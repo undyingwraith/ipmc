@@ -1,0 +1,42 @@
+{
+  "name": "ipm-webui",
+  "type": "module",
+  "scripts": {
+    "watch": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@helia/unixfs": "^3.0.4",
+    "@libp2p/kad-dht": "^12.0.13",
+    "@mui/icons-material": "^5.15.15",
+    "@mui/material": "^5.15.15",
+    "@mui/styled-engine-sc": "^6.0.0-alpha.20",
+    "blockstore-idb": "^1.1.8",
+    "buffer": "^6.0.3",
+    "crypto": "^1.0.1",
+    "crypto-browserify": "^3.12.0",
+    "datastore-idb": "^2.1.9",
+    "helia": "^4.1.1",
+    "i18next": "^23.11.2",
+    "i18next-browser-languagedetector": "^7.2.1",
+    "ipm-core": "workspace:^",
+    "libp2p": "^1.4.2",
+    "libp2p-pnet": "^0.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-i18next": "^14.1.0",
+    "styled-components": "^6.1.8",
+    "util": "^0.12.5",
+    "web-streams-polyfill": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.79",
+    "@types/react-dom": "^18.2.25",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.9",
+    "vite-plugin-node-polyfills": "^0.21.0"
+  },
+  "packageManager": "yarn@4.0.2"
+}

@@ -1,4 +1,5 @@
 import {defineConfig} from 'vite';
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
@@ -11,5 +12,16 @@ export default defineConfig(({ command, mode }) => {
       sourcemap: command === 'serve',
       rollupOptions: { treeshake: true }
     },
+    plugins: [
+        nodePolyfills({
+          include: ['crypto', 'buffer', 'stream', 'util'],
+          globals: {
+            Buffer: true,
+            global: true,
+            process: true,
+          },
+          protocolImports: true,
+        })
+    ],
   };
 });

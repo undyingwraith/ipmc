@@ -1,0 +1,23 @@
+{
+	"name": "ipm-tools",
+	"version": "1.0.0",
+	"main": "index.js",
+	"license": "MIT",
+	"scripts": {
+		"import": "vite-node ./import.ts",
+		"cli": "vite-node ./src/index.ts"
+	},
+	"dependencies": {
+		"cli-progress": "^3.12.0",
+		"fluent-ffmpeg": "^2.1.2",
+		"ipm-core": "workspace:^",
+		"kubo-rpc-client": "^3.0.4",
+		"yargs": "^17.7.2"
+	},
+	"devDependencies": {
+		"@types/cli-progress": "^3.11.5",
+		"@types/fluent-ffmpeg": "^2.1.24",
+		"@types/yargs": "^17.0.32",
+		"vite-node": "^1.5.0"
+	}
+}
