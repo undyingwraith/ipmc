@@ -1,24 +1,24 @@
 {
-  "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
-  "include": [
-    "src/renderer/src/env.d.ts",
-    "src/renderer/src/**/*",
-    "src/renderer/src/**/*.tsx",
-    "src/preload/*.d.ts"
-  ],
-  "compilerOptions": {
-    "composite": true,
-    "jsx": "react-jsx",
-    "baseUrl": ".",
-	"lib": [
-		"ES2015",
-		"DOM",
-		"DOM.Iterable"
+	"extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
+	"include": [
+		"src/renderer/src/env.d.ts",
+		"src/renderer/src/**/*",
+		"src/renderer/src/**/*.tsx",
+		"src/preload/*.d.ts"
 	],
-    "paths": {
-      "@renderer/*": [
-        "src/renderer/src/*"
-      ]
-    }
-  }
+	"compilerOptions": {
+		"composite": true,
+		"jsx": "react-jsx",
+		"baseUrl": ".",
+		"lib": [
+			"ES2015",
+			"DOM",
+			"DOM.Iterable"
+		],
+		"paths": {
+			"@renderer/*": [
+				"src/renderer/src/*"
+			]
+		}
+	}
 }

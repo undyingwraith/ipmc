@@ -1,13 +1,39 @@
 # IPMC
+
 Interplanetary Media Center
+
+## Abstract
+
+A piece of software made to access media libraries on [IPFS](https://ipfs.io)
+
+## Getting started
+
+### Prerequisites
+
+- nodejs >= v20.12.2
+- yarn (installed through [corepack](https://yarnpkg.com/corepack))
+
+### Installing dependencies
+
+```bash
+yarn install
+```
+
+### Running it in dev mode
+
+Run the following commands in paralell:
+```bash
+yarn workspace ipm-core run watch
+yarn workspace ipm-desktop run dev
+```
 
 ## Concepts
 
-## Profiles
+### Profiles
 
 - Keep different configurations for ipfs networks.
 
-## Libraries
+### Libraries
 
 - Keep different media sources
 - bound to profiles
