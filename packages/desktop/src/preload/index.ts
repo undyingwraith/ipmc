@@ -19,8 +19,6 @@ import fs from 'fs';
 
 import { IConfigurationService, INodeService, IInternalProfile, IProfile, IIpfsService, IFileInfo } from 'ipm-core';
 
-console.log("this is the preload script");
-
 function getProfileFolder(name: string): string {
 	return `./profiles/${name}`
 }
@@ -112,8 +110,8 @@ const nodeService: INodeService = {
 			toUrl(cid: string) {
 				return `http://127.0.0.1:${port}/ipfs/${cid}`;
 			},
-			peers() {
-				return node.swarm.peers().then(r => r.map(p => p.addr.toString()));
+			async peers() {
+				return (await node.swarm.peers()).map(p => p.addr.toString());
 			}
 		}
 	}

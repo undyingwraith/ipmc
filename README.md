@@ -4,7 +4,7 @@ Interplanetary Media Center
 
 ## Abstract
 
-A piece of software made to access media libraries on [IPFS](https://ipfs.io)
+A piece of software made to access media libraries hosted on [IPFS](https://ipfs.io)
 
 ## Getting started
 
