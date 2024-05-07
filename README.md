@@ -23,8 +23,8 @@ yarn install
 
 Run the following commands in paralell:
 ```bash
-yarn workspace ipm-core run watch
-yarn workspace ipm-desktop run dev
+yarn workspace ipmc-core run watch
+yarn workspace ipmc-desktop run dev
 ```
 
 ## Concepts

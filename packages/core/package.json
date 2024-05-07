@@ -1,5 +1,5 @@
 {
-	"name": "ipm-core",
+	"name": "ipmc-core",
 	"packageManager": "yarn@4.0.2",
 	"main": "./dist",
 	"type": "module",

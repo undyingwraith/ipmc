@@ -6606,9 +6606,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ipm-core@workspace:^, ipm-core@workspace:packages/core":
+"ipmc-core@workspace:^, ipmc-core@workspace:packages/core":
   version: 0.0.0-use.local
-  resolution: "ipm-core@workspace:packages/core"
+  resolution: "ipmc-core@workspace:packages/core"
   dependencies:
     "@emotion/react": "npm:^11.11.4"
     "@emotion/styled": "npm:^11.11.5"
@@ -6629,9 +6629,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"ipm-desktop@workspace:packages/desktop":
+"ipmc-desktop@workspace:packages/desktop":
   version: 0.0.0-use.local
-  resolution: "ipm-desktop@workspace:packages/desktop"
+  resolution: "ipmc-desktop@workspace:packages/desktop"
   dependencies:
     "@chainsafe/libp2p-noise": "npm:^15.0.0"
     "@electron-toolkit/eslint-config-prettier": "npm:^2.0.0"
@@ -6660,7 +6660,7 @@ __metadata:
     eslint: "npm:^8.57.0"
     eslint-plugin-react: "npm:^7.34.1"
     helia: "npm:^4.1.1"
-    ipm-core: "workspace:^"
+    ipmc-core: "workspace:^"
     kubo-rpc-client: "npm:^4.1.1"
     libp2p: "npm:^1.3.0"
     multiformats: "npm:^13.1.0"
@@ -6674,25 +6674,25 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"ipm-tools@workspace:packages/tools":
+"ipmc-tools@workspace:packages/tools":
   version: 0.0.0-use.local
-  resolution: "ipm-tools@workspace:packages/tools"
+  resolution: "ipmc-tools@workspace:packages/tools"
   dependencies:
     "@types/cli-progress": "npm:^3.11.5"
     "@types/fluent-ffmpeg": "npm:^2.1.24"
     "@types/yargs": "npm:^17.0.32"
     cli-progress: "npm:^3.12.0"
     fluent-ffmpeg: "npm:^2.1.2"
-    ipm-core: "workspace:^"
+    ipmc-core: "workspace:^"
     kubo-rpc-client: "npm:^4.1.1"
     vite-node: "npm:^1.5.0"
     yargs: "npm:^17.7.2"
   languageName: unknown
   linkType: soft
 
-"ipm-webui@workspace:packages/webui":
+"ipmc-webui@workspace:packages/webui":
   version: 0.0.0-use.local
-  resolution: "ipm-webui@workspace:packages/webui"
+  resolution: "ipmc-webui@workspace:packages/webui"
   dependencies:
     "@emotion/react": "npm:^11.11.4"
     "@emotion/styled": "npm:^11.11.5"
@@ -6711,7 +6711,7 @@ __metadata:
     helia: "npm:^4.1.1"
     i18next: "npm:^23.11.2"
     i18next-browser-languagedetector: "npm:^7.2.1"
-    ipm-core: "workspace:^"
+    ipmc-core: "workspace:^"
     libp2p: "npm:^1.3.0"
     libp2p-pnet: "npm:^0.1.0"
     react: "npm:^18.3.1"
@@ -6726,9 +6726,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"ipm@workspace:.":
+"ipmc@workspace:.":
   version: 0.0.0-use.local
-  resolution: "ipm@workspace:."
+  resolution: "ipmc@workspace:."
   dependencies:
     typescript: "npm:^5.4.5"
   languageName: unknown

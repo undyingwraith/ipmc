@@ -1,10 +1,5 @@
 import React from 'react';
-import { AppContextProvider } from './AppContext';
-import { CssBaseline, ThemeProvider } from "@mui/material";
-import { theme } from "./Theme";
-import { MovieList } from "./components/MovieList";
-import { AppBar } from "./components/AppBar";
-import { IFileInfo, IpmApp } from 'ipm-core';
+import { IFileInfo, IpmApp } from 'ipmc-core';
 
 import { webSockets } from '@libp2p/websockets';
 import { webTransport } from '@libp2p/webtransport';
@@ -43,7 +38,7 @@ export function App() {
 		nodeService={{
 			async create(profile) {
 				const libp2p = await createLibp2p({
-					...(profile.swarmKey ? {
+					...(profile?.swarmKey ? {
 						connectionProtector: preSharedKey({
 							psk: new TextEncoder().encode(profile.swarmKey),
 						}),
@@ -54,7 +49,7 @@ export function App() {
 					],
 					peerDiscovery: [
 						bootstrap({
-							list: profile.bootstrap ?? [
+							list: profile?.bootstrap ?? [
 								// a list of bootstrap peer multiaddrs to connect to on node startup
 								'/ip4/104.131.131.82/tcp/4001/ipfs/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ',
 								'/dnsaddr/bootstrap.libp2p.io/ipfs/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN',
@@ -64,21 +59,21 @@ export function App() {
 					],
 					connectionEncryption: [noise()],
 				});
-		
-				const datastore = new IDBDatastore(`${profile.name}/data`);
+
+				const datastore = new IDBDatastore(`${profile?.name ?? 'default'}/data`);
 				await datastore.open();
-				const blockstore = new IDBBlockstore(`${profile.name}/data`);
+				const blockstore = new IDBBlockstore(`${profile?.name ?? 'default'}/data`);
 				await blockstore.open();
-		
+
 				const helia = await createHelia({
 					start: true,
 					datastore,
 					blockstore,
 					libp2p: libp2p,
 				});
-		
+
 				const fs = unixfs(helia);
-		
+
 				return ({
 					async ls(cid: string) {
 						const files: IFileInfo[] = [];
@@ -133,13 +128,5 @@ export function App() {
 			},
 		}}
 	/>
-	return <ThemeProvider theme={theme}>
-		<CssBaseline />
-		<AppContextProvider>
-			<AppBar />
-			<div>Started</div>
-			<MovieList />
-		</AppContextProvider>
-	</ThemeProvider>;
 };
 

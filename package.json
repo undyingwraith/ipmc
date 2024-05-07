@@ -1,5 +1,5 @@
 {
-	"name": "ipm",
+	"name": "ipmc",
 	"version": "1.0.0",
 	"main": "index.js",
 	"license": "MIT",
@@ -9,7 +9,7 @@
 	"scripts": {
 		"watch": "yarn workspaces foreach -Api run watch",
 		"build": "yarn workspaces foreach -At run build",
-		"cli": "yarn workspace ipm-tools run cli"
+		"cli": "yarn workspace ipmc-tools run cli"
 	},
 	"workspaces": [
 		"packages/*"
