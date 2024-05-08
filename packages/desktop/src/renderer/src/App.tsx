@@ -1,7 +1,7 @@
-import { IpmApp } from "ipm-core";
+import { IpmcApp } from "ipmc-core";
 
 function App(): JSX.Element {
-	return <IpmApp
+	return <IpmcApp
 		nodeService={window.nodeService}
 		configService={window.configService}
 	/>

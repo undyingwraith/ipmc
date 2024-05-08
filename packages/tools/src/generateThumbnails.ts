@@ -1,5 +1,5 @@
 import { IPFSEntry, IPFSHTTPClient } from "kubo-rpc-client/types";
-import { Regexes } from 'ipm-core';
+import { Regexes } from 'ipmc-core';
 import ffmpeg from 'fluent-ffmpeg';
 import fs from 'fs';
 import cliProgress from 'cli-progress';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { IFileInfo, IpmApp } from 'ipmc-core';
+import { IFileInfo, IpmcApp } from 'ipmc-core';
 
 import { webSockets } from '@libp2p/websockets';
 import { webTransport } from '@libp2p/webtransport';
@@ -16,7 +16,7 @@ import { unixfs } from '@helia/unixfs';
 import { create } from 'kubo-rpc-client';
 
 export function App() {
-	return <IpmApp
+	return <IpmcApp
 		configService={{
 			getProfile(name) {
 				const value = window.localStorage.getItem('profile_' + name);
@@ -129,4 +129,3 @@ export function App() {
 		}}
 	/>
 };
-

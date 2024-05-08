@@ -1,37 +1,36 @@
 {
-  "compilerOptions": {
-    "allowJs": false,
-    "declaration": true,
-    "emitDecoratorMetadata": true,
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "forceConsistentCasingInFileNames": true,
-    "jsx": "react",
-    "lib": [
-      "esnext",
-      "dom",
-      "dom.iterable"
-    ],
-    "moduleResolution": "node",
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "skipLibCheck": true,
-    "sourceMap": true,
-    "strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "resolveJsonModule": true,
-    "module": "esnext",
-    "target": "ESNext",
-    "downlevelIteration": true,
-    "isolatedModules": true
-  },
-  "include": [
-    "src",
-    "typings.d.ts",
-    "vite.config.ts",
-    ".eslintrc.js",
-    ".prettierrc.js"
-  ]
+	"compilerOptions": {
+		"allowJs": false,
+		"declaration": true,
+		"emitDecoratorMetadata": true,
+		"esModuleInterop": true,
+		"experimentalDecorators": true,
+		"forceConsistentCasingInFileNames": true,
+		"jsx": "react",
+		"lib": [
+			"esnext",
+			"dom",
+			"dom.iterable"
+		],
+		"moduleResolution": "node",
+		"noImplicitAny": true,
+		"noImplicitReturns": true,
+		"noImplicitThis": true,
+		"noUnusedLocals": true,
+		"skipLibCheck": true,
+		"sourceMap": true,
+		"strictNullChecks": true,
+		"resolveJsonModule": true,
+		"module": "esnext",
+		"target": "ESNext",
+		"downlevelIteration": true,
+		"isolatedModules": true
+	},
+	"include": [
+		"src",
+		"typings.d.ts",
+		"vite.config.ts",
+		".eslintrc.js",
+		".prettierrc.js"
+	]
 }

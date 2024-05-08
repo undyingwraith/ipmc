@@ -1,4 +1,4 @@
-export { IpmApp } from './components/pages/IpmApp';
+export { IpmcApp } from './components/pages/IpmcApp';
 export { Regexes, MovieIndexer } from './service/indexer';
 export type {
 	IAppConfiguration,

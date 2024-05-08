@@ -17,7 +17,7 @@ import { unixfs } from '@helia/unixfs';
 import { create } from 'kubo-rpc-client';
 import fs from 'fs';
 
-import { IConfigurationService, INodeService, IInternalProfile, IProfile, IIpfsService, IFileInfo } from 'ipm-core';
+import { IConfigurationService, INodeService, IInternalProfile, IProfile, IIpfsService, IFileInfo } from 'ipmc-core';
 
 function getProfileFolder(name: string): string {
 	return `./profiles/${name}`
