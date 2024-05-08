@@ -20,7 +20,7 @@ import fs from 'fs';
 import { IConfigurationService, INodeService, IInternalProfile, IProfile, IIpfsService, IFileInfo } from 'ipmc-core';
 
 function getProfileFolder(name: string): string {
-	return `./profiles/${name}`
+	return `./profiles/${name}`;
 }
 
 const nodeService: INodeService = {
@@ -94,7 +94,7 @@ const nodeService: INodeService = {
 		const port = connString.substring(connString.lastIndexOf('/') + 1);
 		return {
 			async ls(cid: string) {
-				const files: IFileInfo[] = []
+				const files: IFileInfo[] = [];
 				for await (const file of node.ls(cid)) {
 					files.push({
 						type: file.type,
@@ -113,14 +113,14 @@ const nodeService: INodeService = {
 			async peers() {
 				return (await node.swarm.peers()).map(p => p.addr.toString());
 			}
-		}
+		};
 	}
 };
 
 const configService: IConfigurationService = {
 	getProfiles(): string[] {
 		try {
-			const profiles = fs.readdirSync('./profiles')
+			const profiles = fs.readdirSync('./profiles');
 			return profiles;
 		} catch (_) {
 			return [];
@@ -131,6 +131,9 @@ const configService: IConfigurationService = {
 	},
 	setProfile(name: string, profile: IProfile) {
 		fs.writeFileSync(getProfileFolder(name) + '/profile.json', JSON.stringify(profile));
+	},
+	removeProfile(name) {
+		fs.rmdirSync(getProfileFolder(name), { recursive: true });
 	},
 };
 
@@ -144,14 +147,14 @@ if (process.contextIsolated) {
 		contextBridge.exposeInMainWorld('configService', configService);
 		console.log("exposeInMainWorld");
 	} catch (error) {
-		console.error(error)
+		console.error(error);
 	}
 } else {
 	console.log("window");
 	// @ts-ignore (define in dts)
 	//window.electron = electronAPI
 	// @ts-ignore (define in dts)
-	window.configService = configService
+	window.configService = configService;
 	// @ts-ignore (define in dts)
-	window.nodeService = nodeService
+	window.nodeService = nodeService;
 }

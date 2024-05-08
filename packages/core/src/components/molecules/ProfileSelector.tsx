@@ -1,17 +1,27 @@
-import React from "react";
-import { IConfigurationService, IProfile } from "../../service";
-import { CardActions, Button, ButtonGroup, Card, CardContent, Stack, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
-import { useTranslation } from "react-i18next";
+import { Button, ButtonGroup, Card, CardActions, CardHeader, Dialog, Stack } from "@mui/material";
 import { useComputed, useSignal } from "@preact/signals-react";
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { IConfigurationService, IProfile } from "../../service";
+import { uuid } from '../../util';
+import { ProfileEditor } from "./ProfileEditor";
 
-export function ProfileSelector(props: { profile?: IProfile, profiles: string[], switchProfile: (name: string) => void, configService: IConfigurationService }) {
+export function ProfileSelector(props: { profile?: IProfile, switchProfile: (name: string) => void, configService: IConfigurationService; }) {
 	const { configService } = props;
 
 	const [_t] = useTranslation();
 	const editing = useSignal<string | undefined>(undefined);
+	const profiles = useSignal<(IProfile & { id: string; })[]>(loadProfiles());
+
+	function loadProfiles() {
+		return configService.getProfiles().map(p => ({
+			...configService.getProfile(p),
+			id: p,
+		}));
+	}
 
 	const dialog = useComputed(() => {
-		if (editing.value !== undefined) {
+		if (editing.value == undefined) {
 			return <></>;
 		}
 		return (
@@ -19,31 +29,48 @@ export function ProfileSelector(props: { profile?: IProfile, profiles: string[],
 				open={true}
 				onClose={() => editing.value = undefined}
 			>
-				<DialogTitle>{_t('EditProfile')}</DialogTitle>
-				<DialogContent>
-					TODO
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={() => editing.value = undefined}>{_t('Cancel')}</Button>
-					<Button>{_t('Save')}</Button>
-				</DialogActions>
+				<ProfileEditor
+					id={editing.value}
+					configService={configService}
+					onCancel={() => editing.value = undefined}
+					onSave={() => {
+						editing.value = undefined;
+						profiles.value = loadProfiles();
+					}}
+				/>
 			</Dialog>
 		);
 	});
 
+	const content = useComputed(() => profiles.value.map(p => (
+		<Card key={p.id}>
+			<CardHeader title={p.name} subheader={p.id} />
+			<CardActions>
+				<ButtonGroup>
+					<Button
+						color={"error"}
+						onClick={() => {
+							configService.removeProfile(p.id);
+							profiles.value = loadProfiles();
+						}}
+					>{_t('Delete')}</Button>
+					<Button
+						onClick={() => editing.value = p.id}
+					>{_t('Edit')}</Button>
+					<Button
+						variant={'contained'}
+						onClick={() => props.switchProfile(p.id)}
+					>{_t('Start')}</Button>
+				</ButtonGroup>
+			</CardActions>
+		</Card>
+	)));
+
 	return (<>
 		<Stack spacing={1}>
-			{props.profiles.map(p => <Card key={p}>
-				<CardContent>{p}</CardContent>
-				<CardActions>
-					<ButtonGroup>
-						<Button onClick={() => editing.value = p}>{_t('Edit')}</Button>
-						<Button onClick={() => props.switchProfile(p)}>{_t('Start')}</Button>
-					</ButtonGroup>
-				</CardActions>
-			</Card>)}
+			{content}
 			<div>
-				<Button onClick={() => editing.value = ''}>{_t('AddProfile')}</Button>
+				<Button onClick={() => editing.value = uuid()}>{_t('AddProfile')}</Button>
 			</div>
 		</Stack>
 		{dialog}

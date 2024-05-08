@@ -10,3 +10,4 @@ export type {
 	IInternalProfile,
 	IRemoteProfile,
 } from './service';
+export { uuid } from './util';

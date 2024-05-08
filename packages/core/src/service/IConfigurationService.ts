@@ -7,18 +7,24 @@ export interface IConfigurationService {
 	/**
 	 * Gets a list of all profile names.
 	 */
-	getProfiles(): string[]
+	getProfiles(): string[];
 
 	/**
-	 * returns the specified Profile
+	 * returns the specified Profile.
 	 * @param name name of the profile
 	 */
 	getProfile(name: string): IProfile;
 
 	/**
-	 * Updates the specified Profile
+	 * Updates the specified Profile.
 	 * @param name name of the profile
 	 * @param profile updated profile
 	 */
 	setProfile(name: string, profile: IProfile): void;
+
+	/**
+	 * Deletes the specified Profile.
+	 * @param name name of the profile
+	 */
+	removeProfile(name: string): void;
 }

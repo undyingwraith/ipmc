@@ -44,7 +44,7 @@ export function AppContextProvider(props: PropsWithChildren<IAppInit>) {
 	const node = useSignal<IIpfsService | undefined>(undefined);
 	const state = useSignal<LoadState>(LoadState.Idle);
 
-	const accentColor = useComputed(() => '#0b3a53');
+	const accentColor = useComputed(() => '#6200EE');
 	const darkMode = useComputed(() => true);
 	const theme = useComputed(() => darkMode.value ? createDarkTheme(accentColor.value) : createLightTheme(accentColor.value));
 
@@ -82,7 +82,7 @@ export function AppContextProvider(props: PropsWithChildren<IAppInit>) {
 			case LoadState.Idle:
 				return (
 					<Box>
-						<ProfileSelector switchProfile={start} profiles={props.configService.getProfiles()} configService={configService} />
+						<ProfileSelector switchProfile={start} configService={props.configService} />
 					</Box>
 				);
 			case LoadState.Starting:

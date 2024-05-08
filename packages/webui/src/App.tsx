@@ -34,6 +34,12 @@ export function App() {
 					window.localStorage.setItem('profiles', JSON.stringify([...profiles, name]));
 				}
 			},
+			removeProfile(name) {
+				window.localStorage.removeItem('profile_' + name);
+				const value = window.localStorage.getItem('profiles');
+				const profiles: string[] = value ? JSON.parse(value) : [];
+				window.localStorage.setItem('profiles', JSON.stringify(profiles.filter(p => p !== name)));
+			},
 		}}
 		nodeService={{
 			async create(profile) {
@@ -105,7 +111,7 @@ export function App() {
 				const port = connString.substring(connString.lastIndexOf('/') + 1);
 				return {
 					async ls(cid: string) {
-						const files: IFileInfo[] = []
+						const files: IFileInfo[] = [];
 						for await (const file of node.ls(cid)) {
 							files.push({
 								type: file.type,
@@ -124,8 +130,8 @@ export function App() {
 					peers() {
 						return node.swarm.peers().then(r => r.map(p => p.addr.toString()));
 					}
-				}
+				};
 			},
 		}}
-	/>
+	/>;
 };
