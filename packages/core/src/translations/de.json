@@ -1,9 +1,13 @@
 {
+	"AddProfile": "Profil hinzufügen",
+	"Cancel": "Abbrechen",
 	"Edit": "Bearbeiten",
+	"EditProfile": "Profil bearbeiten",
 	"Home": "Home",
 	"Loading": "Laden...",
 	"Logout": "Abmelden",
 	"Movies": "Filme",
+	"Save": "Speichern",
 	"Search": "Suche",
 	"Start": "Starten",
 	"Starting": "Starten...",

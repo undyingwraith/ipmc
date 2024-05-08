@@ -82,7 +82,7 @@ export function AppContextProvider(props: PropsWithChildren<IAppInit>) {
 			case LoadState.Idle:
 				return (
 					<Box>
-						<ProfileSelector switchProfile={start} profiles={props.configService.getProfiles()} />
+						<ProfileSelector switchProfile={start} profiles={props.configService.getProfiles()} configService={configService} />
 					</Box>
 				);
 			case LoadState.Starting:

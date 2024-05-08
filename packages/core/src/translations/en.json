@@ -1,9 +1,13 @@
 {
+	"AddProfile": "Add profile",
+	"Cancel": "Cancel",
 	"Edit": "Edit",
+	"EditProfile": "Edit profile",
 	"Home": "Home",
 	"Loading": "Loading...",
 	"Logout": "Logout",
 	"Movies": "Movies",
+	"Save": "Save",
 	"Search": "Search",
 	"Start": "Start",
 	"Starting": "Starting node...",
