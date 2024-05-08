@@ -18,6 +18,7 @@ import { create } from 'kubo-rpc-client';
 import fs from 'fs';
 
 import { IConfigurationService, INodeService, IInternalProfile, IProfile, IIpfsService, IFileInfo } from 'ipmc-core';
+import express from 'express';
 
 function getProfileFolder(name: string): string {
 	return `./profiles/${name}`
@@ -63,6 +64,15 @@ const nodeService: INodeService = {
 
 		const fs = unixfs(helia);
 
+		const app = express();
+		app.get('/:cid', async (request, response) => {
+			for await (const buf of fs.cat(CID.parse(request.params.cid))) {
+				response.write(buf)
+			}
+			response.end()
+		});
+		await new Promise<void>((resolve) => app.listen(8090, () => resolve()));
+
 		return ({
 			async ls(cid: string) {
 				const files: IFileInfo[] = [];
@@ -81,7 +91,7 @@ const nodeService: INodeService = {
 				await datastore.close();
 			},
 			toUrl(cid: string) {
-				return `TODO ${cid}`;
+				return `http://127.0.0.1:8090/${cid}`;
 			},
 			peers() {
 				return Promise.resolve(helia.libp2p.getPeers().map(p => p.toString()));

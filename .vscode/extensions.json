@@ -1,5 +1,8 @@
 {
-  "recommendations": [
-    "arcanis.vscode-zipfs"
-  ]
+	"recommendations": [
+		"arcanis.vscode-zipfs",
+		"github.vscode-github-actions",
+		"dsznajder.es7-react-js-snippets",
+		"ecmel.vscode-html-css"
+	]
 }
