@@ -1,3 +1,3 @@
 export type { IFileInfo } from './IFileInfo';
-export { MovieIndexer } from './MovieIndexer';
+export { MovieIndexFetcher } from './MovieIndexFetcher';
 export { Regexes } from './Regexes';

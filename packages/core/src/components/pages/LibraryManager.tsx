@@ -1,82 +1,95 @@
-import React from "react";
-import { ILibrary, IMovieLibrary/*, IGenericMetaData*/ } from "../../service";
-import { Signal, useComputed, useSignal } from "@preact/signals-react";
-import { useApp } from "./AppContext";
-import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Stack } from '@mui/material';
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import HomeIcon from '@mui/icons-material/Home';
-import { useTranslation } from "react-i18next";
-import { MovieLibrary } from "../organisms/MovieLibrary";
-import { LibraryAppBar } from "../organisms/LibraryAppBar";
-
-// Icons
-import MovieIcon from '@mui/icons-material/Movie';
 import LiveTvIcon from '@mui/icons-material/LiveTv';
+import MovieIcon from '@mui/icons-material/Movie';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
+import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Stack } from '@mui/material';
+import { Signal, useComputed, useSignal } from "@preact/signals-react";
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { ILibrary } from "../../service";
+import { isMovieLibrary } from '../../service/Library/ILibrary';
+import { LibraryAppBar } from "../organisms/LibraryAppBar";
+import { MovieLibrary } from "../organisms/MovieLibrary";
+import { useApp } from "./AppContext";
 
 const icons = {
 	movie: <MovieIcon />,
 	series: <LiveTvIcon />,
 	music: <MusicNoteIcon />,
-} as { [key: string]: any }
+} as { [key: string]: any; };
 
 export function LibraryManager() {
 	const { profile } = useApp();
 	const [_t] = useTranslation();
-	const libraries = profile.libraries;
+	const libraries = profile.profile.libraries;
 	const library = useSignal<ILibrary | undefined>(undefined);
 	const display = useSignal<Display>(Display.Poster);
 	const query = useSignal<string>('');
 
 	const content = useComputed(() => {
-		if (library.value == undefined) {
-			return (<Box>Home</Box>);
-		} else {
+		const lib = library.value;
+
+		if (isMovieLibrary(lib)) {
 			return (
 				<Stack sx={{ height: '100%' }}>
 					<LibraryAppBar display={display} query={query} />
 					<Box sx={{ overflow: 'auto', flexShrink: 1, flexGrow: 1 }}>
 						<MovieLibrary
 							display={display}
-							library={library.value as IMovieLibrary}
+							library={lib}
 						/>
 					</Box>
 				</Stack>
 			);
 		}
+
+		if (lib == undefined) {
+			return (<Box>Home</Box>);
+		}
+
+		return (<Box>Unknown Library</Box>);
 	});
+
+	const sidebar = useComputed(() => (
+		<List>
+			<ListItem disablePadding>
+				<ListItemButton
+					selected={library.value == undefined}
+					onClick={() => {
+						library.value = undefined;
+					}}>
+					<ListItemIcon>
+						<HomeIcon />
+					</ListItemIcon>
+					<ListItemText primary={_t('Home')} />
+				</ListItemButton>
+			</ListItem>
+			{libraries.map((lib) => (
+				<ListItem key={lib.name} disablePadding>
+					<ListItemButton
+						selected={library.value?.name == lib.name}
+						onClick={() => {
+							library.value = lib;
+						}}>
+						<ListItemIcon>
+							{icons[lib.type] ?? <QuestionMarkIcon />}
+						</ListItemIcon>
+						<ListItemText primary={lib.name} />
+					</ListItemButton>
+				</ListItem>
+			))}
+		</List>
+	));
 
 	return <Stack direction={"row"} sx={{ height: '100%' }}>
 		<Paper sx={{ width: '25vw', flexShrink: 0 }}>
-			<List>
-				<ListItem disablePadding>
-					<ListItemButton onClick={() => {
-						library.value = undefined;
-					}}>
-						<ListItemIcon>
-							<HomeIcon />
-						</ListItemIcon>
-						<ListItemText primary={_t('Home')} />
-					</ListItemButton>
-				</ListItem>
-				{libraries.map((lib) => (
-					<ListItem key={lib.name} disablePadding>
-						<ListItemButton onClick={() => {
-							library.value = lib;
-						}}>
-							<ListItemIcon>
-								{icons[lib.type] ?? <QuestionMarkIcon />}
-							</ListItemIcon>
-							<ListItemText primary={lib.name} />
-						</ListItemButton>
-					</ListItem>
-				))}
-			</List>
+			{sidebar}
 		</Paper>
 		<Box sx={{ flexGrow: 1 }}>
 			{content}
 		</Box>
-	</Stack>
+	</Stack>;
 }
 
 export enum Display {

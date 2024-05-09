@@ -8,5 +8,8 @@
 	"typescript.enablePromptUseWorkspaceTsdk": true,
 	"editor.formatOnSave": true,
 	"editor.detectIndentation": false,
-	"editor.insertSpaces": false
+	"editor.insertSpaces": false,
+	"typescript.preferences.quoteStyle": "single",
+	"typescript.format.semicolons": "insert",
+	"javascript.format.semicolons": "insert"
 }
