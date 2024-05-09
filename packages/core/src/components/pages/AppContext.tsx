@@ -45,9 +45,9 @@ export function AppContextProvider(props: PropsWithChildren<IAppInit>) {
 	const profileManager = useSignal<IProfileManager | undefined>(undefined);
 	const node = useSignal<IIpfsService | undefined>(undefined);
 	const state = useSignal<LoadState>(LoadState.Idle);
+	const darkMode = useSignal<boolean>(true);
 
-	const accentColor = useComputed(() => '#0b3a53');
-	const darkMode = useComputed(() => true);
+	const accentColor = useComputed(() => '#6200EE');
 	const theme = useComputed(() => darkMode.value ? createDarkTheme(accentColor.value) : createLightTheme(accentColor.value));
 
 	async function start(name: string) {
@@ -131,15 +131,15 @@ export function AppContextProvider(props: PropsWithChildren<IAppInit>) {
 
 	const profile = useComputed(() => profileManager.value?.profile);
 
-	return (
+	return useComputed(() => (
 		<ThemeProvider theme={theme.value}>
 			<CssBaseline />
 			<Stack sx={{ height: '100vh', overflow: 'hidden' }}>
-				<AppBar shutdownProfile={stop} ipfs={node} profile={profile} />
+				<AppBar shutdownProfile={stop} ipfs={node} profile={profile} darkMode={darkMode} />
 				{content}
 			</Stack>
 		</ThemeProvider>
-	);
+	));
 }
 
 export function useApp() {

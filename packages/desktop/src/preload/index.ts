@@ -21,7 +21,7 @@ import { IConfigurationService, INodeService, IInternalProfile, IProfile, IIpfsS
 import express from 'express';
 
 function getProfileFolder(name: string): string {
-	return `./profiles/${name}`
+	return `./profiles/${name}`;
 }
 
 const nodeService: INodeService = {
@@ -67,11 +67,11 @@ const nodeService: INodeService = {
 		const app = express();
 		app.get('/:cid', async (request, response) => {
 			for await (const buf of fs.cat(CID.parse(request.params.cid))) {
-				response.write(buf)
+				response.write(buf);
 			}
-			response.end()
+			response.end();
 		});
-		await new Promise<void>((resolve) => app.listen(8090, () => resolve()));
+		await new Promise<void>((resolve) => app.listen(8090, '127.0.0.1', () => resolve()));
 
 		return ({
 			async ls(cid: string) {
@@ -104,7 +104,7 @@ const nodeService: INodeService = {
 		const port = connString.substring(connString.lastIndexOf('/') + 1);
 		return {
 			async ls(cid: string) {
-				const files: IFileInfo[] = []
+				const files: IFileInfo[] = [];
 				for await (const file of node.ls(cid)) {
 					files.push({
 						type: file.type,
@@ -123,14 +123,14 @@ const nodeService: INodeService = {
 			async peers() {
 				return (await node.swarm.peers()).map(p => p.addr.toString());
 			}
-		}
+		};
 	}
 };
 
 const configService: IConfigurationService = {
 	getProfiles(): string[] {
 		try {
-			const profiles = fs.readdirSync('./profiles')
+			const profiles = fs.readdirSync('./profiles');
 			return profiles;
 		} catch (_) {
 			return [];
@@ -154,14 +154,14 @@ if (process.contextIsolated) {
 		contextBridge.exposeInMainWorld('configService', configService);
 		console.log("exposeInMainWorld");
 	} catch (error) {
-		console.error(error)
+		console.error(error);
 	}
 } else {
 	console.log("window");
 	// @ts-ignore (define in dts)
 	//window.electron = electronAPI
 	// @ts-ignore (define in dts)
-	window.configService = configService
+	window.configService = configService;
 	// @ts-ignore (define in dts)
-	window.nodeService = nodeService
+	window.nodeService = nodeService;
 }

@@ -5,31 +5,34 @@ import { LanguageSelector } from "../molecules/LanguageSelector";
 import { IIpfsService, IProfile } from "../../service";
 import { Signal, useComputed } from '@preact/signals-react';
 import { useTranslation } from "react-i18next";
+import { ThemeToggle } from '../atoms/ThemeToggle';
 
 export function AppBar(props: {
 	shutdownProfile: () => void;
 	ipfs: Signal<IIpfsService | undefined>;
 	profile: Signal<IProfile | undefined>;
+	darkMode: Signal<boolean>;
 }) {
-	const { shutdownProfile } = props;
+	const { shutdownProfile, ipfs, profile, darkMode } = props;
 	const [_t] = useTranslation();
 
-	return useComputed(() => {
-		const ipfs = props.ipfs.value;
-		const profile = props.profile.value;
+	const status = useComputed(() => ipfs.value != undefined && (<ConnectionStatus ipfs={ipfs.value} />));
+	const logout = useComputed(() => ipfs.value != undefined && (<>
+		<Button onClick={shutdownProfile}>{_t('Logout')}</Button>
+		{profile.value?.name}
+	</>));
 
-		return (
-			<Box sx={{ backgroundColor: 'primary' }}>
-				<Toolbar>
-					{ipfs != undefined && (<>
-						<Button onClick={shutdownProfile}>{_t('Logout')}</Button>
-						{profile?.name}
-					</>)}
-					<Box sx={{ flexGrow: 1 }} />
-					{ipfs != undefined && <ConnectionStatus ipfs={ipfs} />}
-					<LanguageSelector />
-				</Toolbar>
-			</Box>
-		);
-	});
+	return (
+		<Box sx={{ backgroundColor: 'primary' }}>
+			<Toolbar>
+				{logout}
+				<Box sx={{ flexGrow: 1 }} />
+				{status}
+				<ThemeToggle isDark={darkMode} toggle={() => {
+					darkMode.value = !darkMode.value;
+				}} />
+				<LanguageSelector />
+			</Toolbar>
+		</Box>
+	);
 }
