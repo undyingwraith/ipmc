@@ -10,13 +10,13 @@ export function isMovieLibrary(item: any): item is IMovieLibrary {
 
 export type ISeriesLibrary = IGenericLibrary<ISeriesMetaData, 'series'>;
 
-export function isSeriesLibrary(item: any): item is IMovieLibrary {
+export function isSeriesLibrary(item: any): item is ISeriesLibrary {
 	return isGenericLibrary<any, 'series'>(item) && item.type === 'series';
 }
 
 export type IMusicLibrary = IGenericLibrary<any, 'music'>;
 
-export function isMusicLibrary(item: any): item is IMovieLibrary {
+export function isMusicLibrary(item: any): item is IMusicLibrary {
 	return isGenericLibrary<any, 'music'>(item) && item.type === 'music';
 }
 

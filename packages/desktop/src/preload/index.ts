@@ -7,6 +7,7 @@ import { preSharedKey } from "@libp2p/pnet";
 import { createLibp2p } from 'libp2p';
 import { noise } from "@chainsafe/libp2p-noise";
 import { tcp } from '@libp2p/tcp';
+import { peerIdFromString } from '@libp2p/peer-id';
 import { bootstrap } from '@libp2p/bootstrap';
 
 import { CID } from 'multiformats';
@@ -14,6 +15,7 @@ import { FsBlockstore } from 'blockstore-fs';
 import { LevelDatastore } from 'datastore-level';
 import { createHelia } from 'helia';
 import { unixfs } from '@helia/unixfs';
+import { ipns } from '@helia/ipns';
 import { create } from 'kubo-rpc-client';
 import fs from 'fs';
 
@@ -49,6 +51,13 @@ const nodeService: INodeService = {
 			],
 			connectionEncryption: [noise()],
 		});
+
+		console.log(profile.bootstrap ?? [
+			// a list of bootstrap peer multiaddrs to connect to on node startup
+			'/ip4/104.131.131.82/tcp/4001/ipfs/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ',
+			'/dnsaddr/bootstrap.libp2p.io/ipfs/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN',
+			'/dnsaddr/bootstrap.libp2p.io/ipfs/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa'
+		]);
 
 		const datastore = new LevelDatastore(`${getProfileFolder(profile.name)}/data`);
 		await datastore.open();
@@ -96,6 +105,13 @@ const nodeService: INodeService = {
 			peers() {
 				return Promise.resolve(helia.libp2p.getPeers().map(p => p.toString()));
 			},
+			async resolve(name) {
+				try {
+					return (await ipns(helia).resolve(peerIdFromString(name))).cid.toString();
+				} catch (ex) {
+					return (await ipns(helia).resolveDNSLink(name)).cid.toString();
+				}
+			},
 		});
 	},
 	async createRemote(url: string): Promise<IIpfsService> {
@@ -122,7 +138,15 @@ const nodeService: INodeService = {
 			},
 			async peers() {
 				return (await node.swarm.peers()).map(p => p.addr.toString());
-			}
+			},
+			async resolve(name) {
+				let result = '';
+				for await (const res of node.name.resolve(name)) {
+					result = res;
+				}
+
+				return result;
+			},
 		};
 	}
 };

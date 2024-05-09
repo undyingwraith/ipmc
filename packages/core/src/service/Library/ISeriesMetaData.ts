@@ -1,7 +1,6 @@
 import { IFileInfo } from '../indexer';
-import { IGenericMetaData } from './IGenericMetaData';
 
-export interface ISeriesMetaData extends IGenericMetaData<'series'> {
+export interface ISeriesMetaData {
 	title: string;
 	posters: IFileInfo[];
 	yearStart?: number;

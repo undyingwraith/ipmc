@@ -22,7 +22,7 @@ export function MovieLibrary(props: ILibraryProps<IMovieLibrary>) {
 		return i?.cid == undefined ? (
 			<LoadScreen text={_t('Loading')} />
 		) : (
-			<Grid container spacing={1}>
+			<Grid container spacing={1} sx={{ height: '100%', justifyContent: 'center' }}>
 				{i.values.map(v => <Grid item key={v.file.cid}>{display == Display.Poster ? <MoviePosterGridItem movie={v} /> : <MovieThumbnailGridItem movie={v} />}</Grid>)}
 			</Grid>
 		);
