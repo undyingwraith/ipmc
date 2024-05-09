@@ -3,24 +3,26 @@ import { useComputed, useSignal, useSignalEffect } from "@preact/signals-react";
 import { Button } from "@mui/material";
 import { IIpfsService } from "../../service";
 
-export function ConnectionStatus(props: { ipfs: IIpfsService }) {
-	const peers = useSignal<string[]>([])
+export function ConnectionStatus(props: { ipfs: IIpfsService; }) {
+	const peers = useSignal<string[]>([]);
 
 	useSignalEffect(() => {
-		const i = setInterval(() => {
+		const updatePeers = () => {
 			props.ipfs.peers()
 				.then(r => {
 					peers.value = r;
 				})
 				.catch(console.error);
-		}, 5000);
+		};
+		const i = setInterval(updatePeers, 5000);
+		updatePeers();
 
 		return () => {
 			clearInterval(i);
-		}
+		};
 	});
 
 	return useComputed(() => (
-		<Button>{peers.value.length}</Button>
+		<Button onClick={() => console.log(peers.value)}>{peers.value.length}</Button>
 	));
 }

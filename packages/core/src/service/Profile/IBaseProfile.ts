@@ -1,6 +1,18 @@
-import { ILibrary } from "../Library"
+import { ILibrary } from '../Library';
 
 export interface IBaseProfile {
-	name: string
-	libraries: ILibrary[]
-};
+	/**
+	 * Id of the profile.
+	 */
+	id: string;
+
+	/**
+	 * Name of the profile.
+	 */
+	name: string;
+
+	/**
+	 * Libraries of the profile.
+	 */
+	libraries: ILibrary[];
+}

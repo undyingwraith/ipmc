@@ -1,5 +1,5 @@
 export { IpmcApp } from './components/pages/IpmcApp';
-export { Regexes, MovieIndexer } from './service/indexer';
+export { Regexes } from './service/indexer';
 export type {
 	IAppConfiguration,
 	IFileInfo,

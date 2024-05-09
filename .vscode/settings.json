@@ -9,5 +9,7 @@
 	"editor.formatOnSave": true,
 	"editor.detectIndentation": false,
 	"editor.insertSpaces": false,
-	"typescript.format.semicolons": "insert"
+	"typescript.preferences.quoteStyle": "single",
+	"typescript.format.semicolons": "insert",
+	"javascript.format.semicolons": "insert"
 }

@@ -1,16 +1,34 @@
 {
 	"name": "ipmc-core",
 	"packageManager": "yarn@4.0.2",
-	"main": "./dist",
 	"type": "module",
+	"main": "./dist/index.umd.cjs",
+	"module": "./dist/index.js",
+	"typings": "./dist/index.d.ts",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"require": "./dist/index.umd.cjs"
+		}
+	},
 	"scripts": {
-		"build": "tsc",
-		"watch": "tsc --watch"
+		"watch": "vite build --watch --mode dev",
+		"build": "vite build",
+		"test": "vitest run"
 	},
 	"devDependencies": {
 		"@types/react": "^18.3.1",
 		"@types/react-dom": "^18.3.0",
-		"typescript": "^5.4.5"
+		"terser": "^5.31.0",
+		"typescript": "^5.4.5",
+		"vite": "^5.2.11",
+		"vite-plugin-checker": "^0.6.4",
+		"vite-plugin-dts": "^3.9.1",
+		"vitest": "^1.6.0"
 	},
 	"dependencies": {
 		"@emotion/react": "^11.11.4",
