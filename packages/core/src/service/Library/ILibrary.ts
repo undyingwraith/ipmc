@@ -1,5 +1,6 @@
 import { IMovieMetaData } from './IMovieMetaData';
 import { IGenericLibrary, isGenericLibrary } from './IGenericLibrary';
+import { ISeriesMetaData } from './ISeriesMetaData';
 
 export type IMovieLibrary = IGenericLibrary<IMovieMetaData, 'movie'>;
 
@@ -7,7 +8,7 @@ export function isMovieLibrary(item: any): item is IMovieLibrary {
 	return isGenericLibrary<IMovieMetaData, 'movie'>(item) && item.type === 'movie';
 }
 
-export type ISeriesLibrary = IGenericLibrary<any, 'series'>;
+export type ISeriesLibrary = IGenericLibrary<ISeriesMetaData, 'series'>;
 
 export function isSeriesLibrary(item: any): item is IMovieLibrary {
 	return isGenericLibrary<any, 'series'>(item) && item.type === 'series';
