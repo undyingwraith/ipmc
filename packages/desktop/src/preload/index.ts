@@ -22,6 +22,7 @@ import fs from 'fs';
 
 import { IConfigurationService, INodeService, IInternalProfile, IProfile, IIpfsService, IFileInfo } from 'ipmc-core';
 import express from 'express';
+import { Server, IncomingMessage, ServerResponse } from 'http';
 
 function getProfileFolder(name: string): string {
 	return `./profiles/${name}`;
@@ -80,7 +81,9 @@ const nodeService: INodeService = {
 			}
 			response.end();
 		});
-		await new Promise<void>((resolve) => app.listen(8090, '127.0.0.1', () => resolve()));
+		const server = await new Promise<Server<typeof IncomingMessage, typeof ServerResponse>>((resolve) => {
+			const server = app.listen(8090, '127.0.0.1', () => resolve(server));
+		});
 
 		return ({
 			async ls(cid: string) {
@@ -95,6 +98,7 @@ const nodeService: INodeService = {
 				return files;
 			},
 			async stop() {
+				server.close();
 				await helia.stop();
 				await blockstore.close();
 				await datastore.close();
