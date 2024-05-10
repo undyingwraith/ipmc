@@ -8,6 +8,7 @@ import { noise } from "@chainsafe/libp2p-noise";
 import { tcp } from '@libp2p/tcp';
 import { peerIdFromString } from '@libp2p/peer-id';
 import { bootstrap } from '@libp2p/bootstrap';
+import { circuitRelayTransport, circuitRelayServer } from '@libp2p/circuit-relay-v2';
 
 import { CID } from 'multiformats';
 import { FsBlockstore } from 'blockstore-fs';
@@ -47,6 +48,7 @@ const nodeService: INodeService = {
 					webSockets(),
 					webTransport(),
 					tcp(),
+					circuitRelayTransport(),
 				],
 				peerDiscovery: [
 					bootstrap({
@@ -55,10 +57,13 @@ const nodeService: INodeService = {
 							'/ip4/104.131.131.82/tcp/4001/ipfs/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ',
 							'/dnsaddr/bootstrap.libp2p.io/ipfs/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN',
 							'/dnsaddr/bootstrap.libp2p.io/ipfs/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa'
-						]
-					})
+						],
+					}),
 				],
 				connectionEncryption: [noise()],
+				services: {
+					circuitRelay: circuitRelayServer()
+				}
 			},
 			blockBrokers: [
 				bitswap(),
