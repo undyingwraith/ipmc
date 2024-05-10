@@ -19,4 +19,10 @@ export interface IIpfsService {
 	 * Stops the node.
 	 */
 	stop(): Promise<void>;
+
+	/**
+	 * Resolves a ipns address.
+	 * @param ipns ipns address.
+	 */
+	resolve(ipns: string): Promise<string>;
 }

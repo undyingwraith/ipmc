@@ -1369,6 +1369,40 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@helia/interface@npm:^4.3.0":
+  version: 4.3.0
+  resolution: "@helia/interface@npm:4.3.0"
+  dependencies:
+    "@libp2p/interface": "npm:^1.1.4"
+    "@multiformats/dns": "npm:^1.0.1"
+    interface-blockstore: "npm:^5.2.10"
+    interface-datastore: "npm:^8.2.11"
+    interface-store: "npm:^5.1.8"
+    multiformats: "npm:^13.1.0"
+    progress-events: "npm:^1.0.0"
+  checksum: 10c0/dcdf2a3156ec711d1fb4332b929c1e0256f9403365aab1048e73a54c5200405be42a08a809d848e32911a45900312b7765e5d6ce989299f348b9786a027f50bd
+  languageName: node
+  linkType: hard
+
+"@helia/ipns@npm:^7.2.2":
+  version: 7.2.2
+  resolution: "@helia/ipns@npm:7.2.2"
+  dependencies:
+    "@helia/interface": "npm:^4.3.0"
+    "@libp2p/interface": "npm:^1.1.4"
+    "@libp2p/kad-dht": "npm:^12.0.8"
+    "@libp2p/logger": "npm:^4.0.7"
+    "@libp2p/peer-id": "npm:^4.0.7"
+    "@multiformats/dns": "npm:^1.0.1"
+    interface-datastore: "npm:^8.2.11"
+    ipns: "npm:^9.1.0"
+    multiformats: "npm:^13.1.0"
+    progress-events: "npm:^1.0.0"
+    uint8arrays: "npm:^5.0.2"
+  checksum: 10c0/6812664e23c5e98df0ea5bc7698fd64931956c788b2c0d0eeea871e436c80df24c4addbfdb3ba73ffaf215a85de5d58ac33b353e2a19e9534902dad22fdef1e2
+  languageName: node
+  linkType: hard
+
 "@helia/routers@npm:^1.0.3":
   version: 1.0.3
   resolution: "@helia/routers@npm:1.0.3"
@@ -7867,6 +7901,7 @@ __metadata:
     "@electron-toolkit/preload": "npm:^3.0.1"
     "@electron-toolkit/tsconfig": "npm:^1.0.1"
     "@electron-toolkit/utils": "npm:^3.0.0"
+    "@helia/ipns": "npm:^7.2.2"
     "@helia/unixfs": "npm:^3.0.4"
     "@libp2p/bootstrap": "npm:^10.0.22"
     "@libp2p/pnet": "npm:^1.0.1"
@@ -7926,6 +7961,7 @@ __metadata:
   dependencies:
     "@emotion/react": "npm:^11.11.4"
     "@emotion/styled": "npm:^11.11.5"
+    "@helia/ipns": "npm:^7.2.2"
     "@helia/unixfs": "npm:^3.0.4"
     "@libp2p/kad-dht": "npm:^12.0.9"
     "@mui/icons-material": "npm:^5.15.15"
@@ -7981,6 +8017,26 @@ __metadata:
     uint8arraylist: "npm:^2.4.8"
     uint8arrays: "npm:^5.0.1"
   checksum: 10c0/156b62e2c3daa9b450f057dc40e1211af808ce4c254d0568b91cdbf8475f230a76873e1ff1f5fe187202b64e285b7af5cfdfc2e3e39c5b89ea0ed72fc2ff5947
+  languageName: node
+  linkType: hard
+
+"ipns@npm:^9.1.0":
+  version: 9.1.0
+  resolution: "ipns@npm:9.1.0"
+  dependencies:
+    "@libp2p/crypto": "npm:^4.0.0"
+    "@libp2p/interface": "npm:^1.1.0"
+    "@libp2p/logger": "npm:^4.0.3"
+    "@libp2p/peer-id": "npm:^4.0.3"
+    cborg: "npm:^4.0.1"
+    err-code: "npm:^3.0.1"
+    interface-datastore: "npm:^8.1.0"
+    multiformats: "npm:^13.0.0"
+    protons-runtime: "npm:^5.2.1"
+    timestamp-nano: "npm:^1.0.0"
+    uint8arraylist: "npm:^2.4.8"
+    uint8arrays: "npm:^5.0.1"
+  checksum: 10c0/31eac1b662975fda73cbbd96a74b2a8e03b6a712bc555a7906a3ffa427e303493b7fcf08a6c12ef06983b0013a3e93dffee765940d48196ffcd6f7f683eadbd0
   languageName: node
   linkType: hard
 

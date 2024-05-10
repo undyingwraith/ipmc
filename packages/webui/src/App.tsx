@@ -7,6 +7,7 @@ import { preSharedKey } from "@libp2p/pnet";
 import { createLibp2p } from 'libp2p';
 import { noise } from "@chainsafe/libp2p-noise";
 import { bootstrap } from '@libp2p/bootstrap';
+import { peerIdFromString } from '@libp2p/peer-id';
 
 import { CID } from 'multiformats';
 import { IDBBlockstore } from 'blockstore-idb';
@@ -14,6 +15,7 @@ import { IDBDatastore } from 'datastore-idb';
 import { createHelia } from 'helia';
 import { unixfs } from '@helia/unixfs';
 import { create } from 'kubo-rpc-client';
+import { ipns } from '@helia/ipns';
 
 export function App() {
 	return <IpmcApp
@@ -97,6 +99,13 @@ export function App() {
 					peers() {
 						return Promise.resolve(helia.libp2p.getPeers().map(p => p.toString()));
 					},
+					async resolve(name) {
+						try {
+							return (await ipns(helia).resolve(peerIdFromString(name))).cid.toString();
+						} catch (ex) {
+							return (await ipns(helia).resolveDNSLink(name)).cid.toString();
+						}
+					},
 				});
 			},
 			async createRemote(url) {
@@ -105,7 +114,7 @@ export function App() {
 				const port = connString.substring(connString.lastIndexOf('/') + 1);
 				return {
 					async ls(cid: string) {
-						const files: IFileInfo[] = []
+						const files: IFileInfo[] = [];
 						for await (const file of node.ls(cid)) {
 							files.push({
 								type: file.type,
@@ -123,9 +132,17 @@ export function App() {
 					},
 					peers() {
 						return node.swarm.peers().then(r => r.map(p => p.addr.toString()));
-					}
-				}
+					},
+					async resolve(name) {
+						let result = '';
+						for await (const res of node.name.resolve(name)) {
+							result = res;
+						}
+
+						return result;
+					},
+				};
 			},
 		}}
-	/>
+	/>;
 };

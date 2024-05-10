@@ -134,7 +134,7 @@ export function AppContextProvider(props: PropsWithChildren<IAppInit>) {
 	return useComputed(() => (
 		<ThemeProvider theme={theme.value}>
 			<CssBaseline />
-			<Stack sx={{ height: '100vh', overflow: 'hidden' }}>
+			<Stack sx={{ height: '100vh', width: '100vw', overflow: 'hidden' }}>
 				<AppBar shutdownProfile={stop} ipfs={node} profile={profile} darkMode={darkMode} />
 				{content}
 			</Stack>
