@@ -13,6 +13,7 @@ import { LibraryAppBar } from "../organisms/LibraryAppBar";
 import { MovieLibrary } from "../organisms/MovieLibrary";
 import { useApp } from "./AppContext";
 import { SeriesLibrary } from '../organisms/SeriesLibrary';
+import { LibraryHomeScreen } from '../organisms/LibraryHomeScreen';
 
 const icons = {
 	movie: <MovieIcon />,
@@ -33,7 +34,7 @@ export function LibraryManager() {
 		let component = (<Box>Unknown Library</Box>);
 
 		if (lib == undefined) {
-			component = (<Box>Home</Box>);
+			component = (<LibraryHomeScreen />);
 		}
 
 		if (isMovieLibrary(lib)) {

@@ -4,10 +4,10 @@ import { IFileInfo, IpmcApp } from 'ipmc-core';
 import { webSockets } from '@libp2p/websockets';
 import { webTransport } from '@libp2p/webtransport';
 import { preSharedKey } from "@libp2p/pnet";
-import { createLibp2p } from 'libp2p';
 import { noise } from "@chainsafe/libp2p-noise";
 import { bootstrap } from '@libp2p/bootstrap';
 import { peerIdFromString } from '@libp2p/peer-id';
+import { bitswap, trustlessGateway } from '@helia/block-brokers';
 
 import { CID } from 'multiformats';
 import { IDBBlockstore } from 'blockstore-idb';
@@ -39,29 +39,6 @@ export function App() {
 		}}
 		nodeService={{
 			async create(profile) {
-				const libp2p = await createLibp2p({
-					...(profile?.swarmKey ? {
-						connectionProtector: preSharedKey({
-							psk: new TextEncoder().encode(profile.swarmKey),
-						}),
-					} : {}),
-					transports: [
-						webSockets(),
-						webTransport(),
-					],
-					peerDiscovery: [
-						bootstrap({
-							list: profile?.bootstrap ?? [
-								// a list of bootstrap peer multiaddrs to connect to on node startup
-								'/ip4/104.131.131.82/tcp/4001/ipfs/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ',
-								'/dnsaddr/bootstrap.libp2p.io/ipfs/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN',
-								'/dnsaddr/bootstrap.libp2p.io/ipfs/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa'
-							]
-						})
-					],
-					connectionEncryption: [noise()],
-				});
-
 				const datastore = new IDBDatastore(`${profile?.name ?? 'default'}/data`);
 				await datastore.open();
 				const blockstore = new IDBBlockstore(`${profile?.name ?? 'default'}/data`);
@@ -71,7 +48,32 @@ export function App() {
 					start: true,
 					datastore,
 					blockstore,
-					libp2p: libp2p,
+					libp2p: {
+						...(profile?.swarmKey ? {
+							connectionProtector: preSharedKey({
+								psk: new TextEncoder().encode(profile.swarmKey),
+							}),
+						} : {}),
+						transports: [
+							webSockets(),
+							webTransport(),
+						],
+						peerDiscovery: [
+							bootstrap({
+								list: profile?.bootstrap ?? [
+									// a list of bootstrap peer multiaddrs to connect to on node startup
+									'/ip4/104.131.131.82/tcp/4001/ipfs/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ',
+									'/dnsaddr/bootstrap.libp2p.io/ipfs/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN',
+									'/dnsaddr/bootstrap.libp2p.io/ipfs/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa'
+								]
+							})
+						],
+						connectionEncryption: [noise()],
+					},
+					blockBrokers: [
+						bitswap(),
+						...(profile?.swarmKey == undefined ? [trustlessGateway()] : [])
+					],
 				});
 
 				const fs = unixfs(helia);

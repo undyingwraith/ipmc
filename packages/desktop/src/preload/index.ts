@@ -4,7 +4,6 @@ import { contextBridge } from 'electron';
 import { webSockets } from '@libp2p/websockets';
 import { webTransport } from '@libp2p/webtransport';
 import { preSharedKey } from "@libp2p/pnet";
-import { createLibp2p } from 'libp2p';
 import { noise } from "@chainsafe/libp2p-noise";
 import { tcp } from '@libp2p/tcp';
 import { peerIdFromString } from '@libp2p/peer-id';
@@ -16,6 +15,7 @@ import { LevelDatastore } from 'datastore-level';
 import { createHelia } from 'helia';
 import { unixfs } from '@helia/unixfs';
 import { ipns } from '@helia/ipns';
+import { bitswap, trustlessGateway } from '@helia/block-brokers';
 import { create } from 'kubo-rpc-client';
 import fs from 'fs';
 
@@ -28,37 +28,6 @@ function getProfileFolder(name: string): string {
 
 const nodeService: INodeService = {
 	async create(profile: IInternalProfile): Promise<IIpfsService> {
-		const libp2p = await createLibp2p({
-			...(profile.swarmKey ? {
-				connectionProtector: preSharedKey({
-					psk: new TextEncoder().encode(profile.swarmKey),
-				}),
-			} : {}),
-			transports: [
-				webSockets(),
-				webTransport(),
-				tcp(),
-			],
-			peerDiscovery: [
-				bootstrap({
-					list: profile.bootstrap ?? [
-						// a list of bootstrap peer multiaddrs to connect to on node startup
-						'/ip4/104.131.131.82/tcp/4001/ipfs/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ',
-						'/dnsaddr/bootstrap.libp2p.io/ipfs/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN',
-						'/dnsaddr/bootstrap.libp2p.io/ipfs/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa'
-					]
-				})
-			],
-			connectionEncryption: [noise()],
-		});
-
-		console.log(profile.bootstrap ?? [
-			// a list of bootstrap peer multiaddrs to connect to on node startup
-			'/ip4/104.131.131.82/tcp/4001/ipfs/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ',
-			'/dnsaddr/bootstrap.libp2p.io/ipfs/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN',
-			'/dnsaddr/bootstrap.libp2p.io/ipfs/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa'
-		]);
-
 		const datastore = new LevelDatastore(`${getProfileFolder(profile.name)}/data`);
 		await datastore.open();
 		const blockstore = new FsBlockstore(`${getProfileFolder(profile.name)}/blocks`);
@@ -68,7 +37,33 @@ const nodeService: INodeService = {
 			start: true,
 			datastore,
 			blockstore,
-			libp2p: libp2p,
+			libp2p: {
+				...(profile.swarmKey ? {
+					connectionProtector: preSharedKey({
+						psk: new TextEncoder().encode(profile.swarmKey),
+					}),
+				} : {}),
+				transports: [
+					webSockets(),
+					webTransport(),
+					tcp(),
+				],
+				peerDiscovery: [
+					bootstrap({
+						list: profile.bootstrap ?? [
+							// a list of bootstrap peer multiaddrs to connect to on node startup
+							'/ip4/104.131.131.82/tcp/4001/ipfs/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ',
+							'/dnsaddr/bootstrap.libp2p.io/ipfs/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN',
+							'/dnsaddr/bootstrap.libp2p.io/ipfs/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa'
+						]
+					})
+				],
+				connectionEncryption: [noise()],
+			},
+			blockBrokers: [
+				bitswap(),
+				...(profile.swarmKey == undefined ? [trustlessGateway()] : [])
+			],
 		});
 
 		const fs = unixfs(helia);
