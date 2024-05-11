@@ -32,7 +32,7 @@ export async function createRemoteIpfsService(url: string): Promise<IIpfsService
 		},
 		async resolve(name) {
 			let result = '';
-			for await (const res of node.name.resolve(name)) {
+			for await (const res of node.name.resolve(name.at(0) == '/' ? name : '/ipns/' + name)) {
 				result = res;
 			}
 

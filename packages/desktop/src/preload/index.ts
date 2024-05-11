@@ -21,9 +21,7 @@ import { createHelia } from 'helia';
 import { IncomingMessage, Server, ServerResponse } from 'http';
 import { IConfigurationService, IFileInfo, IInternalProfile, IIpfsService, INodeService, IProfile, createRemoteIpfsService } from 'ipmc-core';
 import { CID } from 'multiformats';
-//import { gossipsub } from '@chainsafe/libp2p-gossipsub';
-//import { pubsubPeerDiscovery } from '@libp2p/pubsub-peer-discovery';
-//import { identify } from '@libp2p/identify';
+import { libp2pRouting } from '@helia/routers';
 
 function getProfileFolder(name: string): string {
 	return `./profiles/${name}`;
@@ -66,14 +64,13 @@ const nodeService: INodeService = {
 				],
 				peerDiscovery: [
 					bootstrap({
-						list: profile.bootstrap ?? [
+						list: profile.bootstrap ?? (profile.swarmKey != undefined ? [] : [
 							// a list of bootstrap peer multiaddrs to connect to on node startup
 							'/ip4/104.131.131.82/tcp/4001/ipfs/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ',
 							'/dnsaddr/bootstrap.libp2p.io/ipfs/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN',
 							'/dnsaddr/bootstrap.libp2p.io/ipfs/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa',
-						],
+						]),
 					}),
-					//pubsubPeerDiscovery(),
 				],
 				connectionEncryption: [
 					noise(),
@@ -83,15 +80,36 @@ const nodeService: INodeService = {
 					mplex(),
 				],
 				services: {
-					//identify: identify(),
 					relay: circuitRelayServer(),
-					//pubsub: gossipsub(),
 					dht: kadDHT({
 						protocol: '/ipfs/kad/1.0.0',
 						peerInfoMapper: removePrivateAddressesMapper
 					})
 				},
 			},
+			routers: [
+				{
+					findPeer(peerId, options) {
+						return libp2pRouting(helia.libp2p).findPeer(peerId, options);
+					},
+					findProviders(cid, options) {
+						return libp2pRouting(helia.libp2p).findProviders(cid, options);
+					},
+					get(key, options) {
+						return libp2pRouting(helia.libp2p).get(key, options);
+					},
+					getClosestPeers(key, options) {
+						return libp2pRouting(helia.libp2p).getClosestPeers(key, options);
+					},
+					provide(cid, options) {
+						return libp2pRouting(helia.libp2p).provide(cid, options);
+					},
+					put(key, value, options) {
+						return libp2pRouting(helia.libp2p).put(key, value, options);
+					},
+				}
+				,
+			],
 			blockBrokers: [
 				bitswap(),
 				...(profile.swarmKey == undefined ? [trustlessGateway()] : [])

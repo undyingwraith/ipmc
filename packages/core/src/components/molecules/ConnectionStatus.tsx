@@ -38,13 +38,13 @@ export function ConnectionStatus(props: { ipfs: IIpfsService; }) {
 				horizontal: 'right',
 			}}
 		>
-			<List>
+			<List sx={{ width: '25vw' }}>
 				{peers.value.length > 0 ? peers.value.map(p => (
 					<ListItem key={p}>
 						<ListItemIcon>
-							<Identicon value={p} />
+							<Identicon value={p.substring(p.lastIndexOf('/'))} />
 						</ListItemIcon>
-						<ListItemText>{p}</ListItemText>
+						<ListItemText sx={{ textOverflow: 'ellipsis' }}>{p}</ListItemText>
 					</ListItem>
 				)) : (
 					<ListItem>
