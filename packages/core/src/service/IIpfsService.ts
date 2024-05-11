@@ -25,4 +25,9 @@ export interface IIpfsService {
 	 * @param ipns ipns address.
 	 */
 	resolve(ipns: string): Promise<string>;
+
+	/**
+	 * Returns node id.
+	 */
+	id(): string;
 }

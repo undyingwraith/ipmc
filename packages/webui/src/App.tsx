@@ -1,5 +1,5 @@
 import React from 'react';
-import { IFileInfo, IpmcApp } from 'ipmc-core';
+import { IFileInfo, IpmcApp, createRemoteIpfsService } from 'ipmc-core';
 
 import { webSockets } from '@libp2p/websockets';
 import { webTransport } from '@libp2p/webtransport';
@@ -14,7 +14,6 @@ import { IDBBlockstore } from 'blockstore-idb';
 import { IDBDatastore } from 'datastore-idb';
 import { createHelia } from 'helia';
 import { unixfs } from '@helia/unixfs';
-import { create } from 'kubo-rpc-client';
 import { ipns } from '@helia/ipns';
 
 export function App() {
@@ -99,7 +98,10 @@ export function App() {
 						return `TODO ${cid}`;
 					},
 					peers() {
-						return Promise.resolve(helia.libp2p.getPeers().map(p => p.toString()));
+						return Promise.resolve(helia.libp2p.getConnections().map(p => p.remoteAddr.toString()));
+					},
+					id() {
+						return helia.libp2p.peerId.toString();
 					},
 					async resolve(name) {
 						try {
@@ -110,40 +112,8 @@ export function App() {
 					},
 				});
 			},
-			async createRemote(url) {
-				const node = create({ url: url });
-				const connString = (await node.config.get("Addresses.Gateway")) as string;
-				const port = connString.substring(connString.lastIndexOf('/') + 1);
-				return {
-					async ls(cid: string) {
-						const files: IFileInfo[] = [];
-						for await (const file of node.ls(cid)) {
-							files.push({
-								type: file.type,
-								name: file.name,
-								cid: file.cid.toString(),
-							});
-						}
-						return files;
-					},
-					stop() {
-						return Promise.resolve();
-					},
-					toUrl(cid: string) {
-						return `http://127.0.0.1:${port}/ipfs/${cid}`;
-					},
-					peers() {
-						return node.swarm.peers().then(r => r.map(p => p.addr.toString()));
-					},
-					async resolve(name) {
-						let result = '';
-						for await (const res of node.name.resolve(name)) {
-							result = res;
-						}
-
-						return result;
-					},
-				};
+			createRemote(url: string) {
+				return createRemoteIpfsService(url);
 			},
 		}}
 	/>;

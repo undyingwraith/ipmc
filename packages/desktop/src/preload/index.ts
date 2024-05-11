@@ -1,28 +1,29 @@
-import { contextBridge } from 'electron';
-//import { electronAPI } from '@electron-toolkit/preload';
-
+import { noise } from '@chainsafe/libp2p-noise';
+import { yamux } from '@chainsafe/libp2p-yamux';
+import { mplex } from '@libp2p/mplex';
+import { bitswap, trustlessGateway } from '@helia/block-brokers';
+import { ipns } from '@helia/ipns';
+import { unixfs } from '@helia/unixfs';
+import { bootstrap } from '@libp2p/bootstrap';
+import { circuitRelayServer, circuitRelayTransport } from '@libp2p/circuit-relay-v2';
+import { peerIdFromString } from '@libp2p/peer-id';
+import { preSharedKey } from '@libp2p/pnet';
+import { tcp } from '@libp2p/tcp';
 import { webSockets } from '@libp2p/websockets';
 import { webTransport } from '@libp2p/webtransport';
-import { preSharedKey } from "@libp2p/pnet";
-import { noise } from "@chainsafe/libp2p-noise";
-import { tcp } from '@libp2p/tcp';
-import { peerIdFromString } from '@libp2p/peer-id';
-import { bootstrap } from '@libp2p/bootstrap';
-import { circuitRelayTransport, circuitRelayServer } from '@libp2p/circuit-relay-v2';
-
-import { CID } from 'multiformats';
+import { kadDHT, removePrivateAddressesMapper } from '@libp2p/kad-dht';
 import { FsBlockstore } from 'blockstore-fs';
 import { LevelDatastore } from 'datastore-level';
-import { createHelia } from 'helia';
-import { unixfs } from '@helia/unixfs';
-import { ipns } from '@helia/ipns';
-import { bitswap, trustlessGateway } from '@helia/block-brokers';
-import { create } from 'kubo-rpc-client';
-import fs from 'fs';
-
-import { IConfigurationService, INodeService, IInternalProfile, IProfile, IIpfsService, IFileInfo } from 'ipmc-core';
+import { contextBridge } from 'electron';
 import express from 'express';
-import { Server, IncomingMessage, ServerResponse } from 'http';
+import fs from 'fs';
+import { createHelia } from 'helia';
+import { IncomingMessage, Server, ServerResponse } from 'http';
+import { IConfigurationService, IFileInfo, IInternalProfile, IIpfsService, INodeService, IProfile, createRemoteIpfsService } from 'ipmc-core';
+import { CID } from 'multiformats';
+//import { gossipsub } from '@chainsafe/libp2p-gossipsub';
+//import { pubsubPeerDiscovery } from '@libp2p/pubsub-peer-discovery';
+//import { identify } from '@libp2p/identify';
 
 function getProfileFolder(name: string): string {
 	return `./profiles/${name}`;
@@ -40,6 +41,16 @@ const nodeService: INodeService = {
 			datastore,
 			blockstore,
 			libp2p: {
+				addresses: {
+					listen: [
+						'/ip4/0.0.0.0/tcp/0',
+						'/ip4/0.0.0.0/tcp/0/ws',
+						'/ip4/0.0.0.0/udp/0/quic-v1',
+						'/ip6/::/tcp/0',
+						'/ip6/::/tcp/0/ws',
+						'/ip6/::/udp/0/quic-v1',
+					],
+				},
 				...(profile.swarmKey ? {
 					connectionProtector: preSharedKey({
 						psk: new TextEncoder().encode(profile.swarmKey),
@@ -49,7 +60,9 @@ const nodeService: INodeService = {
 					webSockets(),
 					webTransport(),
 					tcp(),
-					circuitRelayTransport(),
+					circuitRelayTransport({
+						discoverRelays: 1,
+					}),
 				],
 				peerDiscovery: [
 					bootstrap({
@@ -57,14 +70,27 @@ const nodeService: INodeService = {
 							// a list of bootstrap peer multiaddrs to connect to on node startup
 							'/ip4/104.131.131.82/tcp/4001/ipfs/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ',
 							'/dnsaddr/bootstrap.libp2p.io/ipfs/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN',
-							'/dnsaddr/bootstrap.libp2p.io/ipfs/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa'
+							'/dnsaddr/bootstrap.libp2p.io/ipfs/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa',
 						],
 					}),
+					//pubsubPeerDiscovery(),
 				],
-				connectionEncryption: [noise()],
+				connectionEncryption: [
+					noise(),
+				],
+				streamMuxers: [
+					yamux(),
+					mplex(),
+				],
 				services: {
-					circuitRelay: circuitRelayServer()
-				}
+					//identify: identify(),
+					relay: circuitRelayServer(),
+					//pubsub: gossipsub(),
+					dht: kadDHT({
+						protocol: '/ipfs/kad/1.0.0',
+						peerInfoMapper: removePrivateAddressesMapper
+					})
+				},
 			},
 			blockBrokers: [
 				bitswap(),
@@ -81,8 +107,9 @@ const nodeService: INodeService = {
 			}
 			response.end();
 		});
+		const gatewayPort = 8090;
 		const server = await new Promise<Server<typeof IncomingMessage, typeof ServerResponse>>((resolve) => {
-			const server = app.listen(8090, '127.0.0.1', () => resolve(server));
+			const server = app.listen(gatewayPort, '127.0.0.1', () => resolve(server));
 		});
 
 		return ({
@@ -104,10 +131,13 @@ const nodeService: INodeService = {
 				await datastore.close();
 			},
 			toUrl(cid: string) {
-				return `http://127.0.0.1:8090/${cid}`;
+				return `http://127.0.0.1:${gatewayPort}/${cid}`;
 			},
 			peers() {
-				return Promise.resolve(helia.libp2p.getPeers().map(p => p.toString()));
+				return Promise.resolve(helia.libp2p.getConnections().map(p => p.remoteAddr.toString()));
+			},
+			id() {
+				return helia.libp2p.peerId.toString();
 			},
 			async resolve(name) {
 				try {
@@ -118,40 +148,8 @@ const nodeService: INodeService = {
 			},
 		});
 	},
-	async createRemote(url: string): Promise<IIpfsService> {
-		const node = create({ url: url });
-		const connString = (await node.config.get("Addresses.Gateway")) as string;
-		const port = connString.substring(connString.lastIndexOf('/') + 1);
-		return {
-			async ls(cid: string) {
-				const files: IFileInfo[] = [];
-				for await (const file of node.ls(cid)) {
-					files.push({
-						type: file.type,
-						name: file.name,
-						cid: file.cid.toString(),
-					});
-				}
-				return files;
-			},
-			stop() {
-				return Promise.resolve();
-			},
-			toUrl(cid: string) {
-				return `http://127.0.0.1:${port}/ipfs/${cid}`;
-			},
-			async peers() {
-				return (await node.swarm.peers()).map(p => p.addr.toString());
-			},
-			async resolve(name) {
-				let result = '';
-				for await (const res of node.name.resolve(name)) {
-					result = res;
-				}
-
-				return result;
-			},
-		};
+	createRemote(url: string): Promise<IIpfsService> {
+		return createRemoteIpfsService(url);
 	}
 };
 
@@ -172,22 +170,18 @@ const configService: IConfigurationService = {
 	},
 };
 
+
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise
 // just add to the DOM global.
 if (process.contextIsolated) {
 	try {
-		//contextBridge.exposeInMainWorld('electron', electronAPI);
 		contextBridge.exposeInMainWorld('nodeService', nodeService);
 		contextBridge.exposeInMainWorld('configService', configService);
-		console.log("exposeInMainWorld");
 	} catch (error) {
 		console.error(error);
 	}
 } else {
-	console.log("window");
-	// @ts-ignore (define in dts)
-	//window.electron = electronAPI
 	// @ts-ignore (define in dts)
 	window.configService = configService;
 	// @ts-ignore (define in dts)
