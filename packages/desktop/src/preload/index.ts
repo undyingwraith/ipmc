@@ -10,7 +10,6 @@ import { peerIdFromString } from '@libp2p/peer-id';
 import { preSharedKey } from '@libp2p/pnet';
 import { tcp } from '@libp2p/tcp';
 import { webSockets } from '@libp2p/websockets';
-import { webTransport } from '@libp2p/webtransport';
 import { kadDHT, removePrivateAddressesMapper } from '@libp2p/kad-dht';
 import { FsBlockstore } from 'blockstore-fs';
 import { LevelDatastore } from 'datastore-level';
@@ -23,7 +22,6 @@ import { IConfigurationService, IFileInfo, IInternalProfile, IIpfsService, INode
 import { CID } from 'multiformats';
 import { gossipsub } from '@chainsafe/libp2p-gossipsub';
 import { pubsubPeerDiscovery } from '@libp2p/pubsub-peer-discovery';
-import { identify } from '@libp2p/identify';
 import { mdns } from '@libp2p/mdns';
 
 function getProfileFolder(name: string): string {
@@ -58,7 +56,6 @@ const nodeService: INodeService = {
 				} : {}),
 				transports: [
 					webSockets(),
-					webTransport(),
 					tcp(),
 					circuitRelayTransport({
 						discoverRelays: 1,
@@ -73,8 +70,8 @@ const nodeService: INodeService = {
 							'/dnsaddr/bootstrap.libp2p.io/ipfs/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa',
 						]),
 					}),
-					mdns(),
 					pubsubPeerDiscovery(),
+					mdns(),
 				],
 				connectionEncryption: [
 					noise(),
@@ -84,16 +81,18 @@ const nodeService: INodeService = {
 					mplex(),
 				],
 				services: {
-					relay: circuitRelayServer(),
+					relay: circuitRelayServer({
+						advertise: true
+					}),
 					dht: kadDHT({
 						protocol: '/ipfs/kad/1.0.0',
-						peerInfoMapper: removePrivateAddressesMapper
+						peerInfoMapper: removePrivateAddressesMapper,
+						allowQueryWithZeroPeers: true,
 					}),
 					pubsub: gossipsub({
 						allowPublishToZeroTopicPeers: true,
 						canRelayMessage: true,
 					}),
-					identify: identify(),
 				},
 			},
 			blockBrokers: [
