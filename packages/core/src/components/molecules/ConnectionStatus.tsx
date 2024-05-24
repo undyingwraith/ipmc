@@ -1,4 +1,4 @@
-import { Badge, IconButton, List, ListItem, ListItemIcon, ListItemText, Popover } from "@mui/material";
+import { Badge, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 import { useComputed, useSignal, useSignalEffect } from "@preact/signals-react";
 import React from "react";
 import { IIpfsService } from "../../service";
@@ -29,22 +29,22 @@ export function ConnectionStatus(props: { ipfs: IIpfsService; }) {
 	});
 
 	const popover = useComputed(() => anchor.value != undefined ? (
-		<Popover
+		<Drawer
 			open={true}
-			anchorEl={anchor.value}
 			onClose={() => anchor.value = undefined}
-			anchorOrigin={{
-				vertical: 'bottom',
-				horizontal: 'right',
-			}}
+			anchor={'right'}
 		>
-			<List sx={{ width: '25vw' }}>
+			<List
+				sx={{
+					maxWidth: '50vw',
+				}}
+			>
 				{peers.value.length > 0 ? peers.value.map(p => (
 					<ListItem key={p}>
 						<ListItemIcon>
-							<Identicon value={p.substring(p.lastIndexOf('/'))} />
+							<Identicon value={p.substring(p.lastIndexOf('/') + 1)} />
 						</ListItemIcon>
-						<ListItemText sx={{ textOverflow: 'ellipsis' }}>{p}</ListItemText>
+						<ListItemText primary={p.substring(p.lastIndexOf('/') + 1)} secondary={p} />
 					</ListItem>
 				)) : (
 					<ListItem>
@@ -52,7 +52,7 @@ export function ConnectionStatus(props: { ipfs: IIpfsService; }) {
 					</ListItem>
 				)}
 			</List>
-		</Popover>
+		</Drawer>
 	) : undefined);
 
 	return (<>

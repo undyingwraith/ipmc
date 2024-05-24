@@ -28,7 +28,7 @@ export async function createRemoteIpfsService(url: string): Promise<IIpfsService
 			return id;
 		},
 		async peers() {
-			return (await node.swarm.peers()).map(p => p.addr.toString());
+			return (await node.swarm.peers()).map(p => p.addr.toString() + '/' + p.peer.toString());
 		},
 		async resolve(name) {
 			let result = '';
