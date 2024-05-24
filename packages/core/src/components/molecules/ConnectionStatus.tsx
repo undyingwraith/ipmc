@@ -3,13 +3,13 @@ import { useComputed, useSignal, useSignalEffect } from "@preact/signals-react";
 import React from "react";
 import { IIpfsService } from "../../service";
 import { Identicon } from '../atoms';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../../hooks/useTranslation';
 
 export function ConnectionStatus(props: { ipfs: IIpfsService; }) {
 	const peers = useSignal<string[]>([]);
 	const anchor = useSignal<HTMLButtonElement | undefined>(undefined);
 	const count = useComputed(() => peers.value.length);
-	const [_t] = useTranslation();
+	const _t = useTranslation();
 
 
 	useSignalEffect(() => {

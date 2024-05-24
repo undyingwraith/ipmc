@@ -9,7 +9,6 @@ import {
 	isRemoteProfile,
 } from '../../service/Profile';
 import { Box, CssBaseline, ThemeProvider, Stack, Alert, Button, ButtonGroup } from "@mui/material";
-import { useTranslation } from "react-i18next";
 import { useComputed, useSignal } from "@preact/signals-react";
 import { createDarkTheme, createLightTheme } from '../../Theme';
 import { ProfileSelector } from "../molecules/ProfileSelector";
@@ -17,6 +16,7 @@ import { AppBar } from "../organisms/AppBar";
 import { LoadScreen } from "../molecules/LoadScreen";
 import { SimpleProfileManager } from '../../service/ProfileManager/SimpleProfileManager';
 import { IProfileManager } from '../../service/ProfileManager';
+import { useTranslation } from '../../hooks/useTranslation';
 
 export interface IAppContext {
 	config: IConfigurationService;
@@ -40,7 +40,7 @@ enum LoadState {
 }
 
 export function AppContextProvider(props: PropsWithChildren<IAppInit>) {
-	const [_t] = useTranslation();
+	const _t = useTranslation();
 
 	const profileManager = useSignal<IProfileManager | undefined>(undefined);
 	const node = useSignal<IIpfsService | undefined>(undefined);

@@ -6,7 +6,6 @@ import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Stack } from '@mui/material';
 import { Signal, useComputed, useSignal } from "@preact/signals-react";
 import React from "react";
-import { useTranslation } from "react-i18next";
 import { ILibrary } from "../../service";
 import { isMovieLibrary, isSeriesLibrary } from '../../service/Library/ILibrary';
 import { LibraryAppBar } from "../organisms/LibraryAppBar";
@@ -14,6 +13,7 @@ import { MovieLibrary } from "../organisms/MovieLibrary";
 import { useApp } from "./AppContext";
 import { SeriesLibrary } from '../organisms/SeriesLibrary';
 import { LibraryHomeScreen } from '../organisms/LibraryHomeScreen';
+import { useTranslation } from '../../hooks/useTranslation';
 
 const icons = {
 	movie: <MovieIcon />,
@@ -23,7 +23,7 @@ const icons = {
 
 export function LibraryManager() {
 	const { profile } = useApp();
-	const [_t] = useTranslation();
+	const _t = useTranslation();
 	const libraries = profile.profile.libraries;
 	const library = useSignal<ILibrary | undefined>(undefined);
 	const display = useSignal<Display>(Display.Poster);

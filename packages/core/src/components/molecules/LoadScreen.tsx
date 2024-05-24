@@ -1,8 +1,9 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
 import { Loader } from "../atoms";
+import { ReadonlySignal } from '@preact/signals-react';
 
-export function LoadScreen(props: { text: string }) {
+export function LoadScreen(props: { text: string | ReadonlySignal<string>; }) {
 	return (
 		<Box sx={{
 			display: 'flex',

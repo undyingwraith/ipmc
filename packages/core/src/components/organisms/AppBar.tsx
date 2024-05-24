@@ -4,8 +4,8 @@ import { ConnectionStatus } from "../molecules/ConnectionStatus";
 import { LanguageSelector } from "../molecules/LanguageSelector";
 import { IIpfsService, IProfile } from "../../service";
 import { Signal, useComputed } from '@preact/signals-react';
-import { useTranslation } from "react-i18next";
 import { ThemeToggle } from '../atoms/ThemeToggle';
+import { useTranslation } from '../../hooks/useTranslation';
 
 export function AppBar(props: {
 	shutdownProfile: () => void;
@@ -14,7 +14,7 @@ export function AppBar(props: {
 	darkMode: Signal<boolean>;
 }) {
 	const { shutdownProfile, ipfs, profile, darkMode } = props;
-	const [_t] = useTranslation();
+	const _t = useTranslation();
 
 	const status = useComputed(() => ipfs.value != undefined && (<ConnectionStatus ipfs={ipfs.value} />));
 	const logout = useComputed(() => ipfs.value != undefined && (<>

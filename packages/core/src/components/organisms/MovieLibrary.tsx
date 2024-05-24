@@ -1,16 +1,16 @@
 import { Grid } from "@mui/material";
 import { useComputed } from "@preact/signals-react";
 import React from "react";
-import { useTranslation } from "react-i18next";
 import { useWatcher } from '../../hooks';
 import { IMovieLibrary } from "../../service";
 import { MovieGridItem } from "../molecules/GridItems";
 import { LoadScreen } from "../molecules/LoadScreen";
 import { useApp } from "../pages/AppContext";
 import { ILibraryProps } from "../pages/LibraryManager";
+import { useTranslation } from '../../hooks/useTranslation';
 
 export function MovieLibrary(props: ILibraryProps<IMovieLibrary>) {
-	const [_t] = useTranslation();
+	const _t = useTranslation();
 	const { profile } = useApp();
 
 	const index = useWatcher(profile.libraries.get(props.library.name)?.value.index);
