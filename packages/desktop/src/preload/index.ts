@@ -1,4 +1,4 @@
-import { noise } from '@chainsafe/libp2p-noise';
+import { noise, pureJsCrypto } from '@chainsafe/libp2p-noise';
 import { yamux } from '@chainsafe/libp2p-yamux';
 import { mplex } from '@libp2p/mplex';
 import { bitswap, trustlessGateway } from '@helia/block-brokers';
@@ -23,6 +23,15 @@ import { CID } from 'multiformats';
 import { gossipsub } from '@chainsafe/libp2p-gossipsub';
 import { pubsubPeerDiscovery } from '@libp2p/pubsub-peer-discovery';
 import { mdns } from '@libp2p/mdns';
+import { identify, identifyPush } from '@libp2p/identify';
+import { keychain } from '@libp2p/keychain';
+import { ping } from '@libp2p/ping';
+import { dcutr } from '@libp2p/dcutr';
+import { autoNAT } from '@libp2p/autonat';
+import { ipnsSelector } from 'ipns/selector';
+import { ipnsValidator } from 'ipns/validator';
+import { uPnPNAT } from '@libp2p/upnp-nat';
+import * as libp2pInfo from 'libp2p/version';
 
 function getProfileFolder(name: string): string {
 	return `./profiles/${name}`;
@@ -30,6 +39,7 @@ function getProfileFolder(name: string): string {
 
 const nodeService: INodeService = {
 	async create(profile: IInternalProfile): Promise<IIpfsService> {
+		const agentVersion = `helia/2.0.0 ${libp2pInfo.name}/${libp2pInfo.version} UserAgent=${process.version}`;
 		const datastore = new LevelDatastore(`${getProfileFolder(profile.name)}/data`);
 		await datastore.open();
 		const blockstore = new FsBlockstore(`${getProfileFolder(profile.name)}/blocks`);
@@ -74,7 +84,9 @@ const nodeService: INodeService = {
 					mdns(),
 				],
 				connectionEncryption: [
-					noise(),
+					noise({
+						crypto: pureJsCrypto
+					}),
 				],
 				streamMuxers: [
 					yamux(),
@@ -82,15 +94,26 @@ const nodeService: INodeService = {
 				],
 				services: {
 					relay: circuitRelayServer({
-						advertise: true
+						advertise: true,
 					}),
 					dht: kadDHT({
-						protocol: '/ipfs/kad/1.0.0',
 						peerInfoMapper: removePrivateAddressesMapper,
-						allowQueryWithZeroPeers: true,
+						validators: {
+							ipns: ipnsValidator
+						},
+						selectors: {
+							ipns: ipnsSelector
+						}
 					}),
+					identify: identify({ agentVersion }),
+					identifyPush: identifyPush({ agentVersion }),
+					keychain: keychain(),
+					ping: ping(),
+					autoNAT: autoNAT(),
+					dcutr: dcutr(),
+					upnp: uPnPNAT(),
 					pubsub: gossipsub({
-						allowPublishToZeroTopicPeers: true,
+					allowPublishToZeroTopicPeers: true,
 						canRelayMessage: true,
 					}),
 				},
@@ -102,9 +125,6 @@ const nodeService: INodeService = {
 		});
 
 		console.log(helia.libp2p.getMultiaddrs().map(a => a.toString()));
-		helia.libp2p.addEventListener('peer:connect', console.log);
-		helia.libp2p.addEventListener('peer:disconnect', console.log);
-		helia.libp2p.addEventListener('peer:discovery', console.log);
 
 		const fs = unixfs(helia);
 

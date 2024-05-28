@@ -1,12 +1,12 @@
-import { app, shell, BrowserWindow } from 'electron'
-import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
+import { app, shell, BrowserWindow } from 'electron';
+import { join } from 'path';
+import { electronApp, optimizer, is } from '@electron-toolkit/utils';
+import icon from '../../resources/icon.png?asset';
 //import { fileURLToPath } from 'url'
 
 process.on('uncaughtException', function (error) {
 	process.stdout.write(error.name + ': ' + error.message + '\n' + (error.stack != undefined ? error.stack + '\n' : ''));
-})
+});
 
 function createWindow(): void {
 	// Create the browser window.
@@ -19,7 +19,7 @@ function createWindow(): void {
 		webPreferences: {
 			nodeIntegration: false,
 			contextIsolation: true,
-			preload: join(__dirname, '../preload/index.mjs'), 
+			preload: join(__dirname, '../preload/index.mjs'),
 			//preload: fileURLToPath(new URL('../preload/index.cjs', import.meta.url)),
 			sandbox: false, // https://www.electronjs.org/docs/latest/tutorial/esm#summary-esm-support-matrix
 		},
@@ -60,7 +60,7 @@ app.whenReady().then(() => {
 	// see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
 	app.on('browser-window-created', (_, window) => {
 		optimizer.watchWindowShortcuts(window);
-	})
+	});
 
 	createWindow();
 
@@ -69,16 +69,16 @@ app.whenReady().then(() => {
 		// dock icon is clicked and there are no other windows open.
 		if (BrowserWindow.getAllWindows().length === 0) createWindow();
 	});
-})
+});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') {
-		app.quit()
+		app.quit();
 	}
-})
+});
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.

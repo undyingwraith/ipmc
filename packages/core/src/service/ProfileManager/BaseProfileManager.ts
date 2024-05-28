@@ -7,8 +7,8 @@ import { IProfile } from '../Profile/IProfile';
 import { MovieIndexFetcher, SeriesIndexFetcher } from '../indexer';
 import { IProfileManager, ProfileManagerState } from "./IProfileManager";
 
-export abstract class BaseProfileManager implements IProfileManager {
-	protected constructor(public readonly profile: IProfile) {
+export abstract class BaseProfileManager<TProfile extends IProfile> implements IProfileManager {
+	protected constructor(public readonly profile: TProfile) {
 		for (const lib of this.profile.libraries) {
 			this.libraries.set(lib.name, new Signal<ILibrary>(lib));
 		}
@@ -44,7 +44,7 @@ export abstract class BaseProfileManager implements IProfileManager {
 
 	protected abstract stopNode(): Promise<void>;
 
-	protected ipfs: IIpfsService | undefined;
+	public ipfs: IIpfsService | undefined;
 
 
 	private triggerUpdate(): void {

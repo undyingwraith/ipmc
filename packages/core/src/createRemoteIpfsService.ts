@@ -1,7 +1,7 @@
 import { IFileInfo, IIpfsService } from './service';
 import { create } from 'kubo-rpc-client';
 
-export async function createRemoteIpfsService(url: string): Promise<IIpfsService> {
+export async function createRemoteIpfsService(url?: string): Promise<IIpfsService> {
 	const node = create({ url: url });
 	const connString = (await node.config.get('Addresses.Gateway')) as string;
 	const port = connString.substring(connString.lastIndexOf('/') + 1);

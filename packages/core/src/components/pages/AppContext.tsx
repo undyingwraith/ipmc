@@ -15,7 +15,7 @@ import { ProfileSelector } from "../molecules/ProfileSelector";
 import { AppBar } from "../organisms/AppBar";
 import { LoadScreen } from "../molecules/LoadScreen";
 import { SimpleProfileManager } from '../../service/ProfileManager/SimpleProfileManager';
-import { IProfileManager } from '../../service/ProfileManager';
+import { IProfileManager, RemoteProfileManager } from '../../service/ProfileManager';
 import { useTranslation } from '../../hooks/useTranslation';
 
 export interface IAppContext {
@@ -43,7 +43,6 @@ export function AppContextProvider(props: PropsWithChildren<IAppInit>) {
 	const _t = useTranslation();
 
 	const profileManager = useSignal<IProfileManager | undefined>(undefined);
-	const node = useSignal<IIpfsService | undefined>(undefined);
 	const state = useSignal<LoadState>(LoadState.Idle);
 	const darkMode = useSignal<boolean>(true);
 
@@ -59,14 +58,12 @@ export function AppContextProvider(props: PropsWithChildren<IAppInit>) {
 				state.value = LoadState.Starting;
 
 				if (isRemoteProfile(currentProfile)) {
-					node.value = await props.nodeService.createRemote(currentProfile.url);
+					profileManager.value = new RemoteProfileManager(currentProfile);
 				}
 				if (isInternalProfile(currentProfile)) {
-					node.value = await props.nodeService.create(currentProfile);
+					profileManager.value = new SimpleProfileManager(await props.nodeService.create(currentProfile), currentProfile);
 				}
-				const manager = new SimpleProfileManager(node.value!, currentProfile);
-				profileManager.value = manager;
-				await manager.start();
+				await profileManager.value!.start();
 
 				state.value = LoadState.Ready;
 			} catch (ex) {
@@ -81,7 +78,6 @@ export function AppContextProvider(props: PropsWithChildren<IAppInit>) {
 			state.value = LoadState.Stopping;
 			try {
 				await profileManager.value!.stop();
-				node.value = undefined;
 				profileManager.value = undefined;
 			} catch (ex) {
 				console.error(ex);
@@ -130,6 +126,7 @@ export function AppContextProvider(props: PropsWithChildren<IAppInit>) {
 	});
 
 	const profile = useComputed(() => profileManager.value?.profile);
+	const node = useComputed(() => profileManager.value?.ipfs);
 
 	return useComputed(() => (
 		<ThemeProvider theme={theme.value}>

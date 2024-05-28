@@ -3027,7 +3027,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^20.12.10, @types/node@npm:^20.9.0":
+"@types/node@npm:*, @types/node@npm:^20.12.12, @types/node@npm:^20.9.0":
   version: 20.12.12
   resolution: "@types/node@npm:20.12.12"
   dependencies:
@@ -5464,7 +5464,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-vite@npm:^2.1.0":
+"electron-vite@npm:^2.2.0":
   version: 2.2.0
   resolution: "electron-vite@npm:2.2.0"
   dependencies:
@@ -6979,7 +6979,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"helia@npm:^4.2.1, helia@npm:^4.2.2":
+"helia@npm:^4.2.2":
   version: 4.2.2
   resolution: "helia@npm:4.2.2"
   dependencies:
@@ -7415,7 +7415,7 @@ __metadata:
     "@preact/signals-react": "npm:^2.0.1"
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.3.0"
-    helia: "npm:^4.2.1"
+    helia: "npm:^4.2.2"
     i18next: "npm:^23.11.2"
     minidenticons: "npm:^4.2.1"
     multiformats: "npm:^13.1.0"
@@ -7454,7 +7454,7 @@ __metadata:
     "@preact/signals-react-transform": "npm:^0.3.1"
     "@rollup/plugin-commonjs": "npm:^25.0.7"
     "@types/express": "npm:^4"
-    "@types/node": "npm:^20.12.10"
+    "@types/node": "npm:^20.12.12"
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.3.0"
     "@vitejs/plugin-react": "npm:^4.2.1"
@@ -7463,7 +7463,7 @@ __metadata:
     electron: "npm:30.0.7"
     electron-builder: "npm:^24.13.3"
     electron-updater: "npm:6.2.1"
-    electron-vite: "npm:^2.1.0"
+    electron-vite: "npm:^2.2.0"
     eslint: "npm:^8.57.0"
     eslint-plugin-react: "npm:^7.34.1"
     express: "npm:^4.19.2"
@@ -7477,7 +7477,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.4.5"
-    vite: "npm:^5.0.0"
+    vite: "npm:^5.2.11"
     vite-plugin-commonjs: "npm:^0.10.1"
   languageName: unknown
   linkType: soft
@@ -7493,7 +7493,7 @@ __metadata:
     fluent-ffmpeg: "npm:^2.1.2"
     ipmc-core: "workspace:^"
     kubo-rpc-client: "npm:^4.1.1"
-    vite-node: "npm:^1.5.0"
+    vite-node: "npm:^1.6.0"
     yargs: "npm:^17.7.2"
   languageName: unknown
   linkType: soft
@@ -7517,7 +7517,7 @@ __metadata:
     crypto: "npm:^1.0.1"
     crypto-browserify: "npm:^3.12.0"
     datastore-idb: "npm:^2.1.9"
-    helia: "npm:^4.2.1"
+    helia: "npm:^4.2.2"
     i18next: "npm:^23.11.2"
     i18next-browser-languagedetector: "npm:^7.2.1"
     ipmc-core: "workspace:^"
@@ -7529,7 +7529,7 @@ __metadata:
     styled-components: "npm:^6.1.8"
     typescript: "npm:^5.4.5"
     util: "npm:^0.12.5"
-    vite: "npm:^5.0.0"
+    vite: "npm:^5.2.11"
     vite-plugin-node-polyfills: "npm:^0.21.0"
     web-streams-polyfill: "npm:^4.0.0"
   languageName: unknown
@@ -11967,7 +11967,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-node@npm:1.6.0, vite-node@npm:^1.5.0":
+"vite-node@npm:1.6.0, vite-node@npm:^1.6.0":
   version: 1.6.0
   resolution: "vite-node@npm:1.6.0"
   dependencies:
