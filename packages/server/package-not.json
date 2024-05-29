@@ -1,0 +1,16 @@
+{
+	"name": "ipmc-server",
+	"packageManager": "yarn@4.2.1",
+	"scripts": {
+		"start": "vite-node src/index.ts"
+	},
+	"devDependencies": {
+		"vite-node": "^1.6.0"
+	},
+	"dependencies": {
+		"@libp2p/circuit-relay-v2": "^1.0.24",
+		"blockstore-fs": "^1.1.10",
+		"datastore-level": "^10.1.8",
+		"helia": "^4.2.2"
+	}
+}
