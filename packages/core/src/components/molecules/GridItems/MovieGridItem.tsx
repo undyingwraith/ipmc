@@ -1,12 +1,13 @@
 import React from "react";
 import { IMovieMetaData } from "../../../service";
-import { Card, CardContent, CardMedia } from "@mui/material";
+import { Card, CardActions, CardContent, CardMedia } from "@mui/material";
 import { useFileUrl, useWatcher } from "../../../hooks";
 import posterFallback from './no-poster.png';
 import thumbFallback from './no-thumbnail.png';
 import { Signal } from '@preact/signals-react';
 import { Display } from '../../pages/LibraryManager';
 import { useComputed } from '@preact/signals-react';
+import { PinButton } from '../../atoms/PinButton';
 
 export function MovieGridItem(props: { movie: IMovieMetaData, display: Signal<Display>; }) {
 	const { movie, display } = props;
@@ -29,6 +30,9 @@ export function MovieGridItem(props: { movie: IMovieMetaData, display: Signal<Di
 		<Card sx={{ width: width.value }}>
 			<CardMedia image={url.value} sx={{ height: height.value, width: width.value }} />
 			<CardContent>{movie.title}</CardContent>
+			<CardActions>
+				<PinButton cid={props.movie.cid} />
+			</CardActions>
 		</Card>
 	));
 }

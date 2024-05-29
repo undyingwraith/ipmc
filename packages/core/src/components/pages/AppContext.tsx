@@ -57,15 +57,21 @@ export function AppContextProvider(props: PropsWithChildren<IAppInit>) {
 			try {
 				state.value = LoadState.Starting;
 
+				let manager: IProfileManager | undefined;
 				if (isRemoteProfile(currentProfile)) {
-					profileManager.value = new RemoteProfileManager(currentProfile);
+					manager = new RemoteProfileManager(currentProfile);
 				}
 				if (isInternalProfile(currentProfile)) {
-					profileManager.value = new SimpleProfileManager(await props.nodeService.create(currentProfile), currentProfile);
+					manager = new SimpleProfileManager(await props.nodeService.create(currentProfile), currentProfile);
 				}
-				await profileManager.value!.start();
 
-				state.value = LoadState.Ready;
+				if (manager) {
+					await manager.start();
+					profileManager.value = manager;
+					state.value = LoadState.Ready;
+				} else {
+					state.value = LoadState.Error;
+				}
 			} catch (ex) {
 				console.error(ex);
 				state.value = LoadState.Error;
@@ -87,9 +93,11 @@ export function AppContextProvider(props: PropsWithChildren<IAppInit>) {
 		state.value = LoadState.Idle;
 	}
 
-
 	const content = useComputed(() => {
-		switch (state.value) {
+		const manager = profileManager.value;
+		const currentState = state.value;
+
+		switch (currentState) {
 			case LoadState.Error:
 				return (
 					<Box>
@@ -108,14 +116,14 @@ export function AppContextProvider(props: PropsWithChildren<IAppInit>) {
 			case LoadState.Starting:
 			case LoadState.Stopping:
 				return (
-					<LoadScreen text={_t(state.value == LoadState.Starting ? 'Starting' : 'Stopping')} />
+					<LoadScreen text={_t(currentState == LoadState.Starting ? 'Starting' : 'Stopping')} />
 				);
 			case LoadState.Ready:
 				return (
 					<AppContext.Provider value={{
 						config: props.configService,
-						ipfs: node.value!,
-						profile: profileManager.value!,
+						ipfs: manager!.ipfs!,
+						profile: manager!,
 					}}>
 						{props.children}
 					</AppContext.Provider>

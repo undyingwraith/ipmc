@@ -6,6 +6,7 @@ export async function createRemoteIpfsService(url?: string): Promise<IIpfsServic
 	const connString = (await node.config.get('Addresses.Gateway')) as string;
 	const port = connString.substring(connString.lastIndexOf('/') + 1);
 	const id = (await node.id()).id.toString();
+
 	return {
 		async ls(cid: string) {
 			const files: IFileInfo[] = [];
@@ -37,6 +38,20 @@ export async function createRemoteIpfsService(url?: string): Promise<IIpfsServic
 			}
 
 			return result;
+		},
+		async isPinned(cid) {
+			for await (const res of node.pin.ls()) {
+				if (res.cid.toString() == cid) {
+					return true;
+				}
+			}
+			return false;
+		},
+		async addPin(cid) {
+			await node.pin.add(cid);
+		},
+		async rmPin(cid) {
+			await node.pin.rm(cid);
 		},
 	};
 }

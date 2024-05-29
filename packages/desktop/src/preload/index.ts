@@ -18,7 +18,7 @@ import express from 'express';
 import fs from 'fs';
 import { createHelia } from 'helia';
 import { IncomingMessage, Server, ServerResponse } from 'http';
-import { IConfigurationService, IFileInfo, IInternalProfile, IIpfsService, INodeService, IProfile, createRemoteIpfsService } from 'ipmc-core';
+import { IConfigurationService, IFileInfo, IInternalProfile, IIpfsService, INodeService, IProfile } from 'ipmc-core';
 import { CID } from 'multiformats';
 import { gossipsub } from '@chainsafe/libp2p-gossipsub';
 import { pubsubPeerDiscovery } from '@libp2p/pubsub-peer-discovery';
@@ -171,14 +171,25 @@ const nodeService: INodeService = {
 				try {
 					return (await ipns(helia).resolve(peerIdFromString(name))).cid.toString();
 				} catch (ex) {
+					console.error(ex);
 					return (await ipns(helia).resolveDNSLink(name)).cid.toString();
+				}
+			},
+			isPinned(cid) {
+				return helia.pins.isPinned(CID.parse(cid));
+			},
+			async addPin(cid) {
+				for await (const block of helia.pins.add(CID.parse(cid))) {
+					//
+				}
+			},
+			async rmPin(cid) {
+				for await (const block of helia.pins.rm(CID.parse(cid))) {
+					//
 				}
 			},
 		});
 	},
-	createRemote(url: string): Promise<IIpfsService> {
-		return createRemoteIpfsService(url);
-	}
 };
 
 const configService: IConfigurationService = {
