@@ -1,6 +1,7 @@
-import { IFileInfo } from '../indexer';
+import { IFileInfo } from './Files';
 
 export interface ISeriesMetaData {
+	cid: string;
 	title: string;
 	posters: IFileInfo[];
 	yearStart?: number;

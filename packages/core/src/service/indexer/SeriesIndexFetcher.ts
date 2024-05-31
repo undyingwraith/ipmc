@@ -1,6 +1,5 @@
 import { IIpfsService } from "../IIpfsService";
-import { IEpisodeMetaData, IGenericLibrary, ISeasonMetaData, ISeriesMetaData } from "../Library";
-import { IFileInfo } from "./IFileInfo";
+import { IEpisodeMetaData, IGenericLibrary, ISeasonMetaData, ISeriesMetaData, IFileInfo } from "../Library";
 import { IIndexFetcher } from './IIndexFetcher';
 import { Regexes } from "./Regexes";
 
@@ -24,6 +23,7 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 		const folders = entries.filter(f => f.type !== 'file');
 
 		return {
+			cid: entry.cid,
 			title: entry.name,
 			posters: files.filter(f => Regexes.Poster.exec(f.name) != null),
 			seasons: await Promise.all(folders.map(season => this.extractSeasonMetaData(node, season))),

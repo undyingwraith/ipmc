@@ -22,7 +22,7 @@ export function MovieLibrary(props: ILibraryProps<IMovieLibrary>) {
 			<LoadScreen text={_t('Loading')} />
 		) : (
 			<Grid container spacing={1} sx={{ height: '100%', justifyContent: 'center' }}>
-				{i.values.map(v => <Grid item key={v.file.cid}><MovieGridItem movie={v} display={props.display} /></Grid>)}
+				{i.values.map(v => <Grid item key={v.cid}><MovieGridItem movie={v} display={props.display} /></Grid>)}
 			</Grid>
 		);
 	});

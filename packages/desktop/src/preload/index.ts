@@ -180,12 +180,12 @@ const nodeService: INodeService = {
 			},
 			async addPin(cid) {
 				for await (const block of helia.pins.add(CID.parse(cid))) {
-					//
+					console.log(`Pin progress ${cid}: ${block.toString()}`);
 				}
 			},
 			async rmPin(cid) {
 				for await (const block of helia.pins.rm(CID.parse(cid))) {
-					//
+					console.log(`Pin progress ${cid}: ${block.toString()}`);
 				}
 			},
 		});

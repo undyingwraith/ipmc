@@ -1,7 +1,7 @@
 import { IIpfsService } from "../IIpfsService";
 import { IGenericLibrary } from "../Library";
 import { IMovieMetaData } from "../Library/IMovieMetaData";
-import { IFileInfo } from "./IFileInfo";
+import { IFileInfo } from "../Library";
 import { IIndexFetcher } from './IIndexFetcher';
 import { Regexes } from "./Regexes";
 
@@ -23,8 +23,9 @@ export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 		const files = (await this.node.ls(entry.cid)).filter(f => f.type == 'file');
 
 		return {
+			...entry,
 			title: entry.name,
-			file: files.filter(f => f.name.endsWith('.mp4'))[0],
+			video: files.filter(f => f.name.endsWith('.mp4'))[0],
 			thumbnails: files.filter(f => Regexes.Thumbnail.exec(f.name) != null),
 			posters: files.filter(f => Regexes.Poster.exec(f.name) != null),
 		};
