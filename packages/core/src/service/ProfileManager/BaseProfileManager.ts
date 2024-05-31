@@ -1,14 +1,14 @@
 import { Signal } from "@preact/signals-react";
 import { IIpfsService } from '../IIpfsService';
-import { ILibrary } from "../Library";
-import { isMovieLibrary } from "../Library/ILibrary";
-import { IProfile } from '../Profile/IProfile';
-import { MovieIndexFetcher } from '../indexer/MovieIndexFetcher';
-import { IProfileManager, ProfileManagerState } from "./IProfileManager";
 import { ITask } from '../ITask';
+import { ILibrary } from "../Library";
+import { isMovieLibrary, isSeriesLibrary } from "../Library/ILibrary";
+import { IProfile } from '../Profile/IProfile';
+import { MovieIndexFetcher, SeriesIndexFetcher } from '../indexer';
+import { IProfileManager, ProfileManagerState } from "./IProfileManager";
 
-export abstract class BaseProfileManager implements IProfileManager {
-	protected constructor(public readonly profile: IProfile) {
+export abstract class BaseProfileManager<TProfile extends IProfile> implements IProfileManager {
+	protected constructor(public readonly profile: TProfile) {
 		for (const lib of this.profile.libraries) {
 			this.libraries.set(lib.name, new Signal<ILibrary>(lib));
 		}
@@ -44,7 +44,7 @@ export abstract class BaseProfileManager implements IProfileManager {
 
 	protected abstract stopNode(): Promise<void>;
 
-	protected ipfs: IIpfsService | undefined;
+	public ipfs: IIpfsService | undefined;
 
 
 	private triggerUpdate(): void {
@@ -63,29 +63,42 @@ export abstract class BaseProfileManager implements IProfileManager {
 		}
 	}
 
-	private updateLibrary(library: ILibrary): Promise<void> {
-		//TODO: update root from upstream
-		//TODO: verify fetch is needed
-		return this.fetchIndex(library)
-			.then(index => {
-				const lib = this.libraries.get(library.name);
-				if (lib != undefined) {
-					lib.value = {
-						...lib.value, index: {
-							values: index,
-							cid: lib.value.root,
-						}
-					};
+	private async updateLibrary(library: ILibrary): Promise<void> {
+		if (library.upstream != undefined) {
+			try {
+				const cid = await this.ipfs!.resolve(library.upstream);
+				if (library.root != cid) {
+					const lib = this.libraries.get(library.name);
+					if (lib != undefined) {
+						lib.value = {
+							...lib.value, root: cid
+						};
+					}
 				}
-			});
-	}
-
-	private fetchIndex(library: ILibrary) {
-		if (isMovieLibrary(library)) {
-			const indexer = new MovieIndexFetcher(this.ipfs!, library);
-			return indexer.fetchIndex();
+			} catch (ex) {
+				console.error(ex);
+			}
 		}
-		return Promise.reject(new Error(`Unknown library type [${library.type}]`));
+
+		if (library.index?.cid !== library.root || library.index?.cid !== undefined) {
+			const lib = this.libraries.get(library.name);
+			if (lib != undefined) {
+				const indexer = isMovieLibrary(lib.value) ? new MovieIndexFetcher(this.ipfs!, lib.value) : isSeriesLibrary(lib.value) ? new SeriesIndexFetcher(this.ipfs!, lib.value) : undefined;
+				if (indexer == undefined) {
+					throw new Error(`Unknown library type [${library.type}]`);
+				}
+
+				const index = await indexer.fetchIndex();
+
+				//@ts-ignore
+				lib.value = {
+					...lib.value, index: {
+						values: index,
+						cid: lib.value.root,
+					}
+				};
+			}
+		}
 	}
 
 	private updates = new Map<string, Promise<void>>();

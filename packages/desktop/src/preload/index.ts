@@ -1,24 +1,37 @@
-import { contextBridge } from 'electron';
-//import { electronAPI } from '@electron-toolkit/preload';
-
-import { webSockets } from '@libp2p/websockets';
-import { webTransport } from '@libp2p/webtransport';
-import { preSharedKey } from "@libp2p/pnet";
-import { createLibp2p } from 'libp2p';
-import { noise } from "@chainsafe/libp2p-noise";
-import { tcp } from '@libp2p/tcp';
+import { noise, pureJsCrypto } from '@chainsafe/libp2p-noise';
+import { yamux } from '@chainsafe/libp2p-yamux';
+import { mplex } from '@libp2p/mplex';
+import { bitswap, trustlessGateway } from '@helia/block-brokers';
+import { ipns } from '@helia/ipns';
+import { unixfs } from '@helia/unixfs';
 import { bootstrap } from '@libp2p/bootstrap';
-
-import { CID } from 'multiformats';
+import { circuitRelayServer, circuitRelayTransport } from '@libp2p/circuit-relay-v2';
+import { peerIdFromString } from '@libp2p/peer-id';
+import { preSharedKey } from '@libp2p/pnet';
+import { tcp } from '@libp2p/tcp';
+import { webSockets } from '@libp2p/websockets';
+import { kadDHT, removePrivateAddressesMapper } from '@libp2p/kad-dht';
 import { FsBlockstore } from 'blockstore-fs';
 import { LevelDatastore } from 'datastore-level';
-import { createHelia } from 'helia';
-import { unixfs } from '@helia/unixfs';
-import { create } from 'kubo-rpc-client';
-import fs from 'fs';
-
-import { IConfigurationService, INodeService, IInternalProfile, IProfile, IIpfsService, IFileInfo } from 'ipmc-core';
+import { contextBridge } from 'electron';
 import express from 'express';
+import fs from 'fs';
+import { createHelia } from 'helia';
+import { IncomingMessage, Server, ServerResponse } from 'http';
+import { IConfigurationService, IFileInfo, IInternalProfile, IIpfsService, INodeService, IProfile } from 'ipmc-core';
+import { CID } from 'multiformats';
+import { gossipsub } from '@chainsafe/libp2p-gossipsub';
+import { pubsubPeerDiscovery } from '@libp2p/pubsub-peer-discovery';
+import { mdns } from '@libp2p/mdns';
+import { identify, identifyPush } from '@libp2p/identify';
+import { keychain } from '@libp2p/keychain';
+import { ping } from '@libp2p/ping';
+import { dcutr } from '@libp2p/dcutr';
+import { autoNAT } from '@libp2p/autonat';
+import { ipnsSelector } from 'ipns/selector';
+import { ipnsValidator } from 'ipns/validator';
+import { uPnPNAT } from '@libp2p/upnp-nat';
+import * as libp2pInfo from 'libp2p/version';
 
 function getProfileFolder(name: string): string {
 	return `./profiles/${name}`;
@@ -26,30 +39,7 @@ function getProfileFolder(name: string): string {
 
 const nodeService: INodeService = {
 	async create(profile: IInternalProfile): Promise<IIpfsService> {
-		const libp2p = await createLibp2p({
-			...(profile.swarmKey ? {
-				connectionProtector: preSharedKey({
-					psk: new TextEncoder().encode(profile.swarmKey),
-				}),
-			} : {}),
-			transports: [
-				webSockets(),
-				webTransport(),
-				tcp(),
-			],
-			peerDiscovery: [
-				bootstrap({
-					list: profile.bootstrap ?? [
-						// a list of bootstrap peer multiaddrs to connect to on node startup
-						'/ip4/104.131.131.82/tcp/4001/ipfs/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ',
-						'/dnsaddr/bootstrap.libp2p.io/ipfs/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN',
-						'/dnsaddr/bootstrap.libp2p.io/ipfs/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa'
-					]
-				})
-			],
-			connectionEncryption: [noise()],
-		});
-
+		const agentVersion = `helia/2.0.0 ${libp2pInfo.name}/${libp2pInfo.version} UserAgent=${process.version}`;
 		const datastore = new LevelDatastore(`${getProfileFolder(profile.name)}/data`);
 		await datastore.open();
 		const blockstore = new FsBlockstore(`${getProfileFolder(profile.name)}/blocks`);
@@ -59,8 +49,82 @@ const nodeService: INodeService = {
 			start: true,
 			datastore,
 			blockstore,
-			libp2p: libp2p,
+			libp2p: {
+				addresses: {
+					listen: [
+						'/ip4/0.0.0.0/tcp/0',
+						'/ip6/::/tcp/0',
+						'/ws',
+						'/wss',
+						'/webrtc',
+					],
+				},
+				...(profile.swarmKey ? {
+					connectionProtector: preSharedKey({
+						psk: new TextEncoder().encode(profile.swarmKey),
+					}),
+				} : {}),
+				transports: [
+					webSockets(),
+					tcp(),
+					circuitRelayTransport({
+						discoverRelays: 1,
+					}),
+				],
+				peerDiscovery: [
+					bootstrap({
+						list: profile.bootstrap ?? (profile.swarmKey != undefined ? [] : [
+							// a list of bootstrap peer multiaddrs to connect to on node startup
+							'/ip4/104.131.131.82/tcp/4001/ipfs/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ',
+							'/dnsaddr/bootstrap.libp2p.io/ipfs/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN',
+							'/dnsaddr/bootstrap.libp2p.io/ipfs/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa',
+						]),
+					}),
+					pubsubPeerDiscovery(),
+					mdns(),
+				],
+				connectionEncryption: [
+					noise({
+						crypto: pureJsCrypto
+					}),
+				],
+				streamMuxers: [
+					yamux(),
+					mplex(),
+				],
+				services: {
+					relay: circuitRelayServer({
+						advertise: true,
+					}),
+					dht: kadDHT({
+						peerInfoMapper: removePrivateAddressesMapper,
+						validators: {
+							ipns: ipnsValidator
+						},
+						selectors: {
+							ipns: ipnsSelector
+						}
+					}),
+					identify: identify({ agentVersion }),
+					identifyPush: identifyPush({ agentVersion }),
+					keychain: keychain(),
+					ping: ping(),
+					autoNAT: autoNAT(),
+					dcutr: dcutr(),
+					upnp: uPnPNAT(),
+					pubsub: gossipsub({
+					allowPublishToZeroTopicPeers: true,
+						canRelayMessage: true,
+					}),
+				},
+			},
+			blockBrokers: [
+				bitswap(),
+				...(profile.swarmKey == undefined ? [trustlessGateway()] : [])
+			],
 		});
+
+		console.log(helia.libp2p.getMultiaddrs().map(a => a.toString()));
 
 		const fs = unixfs(helia);
 
@@ -71,7 +135,10 @@ const nodeService: INodeService = {
 			}
 			response.end();
 		});
-		await new Promise<void>((resolve) => app.listen(8090, '127.0.0.1', () => resolve()));
+		const gatewayPort = 8090;
+		const server = await new Promise<Server<typeof IncomingMessage, typeof ServerResponse>>((resolve) => {
+			const server = app.listen(gatewayPort, '127.0.0.1', () => resolve(server));
+		});
 
 		return ({
 			async ls(cid: string) {
@@ -86,45 +153,43 @@ const nodeService: INodeService = {
 				return files;
 			},
 			async stop() {
+				server.close();
 				await helia.stop();
 				await blockstore.close();
 				await datastore.close();
 			},
 			toUrl(cid: string) {
-				return `http://127.0.0.1:8090/${cid}`;
+				return `http://127.0.0.1:${gatewayPort}/${cid}`;
 			},
 			peers() {
-				return Promise.resolve(helia.libp2p.getPeers().map(p => p.toString()));
+				return Promise.resolve(helia.libp2p.getConnections().map(p => p.remoteAddr.toString()));
+			},
+			id() {
+				return helia.libp2p.peerId.toString();
+			},
+			async resolve(name) {
+				try {
+					return (await ipns(helia).resolve(peerIdFromString(name))).cid.toString();
+				} catch (ex) {
+					console.error(ex);
+					return (await ipns(helia).resolveDNSLink(name)).cid.toString();
+				}
+			},
+			isPinned(cid) {
+				return helia.pins.isPinned(CID.parse(cid));
+			},
+			async addPin(cid) {
+				for await (const block of helia.pins.add(CID.parse(cid))) {
+					console.log(`Pin progress ${cid}: ${block.toString()}`);
+				}
+			},
+			async rmPin(cid) {
+				for await (const block of helia.pins.rm(CID.parse(cid))) {
+					console.log(`Pin progress ${cid}: ${block.toString()}`);
+				}
 			},
 		});
 	},
-	async createRemote(url: string): Promise<IIpfsService> {
-		const node = create({ url: url });
-		const connString = (await node.config.get("Addresses.Gateway")) as string;
-		const port = connString.substring(connString.lastIndexOf('/') + 1);
-		return {
-			async ls(cid: string) {
-				const files: IFileInfo[] = [];
-				for await (const file of node.ls(cid)) {
-					files.push({
-						type: file.type,
-						name: file.name,
-						cid: file.cid.toString(),
-					});
-				}
-				return files;
-			},
-			stop() {
-				return Promise.resolve();
-			},
-			toUrl(cid: string) {
-				return `http://127.0.0.1:${port}/ipfs/${cid}`;
-			},
-			async peers() {
-				return (await node.swarm.peers()).map(p => p.addr.toString());
-			}
-		};
-	}
 };
 
 const configService: IConfigurationService = {
@@ -147,22 +212,18 @@ const configService: IConfigurationService = {
 	},
 };
 
+
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise
 // just add to the DOM global.
 if (process.contextIsolated) {
 	try {
-		//contextBridge.exposeInMainWorld('electron', electronAPI);
 		contextBridge.exposeInMainWorld('nodeService', nodeService);
 		contextBridge.exposeInMainWorld('configService', configService);
-		console.log("exposeInMainWorld");
 	} catch (error) {
 		console.error(error);
 	}
 } else {
-	console.log("window");
-	// @ts-ignore (define in dts)
-	//window.electron = electronAPI
 	// @ts-ignore (define in dts)
 	window.configService = configService;
 	// @ts-ignore (define in dts)

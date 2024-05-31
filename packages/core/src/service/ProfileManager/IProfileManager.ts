@@ -2,6 +2,7 @@ import { ReadonlySignal } from '@preact/signals-react';
 import { ILibrary } from '../Library';
 import { IProfile } from '../Profile';
 import { ITask } from '../ITask';
+import { IIpfsService } from '../IIpfsService';
 
 /**
  * Manages a profile.
@@ -36,6 +37,11 @@ export interface IProfileManager {
 	 * The profile of the service.
 	 */
 	profile: IProfile;
+
+	/**
+	 * Ipfs service of the profile if started.
+	 */
+	ipfs: undefined | IIpfsService;
 }
 
 export enum ProfileManagerState {

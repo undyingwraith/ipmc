@@ -10,10 +10,4 @@ export interface INodeService {
 	 * @param profile profile to start with.
 	 */
 	create(profile?: IInternalProfile): Promise<IIpfsService>;
-
-	/**
-	 * Connects to a remote IIpfsService.
-	 * @param url url to connect to.
-	 */
-	createRemote(url?: string): Promise<IIpfsService>;
 }

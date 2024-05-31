@@ -1,4 +1,5 @@
 {
+	"ActiveTasks": "Aktive aufgaben",
 	"AddProfile": "Profil hinzufügen",
 	"Cancel": "Abbrechen",
 	"Delete": "Löschen",
@@ -9,6 +10,7 @@
 	"Logout": "Abmelden",
 	"Movies": "Filme",
 	"Name": "Name",
+	"NoNodes": "Keine verbundene Geräte",
 	"Save": "Speichern",
 	"Search": "Suche",
 	"Start": "Starten",

@@ -1,4 +1,5 @@
 {
+	"ActiveTasks": "Currently running",
 	"AddProfile": "Add profile",
 	"Cancel": "Cancel",
 	"Delete": "Delete",
@@ -9,6 +10,7 @@
 	"Logout": "Logout",
 	"Movies": "Movies",
 	"Name": "Name",
+	"NoNodes": "No connected nodes",
 	"Save": "Save",
 	"Search": "Search",
 	"Start": "Start",

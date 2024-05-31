@@ -2,7 +2,7 @@ import React from "react";
 import { Signal, useComputed } from "@preact/signals-react";
 import { Display } from "../pages/LibraryManager";
 import { AppBar, Box, Button, ButtonGroup, TextField, Toolbar } from "@mui/material";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from '../../hooks/useTranslation';
 
 // Icons
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
@@ -11,7 +11,7 @@ import ViewListIcon from '@mui/icons-material/ViewList';
 
 export function LibraryAppBar(props: { query: Signal<string>, display: Signal<Display>; }) {
 	const { query, display } = props;
-	const [_t] = useTranslation();
+	const _t = useTranslation();
 
 
 	const displayButtons = useComputed(() => (

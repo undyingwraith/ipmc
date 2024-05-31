@@ -2,7 +2,7 @@ import { IIpfsService } from '../IIpfsService';
 import { IProfile } from '../Profile/IProfile';
 import { BaseProfileManager } from './BaseProfileManager';
 
-export class SimpleProfileManager extends BaseProfileManager {
+export class SimpleProfileManager extends BaseProfileManager<IProfile> {
 	constructor(ipfs: IIpfsService, profile: IProfile) {
 		super(profile);
 		this.ipfs = ipfs;

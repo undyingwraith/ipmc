@@ -1,10 +1,7 @@
-import { IFileInfo } from '../indexer';
-import { IGenericMetaData } from './IGenericMetaData';
+import { IFileInfo, IVideoFile } from './Files';
 
-export interface IMovieMetaData extends IGenericMetaData<'movie'> {
+export interface IMovieMetaData extends IVideoFile {
 	title: string;
-	file: IFileInfo;
-	thumbnails: IFileInfo[];
 	posters: IFileInfo[];
 	year?: number;
 }

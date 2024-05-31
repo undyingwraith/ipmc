@@ -11,3 +11,4 @@ export type {
 	IRemoteProfile,
 } from './service';
 export { uuid } from './util';
+export { createRemoteIpfsService } from './createRemoteIpfsService';

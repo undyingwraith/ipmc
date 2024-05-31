@@ -1,7 +1,7 @@
 import { Button, ButtonGroup, Card, CardActions, CardHeader, Dialog, Stack } from "@mui/material";
 import { useComputed, useSignal } from "@preact/signals-react";
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from '../../hooks/useTranslation';
 import { IConfigurationService, IProfile } from "../../service";
 import { uuid } from '../../util';
 import { ProfileEditor } from "./ProfileEditor";
@@ -9,7 +9,7 @@ import { ProfileEditor } from "./ProfileEditor";
 export function ProfileSelector(props: { profile?: IProfile, switchProfile: (name: string) => void, configService: IConfigurationService; }) {
 	const { configService } = props;
 
-	const [_t] = useTranslation();
+	const _t = useTranslation();
 	const editing = useSignal<string | undefined>(undefined);
 	const profiles = useSignal<(IProfile & { id: string; })[]>(loadProfiles());
 

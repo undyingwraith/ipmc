@@ -1,2 +1,1 @@
-export { MoviePosterGridItem } from './MoviePosterGridItem';
-export { MovieThumbnailGridItem } from './MovieThumbnailGridItem';
+export { MovieGridItem } from './MovieGridItem';
