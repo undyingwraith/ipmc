@@ -23,10 +23,10 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 		const folders = entries.filter(f => f.type !== 'file');
 
 		return {
-			cid: entry.cid,
+			...entry,
 			title: entry.name,
 			posters: files.filter(f => Regexes.Poster.exec(f.name) != null),
-			seasons: await Promise.all(folders.map(season => this.extractSeasonMetaData(node, season))),
+			items: await Promise.all(folders.map(season => this.extractSeasonMetaData(node, season))),
 		};
 	}
 
@@ -36,16 +36,19 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 		const folders = entries.filter(f => f.type !== 'file');
 
 		return {
+			...entry,
 			posters: files.filter(f => Regexes.Poster.exec(f.name) != null),
-			episodes: await Promise.all(folders.map(episode => this.extractEpisodeMetaData(node, episode))),
+			items: await Promise.all(folders.map(episode => this.extractEpisodeMetaData(node, episode))),
 		};
 	}
+
 	public async extractEpisodeMetaData(node: IIpfsService, entry: IFileInfo, skeleton?: any): Promise<IEpisodeMetaData> {
 		const files = (await this.node.ls(entry.cid)).filter(f => f.type == 'file');
 
 		return {
+			...entry,
 			title: entry.name,
-			file: files.filter(f => f.name.endsWith('.mp4'))[0],
+			video: files.filter(f => f.name.endsWith('.mp4'))[0],
 			thumbnails: files.filter(f => Regexes.Thumbnail.exec(f.name) != null),
 		};
 	}
