@@ -1,6 +1,6 @@
 import React from "react";
 import { IMovieMetaData } from "../../../service";
-import { Card, CardActions, CardContent, CardMedia } from "@mui/material";
+import { Button, Card, CardActions, CardContent, CardMedia } from "@mui/material";
 import { useFileUrl, useWatcher } from "../../../hooks";
 import posterFallback from './no-poster.png';
 import thumbFallback from './no-thumbnail.png';
@@ -9,7 +9,7 @@ import { Display } from '../../pages/LibraryManager';
 import { useComputed } from '@preact/signals-react';
 import { PinButton } from '../../atoms/PinButton';
 
-export function MovieGridItem(props: { movie: IMovieMetaData, display: Signal<Display>; }) {
+export function MovieGridItem(props: { movie: IMovieMetaData; display: Signal<Display>; onOpen: () => void; }) {
 	const { movie, display } = props;
 	const posterUrl = useWatcher(useFileUrl(props.movie.posters[0]?.cid, posterFallback));
 	const thumbUrl = useWatcher(useFileUrl(props.movie.thumbnails[0]?.cid, thumbFallback));
@@ -32,6 +32,7 @@ export function MovieGridItem(props: { movie: IMovieMetaData, display: Signal<Di
 			<CardContent>{movie.title}</CardContent>
 			<CardActions>
 				<PinButton cid={props.movie.cid} />
+				<Button onClick={props.onOpen}>Play</Button>
 			</CardActions>
 		</Card>
 	));
