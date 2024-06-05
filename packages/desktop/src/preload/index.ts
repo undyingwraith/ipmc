@@ -113,7 +113,7 @@ const nodeService: INodeService = {
 					dcutr: dcutr(),
 					upnp: uPnPNAT(),
 					pubsub: gossipsub({
-					allowPublishToZeroTopicPeers: true,
+						allowPublishToZeroTopicPeers: true,
 						canRelayMessage: true,
 					}),
 				},
@@ -162,7 +162,7 @@ const nodeService: INodeService = {
 				return `http://127.0.0.1:${gatewayPort}/${cid}`;
 			},
 			peers() {
-				return Promise.resolve(helia.libp2p.getConnections().map(p => p.remoteAddr.toString()));
+				return Promise.resolve([...new Set(helia.libp2p.getConnections().map(p => p.remoteAddr.toString()))]);
 			},
 			id() {
 				return helia.libp2p.peerId.toString();

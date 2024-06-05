@@ -1,4 +1,4 @@
-import { Backdrop, Box, Button, Grid, Paper, Stack } from "@mui/material";
+import { Box, Button, Grid, Paper, Stack } from "@mui/material";
 import { useComputed, useSignal } from "@preact/signals-react";
 import React from "react";
 import { useWatcher } from '../../hooks';
@@ -9,23 +9,18 @@ import { useApp } from "../pages/AppContext";
 import { ILibraryProps } from "../pages/LibraryManager";
 import { useTranslation } from '../../hooks/useTranslation';
 import { IMovieMetaData } from '../../service/Library';
+import { VideoPlayer } from './VideoPlayer';
+import { DetailOverlay } from '../atoms/DetailOverlay';
 
 export function MovieLibrary(props: ILibraryProps<IMovieLibrary>) {
 	const _t = useTranslation();
-	const { profile, ipfs } = useApp();
+	const { profile } = useApp();
 
 	const index = useWatcher<{ cid: string; values: IMovieMetaData[]; } | undefined>(profile.libraries.get(props.library.name)?.value.index as { cid: string; values: IMovieMetaData[]; } | undefined);
 	const selected = useSignal<IMovieMetaData | undefined>(undefined);
 
 	const detail = useComputed(() => selected.value !== undefined ? (
-		<Backdrop
-			open={true}
-			sx={{
-				marginTop: '64px',
-				width: '100vw',
-				height: 'calc(100vh - 64px)',
-			}}
-		>
+		<DetailOverlay>
 			<Stack>
 				<Paper>
 					<Button onClick={() => {
@@ -33,12 +28,10 @@ export function MovieLibrary(props: ILibraryProps<IMovieLibrary>) {
 					}}>Close</Button>
 				</Paper>
 				<Box>
-					<video controls style={{ maxWidth: '100%', maxHeight: '100%' }}>
-						<source src={ipfs.toUrl(selected.value.video.cid)}></source>
-					</video>
+					<VideoPlayer file={selected.value} />
 				</Box>
 			</Stack>
-		</Backdrop>
+		</DetailOverlay>
 	) : undefined);
 
 	return useComputed(() => {
