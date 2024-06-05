@@ -130,7 +130,27 @@ const nodeService: INodeService = {
 
 		const app = express();
 		app.get('/:cid', async (request, response) => {
-			for await (const buf of fs.cat(CID.parse(request.params.cid))) {
+			const rangeHeader = request.headers.range;
+			const offsetString = rangeHeader != undefined ? rangeHeader.substring(rangeHeader.indexOf('=') + 1, rangeHeader.indexOf('-')) : undefined;
+			const offset = offsetString !== undefined && offsetString !== '' ? parseInt(offsetString) : undefined;
+			const limitString = rangeHeader != undefined && !rangeHeader.endsWith('-') ? rangeHeader.substring(rangeHeader.indexOf('-') + 1, rangeHeader.indexOf('/') ?? rangeHeader.length) : undefined;
+			const limit = limitString !== undefined && limitString !== '' ? parseInt(limitString) : undefined;
+
+			response.appendHeader('Accept-Ranges', 'bytes');
+
+			const cid = CID.parse(request.params.cid);
+
+			const stat = await fs.stat(cid);
+			response.setHeader('Content-Length', limit ?? stat.fileSize.toString());
+			response.setHeader('Content-Range', `bytes ${offset ?? 0}-${limit ?? stat.fileSize.toString()}/${stat.fileSize.toString()}`);
+
+			const controller = new AbortController();
+			response.on('close', () => controller.abort());
+			for await (const buf of fs.cat(cid, {
+				offset,
+				length: limit,
+				signal: controller.signal,
+			})) {
 				response.write(buf);
 			}
 			response.end();
