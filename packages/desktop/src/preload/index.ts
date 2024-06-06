@@ -130,28 +130,43 @@ const nodeService: INodeService = {
 
 		const app = express();
 		app.get('/:cid', async (request, response) => {
+			const CHUNK_SIZE = 10 ** 6;
 			const rangeHeader = request.headers.range;
 			const offsetString = rangeHeader != undefined ? rangeHeader.substring(rangeHeader.indexOf('=') + 1, rangeHeader.indexOf('-')) : undefined;
-			const offset = offsetString !== undefined && offsetString !== '' ? parseInt(offsetString) : undefined;
-			const limitString = rangeHeader != undefined && !rangeHeader.endsWith('-') ? rangeHeader.substring(rangeHeader.indexOf('-') + 1, rangeHeader.indexOf('/') ?? rangeHeader.length) : undefined;
-			const limit = limitString !== undefined && limitString !== '' ? parseInt(limitString) : undefined;
-
-			response.appendHeader('Accept-Ranges', 'bytes');
+			const offset = offsetString !== undefined && offsetString !== '' ? parseInt(offsetString) : 0;
 
 			const cid = CID.parse(request.params.cid);
 
-			const stat = await fs.stat(cid);
-			response.setHeader('Content-Length', limit ?? stat.fileSize.toString());
-			response.setHeader('Content-Range', `bytes ${offset ?? 0}-${limit ?? stat.fileSize.toString()}/${stat.fileSize.toString()}`);
-
 			const controller = new AbortController();
-			response.on('close', () => controller.abort());
+			request.once('close', () => controller.abort('Request cancelled'));
+			const stat = await fs.stat(cid, { signal: controller.signal });
+			const fileSize = parseInt(stat.fileSize.toString());
+			const end = Math.min(offset + CHUNK_SIZE, fileSize - 1);
+			const length = end - offset;
+
+			const headers = {
+				'Accept-Ranges': 'bytes',
+				'Access-Control-Allow-Headers': 'Range',
+				'Access-Control-Expose-Headers': [
+					'Content-Length',
+					'Content-Range',
+				],
+				'Content-Length': length,
+				'Content-Range': `bytes ${offset}-${end}/${fileSize}`,
+			};
+
+			response.writeHead(length + 1 < fileSize ? 206 : 200, headers);
+
 			for await (const buf of fs.cat(cid, {
 				offset,
-				length: limit,
+				length,
 				signal: controller.signal,
 			})) {
-				response.write(buf);
+				try {
+				await new Promise<void>((resolve, reject) => response.write(buf, (ex) => ex != undefined ? reject(ex) : resolve()));
+				} catch (ex) {
+					console.error(ex);
+				}
 			}
 			response.end();
 		});
