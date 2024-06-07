@@ -1,11 +1,11 @@
-import { Card, CardActions, CardContent, CardMedia } from "@mui/material";
+import { Button, Card, CardActions, CardContent, CardMedia } from "@mui/material";
 import React from "react";
 import { useFileUrl } from "../../../hooks";
 import { ISeriesMetaData } from "../../../service";
 import fallback from './no-poster.png';
 import { PinButton } from '../../atoms/PinButton';
 
-export function SeriesPosterGridItem(props: { serie: ISeriesMetaData; }) {
+export function SeriesPosterGridItem(props: { serie: ISeriesMetaData; onOpen: () => void; }) {
 	const url = useFileUrl(props.serie.posters[0]?.cid, fallback);
 
 	return (
@@ -14,6 +14,7 @@ export function SeriesPosterGridItem(props: { serie: ISeriesMetaData; }) {
 			<CardContent>{props.serie.title}</CardContent>
 			<CardActions>
 				<PinButton cid={props.serie.cid} />
+				<Button onClick={props.onOpen}>Play</Button>
 			</CardActions>
 		</Card>
 	);
