@@ -7,6 +7,7 @@ import { VideoPlayer } from './VideoPlayer';
 import { FolderFileView } from './FolderFileView';
 import { ReadonlySignal } from '@preact/signals-react';
 import { Display } from '../pages/LibraryManager';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export function FileView(props: { file: IFileInfo; onClose: () => void; display: ReadonlySignal<Display>; }) {
 	const { file, display, onClose } = props;
@@ -18,7 +19,7 @@ export function FileView(props: { file: IFileInfo; onClose: () => void; display:
 		<DetailOverlay>
 			<Stack sx={{ height: '100%', width: '100%' }}>
 				<Paper>
-					<Button onClick={onClose}>{_t('Back')}</Button>
+					<Button onClick={onClose} startIcon={<ArrowBackIcon />}>{_t('Back')}</Button>
 				</Paper>
 				<Box>
 					{isIVideoFile(file) && <VideoPlayer file={file} />}
