@@ -1,41 +1,49 @@
 import React from 'react';
-import { Box, Button, Paper, Stack } from '@mui/material';
-import { IFileInfo, IFolderFile, isIFolderFile } from '../../service';
-import { useComputed, useSignal } from '@preact/signals-react';
+import { Button, Grid, Paper, Stack } from '@mui/material';
+import { IFileInfo, IFolderFile } from '../../service';
+import { ReadonlySignal, useComputed, useSignal } from '@preact/signals-react';
 import { DetailOverlay } from '../atoms/DetailOverlay';
+import { FileGridItem } from '../molecules/FileGridItem';
+import { Display } from '../pages/LibraryManager';
+import { ErrorBoundary } from '../atoms/ErrorBoundary';
+import { FileView } from './FileView';
+import { useTranslation } from '../../hooks/useTranslation';
 
-export function FolderFileView(props: { file: IFolderFile; onClose: () => void; }) {
+export function FolderFileView(props: { file: IFolderFile; onClose: () => void; display: ReadonlySignal<Display>; }) {
+	const { display } = props;
+	const _t = useTranslation();
 	const selected = useSignal<IFileInfo | undefined>(undefined);
 
-	const detail = useComputed(() => selected.value !== undefined ? isIFolderFile(selected.value) ? <FolderFileView file={selected.value} onClose={() => {
-		selected.value = undefined;
-	}} /> : (
-		<DetailOverlay>
-			<Stack>
-				<Paper>
-					<Button onClick={() => {
-						selected.value = undefined;
-					}}>Back</Button>
-				</Paper>
-				<Box>
-					Item detail: {JSON.stringify(selected.value)}
-				</Box>
-			</Stack>
-		</DetailOverlay>
+	const detail = useComputed(() => selected.value !== undefined ? (
+		<FileView
+			file={selected.value}
+			display={display}
+			onClose={() => {
+				selected.value = undefined;
+			}}
+		/>
 	) : undefined);
 
 	return <DetailOverlay>
-		<Stack>
+		<Stack sx={{ height: '100%', width: '100%' }}>
 			<Paper>
-				<Button onClick={props.onClose}>Close</Button>
+				<Button onClick={props.onClose}>{_t('Back')}</Button>
 			</Paper>
-			<Box>
-				{props.file.items.map(i => <Box key={i.cid}>
-					<Button onClick={() => {
-						selected.value = i;
-					}}>View</Button>
-				</Box>)}
-			</Box>
+			<Grid container>
+				{props.file.items.map(i => (
+					<Grid item key={i.cid}>
+						<ErrorBoundary>
+							<FileGridItem
+								file={i}
+								onOpen={() => {
+									selected.value = i;
+								}}
+								display={display}
+							/>
+						</ErrorBoundary>
+					</Grid>
+				))}
+			</Grid>
 		</Stack>
 		{detail}
 	</DetailOverlay>;

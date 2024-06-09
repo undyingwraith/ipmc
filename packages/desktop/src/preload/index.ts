@@ -130,7 +130,7 @@ const nodeService: INodeService = {
 
 		const app = express();
 		app.get('/:cid', async (request, response) => {
-			const CHUNK_SIZE = 10 ** 6;
+			const CHUNK_SIZE = (10 ** 6) * 5;
 			const rangeHeader = request.headers.range;
 			const offsetString = rangeHeader != undefined ? rangeHeader.substring(rangeHeader.indexOf('=') + 1, rangeHeader.indexOf('-')) : undefined;
 			const offset = offsetString !== undefined && offsetString !== '' ? parseInt(offsetString) : 0;
@@ -141,7 +141,7 @@ const nodeService: INodeService = {
 			request.once('close', () => controller.abort('Request cancelled'));
 			const stat = await fs.stat(cid, { signal: controller.signal });
 			const fileSize = parseInt(stat.fileSize.toString());
-			const end = Math.min(offset + CHUNK_SIZE, fileSize - 1);
+			const end = Math.min(offset + CHUNK_SIZE, fileSize);
 			const length = end - offset;
 
 			const headers = {

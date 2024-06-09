@@ -1,4 +1,6 @@
-export interface IGenericLibrary<TData, TType extends string> {
+import { IFileInfo } from './Files';
+
+export interface IGenericLibrary<TData extends IFileInfo, TType extends string> {
 	/**
 	 * Name of the library. Must be unique.
 	 */
@@ -28,6 +30,6 @@ export interface IGenericLibrary<TData, TType extends string> {
 	type: TType;
 }
 
-export function isGenericLibrary<TData, TType extends string>(item: any): item is IGenericLibrary<TData, TType> {
+export function isGenericLibrary<TData extends IFileInfo, TType extends string>(item: any): item is IGenericLibrary<TData, TType> {
 	return item?.name !== undefined && typeof item?.type === 'string';
 }

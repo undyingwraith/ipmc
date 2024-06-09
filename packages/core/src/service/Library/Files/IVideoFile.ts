@@ -6,5 +6,5 @@ export interface IVideoFile extends IFileInfo {
 }
 
 export function isIVideoFile(item: any): item is IVideoFile {
-	return isIFileInfo(item);
+	return typeof item.video !== 'undefined' && typeof item.thumbnails?.length === 'number' && isIFileInfo(item);
 }

@@ -1,7 +1,7 @@
-import { IFileInfo, IVideoFile } from './Files';
+import { HasPoster } from './Features';
+import { IVideoFile } from './Files';
 
-export interface IMovieMetaData extends IVideoFile {
+export type IMovieMetaData = IVideoFile & HasPoster & {
 	title: string;
-	posters: IFileInfo[];
 	year?: number;
-}
+};
