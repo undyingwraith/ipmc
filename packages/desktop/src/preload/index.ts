@@ -52,8 +52,8 @@ const nodeService: INodeService = {
 			libp2p: {
 				addresses: {
 					listen: [
-						'/ip4/0.0.0.0/tcp/0',
-						'/ip6/::/tcp/0',
+						`/ip4/0.0.0.0/tcp/${profile.port ?? 0}`,
+						`/ip6/::/tcp/${profile.port ?? 0}`,
 						'/ws',
 						'/wss',
 						'/webrtc',
