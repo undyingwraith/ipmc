@@ -1,6 +1,7 @@
 {
 	"ActiveTasks": "Currently running",
 	"AddProfile": "Add profile",
+	"Back": "Back",
 	"Cancel": "Cancel",
 	"Delete": "Delete",
 	"Edit": "Edit",
@@ -11,6 +12,8 @@
 	"Movies": "Movies",
 	"Name": "Name",
 	"NoNodes": "No connected nodes",
+	"Open": "Open",
+	"Play": "Play",
 	"Save": "Save",
 	"Search": "Search",
 	"Start": "Start",

@@ -52,8 +52,8 @@ const nodeService: INodeService = {
 			libp2p: {
 				addresses: {
 					listen: [
-						'/ip4/0.0.0.0/tcp/0',
-						'/ip6/::/tcp/0',
+						`/ip4/0.0.0.0/tcp/${profile.port ?? 0}`,
+						`/ip6/::/tcp/${profile.port ?? 0}`,
 						'/ws',
 						'/wss',
 						'/webrtc',
@@ -113,7 +113,7 @@ const nodeService: INodeService = {
 					dcutr: dcutr(),
 					upnp: uPnPNAT(),
 					pubsub: gossipsub({
-					allowPublishToZeroTopicPeers: true,
+						allowPublishToZeroTopicPeers: true,
 						canRelayMessage: true,
 					}),
 				},
@@ -130,8 +130,43 @@ const nodeService: INodeService = {
 
 		const app = express();
 		app.get('/:cid', async (request, response) => {
-			for await (const buf of fs.cat(CID.parse(request.params.cid))) {
-				response.write(buf);
+			const CHUNK_SIZE = (10 ** 6) * 5;
+			const rangeHeader = request.headers.range;
+			const offsetString = rangeHeader != undefined ? rangeHeader.substring(rangeHeader.indexOf('=') + 1, rangeHeader.indexOf('-')) : undefined;
+			const offset = offsetString !== undefined && offsetString !== '' ? parseInt(offsetString) : 0;
+
+			const cid = CID.parse(request.params.cid);
+
+			const controller = new AbortController();
+			request.once('close', () => controller.abort('Request cancelled'));
+			const stat = await fs.stat(cid, { signal: controller.signal });
+			const fileSize = parseInt(stat.fileSize.toString());
+			const end = Math.min(offset + CHUNK_SIZE, fileSize);
+			const length = end - offset;
+
+			const headers = {
+				'Accept-Ranges': 'bytes',
+				'Access-Control-Allow-Headers': 'Range',
+				'Access-Control-Expose-Headers': [
+					'Content-Length',
+					'Content-Range',
+				],
+				'Content-Length': length,
+				'Content-Range': `bytes ${offset}-${end}/${fileSize}`,
+			};
+
+			response.writeHead(length + 1 < fileSize ? 206 : 200, headers);
+
+			for await (const buf of fs.cat(cid, {
+				offset,
+				length,
+				signal: controller.signal,
+			})) {
+				try {
+				await new Promise<void>((resolve, reject) => response.write(buf, (ex) => ex != undefined ? reject(ex) : resolve()));
+				} catch (ex) {
+					console.error(ex);
+				}
 			}
 			response.end();
 		});
@@ -162,7 +197,7 @@ const nodeService: INodeService = {
 				return `http://127.0.0.1:${gatewayPort}/${cid}`;
 			},
 			peers() {
-				return Promise.resolve(helia.libp2p.getConnections().map(p => p.remoteAddr.toString()));
+				return Promise.resolve([...new Set(helia.libp2p.getConnections().map(p => p.remoteAddr.toString()))]);
 			},
 			id() {
 				return helia.libp2p.peerId.toString();

@@ -1,22 +1,16 @@
-import { IFileInfo } from './Files';
+import { HasPoster } from './Features';
+import { IFileInfo, IFolderFile, IVideoFile } from './Files';
 
-export interface ISeriesMetaData {
-	cid: string;
+export type ISeriesMetaData = IFolderFile & {
 	title: string;
 	posters: IFileInfo[];
 	yearStart?: number;
 	yearEnd?: number;
-	seasons: ISeasonMetaData[];
-}
+};
 
-export interface ISeasonMetaData {
-	posters: IFileInfo[];
-	episodes: IEpisodeMetaData[];
-}
+export type ISeasonMetaData = IFolderFile & HasPoster;
 
-export interface IEpisodeMetaData {
+export interface IEpisodeMetaData extends IVideoFile {
 	title: string;
-	file: IFileInfo;
-	thumbnails: IFileInfo[];
 	date?: string;
 }

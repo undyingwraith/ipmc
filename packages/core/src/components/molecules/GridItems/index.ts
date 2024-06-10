@@ -1,1 +1,0 @@
-export { MovieGridItem } from './MovieGridItem';

@@ -22,7 +22,21 @@ export default defineConfig(({ mode }) => ({
 		},
 		rollupOptions: {
 			preserveSymlinks: true,
-			external: ['helia', 'react', '@mui/material', '@emotion/react'],
+			external: [
+				'helia',
+				'react',
+				'react-dom',
+				'react-i18next',
+				'@mui/material',
+				'@mui/icons-material',
+				'@emotion/react',
+				'@helia/unixfs',
+				'@libp2p/pnet',
+				'@preact/signals-react',
+				'i18next',
+				'minidenticons',
+				'multiformats'
+			],
 			output: {
 				// Provide global variables to use in the UMD build
 				// for externalized deps

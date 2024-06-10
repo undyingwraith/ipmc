@@ -40,7 +40,9 @@ export async function createRemoteIpfsService(url?: string): Promise<IIpfsServic
 			return result;
 		},
 		async isPinned(cid) {
-			for await (const res of node.pin.ls()) {
+			for await (const res of node.pin.ls({
+				paths: cid,
+			})) {
 				if (res.cid.toString() == cid) {
 					return true;
 				}

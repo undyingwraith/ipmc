@@ -1,6 +1,7 @@
 {
 	"ActiveTasks": "Aktive aufgaben",
 	"AddProfile": "Profil hinzufügen",
+	"Back": "Zurück",
 	"Cancel": "Abbrechen",
 	"Delete": "Löschen",
 	"Edit": "Bearbeiten",
@@ -11,6 +12,8 @@
 	"Movies": "Filme",
 	"Name": "Name",
 	"NoNodes": "Keine verbundene Geräte",
+	"Open": "Öffnen",
+	"Play": "Abspielen",
 	"Save": "Speichern",
 	"Search": "Suche",
 	"Start": "Starten",

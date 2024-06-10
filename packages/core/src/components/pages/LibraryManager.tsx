@@ -7,13 +7,11 @@ import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper,
 import { Signal, useComputed, useSignal } from "@preact/signals-react";
 import React from "react";
 import { ILibrary } from "../../service";
-import { isMovieLibrary, isSeriesLibrary } from '../../service/Library/ILibrary';
 import { LibraryAppBar } from "../organisms/LibraryAppBar";
-import { MovieLibrary } from "../organisms/MovieLibrary";
 import { useApp } from "./AppContext";
-import { SeriesLibrary } from '../organisms/SeriesLibrary';
 import { LibraryHomeScreen } from '../organisms/LibraryHomeScreen';
 import { useTranslation } from '../../hooks/useTranslation';
+import { Library } from '../organisms/Library';
 
 const icons = {
 	movie: <MovieIcon />,
@@ -35,23 +33,11 @@ export function LibraryManager() {
 
 		if (lib == undefined) {
 			component = (<LibraryHomeScreen />);
-		}
-
-		if (isMovieLibrary(lib)) {
-			component = (
-				<MovieLibrary
-					display={display}
-					library={lib}
-				/>
-			);
-		}
-		if (isSeriesLibrary(lib)) {
-			component = (
-				<SeriesLibrary
-					display={display}
-					library={lib}
-				/>
-			);
+		} else {
+			component = (<Library
+				display={display}
+				library={lib.name}
+			/>);
 		}
 
 		return (
