@@ -9,6 +9,7 @@ import { IFileInfo } from '../../service';
 import { Display } from '../pages/LibraryManager';
 import { useApp } from '../pages/AppContext';
 import { useWatcher } from '../../hooks';
+import { useHotkey } from '../../hooks/useHotkey';
 
 export function Library(props: {
 	display: ReadonlySignal<Display>;
@@ -22,6 +23,9 @@ export function Library(props: {
 	const selected = useSignal<IFileInfo | undefined>(undefined);
 	const index = useWatcher<{ cid: string; values: IFileInfo[]; } | undefined>(profile.libraries.get(props.library)?.value.index as { cid: string; values: IFileInfo[]; } | undefined);
 
+	useHotkey({ key: 'Escape' }, () => {
+		selected.value = undefined;
+	});
 
 	const detail = useComputed(() => selected.value !== undefined ? (
 		<FileView
