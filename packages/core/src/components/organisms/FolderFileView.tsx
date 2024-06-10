@@ -10,11 +10,16 @@ import { FileView } from './FileView';
 import { useTranslation } from '../../hooks/useTranslation';
 import { FileInfoDisplay } from '../atoms/FileInfoDisplay';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useHotkey } from '../../hooks/useHotkey';
 
 export function FolderFileView(props: { file: IFolderFile; onClose: () => void; display: ReadonlySignal<Display>; }) {
 	const { display, file } = props;
 	const _t = useTranslation();
 	const selected = useSignal<IFileInfo | undefined>(undefined);
+
+	useHotkey({ key: 'Escape' }, () => {
+		selected.value = undefined;
+	});
 
 	const detail = useComputed(() => selected.value !== undefined ? (
 		<FileView
