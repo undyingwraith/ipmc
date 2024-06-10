@@ -6,7 +6,7 @@ export function VideoPlayer(props: { file: IVideoFile; }) {
 	const { ipfs } = useApp();
 
 	return (
-		<video controls style={{ maxWidth: '100%', maxHeight: '100%' }}>
+		<video controls style={{ height: '85vh', maxWidth: '100%', maxHeight: '100%' }}>
 			<source src={ipfs.toUrl(props.file.video.cid)}></source>
 		</video>
 	);

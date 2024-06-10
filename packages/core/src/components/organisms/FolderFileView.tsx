@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, Button, Paper, Stack } from '@mui/material';
-import { IFileInfo, IFolderFile } from '../../service';
+import { IFileInfo, IFolderFile, isIFolderFile } from '../../service';
 import { ReadonlySignal, useComputed, useSignal } from '@preact/signals-react';
 import { DetailOverlay } from '../atoms/DetailOverlay';
 import { FileGridItem } from '../molecules/FileGridItem';
@@ -26,6 +26,8 @@ export function FolderFileView(props: { file: IFolderFile; onClose: () => void; 
 		/>
 	) : undefined);
 
+	const items = file.items.length === 1 && isIFolderFile(file.items[0]) ? file.items[0].items : file.items;
+
 	return <DetailOverlay>
 		<Stack sx={{ height: '100%', width: '100%', overflow: 'hidden' }} spacing={1}>
 			<Paper>
@@ -35,8 +37,10 @@ export function FolderFileView(props: { file: IFolderFile; onClose: () => void; 
 				<Paper>
 					<FileInfoDisplay file={file} />
 				</Paper>
-				<Grid container>
-					{file.items.map(i => (
+				<Grid container spacing={1} sx={{ width: '100%' }}>
+					{items.length === 0 ? (
+						<Grid item>{_t('NoItems')}</Grid>
+					) : items.map(i => (
 						<Grid item key={i.cid}>
 							<ErrorBoundary>
 								<FileGridItem
