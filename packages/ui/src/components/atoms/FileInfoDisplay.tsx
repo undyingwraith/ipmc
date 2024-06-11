@@ -1,12 +1,13 @@
 import { Box, Stack, Typography } from '@mui/material';
-import { IFileInfo, isPosterFeature, isTitleFeature } from 'ipmc-interfaces';
+import { IFileInfo, isPosterFeature } from 'ipmc-interfaces';
 import React from 'react';
 import { useApp } from '../pages/AppContext';
+import { useTitle } from '../../hooks/useTitle';
 
 export function FileInfoDisplay(props: { file: IFileInfo; }) {
 	const { file } = props;
 	const { ipfs } = useApp();
-	const name = isTitleFeature(file) ? file.title : file.name;
+	const name = useTitle(file);
 	const title = (
 		<Typography variant={'h3'}>{name}</Typography>
 	);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Button, Paper, Stack } from '@mui/material';
+import { Grid, Paper, Stack } from '@mui/material';
 import { IFileInfo, IFolderFile, isIFolderFile } from 'ipmc-interfaces';
 import { ReadonlySignal, useComputed, useSignal } from '@preact/signals-react';
 import { DetailOverlay } from '../atoms/DetailOverlay';
@@ -9,11 +9,11 @@ import { ErrorBoundary } from '../atoms/ErrorBoundary';
 import { FileView } from './FileView';
 import { useTranslation } from '../../hooks/useTranslation';
 import { FileInfoDisplay } from '../atoms/FileInfoDisplay';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useHotkey } from '../../hooks/useHotkey';
+import { DetailViewBar } from '../molecules/DetailViewBar';
 
 export function FolderFileView(props: { file: IFolderFile; onClose: () => void; display: ReadonlySignal<Display>; }) {
-	const { display, file } = props;
+	const { display, file, onClose } = props;
 	const _t = useTranslation();
 	const selected = useSignal<IFileInfo | undefined>(undefined);
 
@@ -35,9 +35,7 @@ export function FolderFileView(props: { file: IFolderFile; onClose: () => void; 
 
 	return <DetailOverlay>
 		<Stack sx={{ height: '100%', width: '100%', overflow: 'hidden' }} spacing={1}>
-			<Paper>
-				<Button onClick={props.onClose} startIcon={<ArrowBackIcon />}>{_t('Back')}</Button>
-			</Paper>
+			<DetailViewBar file={file} onClose={onClose} />
 			<Stack sx={{ overflow: 'auto' }} spacing={1}>
 				<Paper>
 					<FileInfoDisplay file={file} />
