@@ -1,6 +1,6 @@
 import { IIpfsService, IGenericLibrary, IMovieMetaData, IFileInfo } from 'ipmc-interfaces';
 import { IIndexFetcher } from './IIndexFetcher';
-import { Regexes } from 'ipmc-core';
+import { Regexes } from '../../Regexes';
 
 export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 	constructor(private readonly node: IIpfsService, private readonly lib: IGenericLibrary<IMovieMetaData, 'movie'>) {

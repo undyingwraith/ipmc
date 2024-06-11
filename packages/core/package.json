@@ -10,6 +10,7 @@
 	"dependencies": {
 		"inversify": "^6.0.2",
 		"ipmc-interfaces": "workspace:^",
+		"kubo-rpc-client": "^4.1.1",
 		"reflect-metadata": "^0.2.2"
 	},
 	"devDependencies": {

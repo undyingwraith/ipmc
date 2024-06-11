@@ -4,4 +4,3 @@ export type {
 	INodeService,
 	IConfigurationService,
 } from './service';
-export { createRemoteIpfsService } from './createRemoteIpfsService';

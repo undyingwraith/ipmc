@@ -7415,6 +7415,7 @@ __metadata:
   dependencies:
     inversify: "npm:^6.0.2"
     ipmc-interfaces: "workspace:^"
+    kubo-rpc-client: "npm:^4.1.1"
     reflect-metadata: "npm:^0.2.2"
     typescript: "npm:^5.4.5"
   languageName: unknown

@@ -1,6 +1,6 @@
 import { IIpfsService, IEpisodeMetaData, IGenericLibrary, ISeasonMetaData, ISeriesMetaData, IFileInfo } from 'ipmc-interfaces';
 import { IIndexFetcher } from './IIndexFetcher';
-import { Regexes } from 'ipmc-core';
+import { Regexes } from '../../Regexes';
 
 export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 	constructor(private readonly node: IIpfsService, private readonly lib: IGenericLibrary<ISeriesMetaData, 'series'>) {

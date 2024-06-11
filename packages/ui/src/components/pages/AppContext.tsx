@@ -4,6 +4,7 @@ import {
 	IIpfsService,
 	isInternalProfile,
 	isRemoteProfile,
+	IProfileManager,
 } from 'ipmc-interfaces';
 import React, { createContext, PropsWithChildren, useContext } from 'react';
 import { useTranslation } from '../../hooks/useTranslation';
@@ -11,8 +12,7 @@ import {
 	IConfigurationService,
 	INodeService,
 } from '../../service';
-import { IProfileManager, RemoteProfileManager } from '../../service/ProfileManager';
-import { SimpleProfileManager } from '../../service/ProfileManager/SimpleProfileManager';
+import { SimpleProfileManager, RemoteProfileManager } from 'ipmc-core';
 import { createDarkTheme, createLightTheme } from '../../Theme';
 import { LoadScreen } from "../molecules/LoadScreen";
 import { ProfileSelector } from "../molecules/ProfileSelector";

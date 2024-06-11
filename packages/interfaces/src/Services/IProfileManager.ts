@@ -1,6 +1,8 @@
 import { ReadonlySignal } from '@preact/signals-react';
-import { IIpfsService, ILibrary, IProfile } from 'ipmc-interfaces';
+import { ILibrary } from '../MetaData';
 import { ITask } from '../ITask';
+import { IProfile } from '../Profile';
+import { IIpfsService } from './IIpfsService';
 
 /**
  * Manages a profile.
