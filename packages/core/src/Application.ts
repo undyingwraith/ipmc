@@ -1,22 +1,30 @@
 import { Container, interfaces } from 'inversify';
+import { IApplication } from './IApplication';
+import { IModule } from './Modules/IModule';
 
-export class Application {
+/**
+ * @inheritdoc
+ */
+export class Application implements IApplication {
 	/**
-	 * Registers a new service.
-	 * @param service service to register.
-	 * @param identifier symbol for the service.
+	 * @inheritdoc
 	 */
 	public register<T>(service: interfaces.ServiceIdentifier<T>, identifier: symbol) {
 		this.container.bind<T>(identifier).toService(service);
 	}
 
 	/**
-	 * Gets a service identified by its symbol.
-	 * @param identifier symbol for the service.
-	 * @returns The requested service.
+	 * @inheritdoc
 	 */
 	getService<T>(identifier: symbol): T | undefined {
 		return this.container.get(identifier);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	use(module: IModule): void {
+		module(this);
 	}
 
 	private readonly container = new Container();
