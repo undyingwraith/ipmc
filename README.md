@@ -22,10 +22,29 @@ yarn install
 ### Running it in dev mode
 
 Run the following commands in paralell:
+
 ```bash
 yarn workspace ipmc-core run watch
 yarn workspace ipmc-desktop run dev
 ```
+
+## Packages
+
+### ipmc-interfaces
+
+Defines interfaces for MetaData and services.
+
+### ipmc-core
+
+Contains Services and utilities.
+
+### ipmc-ui
+
+Contains a react app that acts as ui.
+
+### ipmc-desktop
+
+Contains a electron app using the *ipmc-ui*.
 
 ## Concepts
 
@@ -39,6 +58,7 @@ yarn workspace ipmc-desktop run dev
 - bound to profiles
 
 Types:
+
 - Movie/Video
 - Music/Audio
 - Images

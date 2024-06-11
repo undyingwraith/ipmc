@@ -1,5 +1,6 @@
 import React from 'react';
-import { IFileInfo, IpmcApp, createRemoteIpfsService } from 'ipmc-core';
+import { IFileInfo } from 'ipmc-interfaces';
+import { IpmcApp, createRemoteIpfsService } from 'ipmc-ui';
 
 import { webSockets } from '@libp2p/websockets';
 import { webTransport } from '@libp2p/webtransport';
