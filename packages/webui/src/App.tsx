@@ -1,6 +1,6 @@
 import React from 'react';
 import { IFileInfo } from 'ipmc-interfaces';
-import { IpmcApp, createRemoteIpfsService } from 'ipmc-ui';
+import { IpmcApp } from 'ipmc-ui';
 
 import { webSockets } from '@libp2p/websockets';
 import { webTransport } from '@libp2p/webtransport';
@@ -111,10 +111,20 @@ export function App() {
 							return (await ipns(helia).resolveDNSLink(name)).cid.toString();
 						}
 					},
+					isPinned(cid) {
+						return helia.pins.isPinned(CID.parse(cid));
+					},
+					async addPin(cid) {
+						for await (const block of helia.pins.add(CID.parse(cid))) {
+							console.log(`Pin progress ${cid}: ${block.toString()}`);
+						}
+					},
+					async rmPin(cid) {
+						for await (const block of helia.pins.rm(CID.parse(cid))) {
+							console.log(`Pin progress ${cid}: ${block.toString()}`);
+						}
+					},
 				});
-			},
-			createRemote(url: string) {
-				return createRemoteIpfsService(url);
 			},
 		}}
 	/>;
