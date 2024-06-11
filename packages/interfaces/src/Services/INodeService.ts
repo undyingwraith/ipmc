@@ -1,4 +1,5 @@
-import { IInternalProfile, IIpfsService } from "ipmc-interfaces";
+import { IInternalProfile } from '../Profile';
+import { IIpfsService } from './IIpfsService';
 
 /**
  * Service to create new IIPfsService's.

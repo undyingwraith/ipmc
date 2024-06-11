@@ -5,13 +5,11 @@ import {
 	isInternalProfile,
 	isRemoteProfile,
 	IProfileManager,
+	IConfigurationService,
+	INodeService,
 } from 'ipmc-interfaces';
 import React, { createContext, PropsWithChildren, useContext } from 'react';
 import { useTranslation } from '../../hooks/useTranslation';
-import {
-	IConfigurationService,
-	INodeService,
-} from '../../service';
 import { SimpleProfileManager, RemoteProfileManager } from 'ipmc-core';
 import { createDarkTheme, createLightTheme } from '../../Theme';
 import { LoadScreen } from "../molecules/LoadScreen";

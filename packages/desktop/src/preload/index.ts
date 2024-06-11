@@ -18,7 +18,7 @@ import express from 'express';
 import fs from 'fs';
 import { createHelia } from 'helia';
 import { IncomingMessage, Server, ServerResponse } from 'http';
-import { IConfigurationService, IFileInfo, IInternalProfile, IIpfsService, IProfile } from 'ipmc-interfaces';
+import { IConfigurationService, IFileInfo, IInternalProfile, IIpfsService, INodeService, IProfile } from 'ipmc-interfaces';
 import { CID } from 'multiformats';
 import { gossipsub } from '@chainsafe/libp2p-gossipsub';
 import { pubsubPeerDiscovery } from '@libp2p/pubsub-peer-discovery';
@@ -32,7 +32,6 @@ import { ipnsSelector } from 'ipns/selector';
 import { ipnsValidator } from 'ipns/validator';
 import { uPnPNAT } from '@libp2p/upnp-nat';
 import * as libp2pInfo from 'libp2p/version';
-import { INodeService } from 'ipmc-ui';
 
 function getProfileFolder(name: string): string {
 	return `./profiles/${name}`;
