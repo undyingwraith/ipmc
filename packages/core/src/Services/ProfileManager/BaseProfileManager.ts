@@ -1,7 +1,6 @@
-import { Signal } from "@preact/signals-react";
-import { IIpfsService, ILibrary, IProfile, isMovieLibrary, isSeriesLibrary, ITask } from 'ipmc-interfaces';
+import { Signal } from '@preact/signals-core';
+import { IIpfsService, ILibrary, IProfile, IProfileManager, isMovieLibrary, isSeriesLibrary, ITask, ProfileManagerState } from 'ipmc-interfaces';
 import { MovieIndexFetcher, SeriesIndexFetcher } from '../Indexer';
-import { IProfileManager, ProfileManagerState } from 'ipmc-interfaces';
 
 export abstract class BaseProfileManager<TProfile extends IProfile> implements IProfileManager {
 	protected constructor(public readonly profile: TProfile) {

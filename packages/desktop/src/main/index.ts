@@ -2,7 +2,6 @@ import { app, shell, BrowserWindow } from 'electron';
 import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
-//import { fileURLToPath } from 'url'
 
 process.on('uncaughtException', function (error) {
 	process.stdout.write(error.name + ': ' + error.message + '\n' + (error.stack != undefined ? error.stack + '\n' : ''));
@@ -20,7 +19,6 @@ function createWindow(): void {
 			nodeIntegration: false,
 			contextIsolation: true,
 			preload: join(__dirname, '../preload/index.mjs'),
-			//preload: fileURLToPath(new URL('../preload/index.cjs', import.meta.url)),
 			sandbox: false, // https://www.electronjs.org/docs/latest/tutorial/esm#summary-esm-support-matrix
 		},
 	});

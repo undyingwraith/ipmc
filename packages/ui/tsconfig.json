@@ -16,6 +16,9 @@
 			"dom",
 			"dom.iterable"
 		],
+		"types": [
+			"node"
+		],
 		"moduleResolution": "node",
 		"noImplicitAny": true,
 		"noImplicitReturns": true,
@@ -33,8 +36,6 @@
 	"include": [
 		"src",
 		"typings.d.ts",
-		"vite.config.ts",
-		".eslintrc.js",
-		".prettierrc.js"
+		"vite.config.ts"
 	]
 }

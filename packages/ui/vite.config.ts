@@ -43,6 +43,7 @@ export default defineConfig(({ mode }) => ({
 				globals: {
 					helia: 'helia',
 					react: 'React',
+					i18next: 'i18n',
 				},
 			},
 		},

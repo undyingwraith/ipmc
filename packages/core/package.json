@@ -8,6 +8,7 @@
 		"build": "tsc"
 	},
 	"dependencies": {
+		"@preact/signals-core": "^1.6.0",
 		"inversify": "^6.0.2",
 		"ipmc-interfaces": "workspace:^",
 		"kubo-rpc-client": "^4.1.1",

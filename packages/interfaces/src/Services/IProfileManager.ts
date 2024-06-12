@@ -1,4 +1,4 @@
-import { ReadonlySignal } from '@preact/signals-react';
+import { ReadonlySignal } from '@preact/signals-core';
 import { ILibrary } from '../MetaData';
 import { ITask } from '../ITask';
 import { IProfile } from '../Profile';
