@@ -11,6 +11,7 @@
 		/* Language and Environment */
 		"target": "ES2015", /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
 		"lib": [
+			"DOM",
 			"ES2023",
 			"Decorators"
 		], /* Specify a set of bundled library declaration files that describe the target runtime environment. */

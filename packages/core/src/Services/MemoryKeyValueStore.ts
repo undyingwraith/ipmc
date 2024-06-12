@@ -1,6 +1,9 @@
 import { injectable } from 'inversify';
 import { IKeyValueStore } from 'ipmc-interfaces';
 
+/**
+ * @inheritdoc
+ */
 @injectable()
 export class MemoryKeyValueStore implements IKeyValueStore {
 	/**

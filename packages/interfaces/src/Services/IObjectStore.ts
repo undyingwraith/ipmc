@@ -1,3 +1,5 @@
+export const IObjectStoreSymbol = Symbol.for('IObjectStore');
+
 /**
  * A service to store an retrieve objects.
  */
