@@ -1,4 +1,4 @@
-import { useProfile } from "../components/pages/ProfileContext";
+import { useProfile } from "../context/ProfileContext";
 
 export function useFileUrl(cid?: string, fallback?: string): string | undefined {
 	const { ipfs } = useProfile();

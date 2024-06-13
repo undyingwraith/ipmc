@@ -1,6 +1,6 @@
 import React from 'react';
 import { IVideoFile } from 'ipmc-interfaces';
-import { useProfile } from '../pages/ProfileContext';
+import { useProfile } from '../../context/ProfileContext';
 
 export function VideoPlayer(props: { file: IVideoFile; }) {
 	const { ipfs } = useProfile();

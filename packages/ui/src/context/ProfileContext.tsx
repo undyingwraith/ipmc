@@ -1,4 +1,4 @@
-import { Alert, Box, Button, ButtonGroup, CssBaseline, Stack, ThemeProvider } from "@mui/material";
+import { Alert, Box, Button, ButtonGroup, Stack } from "@mui/material";
 import { useComputed, useSignal } from "@preact/signals-react";
 import {
 	IIpfsService,
@@ -9,12 +9,11 @@ import {
 	INodeService,
 } from 'ipmc-interfaces';
 import React, { createContext, PropsWithChildren, useContext } from 'react';
-import { useTranslation } from '../../hooks/useTranslation';
+import { useTranslation } from '../hooks/useTranslation';
 import { SimpleProfileManager, RemoteProfileManager } from 'ipmc-core';
-import { createDarkTheme, createLightTheme } from '../../Theme';
-import { LoadScreen } from "../molecules/LoadScreen";
-import { ProfileSelector } from "../molecules/ProfileSelector";
-import { AppBar } from "../organisms/AppBar";
+import { LoadScreen } from "../components/molecules/LoadScreen";
+import { ProfileSelector } from "../components/molecules/ProfileSelector";
+import { AppBar } from "../components/organisms/AppBar";
 
 export interface IProfileContext {
 	config: IConfigurationService;
@@ -42,10 +41,6 @@ export function ProfileContextProvider(props: PropsWithChildren<IProfileInit>) {
 
 	const profileManager = useSignal<IProfileManager | undefined>(undefined);
 	const state = useSignal<LoadState>(LoadState.Idle);
-	const darkMode = useSignal<boolean>(true);
-
-	const accentColor = useComputed(() => '#6200EE');
-	const theme = useComputed(() => darkMode.value ? createDarkTheme(accentColor.value) : createLightTheme(accentColor.value));
 
 	async function start(name: string) {
 		if (name == undefined) return;
@@ -135,13 +130,10 @@ export function ProfileContextProvider(props: PropsWithChildren<IProfileInit>) {
 	const node = useComputed(() => profileManager.value?.ipfs);
 
 	return useComputed(() => (
-		<ThemeProvider theme={theme.value}>
-			<CssBaseline />
-			<Stack sx={{ height: '100vh', width: '100vw', overflow: 'hidden' }}>
-				<AppBar shutdownProfile={stop} ipfs={node} profile={profile} darkMode={darkMode} />
-				{content}
-			</Stack>
-		</ThemeProvider>
+		<Stack sx={{ height: '100vh', width: '100vw', overflow: 'hidden' }}>
+			<AppBar shutdownProfile={stop} ipfs={node} profile={profile} />
+			{content}
+		</Stack>
 	));
 }
 

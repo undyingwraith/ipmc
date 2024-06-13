@@ -2,30 +2,26 @@ import { Container, interfaces } from 'inversify';
 import { IApplication } from './IApplication';
 import { IModule } from './Modules/IModule';
 
-/**
- * @inheritdoc
- */
 export class Application implements IApplication {
-	/**
-	 * @inheritdoc
-	 */
-	public register<T>(service: interfaces.ServiceIdentifier<T>, identifier: symbol) {
-		this.container.bind<T>(identifier).toService(service);
+	public register<T>(service: interfaces.Newable<T>, identifier: symbol) {
+		if (this.container.isBound(identifier)) {
+			this.container.unbind(identifier);
+		}
+		this.container.bind<T>(identifier).to(service);
 	}
 
-	/**
-	 * @inheritdoc
-	 */
 	getService<T>(identifier: symbol): T | undefined {
-		return this.container.get(identifier);
+		return this.container.get<T>(identifier);
 	}
 
-	/**
-	 * @inheritdoc
-	 */
 	use(module: IModule): void {
 		module(this);
 	}
 
-	private readonly container = new Container();
+	/**
+	 * The IOC {@link Container} of the {@link IApplication}.
+	 */
+	private readonly container = new Container({
+		defaultScope: 'Singleton',
+	});
 }

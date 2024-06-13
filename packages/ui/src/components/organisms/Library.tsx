@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTranslation } from '../../hooks/useTranslation';
 import { FileGridItem } from '../molecules/FileGridItem';
 import { FileView } from './FileView';
 import { ReadonlySignal, useComputed, useSignal } from '@preact/signals-react';
@@ -7,25 +6,21 @@ import { LoadScreen } from '../molecules/LoadScreen';
 import { Grid } from '@mui/material';
 import { IFileInfo } from 'ipmc-interfaces';
 import { Display } from '../pages/LibraryManager';
-import { useProfile } from '../pages/ProfileContext';
+import { useProfile } from '../../context/ProfileContext';
 import { useWatcher } from '../../hooks';
-import { useHotkey } from '../../hooks/useHotkey';
+import { ErrorBoundary } from '../atoms/ErrorBoundary';
 
 export function Library(props: {
 	display: ReadonlySignal<Display>;
 	query?: string;
 	library: string;
 }) {
-	const { display } = props;
+	const { display, library } = props;
 	const { profile } = useProfile();
-	const _t = useTranslation();
 
 	const selected = useSignal<IFileInfo | undefined>(undefined);
-	const index = useWatcher<{ cid: string; values: IFileInfo[]; } | undefined>(profile.libraries.get(props.library)?.value.index as { cid: string; values: IFileInfo[]; } | undefined);
+	const index = useWatcher<{ cid: string; values: IFileInfo[]; } | undefined>(profile.libraries.get(library)?.value.index as { cid: string; values: IFileInfo[]; } | undefined);
 
-	useHotkey({ key: 'Escape' }, () => {
-		selected.value = undefined;
-	});
 
 	const detail = useComputed(() => selected.value !== undefined ? (
 		<FileView
@@ -41,23 +36,27 @@ export function Library(props: {
 		const i = index.value;
 
 		return i?.cid == undefined ? (
-			<LoadScreen text={_t('Loading')} />
+			<LoadScreen />
 		) : (
 			<>
 				<Grid container spacing={1} sx={{ height: '100%', justifyContent: 'center' }}>
 					{i.values.map(v => (
 						<Grid item key={v.cid}>
-							<FileGridItem
-								onOpen={() => {
-									selected.value = v;
-								}}
-								file={v}
-								display={props.display}
-							/>
+							<ErrorBoundary>
+								<FileGridItem
+									onOpen={() => {
+										selected.value = v;
+									}}
+									file={v}
+									display={props.display}
+								/>
+							</ErrorBoundary>
 						</Grid>
 					))}
 				</Grid>
-				{detail}
+				<ErrorBoundary>
+					{detail}
+				</ErrorBoundary>
 			</>
 		);
 	});

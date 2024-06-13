@@ -1,7 +1,7 @@
 import React from 'react';
 import { LibraryManager } from "./components/pages/LibraryManager";
-import { AppContextProvider } from './components/pages/AppContext';
-import { IProfileInit, ProfileContextProvider } from "./components/pages/ProfileContext";
+import { AppContextProvider } from './context/AppContext';
+import { IProfileInit, ProfileContextProvider } from "./context/ProfileContext";
 import { BrowserModule, CoreModule } from 'ipmc-core';
 
 // Setup translations

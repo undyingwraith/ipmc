@@ -1,7 +1,7 @@
 import { Box, Stack, Typography } from '@mui/material';
 import { IFileInfo, isPosterFeature } from 'ipmc-interfaces';
 import React from 'react';
-import { useProfile } from '../pages/ProfileContext';
+import { useProfile } from '../../context/ProfileContext';
 import { useTitle } from '../../hooks/useTitle';
 
 export function FileInfoDisplay(props: { file: IFileInfo; }) {

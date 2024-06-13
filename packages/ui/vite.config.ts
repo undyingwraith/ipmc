@@ -35,7 +35,9 @@ export default defineConfig(({ mode }) => ({
 				'@preact/signals-react',
 				'i18next',
 				'minidenticons',
-				'multiformats'
+				'multiformats',
+				'ipmc-core',
+				'ipmc-interfaces',
 			],
 			output: {
 				// Provide global variables to use in the UMD build

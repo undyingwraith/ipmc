@@ -8,10 +8,11 @@ import { Signal, useComputed, useSignal } from "@preact/signals-react";
 import React from "react";
 import { ILibrary } from "ipmc-interfaces";
 import { LibraryAppBar } from "../organisms/LibraryAppBar";
-import { useProfile } from "./ProfileContext";
+import { useProfile } from "../../context/ProfileContext";
 import { LibraryHomeScreen } from '../organisms/LibraryHomeScreen';
 import { useTranslation } from '../../hooks/useTranslation';
 import { Library } from '../organisms/Library';
+import { ErrorBoundary } from '../atoms/ErrorBoundary';
 
 const icons = {
 	movie: <MovieIcon />,
@@ -29,25 +30,23 @@ export function LibraryManager() {
 
 	const content = useComputed(() => {
 		const lib = library.value;
-		let component = (<Box>Unknown Library</Box>);
 
 		if (lib == undefined) {
-			component = (<LibraryHomeScreen />);
+			return (
+				<ErrorBoundary>
+					<LibraryHomeScreen />
+				</ErrorBoundary>
+			);
 		} else {
-			component = (<Library
-				display={display}
-				library={lib.name}
-			/>);
+			return (
+				<ErrorBoundary>
+					<Library
+						display={display}
+						library={lib.name}
+					/>
+				</ErrorBoundary>
+			);
 		}
-
-		return (
-			<Stack sx={{ maxHeight: '100%', height: '100%', overflow: 'hidden' }}>
-				<LibraryAppBar display={display} query={query} />
-				<Box sx={{ overflow: 'auto', flexGrow: 1 }}>
-					{component}
-				</Box>
-			</Stack>
-		);
 	});
 
 	const sidebar = useComputed(() => (
@@ -87,7 +86,12 @@ export function LibraryManager() {
 				{sidebar}
 			</Paper>
 			<Box sx={{ flexGrow: 1 }}>
-				{content}
+				<Stack sx={{ maxHeight: '100%', height: '100%', overflow: 'hidden' }}>
+					<LibraryAppBar display={display} query={query} />
+					<Box sx={{ overflow: 'auto', flexGrow: 1 }}>
+						{content}
+					</Box>
+				</Stack>
 			</Box>
 		</Stack>
 	);

@@ -1,4 +1,5 @@
 export { type IConfigurationService } from './IConfigurationService';
+export { IHotkeyServiceSymbol, type IHotkeyService, type IHotkey } from './IHotkeyService';
 export { type IIpfsService } from './IIpfsService';
 export { type IKeyValueStore, IKeyValueStoreSymbol } from './IKeyValueStore';
 export { type INodeService } from './INodeService';

@@ -20,8 +20,8 @@ export interface IApplication {
 	getService<T>(identifier: symbol): T | undefined;
 
 	/**
-	 * Registers a @see IModule.
-	 * @param module @see IModule to use in the @see IApplication.
+	 * Registers a {@link IModule}.
+	 * @param module {@link IModule} to use in the {@link IApplication}.
 	 */
 	use(module: IModule): void;
 }

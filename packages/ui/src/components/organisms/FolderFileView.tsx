@@ -18,7 +18,7 @@ export function FolderFileView(props: { file: IFolderFile; onClose: () => void; 
 	const selected = useSignal<IFileInfo | undefined>(undefined);
 
 	useHotkey({ key: 'Escape' }, () => {
-		selected.value = undefined;
+		onClose();
 	});
 
 	const detail = useComputed(() => selected.value !== undefined ? (

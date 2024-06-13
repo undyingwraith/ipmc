@@ -7,9 +7,14 @@ import { FolderFileView } from './FolderFileView';
 import { ReadonlySignal } from '@preact/signals-react';
 import { Display } from '../pages/LibraryManager';
 import { DetailViewBar } from '../molecules/DetailViewBar';
+import { useHotkey } from '../../hooks';
 
 export function FileView(props: { file: IFileInfo; onClose: () => void; display: ReadonlySignal<Display>; }) {
 	const { file, display, onClose } = props;
+
+	useHotkey({ key: 'Escape' }, () => {
+		onClose();
+	});
 
 	return isIFolderFile(file) ? (
 		<FolderFileView file={file} onClose={onClose} display={display} />

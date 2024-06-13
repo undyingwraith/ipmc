@@ -1,7 +1,7 @@
 import { Alert } from '@mui/material';
 import React, { PropsWithChildren } from 'react';
 
-export class ErrorBoundary extends React.Component<PropsWithChildren<{}>, { hasError: boolean; }> {
+export class ErrorBoundary extends React.Component<PropsWithChildren<{}>, { hasError: boolean; error?: Error; }> {
 	constructor(props: PropsWithChildren<{}>) {
 		super(props);
 		this.state = { hasError: false };
@@ -9,7 +9,7 @@ export class ErrorBoundary extends React.Component<PropsWithChildren<{}>, { hasE
 
 	static getDerivedStateFromError(error: any) {
 		// Update state so the next render will show the fallback UI.
-		return { hasError: true };
+		return { hasError: true, error };
 	}
 
 	componentDidCatch(error: Error, info: any) {
@@ -19,7 +19,7 @@ export class ErrorBoundary extends React.Component<PropsWithChildren<{}>, { hasE
 	render() {
 		if (this.state.hasError) {
 			return (
-				<Alert severity="error">Error</Alert>
+				<Alert severity="error">Error {this.state.error?.name}</Alert>
 			);
 		}
 

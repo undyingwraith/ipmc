@@ -1,5 +1,5 @@
 import { ReadonlySignal, useSignal, useSignalEffect } from '@preact/signals-react';
-import { useProfile } from '../components/pages/ProfileContext';
+import { useProfile } from '../context/ProfileContext';
 
 export enum PinStatus {
 	Unknown,
