@@ -7,7 +7,7 @@ import { LoadScreen } from '../molecules/LoadScreen';
 import { Grid } from '@mui/material';
 import { IFileInfo } from 'ipmc-interfaces';
 import { Display } from '../pages/LibraryManager';
-import { useApp } from '../pages/AppContext';
+import { useProfile } from '../pages/ProfileContext';
 import { useWatcher } from '../../hooks';
 import { useHotkey } from '../../hooks/useHotkey';
 
@@ -17,7 +17,7 @@ export function Library(props: {
 	library: string;
 }) {
 	const { display } = props;
-	const { profile } = useApp();
+	const { profile } = useProfile();
 	const _t = useTranslation();
 
 	const selected = useSignal<IFileInfo | undefined>(undefined);

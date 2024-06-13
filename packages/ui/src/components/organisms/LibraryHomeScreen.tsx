@@ -1,12 +1,12 @@
 import { Box, Card, CardContent, CardHeader, Stack, Typography } from '@mui/material';
 import { useComputed } from '@preact/signals-react';
-import { useApp } from '../pages/AppContext';
+import { useProfile } from '../pages/ProfileContext';
 import React from 'react';
 import { Loader } from '../atoms';
 import { useTranslation } from '../../hooks/useTranslation';
 
 export function LibraryHomeScreen() {
-	const { profile } = useApp();
+	const { profile } = useProfile();
 	const _t = useTranslation();
 
 	const status = useComputed(() => profile.tasks.value.length > 0 ? (

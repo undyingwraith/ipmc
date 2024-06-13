@@ -1,5 +1,5 @@
 import { ReadonlySignal, useSignal, useSignalEffect } from '@preact/signals-react';
-import { useApp } from '../components/pages/AppContext';
+import { useProfile } from '../components/pages/ProfileContext';
 
 export enum PinStatus {
 	Unknown,
@@ -10,7 +10,7 @@ export enum PinStatus {
 }
 
 export function usePinManager(cid: string): [ReadonlySignal<PinStatus>, setState: (pin: boolean) => void] {
-	const { ipfs } = useApp();
+	const { ipfs } = useProfile();
 	const status = useSignal<PinStatus>(PinStatus.Unknown);
 
 	function setState(pin: boolean) {

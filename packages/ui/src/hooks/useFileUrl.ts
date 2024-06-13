@@ -1,7 +1,7 @@
-import { useApp } from "../components/pages/AppContext";
+import { useProfile } from "../components/pages/ProfileContext";
 
 export function useFileUrl(cid?: string, fallback?: string): string | undefined {
-	const { ipfs } = useApp();
+	const { ipfs } = useProfile();
 
 	return cid ? ipfs.toUrl(cid) : fallback ?? undefined;
 }

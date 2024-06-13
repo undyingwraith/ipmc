@@ -1,1 +1,1 @@
-export { IpmcApp } from './components/pages/IpmcApp';
+export { IpmcApp } from './IpmcApp';
