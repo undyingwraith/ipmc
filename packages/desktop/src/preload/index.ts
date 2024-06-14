@@ -141,7 +141,7 @@ const nodeService: INodeService = {
 			request.once('close', () => controller.abort('Request cancelled'));
 			const stat = await fs.stat(cid, { signal: controller.signal });
 			const fileSize = parseInt(stat.fileSize.toString());
-			const end = Math.min(offset + CHUNK_SIZE, fileSize - 1);
+			const end = rangeHeader === undefined ? fileSize - 1 : Math.min(offset + CHUNK_SIZE, fileSize - 1);
 			const length = end - offset;
 
 			const headers = {
