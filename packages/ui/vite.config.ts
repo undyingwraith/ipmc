@@ -2,6 +2,7 @@
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
+import { libInjectCss } from 'vite-plugin-lib-inject-css';
 import dts from 'vite-plugin-dts';
 
 export default defineConfig(({ mode }) => ({
@@ -12,6 +13,7 @@ export default defineConfig(({ mode }) => ({
 		checker({
 			typescript: { buildMode: true }
 		}),
+		libInjectCss(),
 	],
 	build: {
 		lib: {
