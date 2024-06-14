@@ -24,7 +24,7 @@ yarn install
 Run the following commands in paralell:
 
 ```bash
-yarn workspace ipmc-core run watch
+yarn workspace watch
 yarn workspace ipmc-desktop run dev
 ```
 
