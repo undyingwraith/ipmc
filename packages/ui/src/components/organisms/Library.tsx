@@ -9,13 +9,14 @@ import { Display } from '../pages/LibraryManager';
 import { useProfile } from '../../context/ProfileContext';
 import { useWatcher } from '../../hooks';
 import { ErrorBoundary } from '../atoms/ErrorBoundary';
+import { createFilter } from 'ipmc-core';
 
 export function Library(props: {
 	display: ReadonlySignal<Display>;
-	query?: string;
+	query: ReadonlySignal<string | undefined>;
 	library: string;
 }) {
-	const { display, library } = props;
+	const { display, library, query } = props;
 	const { profile } = useProfile();
 
 	const selected = useSignal<IFileInfo | undefined>(undefined);
@@ -34,13 +35,14 @@ export function Library(props: {
 
 	return useComputed(() => {
 		const i = index.value;
+		const q = query.value;
 
 		return i?.cid == undefined ? (
 			<LoadScreen />
 		) : (
 			<>
 				<Grid container spacing={1} sx={{ height: '100%', justifyContent: 'center' }}>
-					{i.values.map(v => (
+					{(q === undefined ? i.values : i.values.filter(createFilter(q))).map(v => (
 						<Grid item key={v.cid}>
 							<ErrorBoundary>
 								<FileGridItem

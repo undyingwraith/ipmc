@@ -21,34 +21,53 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 		const files = entries.filter(f => f.type == 'file');
 		const folders = entries.filter(f => f.type !== 'file');
 
-		return {
+		const serie: Omit<ISeriesMetaData, 'items'> = {
 			...entry,
 			title: entry.name,
 			posters: files.filter(f => Regexes.Poster.exec(f.name) != null),
-			items: await Promise.all(folders.map(season => this.extractSeasonMetaData(node, season))),
+		};
+
+		return {
+			...serie,
+			items: await Promise.all(folders.map(season => this.extractSeasonMetaData(node, season, serie))),
 		};
 	}
 
-	public async extractSeasonMetaData(node: IIpfsService, entry: IFileInfo, skeleton?: any): Promise<ISeasonMetaData> {
+	public async extractSeasonMetaData(node: IIpfsService, entry: IFileInfo, parent: Omit<ISeriesMetaData, 'items'>): Promise<ISeasonMetaData> {
 		const entries = await this.node.ls(entry.cid);
 		const files = entries.filter(f => f.type == 'file');
 		const folders = entries.filter(f => f.type !== 'file');
 
-		return {
+		const season: Omit<ISeasonMetaData, 'items'> = {
 			...entry,
 			posters: files.filter(f => Regexes.Poster.exec(f.name) != null),
-			items: await Promise.all(folders.map(episode => this.extractEpisodeMetaData(node, episode))),
+		};
+
+		if (season.posters.length == 0) {
+			season.posters = parent.posters;
+		}
+
+		return {
+			...season,
+			items: await Promise.all(folders.map(episode => this.extractEpisodeMetaData(node, episode, season))),
 		};
 	}
 
-	public async extractEpisodeMetaData(node: IIpfsService, entry: IFileInfo, skeleton?: any): Promise<IEpisodeMetaData> {
+	public async extractEpisodeMetaData(node: IIpfsService, entry: IFileInfo, parent: Omit<ISeasonMetaData, 'items'>): Promise<IEpisodeMetaData> {
 		const files = (await this.node.ls(entry.cid)).filter(f => f.type == 'file');
 
-		return {
+		const episode = {
 			...entry,
+			posters: files.filter(f => Regexes.Poster.exec(f.name) != null),
 			title: entry.name,
 			video: files.filter(f => f.name.endsWith('.mp4'))[0],
 			thumbnails: files.filter(f => Regexes.Thumbnail.exec(f.name) != null),
 		};
+
+		if (episode.posters.length == 0) {
+			episode.posters = parent.posters;
+		}
+
+		return episode;
 	}
 }

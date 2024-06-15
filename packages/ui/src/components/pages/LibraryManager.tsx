@@ -6,13 +6,14 @@ import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Stack } from '@mui/material';
 import { Signal, useComputed, useSignal } from "@preact/signals-react";
 import React from "react";
-import { ILibrary } from "ipmc-interfaces";
 import { LibraryAppBar } from "../organisms/LibraryAppBar";
 import { useProfile } from "../../context/ProfileContext";
 import { LibraryHomeScreen } from '../organisms/LibraryHomeScreen';
 import { useTranslation } from '../../hooks/useTranslation';
 import { Library } from '../organisms/Library';
 import { ErrorBoundary } from '../atoms/ErrorBoundary';
+import { Route, useLocation, useRoute } from 'wouter';
+import { useWatcher } from '../../hooks';
 
 const icons = {
 	movie: <MovieIcon />,
@@ -22,32 +23,14 @@ const icons = {
 
 export function LibraryManager() {
 	const { profile } = useProfile();
+	const [, params] = useRoute<{ library: string; }>('/:library');
+	const [, setLocation] = useLocation();
 	const _t = useTranslation();
+
 	const libraries = profile.profile.libraries;
-	const library = useSignal<ILibrary | undefined>(undefined);
+	const library = useWatcher(() => params?.library !== undefined ? profile.libraries.get(params?.library) : undefined);
 	const display = useSignal<Display>(Display.Poster);
 	const query = useSignal<string>('');
-
-	const content = useComputed(() => {
-		const lib = library.value;
-
-		if (lib == undefined) {
-			return (
-				<ErrorBoundary>
-					<LibraryHomeScreen />
-				</ErrorBoundary>
-			);
-		} else {
-			return (
-				<ErrorBoundary>
-					<Library
-						display={display}
-						library={lib.name}
-					/>
-				</ErrorBoundary>
-			);
-		}
-	});
 
 	const sidebar = useComputed(() => (
 		<List>
@@ -55,7 +38,7 @@ export function LibraryManager() {
 				<ListItemButton
 					selected={library.value == undefined}
 					onClick={() => {
-						library.value = undefined;
+						setLocation('/');
 					}}>
 					<ListItemIcon>
 						<HomeIcon />
@@ -66,9 +49,9 @@ export function LibraryManager() {
 			{libraries.map((lib) => (
 				<ListItem key={lib.name} disablePadding>
 					<ListItemButton
-						selected={library.value?.name == lib.name}
+						selected={library.value.name == lib.name}
 						onClick={() => {
-							library.value = lib;
+							setLocation('/' + lib.name);
 						}}>
 						<ListItemIcon>
 							{icons[lib.type] ?? <QuestionMarkIcon />}
@@ -89,7 +72,18 @@ export function LibraryManager() {
 				<Stack sx={{ maxHeight: '100%', height: '100%', overflow: 'hidden' }}>
 					<LibraryAppBar display={display} query={query} />
 					<Box sx={{ overflow: 'auto', flexGrow: 1 }}>
-						{content}
+						<Route path={'/'}>
+							<ErrorBoundary>
+								<LibraryHomeScreen />
+							</ErrorBoundary>
+						</Route>
+						<Route path={'/:library'}>
+							{(params) => (
+								<ErrorBoundary>
+									<Library display={display} library={params.library} query={query} />
+								</ErrorBoundary>
+							)}
+						</Route>
 					</Box>
 				</Stack>
 			</Box>
@@ -108,7 +102,3 @@ export interface ILibraryProps<TLib> {
 	query?: string;
 	library: TLib;
 }
-
-/*function createFilter<TData extends IGenericMetaData<string>>(query: string | undefined) {
-	return (entry: TData) => true;
-}*/
