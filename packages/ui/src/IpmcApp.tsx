@@ -2,6 +2,7 @@ import React from 'react';
 import { LibraryManager } from "./components/pages/LibraryManager";
 import { AppContextProvider } from './context/AppContext';
 import { IProfileInit, ProfileContextProvider } from "./context/ProfileContext";
+import { Route, Switch } from 'wouter';
 import { BrowserModule, CoreModule } from 'ipmc-core';
 
 // Setup translations
@@ -14,7 +15,12 @@ export function IpmcApp(props: IProfileInit) {
 			app.use(BrowserModule);
 		}}>
 			<ProfileContextProvider {...props}>
-				<LibraryManager />
+				<Switch>
+					<Route path={'/'}>
+						<LibraryManager />
+					</Route>
+					<Route>404: No such page!</Route>
+				</Switch>
 			</ProfileContextProvider>
 		</AppContextProvider>
 	);
