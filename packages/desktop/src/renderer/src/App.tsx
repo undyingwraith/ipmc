@@ -1,10 +1,14 @@
-import { IpmcApp } from "ipmc-core";
+import { IpmcLauncher, ThemeContextProvider } from "ipmc-ui";
 
 function App(): JSX.Element {
-	return <IpmcApp
-		nodeService={window.nodeService}
-		configService={window.configService}
-	/>
+	return (
+		<ThemeContextProvider>
+			<IpmcLauncher
+				nodeService={window.nodeService}
+				configService={window.configService}
+			/>
+		</ThemeContextProvider>
+	);
 }
 
 export default App;

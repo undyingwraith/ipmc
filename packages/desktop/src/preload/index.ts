@@ -18,7 +18,7 @@ import express from 'express';
 import fs from 'fs';
 import { createHelia } from 'helia';
 import { IncomingMessage, Server, ServerResponse } from 'http';
-import { IConfigurationService, IFileInfo, IInternalProfile, IIpfsService, INodeService, IProfile } from 'ipmc-core';
+import { IConfigurationService, IFileInfo, IInternalProfile, IIpfsService, INodeService, IProfile } from 'ipmc-interfaces';
 import { CID } from 'multiformats';
 import { gossipsub } from '@chainsafe/libp2p-gossipsub';
 import { pubsubPeerDiscovery } from '@libp2p/pubsub-peer-discovery';
@@ -37,8 +37,14 @@ function getProfileFolder(name: string): string {
 	return `./profiles/${name}`;
 }
 
+const nodes = new Map<string, IIpfsService>();
+
 const nodeService: INodeService = {
 	async create(profile: IInternalProfile): Promise<IIpfsService> {
+		if (nodes.has(profile.id)) {
+			return nodes.get(profile.id)!;
+		}
+
 		const agentVersion = `helia/2.0.0 ${libp2pInfo.name}/${libp2pInfo.version} UserAgent=${process.version}`;
 		const datastore = new LevelDatastore(`${getProfileFolder(profile.name)}/data`);
 		await datastore.open();
@@ -130,7 +136,7 @@ const nodeService: INodeService = {
 
 		const app = express();
 		app.get('/:cid', async (request, response) => {
-			const CHUNK_SIZE = (10 ** 6) * 5;
+			const CHUNK_SIZE = (10 ** 6) * 3;
 			const rangeHeader = request.headers.range;
 			const offsetString = rangeHeader != undefined ? rangeHeader.substring(rangeHeader.indexOf('=') + 1, rangeHeader.indexOf('-')) : undefined;
 			const offset = offsetString !== undefined && offsetString !== '' ? parseInt(offsetString) : 0;
@@ -141,7 +147,7 @@ const nodeService: INodeService = {
 			request.once('close', () => controller.abort('Request cancelled'));
 			const stat = await fs.stat(cid, { signal: controller.signal });
 			const fileSize = parseInt(stat.fileSize.toString());
-			const end = Math.min(offset + CHUNK_SIZE, fileSize);
+			const end = rangeHeader === undefined ? fileSize - 1 : Math.min(offset + CHUNK_SIZE, fileSize - 1);
 			const length = end - offset;
 
 			const headers = {
@@ -163,7 +169,7 @@ const nodeService: INodeService = {
 				signal: controller.signal,
 			})) {
 				try {
-				await new Promise<void>((resolve, reject) => response.write(buf, (ex) => ex != undefined ? reject(ex) : resolve()));
+					await new Promise<void>((resolve, reject) => response.write(buf, (ex) => ex != undefined ? reject(ex) : resolve()));
 				} catch (ex) {
 					console.error(ex);
 				}
@@ -175,7 +181,7 @@ const nodeService: INodeService = {
 			const server = app.listen(gatewayPort, '127.0.0.1', () => resolve(server));
 		});
 
-		return ({
+		const service = ({
 			async ls(cid: string) {
 				const files: IFileInfo[] = [];
 				for await (const file of fs.ls(CID.parse(cid))) {
@@ -192,6 +198,7 @@ const nodeService: INodeService = {
 				await helia.stop();
 				await blockstore.close();
 				await datastore.close();
+				nodes.delete(profile.id);
 			},
 			toUrl(cid: string) {
 				return `http://127.0.0.1:${gatewayPort}/${cid}`;
@@ -224,6 +231,10 @@ const nodeService: INodeService = {
 				}
 			},
 		});
+
+		nodes.set(profile.id, service);
+
+		return service;
 	},
 };
 

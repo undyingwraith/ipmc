@@ -21,7 +21,7 @@
 	},
 	"build": {
 		"files": [
-			"build/**/*"
+			"out/**/*"
 		]
 	},
 	"dependencies": {
@@ -43,6 +43,8 @@
 		"express": "^4.19.2",
 		"helia": "^4.2.2",
 		"ipmc-core": "workspace:^",
+		"ipmc-interfaces": "workspace:^",
+		"ipmc-ui": "workspace:^",
 		"kubo-rpc-client": "^4.1.1",
 		"libp2p": "^1.3.0",
 		"multiformats": "^13.1.0",

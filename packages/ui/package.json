@@ -1,0 +1,52 @@
+{
+	"name": "ipmc-ui",
+	"packageManager": "yarn@4.0.2",
+	"type": "module",
+	"main": "./dist/index.umd.cjs",
+	"module": "./dist/index.js",
+	"typings": "./dist/index.d.ts",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"require": "./dist/index.umd.cjs"
+		}
+	},
+	"scripts": {
+		"watch": "vite build --watch --mode dev",
+		"build": "vite build",
+		"test": "vitest run"
+	},
+	"devDependencies": {
+		"@types/react": "^18.3.1",
+		"@types/react-dom": "^18.3.0",
+		"terser": "^5.31.0",
+		"typescript": "^5.4.5",
+		"vite": "^5.2.11",
+		"vite-plugin-checker": "^0.6.4",
+		"vite-plugin-dts": "^3.9.1",
+		"vitest": "^1.6.0"
+	},
+	"dependencies": {
+		"@emotion/react": "^11.11.4",
+		"@emotion/styled": "^11.11.5",
+		"@helia/unixfs": "^3.0.6",
+		"@libp2p/pnet": "^1.0.1",
+		"@mui/icons-material": "^5.15.15",
+		"@mui/material": "^5.15.15",
+		"@preact/signals-react": "^2.0.1",
+		"helia": "^4.2.2",
+		"i18next": "^23.11.2",
+		"ipmc-core": "workspace:^",
+		"ipmc-interfaces": "workspace:^",
+		"minidenticons": "^4.2.1",
+		"multiformats": "^13.1.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"react-i18next": "^14.1.1",
+		"wouter": "^3.2.0"
+	}
+}
