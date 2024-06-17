@@ -2,33 +2,27 @@ import { Box, Button, Toolbar } from "@mui/material";
 import React from "react";
 import { ConnectionStatus } from "../molecules/ConnectionStatus";
 import { LanguageSelector } from "../molecules/LanguageSelector";
-import { Signal, useComputed } from '@preact/signals-react';
 import { ThemeToggle } from '../atoms/ThemeToggle';
 import { useTranslation } from '../../hooks/useTranslation';
-import { IIpfsService, IProfile } from 'ipmc-interfaces';
+import { IIpfsService, IIpfsServiceSymbol, IProfileManager, IProfileManagerSymbol } from 'ipmc-interfaces';
 import { useTheme } from '../../context/ThemeContext';
+import { useOptionalService, useService } from '../../context';
+import { IReturnToLauncherAction, IReturnToLauncherActionSymbol } from '../../IpmcLauncher';
 
-export function AppBar(props: {
-	shutdownProfile: () => void;
-	ipfs: Signal<IIpfsService | undefined>;
-	profile: Signal<IProfile | undefined>;
-}) {
-	const { shutdownProfile, ipfs, profile } = props;
+export function AppBar() {
+	const shutdownProfile = useOptionalService<IReturnToLauncherAction>(IReturnToLauncherActionSymbol);
+	const ipfs = useService<IIpfsService>(IIpfsServiceSymbol);
+	const { profile } = useService<IProfileManager>(IProfileManagerSymbol);
 	const _t = useTranslation();
 	const { darkMode } = useTheme();
-
-	const status = useComputed(() => ipfs.value != undefined && (<ConnectionStatus ipfs={ipfs.value} />));
-	const logout = useComputed(() => ipfs.value != undefined && (<>
-		<Button onClick={shutdownProfile}>{_t('Logout')}</Button>
-		{profile.value?.name}
-	</>));
 
 	return (
 		<Box sx={{ backgroundColor: 'primary' }}>
 			<Toolbar>
-				{logout}
+				{shutdownProfile && <Button onClick={shutdownProfile}>{_t('Logout')}</Button>}
+				{profile.name}
 				<Box sx={{ flexGrow: 1 }} />
-				{status}
+				<ConnectionStatus ipfs={ipfs} />
 				<ThemeToggle isDark={darkMode} toggle={() => {
 					darkMode.value = !darkMode.value;
 				}} />

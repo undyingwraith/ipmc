@@ -4,6 +4,8 @@ import { ITask } from '../ITask';
 import { IProfile } from '../Profile';
 import { IIpfsService } from './IIpfsService';
 
+export const IProfileManagerSymbol = Symbol.for('IProfileManager');
+
 /**
  * Manages a profile.
  */

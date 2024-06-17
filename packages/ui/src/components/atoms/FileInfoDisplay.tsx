@@ -1,12 +1,12 @@
 import { Box, Stack, Typography } from '@mui/material';
-import { IFileInfo, isPosterFeature } from 'ipmc-interfaces';
+import { IFileInfo, IIpfsService, IIpfsServiceSymbol, isPosterFeature } from 'ipmc-interfaces';
 import React from 'react';
-import { useProfile } from '../../context/ProfileContext';
 import { useTitle } from '../../hooks/useTitle';
+import { useService } from '../../context/AppContext';
 
 export function FileInfoDisplay(props: { file: IFileInfo; }) {
 	const { file } = props;
-	const { ipfs } = useProfile();
+	const ipfs = useService<IIpfsService>(IIpfsServiceSymbol);
 	const name = useTitle(file);
 	const title = (
 		<Typography variant={'h3'}>{name}</Typography>

@@ -1,8 +1,16 @@
 import { Container, interfaces } from 'inversify';
 import { IApplication } from './IApplication';
 import { IModule } from './Modules/IModule';
+import { IApplicationRegistration } from './IApplicationRegistration';
 
-export class Application implements IApplication {
+export class Application implements IApplication, IApplicationRegistration {
+	public registerConstant<T>(service: T, identifier: symbol) {
+		if (this.container.isBound(identifier)) {
+			this.container.unbind(identifier);
+		}
+		this.container.bind<T>(identifier).toConstantValue(service);
+	}
+
 	public register<T>(service: interfaces.Newable<T>, identifier: symbol) {
 		if (this.container.isBound(identifier)) {
 			this.container.unbind(identifier);
@@ -10,12 +18,12 @@ export class Application implements IApplication {
 		this.container.bind<T>(identifier).to(service);
 	}
 
-	getService<T>(identifier: symbol): T | undefined {
-		return this.container.get<T>(identifier);
+	public use(module: IModule): void {
+		module(this);
 	}
 
-	use(module: IModule): void {
-		module(this);
+	public getService<T>(identifier: symbol): T | undefined {
+		return this.container.get<T>(identifier);
 	}
 
 	/**

@@ -4,11 +4,11 @@ import { FileView } from './FileView';
 import { ReadonlySignal, useComputed, useSignal } from '@preact/signals-react';
 import { LoadScreen } from '../molecules/LoadScreen';
 import { Grid } from '@mui/material';
-import { IFileInfo } from 'ipmc-interfaces';
+import { IFileInfo, IProfileManager, IProfileManagerSymbol } from 'ipmc-interfaces';
 import { Display } from '../pages/LibraryManager';
-import { useProfile } from '../../context/ProfileContext';
 import { useWatcher } from '../../hooks';
 import { ErrorBoundary } from '../atoms/ErrorBoundary';
+import { useService } from '../../context/AppContext';
 
 export function Library(props: {
 	display: ReadonlySignal<Display>;
@@ -16,7 +16,7 @@ export function Library(props: {
 	library: string;
 }) {
 	const { display, library } = props;
-	const { profile } = useProfile();
+	const profile = useService<IProfileManager>(IProfileManagerSymbol);
 
 	const selected = useSignal<IFileInfo | undefined>(undefined);
 	const index = useWatcher<{ cid: string; values: IFileInfo[]; } | undefined>(profile.libraries.get(library)?.value.index as { cid: string; values: IFileInfo[]; } | undefined);

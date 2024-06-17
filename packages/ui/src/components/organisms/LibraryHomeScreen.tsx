@@ -1,12 +1,13 @@
 import { Box, Card, CardContent, CardHeader, Stack, Typography } from '@mui/material';
 import { useComputed } from '@preact/signals-react';
-import { useProfile } from '../../context/ProfileContext';
 import React from 'react';
 import { Loader } from '../atoms';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useService } from '../../context/AppContext';
+import { IProfileManager, IProfileManagerSymbol } from 'ipmc-interfaces';
 
 export function LibraryHomeScreen() {
-	const { profile } = useProfile();
+	const profile = useService<IProfileManager>(IProfileManagerSymbol);
 	const _t = useTranslation();
 
 	const status = useComputed(() => profile.tasks.value.length > 0 ? (

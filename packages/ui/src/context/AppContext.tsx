@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Application, IApplication } from 'ipmc-core';
+import { Application, IApplication, IModule } from 'ipmc-core';
 import { PropsWithChildren, createContext } from 'react';
 import { useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
 import { LoadScreen } from '../components/molecules/LoadScreen';
@@ -7,7 +7,7 @@ import { ThemeContextProvider } from './ThemeContext';
 
 const AppContext = createContext({} as IApplication);
 
-export function AppContextProvider(props: PropsWithChildren<{ setup: (app: IApplication) => void; }>) {
+export function AppContextProvider(props: PropsWithChildren<{ setup: IModule; }>) {
 	const application = useSignal<IApplication | undefined>(undefined);
 
 	useSignalEffect(() => {
@@ -29,7 +29,6 @@ export function AppContextProvider(props: PropsWithChildren<{ setup: (app: IAppl
 	);
 }
 
-
 export function useApp() {
 	return useContext(AppContext);
 }
@@ -38,3 +37,13 @@ export function useService<T>(identifier: symbol): T {
 	const app = useApp();
 	return app.getService<T>(identifier)!;
 }
+
+export function useOptionalService<T>(identifier: symbol): T | undefined {
+	const app = useApp();
+	try {
+		return app.getService<T>(identifier)!;
+	} catch (ex) {
+		return undefined;
+	}
+}
+
