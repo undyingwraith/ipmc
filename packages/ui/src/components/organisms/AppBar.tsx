@@ -4,7 +4,7 @@ import { ConnectionStatus } from "../molecules/ConnectionStatus";
 import { LanguageSelector } from "../molecules/LanguageSelector";
 import { ThemeToggle } from '../atoms/ThemeToggle';
 import { useTranslation } from '../../hooks/useTranslation';
-import { IIpfsService, IIpfsServiceSymbol, IProfileManager, IProfileManagerSymbol } from 'ipmc-interfaces';
+import { IIpfsService, IIpfsServiceSymbol, IProfile, IProfileSymbol } from 'ipmc-interfaces';
 import { useTheme } from '../../context/ThemeContext';
 import { useOptionalService, useService } from '../../context';
 import { IReturnToLauncherAction, IReturnToLauncherActionSymbol } from '../../IpmcLauncher';
@@ -12,7 +12,7 @@ import { IReturnToLauncherAction, IReturnToLauncherActionSymbol } from '../../Ip
 export function AppBar() {
 	const shutdownProfile = useOptionalService<IReturnToLauncherAction>(IReturnToLauncherActionSymbol);
 	const ipfs = useService<IIpfsService>(IIpfsServiceSymbol);
-	const { profile } = useService<IProfileManager>(IProfileManagerSymbol);
+	const profile = useService<IProfile>(IProfileSymbol);
 	const _t = useTranslation();
 	const { darkMode } = useTheme();
 

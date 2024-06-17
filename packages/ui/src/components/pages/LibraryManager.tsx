@@ -6,7 +6,7 @@ import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Stack } from '@mui/material';
 import { Signal, useComputed, useSignal } from "@preact/signals-react";
 import React from "react";
-import { ILibrary, IProfileManager, IProfileManagerSymbol } from "ipmc-interfaces";
+import { ILibrary, IProfile, IProfileSymbol } from "ipmc-interfaces";
 import { LibraryAppBar } from "../organisms/LibraryAppBar";
 import { LibraryHomeScreen } from '../organisms/LibraryHomeScreen';
 import { useTranslation } from '../../hooks/useTranslation';
@@ -21,9 +21,9 @@ const icons = {
 } as { [key: string]: any; };
 
 export function LibraryManager() {
-	const profile = useService<IProfileManager>(IProfileManagerSymbol);
+	const profile = useService<IProfile>(IProfileSymbol);
 	const _t = useTranslation();
-	const libraries = profile.profile.libraries;
+	const libraries = profile.libraries;
 	const library = useSignal<ILibrary | undefined>(undefined);
 	const display = useSignal<Display>(Display.Poster);
 	const query = useSignal<string>('');

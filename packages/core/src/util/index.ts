@@ -1,0 +1,1 @@
+export { createRemoteIpfs } from './createRemoteIpfs';

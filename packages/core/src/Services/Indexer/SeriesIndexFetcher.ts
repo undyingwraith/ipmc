@@ -6,6 +6,8 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 	constructor(private readonly node: IIpfsService, private readonly lib: IGenericLibrary<ISeriesMetaData, 'series'>) {
 	}
 
+	public version = '0';
+
 	public async fetchIndex(): Promise<ISeriesMetaData[]> {
 		const files = (await this.node.ls(this.lib.root.toString())).filter(f => f.type == 'dir');
 		const index = [];
