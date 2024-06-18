@@ -9,6 +9,7 @@ import { Display } from '../pages/LibraryManager';
 import { ErrorBoundary } from '../atoms/ErrorBoundary';
 import { createFilter } from 'ipmc-core';
 import { useService } from '../../context/AppContext';
+import { useWatcher } from '../../hooks';
 
 export function Library(props: {
 	display: ReadonlySignal<Display>;
@@ -16,7 +17,8 @@ export function Library(props: {
 	library: string;
 }) {
 	const { display, library } = props;
-	const index = useService<IIndexManager>(IIndexManagerSymbol).indexes.get(library)!;
+	const indexManager = useService<IIndexManager>(IIndexManagerSymbol);
+	const index = useWatcher(indexManager.indexes.get(library)!.value);
 	const selected = useSignal<IFileInfo | undefined>(undefined);
 
 
