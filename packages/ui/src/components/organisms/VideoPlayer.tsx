@@ -1,10 +1,10 @@
 import React, { useRef } from 'react';
-import { IVideoFile } from 'ipmc-interfaces';
-import { useProfile } from '../../context/ProfileContext';
+import { IIpfsService, IIpfsServiceSymbol, IVideoFile } from 'ipmc-interfaces';
 import { useHotkey } from '../../hooks';
+import { useService } from '../../context';
 
 export function VideoPlayer(props: { file: IVideoFile; }) {
-	const { ipfs } = useProfile();
+	const ipfs = useService<IIpfsService>(IIpfsServiceSymbol);
 	const videoRef = useRef<HTMLVideoElement>(null);
 
 	useHotkey({ key: 'F' }, () => {

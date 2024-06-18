@@ -1,5 +1,6 @@
 import { ReadonlySignal, useSignal, useSignalEffect } from '@preact/signals-react';
-import { useProfile } from '../context/ProfileContext';
+import { useService } from '../context/AppContext';
+import { IIpfsService, IIpfsServiceSymbol } from 'ipmc-interfaces';
 
 export enum PinStatus {
 	Unknown,
@@ -10,7 +11,7 @@ export enum PinStatus {
 }
 
 export function usePinManager(cid: string): [ReadonlySignal<PinStatus>, setState: (pin: boolean) => void] {
-	const { ipfs } = useProfile();
+	const ipfs = useService<IIpfsService>(IIpfsServiceSymbol);
 	const status = useSignal<PinStatus>(PinStatus.Unknown);
 
 	function setState(pin: boolean) {

@@ -1,5 +1,7 @@
 import { IFileInfo } from '../MetaData';
 
+export const IIpfsServiceSymbol = Symbol.for('IIpfsService');
+
 export interface IIpfsService {
 	/**
 	 * Checks whether a cid is pinned.

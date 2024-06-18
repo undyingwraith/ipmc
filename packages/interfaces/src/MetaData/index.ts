@@ -1,10 +1,7 @@
 export * from './Features';
 export * from './Library';
-export type { IFileInfo } from './IFileInfo';
-export { isIFileInfo } from './IFileInfo';
-export type { IFolderFile } from './IFolderFile';
-export { isIFolderFile } from './IFolderFile';
-export type { IImageFile } from './IImageFile';
-export { isIImageFile } from './IImageFile';
-export type { IVideoFile } from './IVideoFile';
-export { isIVideoFile } from './IVideoFile';
+export { type IFileInfo, isIFileInfo } from './IFileInfo';
+export { type IFolderFile, isIFolderFile } from './IFolderFile';
+export { type IImageFile, isIImageFile } from './IImageFile';
+export { type ILibraryIndex } from './ILibraryIndex';
+export { type IVideoFile, isIVideoFile } from './IVideoFile';

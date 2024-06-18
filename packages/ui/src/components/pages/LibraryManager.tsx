@@ -5,15 +5,15 @@ import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Stack } from '@mui/material';
 import { Signal, useComputed, useSignal } from "@preact/signals-react";
+import { ILibrary, IProfile, IProfileSymbol } from "ipmc-interfaces";
 import React from "react";
-import { LibraryAppBar } from "../organisms/LibraryAppBar";
-import { useProfile } from "../../context/ProfileContext";
-import { LibraryHomeScreen } from '../organisms/LibraryHomeScreen';
+import { Route, useLocation } from 'wouter';
+import { useService } from '../../context/AppContext';
 import { useTranslation } from '../../hooks/useTranslation';
-import { Library } from '../organisms/Library';
 import { ErrorBoundary } from '../atoms/ErrorBoundary';
-import { Route, useLocation, useRoute } from 'wouter';
-import { useWatcher } from '../../hooks';
+import { Library } from '../organisms/Library';
+import { LibraryAppBar } from "../organisms/LibraryAppBar";
+import { LibraryHomeScreen } from '../organisms/LibraryHomeScreen';
 
 const icons = {
 	movie: <MovieIcon />,
@@ -22,15 +22,13 @@ const icons = {
 } as { [key: string]: any; };
 
 export function LibraryManager() {
-	const { profile } = useProfile();
-	const [, params] = useRoute<{ library: string; }>('/:library');
-	const [, setLocation] = useLocation();
+	const profile = useService<IProfile>(IProfileSymbol);
 	const _t = useTranslation();
-
-	const libraries = profile.profile.libraries;
-	const library = useWatcher(() => params?.library !== undefined ? profile.libraries.get(params?.library) : undefined);
+	const libraries = profile.libraries;
+	const library = useSignal<ILibrary | undefined>(undefined);
 	const display = useSignal<Display>(Display.Poster);
 	const query = useSignal<string>('');
+	const [_, setLocation] = useLocation();
 
 	const sidebar = useComputed(() => (
 		<List>
@@ -49,7 +47,7 @@ export function LibraryManager() {
 			{libraries.map((lib) => (
 				<ListItem key={lib.name} disablePadding>
 					<ListItemButton
-						selected={library.value.name == lib.name}
+						selected={library.value?.name == lib.name}
 						onClick={() => {
 							setLocation('/' + lib.name);
 						}}>

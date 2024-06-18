@@ -6,6 +6,8 @@ export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 	constructor(private readonly node: IIpfsService, private readonly lib: IGenericLibrary<IMovieMetaData, 'movie'>) {
 	}
 
+	public version = '0';
+
 	public async fetchIndex(): Promise<IMovieMetaData[]> {
 		const files = (await this.node.ls(this.lib.root.toString())).filter(f => f.type == 'dir');
 		const index = [];
