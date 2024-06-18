@@ -64,13 +64,13 @@ export class IndexManager implements IIndexManager {
 		if (library.upstream != undefined && index != undefined) {
 			try {
 				const cid = await this.ipfs.resolve(library.upstream);
-				const indexer = isMovieLibrary(library) ? new MovieIndexFetcher(this.ipfs, library) : isSeriesLibrary(library) ? new SeriesIndexFetcher(this.ipfs, library) : undefined;
-				if (index.value?.cid != cid || indexer?.version !== index.value?.indexer) {
+				const indexer = isMovieLibrary(library) ? new MovieIndexFetcher(this.ipfs) : isSeriesLibrary(library) ? new SeriesIndexFetcher(this.ipfs) : undefined;
+				if (index.value?.cid != cid || indexer?.version !== index.value.indexer) {
 					if (indexer == undefined) {
 						throw new Error(`Unknown library type [${library.type}]`);
 					}
 
-					const newIndex = await indexer.fetchIndex();
+					const newIndex = await indexer.fetchIndex(cid);
 
 					index.value = {
 						cid: cid,

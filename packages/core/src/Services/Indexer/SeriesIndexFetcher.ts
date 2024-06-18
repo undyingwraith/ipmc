@@ -1,15 +1,15 @@
-import { IIpfsService, IEpisodeMetaData, IGenericLibrary, ISeasonMetaData, ISeriesMetaData, IFileInfo } from 'ipmc-interfaces';
-import { IIndexFetcher } from './IIndexFetcher';
+import { IEpisodeMetaData, IFileInfo, IIpfsService, ISeasonMetaData, ISeriesMetaData } from 'ipmc-interfaces';
 import { Regexes } from '../../Regexes';
+import { IIndexFetcher } from './IIndexFetcher';
 
 export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
-	constructor(private readonly node: IIpfsService, private readonly lib: IGenericLibrary<ISeriesMetaData, 'series'>) {
+	constructor(private readonly node: IIpfsService) {
 	}
 
 	public version = '0';
 
-	public async fetchIndex(): Promise<ISeriesMetaData[]> {
-		const files = (await this.node.ls(this.lib.root.toString())).filter(f => f.type == 'dir');
+	public async fetchIndex(cid: string): Promise<ISeriesMetaData[]> {
+		const files = (await this.node.ls(cid)).filter(f => f.type == 'dir');
 		const index = [];
 		for (const file of files) {
 			index.push(await this.extractSeriesMetaData(this.node, file));
