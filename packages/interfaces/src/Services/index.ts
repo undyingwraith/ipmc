@@ -1,3 +1,4 @@
+export * from './ITaskManager';
 export { type IConfigurationService } from './IConfigurationService';
 export { IHotkeyServiceSymbol, type IHotkeyService, type IHotkey } from './IHotkeyService';
 export { type IIndexManager, IIndexManagerSymbol } from './IIndexManager';

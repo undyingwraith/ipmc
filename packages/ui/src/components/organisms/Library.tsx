@@ -16,7 +16,7 @@ export function Library(props: {
 	query: ReadonlySignal<string | undefined>;
 	library: string;
 }) {
-	const { display, library } = props;
+	const { display, library, query } = props;
 	const indexManager = useService<IIndexManager>(IIndexManagerSymbol);
 	const index = useWatcher(indexManager.indexes.get(library)!.value);
 	const selected = useSignal<IFileInfo | undefined>(undefined);

@@ -5,7 +5,7 @@ import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Stack } from '@mui/material';
 import { Signal, useComputed, useSignal } from "@preact/signals-react";
-import { ILibrary, IProfile, IProfileSymbol } from "ipmc-interfaces";
+import { IProfile, IProfileSymbol } from "ipmc-interfaces";
 import React from "react";
 import { Route, useLocation } from 'wouter';
 import { useService } from '../../context/AppContext';
@@ -14,6 +14,7 @@ import { ErrorBoundary } from '../atoms/ErrorBoundary';
 import { Library } from '../organisms/Library';
 import { LibraryAppBar } from "../organisms/LibraryAppBar";
 import { LibraryHomeScreen } from '../organisms/LibraryHomeScreen';
+import { useWatcher } from '../../hooks';
 
 const icons = {
 	movie: <MovieIcon />,
@@ -25,16 +26,16 @@ export function LibraryManager() {
 	const profile = useService<IProfile>(IProfileSymbol);
 	const _t = useTranslation();
 	const libraries = profile.libraries;
-	const library = useSignal<ILibrary | undefined>(undefined);
 	const display = useSignal<Display>(Display.Poster);
 	const query = useSignal<string>('');
-	const [_, setLocation] = useLocation();
+	const [loc, setLocation] = useLocation();
+	const location = useWatcher(loc);
 
 	const sidebar = useComputed(() => (
 		<List>
 			<ListItem disablePadding>
 				<ListItemButton
-					selected={library.value == undefined}
+					selected={location.value === '/'}
 					onClick={() => {
 						setLocation('/');
 					}}>
@@ -47,7 +48,7 @@ export function LibraryManager() {
 			{libraries.map((lib) => (
 				<ListItem key={lib.name} disablePadding>
 					<ListItemButton
-						selected={library.value?.name == lib.name}
+						selected={location.value === '/' + lib.name}
 						onClick={() => {
 							setLocation('/' + lib.name);
 						}}>
