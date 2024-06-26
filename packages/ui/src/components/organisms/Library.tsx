@@ -4,22 +4,22 @@ import { FileView } from './FileView';
 import { ReadonlySignal, useComputed, useSignal } from '@preact/signals-react';
 import { LoadScreen } from '../molecules/LoadScreen';
 import { Grid } from '@mui/material';
-import { IFileInfo, IProfileManager, IProfileManagerSymbol } from 'ipmc-interfaces';
+import { IFileInfo, IIndexManager, IIndexManagerSymbol } from 'ipmc-interfaces';
 import { Display } from '../pages/LibraryManager';
-import { useWatcher } from '../../hooks';
 import { ErrorBoundary } from '../atoms/ErrorBoundary';
+import { createFilter } from 'ipmc-core';
 import { useService } from '../../context/AppContext';
+import { useWatcher } from '../../hooks';
 
 export function Library(props: {
 	display: ReadonlySignal<Display>;
-	query?: string;
+	query: ReadonlySignal<string | undefined>;
 	library: string;
 }) {
-	const { display, library } = props;
-	const profile = useService<IProfileManager>(IProfileManagerSymbol);
-
+	const { display, library, query } = props;
+	const indexManager = useService<IIndexManager>(IIndexManagerSymbol);
+	const index = useWatcher(indexManager.indexes.get(library)!.value);
 	const selected = useSignal<IFileInfo | undefined>(undefined);
-	const index = useWatcher<{ cid: string; values: IFileInfo[]; } | undefined>(profile.libraries.get(library)?.value.index as { cid: string; values: IFileInfo[]; } | undefined);
 
 
 	const detail = useComputed(() => selected.value !== undefined ? (
@@ -34,13 +34,14 @@ export function Library(props: {
 
 	return useComputed(() => {
 		const i = index.value;
+		const q = query.value;
 
 		return i?.cid == undefined ? (
 			<LoadScreen />
 		) : (
 			<>
 				<Grid container spacing={1} sx={{ height: '100%', justifyContent: 'center' }}>
-					{i.values.map(v => (
+					{(q === undefined ? i.index : i.index.filter(createFilter(q))).map(v => (
 						<Grid item key={v.cid}>
 							<ErrorBoundary>
 								<FileGridItem

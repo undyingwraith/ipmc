@@ -1,8 +1,8 @@
 import React, { PropsWithChildren } from 'react';
 import { useComputed, useSignal } from '@preact/signals-react';
 import { useTranslation } from './hooks';
-import { IConfigurationService, IIpfsService, IIpfsServiceSymbol, INodeService, IProfileManager, IProfileManagerSymbol, isInternalProfile, isRemoteProfile } from 'ipmc-interfaces';
-import { RemoteProfileManager, SimpleProfileManager } from 'ipmc-core';
+import { IConfigurationService, IIpfsService, IIpfsServiceSymbol, INodeService, IProfile, IProfileSymbol, isInternalProfile, isRemoteProfile } from 'ipmc-interfaces';
+import { createRemoteIpfs } from 'ipmc-core';
 import { IpmcApp } from './IpmcApp';
 import { Alert, Box, Button, ButtonGroup, Stack } from '@mui/material';
 import { ProfileSelector } from './components/molecules/ProfileSelector';
@@ -28,32 +28,27 @@ export type IReturnToLauncherAction = () => void;
 export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 	const _t = useTranslation();
 
-	const profileManager = useSignal<IProfileManager | undefined>(undefined);
 	const state = useSignal<LoadState>(LoadState.Idle);
+	const node = useSignal<IIpfsService | undefined>(undefined);
+	const profile = useSignal<IProfile | undefined>(undefined);
 
 	async function start(name: string) {
 		if (name == undefined) return;
 
 		const currentProfile = props.configService.getProfile(name);
 		if (currentProfile != undefined) {
+			profile.value = currentProfile;
 			try {
 				state.value = LoadState.Starting;
 
-				let manager: IProfileManager | undefined;
 				if (isRemoteProfile(currentProfile)) {
-					manager = new RemoteProfileManager(currentProfile);
+					node.value = await createRemoteIpfs(currentProfile.url);
 				}
 				if (isInternalProfile(currentProfile)) {
-					manager = new SimpleProfileManager(await props.nodeService.create(currentProfile), currentProfile);
+					node.value = await props.nodeService.create(currentProfile);
 				}
 
-				if (manager) {
-					await manager.start();
-					profileManager.value = manager;
-					state.value = LoadState.Ready;
-				} else {
-					state.value = LoadState.Error;
-				}
+				state.value = LoadState.Ready;
 			} catch (ex) {
 				console.error(ex);
 				state.value = LoadState.Error;
@@ -65,8 +60,9 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 		if (node.value != undefined) {
 			state.value = LoadState.Stopping;
 			try {
-				await profileManager.value!.stop();
-				profileManager.value = undefined;
+				await node.value!.stop();
+				node.value = undefined;
+				profile.value = undefined;
 			} catch (ex) {
 				console.error(ex);
 				state.value = LoadState.Error;
@@ -75,11 +71,10 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 		state.value = LoadState.Idle;
 	}
 
-	const node = useComputed(() => profileManager.value?.ipfs);
-
 	const content = useComputed(() => {
-		const manager = profileManager.value;
+		const ipfs = node.value;
 		const currentState = state.value;
+		const currentProfile = profile.value;
 
 		switch (currentState) {
 			case LoadState.Error:
@@ -105,8 +100,8 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 			case LoadState.Ready:
 				return (
 					<IpmcApp setup={(app) => {
-						app.registerConstant<IIpfsService>(manager!.ipfs!, IIpfsServiceSymbol);
-						app.registerConstant<IProfileManager>(manager!, IProfileManagerSymbol);
+						app.registerConstant<IIpfsService>(ipfs!, IIpfsServiceSymbol);
+						app.registerConstant<IProfile>(currentProfile!, IProfileSymbol);
 						app.registerConstant<IReturnToLauncherAction>(stop, IReturnToLauncherActionSymbol);
 					}} />
 				);

@@ -40,13 +40,15 @@ export function LibraryAppBar(props: { query: Signal<string>, display: Signal<Di
 	return (
 		<AppBar position={'relative'}>
 			<Toolbar>
-				<TextField
-					label={_t('Search')}
-					variant="standard"
-					size="small"
-					value={query.value}
-					onChange={(e) => query.value = e.target.value}
-				/>
+				{useComputed(() => (
+					<TextField
+						label={_t('Search')}
+						variant="standard"
+						size="small"
+						value={query.value}
+						onChange={(e) => query.value = e.target.value}
+					/>
+				))}
 				<Box sx={{ flexGrow: 1 }} />
 				{displayButtons}
 			</Toolbar>

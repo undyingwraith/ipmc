@@ -1,3 +1,4 @@
 export interface IIndexFetcher<TIndex> {
-	fetchIndex(): Promise<TIndex>;
+	fetchIndex(cid: string): Promise<TIndex>;
+	version: string;
 }

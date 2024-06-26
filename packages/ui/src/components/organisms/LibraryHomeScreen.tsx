@@ -1,19 +1,19 @@
 import { Box, Card, CardContent, CardHeader, Stack, Typography } from '@mui/material';
 import { useComputed } from '@preact/signals-react';
+import { ITaskManager, ITaskManagerSymbol } from 'ipmc-interfaces';
 import React from 'react';
-import { Loader } from '../atoms';
+import { useService } from '../../context';
 import { useTranslation } from '../../hooks/useTranslation';
-import { useService } from '../../context/AppContext';
-import { IProfileManager, IProfileManagerSymbol } from 'ipmc-interfaces';
+import { Loader } from '../atoms';
 
 export function LibraryHomeScreen() {
-	const profile = useService<IProfileManager>(IProfileManagerSymbol);
 	const _t = useTranslation();
+	const taskManager = useService<ITaskManager>(ITaskManagerSymbol);
 
-	const status = useComputed(() => profile.tasks.value.length > 0 ? (
+	const status = useComputed(() => taskManager.status.value.length > 0 ? (
 		<Card>
 			<CardHeader title={_t('ActiveTasks')} />
-			{profile.tasks.value.map(t => (
+			{taskManager.status.value.map(t => (
 				<CardContent>
 					<Stack direction={"row"} gap={1}>
 						<Loader />
