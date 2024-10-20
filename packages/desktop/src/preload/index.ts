@@ -31,7 +31,10 @@ import { autoNAT } from '@libp2p/autonat';
 import { ipnsSelector } from 'ipns/selector';
 import { ipnsValidator } from 'ipns/validator';
 import { uPnPNAT } from '@libp2p/upnp-nat';
+import { webTransport } from '@libp2p/webtransport';
 import * as libp2pInfo from 'libp2p/version';
+import { concat } from 'uint8arrays';
+import { Defaults } from 'ipmc-core';
 
 function getProfileFolder(name: string): string {
 	return `./profiles/${name}`;
@@ -71,6 +74,7 @@ const nodeService: INodeService = {
 					}),
 				} : {}),
 				transports: [
+					webTransport(),
 					webSockets(),
 					tcp(),
 					circuitRelayTransport({
@@ -79,12 +83,7 @@ const nodeService: INodeService = {
 				],
 				peerDiscovery: [
 					bootstrap({
-						list: profile.bootstrap ?? (profile.swarmKey != undefined ? [] : [
-							// a list of bootstrap peer multiaddrs to connect to on node startup
-							'/ip4/104.131.131.82/tcp/4001/ipfs/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ',
-							'/dnsaddr/bootstrap.libp2p.io/ipfs/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN',
-							'/dnsaddr/bootstrap.libp2p.io/ipfs/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa',
-						]),
+						list: profile.bootstrap ?? (profile.swarmKey != undefined ? [] : Defaults.Bootstrap),
 					}),
 					pubsubPeerDiscovery(),
 					mdns(),
@@ -229,6 +228,13 @@ const nodeService: INodeService = {
 				for await (const block of helia.pins.rm(CID.parse(cid))) {
 					console.log(`Pin progress ${cid}: ${block.toString()}`);
 				}
+			},
+			async fetch(cid: string) {
+				const data: Uint8Array[] = [];
+				for await (const buf of fs.cat(CID.parse(cid))) {
+					data.push(buf);
+				}
+				return concat(data);
 			},
 		});
 

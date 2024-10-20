@@ -38,6 +38,7 @@ export default defineConfig(({ mode }) => ({
 				'multiformats',
 				'ipmc-core',
 				'ipmc-interfaces',
+				'shaka-player',
 			],
 			output: {
 				// Provide global variables to use in the UMD build

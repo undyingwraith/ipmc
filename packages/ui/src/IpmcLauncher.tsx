@@ -43,9 +43,10 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 
 				if (isRemoteProfile(currentProfile)) {
 					node.value = await createRemoteIpfs(currentProfile.url);
-				}
-				if (isInternalProfile(currentProfile)) {
+				} else if (isInternalProfile(currentProfile)) {
 					node.value = await props.nodeService.create(currentProfile);
+				} else {
+					throw new Error('Unknown profile type');
 				}
 
 				state.value = LoadState.Ready;

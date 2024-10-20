@@ -50,4 +50,10 @@ export interface IIpfsService {
 	 * Returns node id.
 	 */
 	id(): string;
+
+	/**
+	 * Fetches a block.
+	 * @param cid cid of the block to fetch.
+	 */
+	fetch(cid: string): Promise<Uint8Array>;
 }
