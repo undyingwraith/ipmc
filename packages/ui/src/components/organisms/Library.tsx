@@ -1,15 +1,15 @@
-import React from 'react';
-import { FileGridItem } from '../molecules/FileGridItem';
-import { FileView } from './FileView';
-import { ReadonlySignal, useComputed, useSignal } from '@preact/signals-react';
-import { LoadScreen } from '../molecules/LoadScreen';
 import { Grid } from '@mui/material';
-import { IFileInfo, IIndexManager, IIndexManagerSymbol } from 'ipmc-interfaces';
-import { Display } from '../pages/LibraryManager';
-import { ErrorBoundary } from '../atoms/ErrorBoundary';
+import { ReadonlySignal, useComputed, useSignal } from '@preact/signals-react';
 import { createFilter } from 'ipmc-core';
+import { IFileInfo, IIndexManager, IIndexManagerSymbol } from 'ipmc-interfaces';
+import React from 'react';
 import { useService } from '../../context/AppContext';
-import { useWatcher } from '../../hooks';
+import { useLinkedSignal } from '../../hooks';
+import { ErrorBoundary } from '../atoms/ErrorBoundary';
+import { FileGridItem } from '../molecules/FileGridItem';
+import { LoadScreen } from '../molecules/LoadScreen';
+import { Display } from '../pages/LibraryManager';
+import { FileView } from './FileView';
 
 export function Library(props: {
 	display: ReadonlySignal<Display>;
@@ -18,7 +18,7 @@ export function Library(props: {
 }) {
 	const { display, library, query } = props;
 	const indexManager = useService<IIndexManager>(IIndexManagerSymbol);
-	const index = useWatcher(indexManager.indexes.get(library)!.value);
+	const index = useLinkedSignal(indexManager.indexes.get(library)!.value);
 	const selected = useSignal<IFileInfo | undefined>(undefined);
 
 

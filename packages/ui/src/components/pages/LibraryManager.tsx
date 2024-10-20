@@ -14,7 +14,7 @@ import { ErrorBoundary } from '../atoms/ErrorBoundary';
 import { Library } from '../organisms/Library';
 import { LibraryAppBar } from "../organisms/LibraryAppBar";
 import { LibraryHomeScreen } from '../organisms/LibraryHomeScreen';
-import { useWatcher } from '../../hooks';
+import { useLinkedSignal } from '../../hooks';
 
 const icons = {
 	movie: <MovieIcon />,
@@ -29,7 +29,7 @@ export function LibraryManager() {
 	const display = useSignal<Display>(Display.Poster);
 	const query = useSignal<string>('');
 	const [loc, setLocation] = useLocation();
-	const location = useWatcher(loc);
+	const location = useLinkedSignal(loc);
 
 	const sidebar = useComputed(() => (
 		<List>
