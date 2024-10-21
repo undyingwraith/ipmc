@@ -1,40 +1,38 @@
+import { gossipsub } from '@chainsafe/libp2p-gossipsub';
 import { noise, pureJsCrypto } from '@chainsafe/libp2p-noise';
 import { yamux } from '@chainsafe/libp2p-yamux';
-import { mplex } from '@libp2p/mplex';
 import { bitswap, trustlessGateway } from '@helia/block-brokers';
 import { ipns } from '@helia/ipns';
 import { unixfs } from '@helia/unixfs';
+import { autoNAT } from '@libp2p/autonat';
 import { bootstrap } from '@libp2p/bootstrap';
 import { circuitRelayServer, circuitRelayTransport } from '@libp2p/circuit-relay-v2';
-import { peerIdFromString } from '@libp2p/peer-id';
-import { preSharedKey } from '@libp2p/pnet';
-import { tcp } from '@libp2p/tcp';
-import { webSockets } from '@libp2p/websockets';
+import { dcutr } from '@libp2p/dcutr';
+import { identify, identifyPush } from '@libp2p/identify';
 import { kadDHT, removePrivateAddressesMapper } from '@libp2p/kad-dht';
+import { keychain } from '@libp2p/keychain';
+import { mdns } from '@libp2p/mdns';
+import { mplex } from '@libp2p/mplex';
+import { peerIdFromString } from '@libp2p/peer-id';
+import { ping } from '@libp2p/ping';
+import { preSharedKey } from '@libp2p/pnet';
+import { pubsubPeerDiscovery } from '@libp2p/pubsub-peer-discovery';
+import { tcp } from '@libp2p/tcp';
+import { uPnPNAT } from '@libp2p/upnp-nat';
+import { webSockets } from '@libp2p/websockets';
+import { webTransport } from '@libp2p/webtransport';
 import { FsBlockstore } from 'blockstore-fs';
 import { LevelDatastore } from 'datastore-level';
 import { contextBridge } from 'electron';
-import express from 'express';
 import fs from 'fs';
 import { createHelia } from 'helia';
-import { IncomingMessage, Server, ServerResponse } from 'http';
+import { Defaults } from 'ipmc-core';
 import { IConfigurationService, IFileInfo, IInternalProfile, IIpfsService, INodeService, IProfile } from 'ipmc-interfaces';
-import { CID } from 'multiformats';
-import { gossipsub } from '@chainsafe/libp2p-gossipsub';
-import { pubsubPeerDiscovery } from '@libp2p/pubsub-peer-discovery';
-import { mdns } from '@libp2p/mdns';
-import { identify, identifyPush } from '@libp2p/identify';
-import { keychain } from '@libp2p/keychain';
-import { ping } from '@libp2p/ping';
-import { dcutr } from '@libp2p/dcutr';
-import { autoNAT } from '@libp2p/autonat';
 import { ipnsSelector } from 'ipns/selector';
 import { ipnsValidator } from 'ipns/validator';
-import { uPnPNAT } from '@libp2p/upnp-nat';
-import { webTransport } from '@libp2p/webtransport';
 import * as libp2pInfo from 'libp2p/version';
+import { CID } from 'multiformats';
 import { concat } from 'uint8arrays';
-import { Defaults } from 'ipmc-core';
 
 function getProfileFolder(name: string): string {
 	return `./profiles/${name}`;
@@ -133,53 +131,6 @@ const nodeService: INodeService = {
 
 		const fs = unixfs(helia);
 
-		const app = express();
-		app.get('/:cid', async (request, response) => {
-			const CHUNK_SIZE = (10 ** 6) * 3;
-			const rangeHeader = request.headers.range;
-			const offsetString = rangeHeader != undefined ? rangeHeader.substring(rangeHeader.indexOf('=') + 1, rangeHeader.indexOf('-')) : undefined;
-			const offset = offsetString !== undefined && offsetString !== '' ? parseInt(offsetString) : 0;
-
-			const cid = CID.parse(request.params.cid);
-
-			const controller = new AbortController();
-			request.once('close', () => controller.abort('Request cancelled'));
-			const stat = await fs.stat(cid, { signal: controller.signal });
-			const fileSize = parseInt(stat.fileSize.toString());
-			const end = rangeHeader === undefined ? fileSize - 1 : Math.min(offset + CHUNK_SIZE, fileSize - 1);
-			const length = end - offset;
-
-			const headers = {
-				'Accept-Ranges': 'bytes',
-				'Access-Control-Allow-Headers': 'Range',
-				'Access-Control-Expose-Headers': [
-					'Content-Length',
-					'Content-Range',
-				],
-				'Content-Length': length,
-				'Content-Range': `bytes ${offset}-${end}/${fileSize}`,
-			};
-
-			response.writeHead(length + 1 < fileSize ? 206 : 200, headers);
-
-			for await (const buf of fs.cat(cid, {
-				offset,
-				length,
-				signal: controller.signal,
-			})) {
-				try {
-					await new Promise<void>((resolve, reject) => response.write(buf, (ex) => ex != undefined ? reject(ex) : resolve()));
-				} catch (ex) {
-					console.error(ex);
-				}
-			}
-			response.end();
-		});
-		const gatewayPort = 8090;
-		const server = await new Promise<Server<typeof IncomingMessage, typeof ServerResponse>>((resolve) => {
-			const server = app.listen(gatewayPort, '127.0.0.1', () => resolve(server));
-		});
-
 		const service = ({
 			async ls(cid: string) {
 				const files: IFileInfo[] = [];
@@ -193,14 +144,10 @@ const nodeService: INodeService = {
 				return files;
 			},
 			async stop() {
-				server.close();
 				await helia.stop();
 				await blockstore.close();
 				await datastore.close();
 				nodes.delete(profile.id);
-			},
-			toUrl(cid: string) {
-				return `http://127.0.0.1:${gatewayPort}/${cid}`;
 			},
 			peers() {
 				return Promise.resolve([...new Set(helia.libp2p.getConnections().map(p => p.remoteAddr.toString()))]);
@@ -229,9 +176,11 @@ const nodeService: INodeService = {
 					console.log(`Pin progress ${cid}: ${block.toString()}`);
 				}
 			},
-			async fetch(cid: string) {
+			async fetch(cid: string, path?: string) {
 				const data: Uint8Array[] = [];
-				for await (const buf of fs.cat(CID.parse(cid))) {
+				for await (const buf of fs.cat(CID.parse(cid), {
+					path
+				})) {
 					data.push(buf);
 				}
 				return concat(data);

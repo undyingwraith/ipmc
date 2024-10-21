@@ -3,29 +3,20 @@ import { IIpfsService, IIpfsServiceSymbol, IVideoFile } from 'ipmc-interfaces';
 import React from 'react';
 import { useService } from '../../context';
 import { useHotkey } from '../../hooks';
+//@ts-ignore
 import shaka from 'shaka-player';
 
 function createShakaIpfsPlugin(ipfs: IIpfsService): shaka.extern.SchemePlugin {
 	return async (uri: string, request: shaka.extern.Request, requestType: shaka.net.NetworkingEngine.RequestType, progressUpdated: shaka.extern.ProgressUpdated, headersReceived: shaka.extern.HeadersReceived, config: shaka.extern.SchemePluginConfig) => {
-		const path = uri.substring(uri.indexOf('://') + 3);
-		const paths = path.split('/');
-		let cid = paths.shift()!;
+		const fullPath = uri.substring(uri.indexOf('://') + 3);
+		const paths = fullPath.split('/');
+		const cid = paths.shift()!;
+		const path = paths.join('/');
 
-		while (paths.length > 0) {
-			const filename = paths.shift();
-			const files = await ipfs.ls(cid);
-
-			const file = files.find(f => f.name === filename);
-			if (!file) {
-				throw new Error('File Not Found');
-			}
-			cid = file.cid;
-		}
-
-		console.log(uri, path, cid, request, requestType, config);
+		console.log(uri, fullPath, path, cid, request, requestType, config);
 		headersReceived({});
 
-		const data = await ipfs.fetch(cid);
+		const data = await ipfs.fetch(cid, path);
 
 		return {
 			uri: uri,

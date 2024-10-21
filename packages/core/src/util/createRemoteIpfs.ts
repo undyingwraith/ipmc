@@ -1,5 +1,6 @@
 import { IFileInfo, IIpfsService } from 'ipmc-interfaces';
 import { create } from 'kubo-rpc-client';
+import { concat } from 'uint8arrays';
 
 export async function createRemoteIpfs(url?: string): Promise<IIpfsService> {
 	const node = create({ url });
@@ -21,9 +22,6 @@ export async function createRemoteIpfs(url?: string): Promise<IIpfsService> {
 		},
 		stop() {
 			return Promise.resolve();
-		},
-		toUrl(cid: string) {
-			return `http://127.0.0.1:${port}/ipfs/${cid}`;
 		},
 		id() {
 			return id;
@@ -55,5 +53,12 @@ export async function createRemoteIpfs(url?: string): Promise<IIpfsService> {
 		async rmPin(cid) {
 			await node.pin.rm(cid);
 		},
+		async fetch(cid: string, path?: string) {
+			const parts = [];
+			for await (const buf of node.cat(path ? path.startsWith('/') ? cid + path : cid + '/' + path : cid)) {
+				parts.push(buf);
+			}
+			return concat(parts);
+		}
 	};
 }

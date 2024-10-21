@@ -146,9 +146,6 @@ export function App() {
 								await blockstore.close();
 								await datastore.close();
 							},
-							toUrl(cid: string) {
-								return `TODO ${cid}`;
-							},
 							peers() {
 								return Promise.resolve(helia.libp2p.getConnections().map(p => p.remoteAddr.toString()));
 							},
@@ -175,9 +172,11 @@ export function App() {
 									console.log(`Pin progress ${cid}: ${block.toString()}`);
 								}
 							},
-							async fetch(cid: string) {
+							async fetch(cid: string, path?: string) {
 								const data: Uint8Array[] = [];
-								for await (const buf of fs.cat(CID.parse(cid))) {
+								for await (const buf of fs.cat(CID.parse(cid), {
+									path
+								})) {
 									data.push(buf);
 								}
 								return concat(data);
