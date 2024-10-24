@@ -5513,7 +5513,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eme-encryption-scheme-polyfill@npm:^2.1.1":
+"eme-encryption-scheme-polyfill@npm:^2.1.5":
   version: 2.1.5
   resolution: "eme-encryption-scheme-polyfill@npm:2.1.5"
   checksum: 10c0/14fbba1beb91293abf2703901be3026b0270466c5048d24ea2b6d486b61d8dc255518fdfff41e2012e8dc9c7897bc542c22b3fcadc6ee89e58bb05fc9d4fda34
@@ -7476,7 +7476,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     react-i18next: "npm:^14.1.1"
-    shaka-player: "npm:^3.3.2"
+    shaka-player: "npm:^4.11.8"
     terser: "npm:^5.31.0"
     typescript: "npm:^5.4.5"
     vite: "npm:^5.2.11"
@@ -10748,12 +10748,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"shaka-player@npm:^3.3.2":
-  version: 3.3.19
-  resolution: "shaka-player@npm:3.3.19"
+"shaka-player@npm:^4.11.8":
+  version: 4.11.8
+  resolution: "shaka-player@npm:4.11.8"
   dependencies:
-    eme-encryption-scheme-polyfill: "npm:^2.1.1"
-  checksum: 10c0/5dc8a5bb12cfe00207e1c0da24fddbc78b6b4fa62640c88e4ac04d5abde5bc63d61ace963fa440990d620a022c3cdd2ad5a376434bbbd545b3f77e63086de9fc
+    eme-encryption-scheme-polyfill: "npm:^2.1.5"
+  checksum: 10c0/58ae27475d81537d575b4525b1360b2f3c32bdd3944f7dda82949e5e09cfc5ae39719a15355adb4f30208ac2898c1a39eac52c059b96acd3d8d4f3855d2c9c6f
   languageName: node
   linkType: hard
 

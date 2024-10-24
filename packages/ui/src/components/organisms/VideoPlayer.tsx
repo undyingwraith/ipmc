@@ -1,4 +1,4 @@
-import { useSignal, useSignalEffect } from '@preact/signals-react';
+import { useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
 import { IIpfsService, IIpfsServiceSymbol, IVideoFile } from 'ipmc-interfaces';
 import React from 'react';
 import { useService } from '../../context';
@@ -13,7 +13,6 @@ function createShakaIpfsPlugin(ipfs: IIpfsService): shaka.extern.SchemePlugin {
 		const cid = paths.shift()!;
 		const path = paths.join('/');
 
-		console.log(uri, fullPath, path, cid, request, requestType, config);
 		headersReceived({});
 
 		const data = await ipfs.fetch(cid, path);
@@ -31,6 +30,8 @@ export function VideoPlayer(props: { file: IVideoFile; }) {
 	const ipfs = useService<IIpfsService>(IIpfsServiceSymbol);
 	const videoRef = useSignal<HTMLVideoElement | null>(null);
 	const playerRef = useSignal<any | null>(null);
+	const subtitles = useSignal<any[]>([]);
+	const languages = useSignal<string[]>([]);
 
 	useHotkey({ key: 'F' }, () => {
 		videoRef.value?.requestFullscreen();
@@ -42,10 +43,10 @@ export function VideoPlayer(props: { file: IVideoFile; }) {
 			const player = new shaka.Player();
 			playerRef.value = player;
 			player.attach(videoRef.value)
-				.then(() => player.load(`ipfs://QmediiYR5uAswBjrDGXFhR2BHk9j9Fe3v7tZbfeF3Qe4oa/video.mpd`))
-				//.then(() => player.load(`ipfs://${props.file.cid}/${props.file.video.name}`))
+				.then(() => player.load(`ipfs://${props.file.cid}/${props.file.video.name}`))
 				.then(() => {
-					console.log('player ready');
+					subtitles.value = player.getTextTracks();
+					languages.value = player.getAudioLanguages();
 				})
 				.catch((ex: any) => {
 					console.error(ex);
@@ -61,14 +62,36 @@ export function VideoPlayer(props: { file: IVideoFile; }) {
 	});
 
 	return (
-		<video
-			controls
-			style={{ height: '85vh', maxWidth: '100%', maxHeight: '100%' }}
-			ref={(ref) => {
-				videoRef.value = ref;
-			}}
-			preload={'metadata'}
-		>
-		</video>
+		<div>
+			<video
+				controls
+				style={{ height: '85vh', maxWidth: '100%', maxHeight: '100%' }}
+				ref={(ref) => {
+					videoRef.value = ref;
+				}}
+				preload={'metadata'}
+			>
+			</video>
+			Language
+			<select>
+				{useComputed(() => languages.value.map(l => (
+					<option>{l}</option>
+				)))}
+			</select>
+			Subtitle
+			<select onChange={(ev) => {
+				if (ev.currentTarget.value !== 'null') {
+					playerRef.value.selectTextTrack(ev.currentTarget.value);
+					playerRef.value.setTextTrackVisibility(true);
+				} else {
+					playerRef.value.setTextTrackVisibility(false);
+				}
+			}}>
+				<option value="null">None</option>
+				{useComputed(() => subtitles.value.map(l => (
+					<option>{l.language}</option>
+				)))}
+			</select>
+		</div>
 	);
 }

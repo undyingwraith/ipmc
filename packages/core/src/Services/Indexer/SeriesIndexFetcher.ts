@@ -62,7 +62,7 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 			...entry,
 			posters: files.filter(f => Regexes.Poster.exec(f.name) != null),
 			title: entry.name,
-			video: files.filter(f => f.name.endsWith('.mp4'))[0],
+			video: files.filter(f => f.name.endsWith('.mpd'))[0],
 			thumbnails: files.filter(f => Regexes.Thumbnail.exec(f.name) != null),
 		};
 

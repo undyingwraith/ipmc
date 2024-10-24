@@ -48,7 +48,7 @@
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"react-i18next": "^14.1.1",
-		"shaka-player": "^3.3.2",
+		"shaka-player": "^4.11.8",
 		"wouter": "^3.2.0"
 	}
 }

@@ -20,11 +20,12 @@ export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 
 	public async extractMovieMetaData(node: IIpfsService, entry: IFileInfo, skeleton?: any): Promise<IMovieMetaData> {
 		const files = (await this.node.ls(entry.cid)).filter(f => f.type == 'file');
+		const videoFile = files.filter(f => f.name.endsWith('.mpd'))[0];
 
 		return {
 			...entry,
-			title: entry.name,
-			video: files.filter(f => f.name.endsWith('.mp4'))[0],
+			title: videoFile.name.substring(0, videoFile.name.lastIndexOf('.')),
+			video: videoFile,
 			thumbnails: files.filter(f => Regexes.Thumbnail.exec(f.name) != null),
 			posters: files.filter(f => Regexes.Poster.exec(f.name) != null),
 		};
