@@ -41,6 +41,12 @@ export function VideoPlayer(props: { file: IVideoFile; }) {
 		if (videoRef.value != null) {
 			shaka.net.NetworkingEngine.registerScheme('ipfs', createShakaIpfsPlugin(ipfs), 1, false);
 			const player = new shaka.Player();
+			player.configure({
+				streaming: {
+					rebufferingGoal: 5,
+					bufferingGoal: 30,
+				}
+			});
 			playerRef.value = player;
 			player.attach(videoRef.value)
 				.then(() => player.load(`ipfs://${props.file.cid}/${props.file.video.name}`))
