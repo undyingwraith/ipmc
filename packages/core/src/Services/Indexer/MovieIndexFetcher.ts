@@ -12,7 +12,11 @@ export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 		const files = (await this.node.ls(cid)).filter(f => f.type == 'dir');
 		const index = [];
 		for (const file of files) {
-			index.push(await this.extractMovieMetaData(this.node, file));
+			try {
+				index.push(await this.extractMovieMetaData(this.node, file));
+			} catch (ex) {
+				console.error(ex);
+			}
 		}
 
 		return index;
@@ -20,7 +24,9 @@ export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 
 	public async extractMovieMetaData(node: IIpfsService, entry: IFileInfo, skeleton?: any): Promise<IMovieMetaData> {
 		const files = (await this.node.ls(entry.cid)).filter(f => f.type == 'file');
-		const videoFile = files.filter(f => f.name.endsWith('.mpd'))[0];
+		const videoFile = files.find(f => f.name.endsWith('.mpd'));
+
+		if (!videoFile) throw new Error('Failed to find video file in ' + entry.name + '|' + entry.cid);
 
 		return {
 			...entry,
