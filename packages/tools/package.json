@@ -4,10 +4,12 @@
 	"main": "index.js",
 	"license": "MIT",
 	"scripts": {
-		"import": "vite-node ./import.ts",
+		"import": "vite-node ./src/import.ts",
 		"cli": "vite-node ./src/index.ts"
 	},
 	"dependencies": {
+		"@inquirer/prompts": "^7.0.1",
+		"chalk": "^5.3.0",
 		"cli-progress": "^3.12.0",
 		"fluent-ffmpeg": "^2.1.2",
 		"ipmc-core": "workspace:^",
