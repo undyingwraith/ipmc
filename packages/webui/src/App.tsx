@@ -38,20 +38,19 @@ export function App() {
 			<IpmcLauncher
 				configService={{
 					getProfile(name) {
-						const value = window.localStorage.getItem('profile_' + name);
-						return value ? JSON.parse(value) : undefined;
+						const value = window.localStorage.getItem('profiles');
+						return value ? JSON.parse(value)[name] : undefined;
 					},
 					getProfiles() {
 						const value = window.localStorage.getItem('profiles');
-						return value ? JSON.parse(value) : [];
+						return value ? Object.keys(JSON.parse(value)) : [];
 					},
 					setProfile(name, profile) {
-						window.localStorage.setItem('profile_' + name, JSON.stringify(profile));
-						const value = window.localStorage.getItem('profiles');
-						const profiles: string[] = value ? JSON.parse(value) : [];
-						if (!profiles.some(p => p == name)) {
-							window.localStorage.setItem('profiles', JSON.stringify([...profiles, name]));
-						}
+						const profilesString = window.localStorage.getItem('profiles');
+						const profiles = profilesString ? JSON.parse(profilesString) : {};
+						profiles[name] = profile;
+
+						window.localStorage.setItem('profiles', JSON.stringify(profiles));
 					},
 				}}
 				nodeService={{
