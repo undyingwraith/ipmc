@@ -26,7 +26,6 @@ import { LevelDatastore } from 'datastore-level';
 import { contextBridge } from 'electron';
 import fs from 'fs';
 import { createHelia } from 'helia';
-import { Defaults } from 'ipmc-core';
 import { IConfigurationService, IFileInfo, IInternalProfile, IIpfsService, INodeService, IProfile } from 'ipmc-interfaces';
 import { ipnsSelector } from 'ipns/selector';
 import { ipnsValidator } from 'ipns/validator';
@@ -81,7 +80,12 @@ const nodeService: INodeService = {
 				],
 				peerDiscovery: [
 					bootstrap({
-						list: profile.bootstrap ?? (profile.swarmKey != undefined ? [] : Defaults.Bootstrap),
+						list: profile.bootstrap ?? (profile.swarmKey != undefined ? [] : [
+							//TODO: replace with Defaults from core module
+							'/ip4/104.131.131.82/tcp/4001/ipfs/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ',
+							'/dnsaddr/bootstrap.libp2p.io/ipfs/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN',
+							'/dnsaddr/bootstrap.libp2p.io/ipfs/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa',
+						]),
 					}),
 					pubsubPeerDiscovery(),
 					mdns(),
