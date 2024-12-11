@@ -7,7 +7,7 @@ export interface ITask {
 	/**
 	 * The task to run.
 	 */
-	task: () => Promise<void>;
+	task: (onProgress: (progress: number) => void) => Promise<void>;
 
 	/**
 	 * Start event handler.

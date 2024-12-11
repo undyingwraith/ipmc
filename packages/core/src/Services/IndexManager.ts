@@ -1,6 +1,6 @@
 import { Signal } from '@preact/signals-core';
 import { inject, injectable, postConstruct, preDestroy } from 'inversify';
-import { IIndexManager, IIpfsService, IIpfsServiceSymbol, ILibrary, ILibraryIndex, IObjectStore, IObjectStoreSymbol, IProfile, IProfileSymbol, ITask, isMovieLibrary, isSeriesLibrary } from 'ipmc-interfaces';
+import { IIndexManager, IIpfsService, IIpfsServiceSymbol, ILibrary, ILibraryIndex, IObjectStore, IObjectStoreSymbol, IProfile, IProfileSymbol, ITask, ITranslationService, ITranslationServiceSymbol, isMovieLibrary, isSeriesLibrary } from 'ipmc-interfaces';
 import { MovieIndexFetcher, SeriesIndexFetcher } from './Indexer';
 import { ITaskManager, ITaskManagerSymbol } from 'ipmc-interfaces';
 
@@ -10,7 +10,8 @@ export class IndexManager implements IIndexManager {
 		@inject(IProfileSymbol) private readonly profile: IProfile,
 		@inject(IIpfsServiceSymbol) private readonly ipfs: IIpfsService,
 		@inject(IObjectStoreSymbol) private readonly objectStore: IObjectStore,
-		@inject(ITaskManagerSymbol) private readonly taskManager: ITaskManager
+		@inject(ITaskManagerSymbol) private readonly taskManager: ITaskManager,
+		@inject(ITranslationServiceSymbol) private readonly translationService: ITranslationService,
 	) {
 		for (const lib of this.profile.libraries) {
 			this.libraries.set(lib.name, new Signal<ILibrary>(lib));
@@ -51,7 +52,7 @@ export class IndexManager implements IIndexManager {
 			if (!this.updates.has(lib.name)) {
 				this.taskManager.runTask({
 					task: () => this.updateLibrary(lib),
-					title: '',
+					title: this.translationService.translate('UpdatingLibrary', { name: lib.name }),
 					onEnd: () => {
 						this.updates.delete(lib.name);
 					},
