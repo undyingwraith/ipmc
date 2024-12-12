@@ -4,10 +4,10 @@ import { Switch } from 'wouter';
 import { AppBar } from './components/organisms/AppBar';
 import { LibraryManager } from "./components/pages/LibraryManager";
 import { AppContextProvider } from './context';
+import { ITranslationsSymbol, ITranslation } from 'ipmc-interfaces';
 
 // Setup translations
 import './i18n';
-import { ITranslationsSymbol } from 'ipmc-interfaces';
 
 export interface IIpmcAppProps {
 	setup?: IModule;
@@ -33,7 +33,7 @@ export function IpmcApp(props: IIpmcAppProps) {
 		<AppContextProvider setup={(app) => {
 			app.use(CoreModule);
 			app.use(BrowserModule);
-			app.registerConstant<any>(resources, ITranslationsSymbol);
+			app.registerConstantMultiple<ITranslation>(resources, ITranslationsSymbol);
 			setup && app.use(setup);
 		}}>
 			<AppBar />

@@ -1,15 +1,25 @@
 import i18next from 'i18next';
-import { inject, injectable } from 'inversify';
-import { ITranslationService, ITranslationsSymbol } from 'ipmc-interfaces';
+import { multiInject, injectable, optional } from 'inversify';
+import { ITranslationService, ITranslationsSymbol, ITranslation } from 'ipmc-interfaces';
 
 @injectable()
 export class TranslationService implements ITranslationService {
-	constructor(@inject(ITranslationsSymbol) translations: any) {
+	constructor(@multiInject(ITranslationsSymbol) @optional() translations: ITranslation[]) {
+		const resources: ITranslation = {};
+		for (const translationSet of translations) {
+			for (const [lang, values] of Object.entries(translationSet)) {
+				if (!resources.hasOwnProperty(lang)) {
+					resources[lang] = { translation: {} };
+				}
+				resources[lang].translation = { ...resources[lang].translation, ...values.translation };
+			}
+		}
+
 		i18next.init({
-			resources: translations,
-			lng: "en", // language to use, more information here: https://www.i18next.com/overview/configuration-options#languages-namespaces-resources
+			resources,
+			lng: "en",
 			interpolation: {
-				escapeValue: false // react already safes from xss
+				escapeValue: false
 			}
 		});
 	}
@@ -18,6 +28,7 @@ export class TranslationService implements ITranslationService {
 		if (i18next.exists(key)) {
 			return i18next.t(key, values);
 		} else {
+			console.warn(`Missing translation key <${key}>`);
 			return `<${key}>`;
 		}
 	}

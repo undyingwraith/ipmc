@@ -17,6 +17,13 @@ export interface IApplicationRegistration {
 	registerConstant<T>(service: T, identifier: symbol): void;
 
 	/**
+	 * Registers a new constant without removing previous registrations.
+	 * @param service service to register.
+	 * @param identifier symbol for the service.
+	 */
+	registerConstantMultiple<T>(service: T, identifier: symbol): void;
+
+	/**
 	 * Registers a {@link IModule}.
 	 * @param module {@link IModule} to use in the {@link IApplication}.
 	 */
