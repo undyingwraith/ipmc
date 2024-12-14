@@ -28,6 +28,11 @@ yarn workspace watch
 yarn workspace ipmc-desktop run dev
 ```
 
+*NOTE: for first time install you might need to run a build first*
+```bash
+yarn build
+```
+
 ## Packages
 
 ### ipmc-interfaces
