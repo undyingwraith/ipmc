@@ -3,6 +3,7 @@ import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
 import dts from 'vite-plugin-dts';
+import path from 'path';
 
 export default defineConfig(({ mode }) => ({
 	plugins: [
@@ -55,7 +56,13 @@ export default defineConfig(({ mode }) => ({
 		manifest: false,
 		minify: mode == 'dev' ? 'esbuild' : 'terser',
 	},
+	resolve: {
+		alias: {
+			"@src": path.resolve(__dirname, "./src"),
+		}
+	},
 	test: {
 		globals: true,
+		environment: 'jsdom',
 	},
 }));
