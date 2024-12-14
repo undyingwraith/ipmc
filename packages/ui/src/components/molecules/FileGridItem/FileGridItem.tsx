@@ -1,4 +1,4 @@
-import { Button, Card, CardActions, CardContent, CardHeader, CardMedia } from '@mui/material';
+import { Button, Card, CardActions, CardHeader, CardMedia } from '@mui/material';
 import { ReadonlySignal, useComputed } from '@preact/signals-react';
 import { IFileInfo, isIVideoFile, isPosterFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
 import React from 'react';
