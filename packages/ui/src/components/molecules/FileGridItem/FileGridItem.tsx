@@ -1,6 +1,6 @@
-import { Button, Card, CardActions, CardContent, CardMedia } from '@mui/material';
+import { Button, Card, CardActions, CardContent, CardHeader, CardMedia } from '@mui/material';
 import { ReadonlySignal, useComputed } from '@preact/signals-react';
-import { IFileInfo, isIVideoFile, isPosterFeature, isTitleFeature } from 'ipmc-interfaces';
+import { IFileInfo, isIVideoFile, isPosterFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
 import React from 'react';
 import { useFileUrl } from '../../../hooks';
 import { useTranslation } from '../../../hooks/useTranslation';
@@ -32,7 +32,7 @@ export function FileGridItem(props: { file: IFileInfo; onOpen: () => void; displ
 	return useComputed(() => (
 		<Card sx={{ width: width.value }}>
 			<CardMedia image={url.value} sx={{ height: height.value, width: width.value }} />
-			<CardContent>{isTitleFeature(file) ? file.title : file.name}</CardContent>
+			<CardHeader title={isTitleFeature(file) ? file.title : file.name} subheader={isYearFeature(file) ? file.year : undefined}></CardHeader>
 			<CardActions>
 				<PinButton cid={file.cid} />
 				<Button onClick={onOpen}>{_t('Open')}</Button>

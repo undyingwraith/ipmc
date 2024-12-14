@@ -1,8 +1,7 @@
 import { Signal } from '@preact/signals-core';
 import { inject, injectable, postConstruct, preDestroy } from 'inversify';
-import { IIndexManager, IIpfsService, IIpfsServiceSymbol, ILibrary, ILibraryIndex, IObjectStore, IObjectStoreSymbol, IProfile, IProfileSymbol, ITask, ITranslationService, ITranslationServiceSymbol, isMovieLibrary, isSeriesLibrary } from 'ipmc-interfaces';
-import { MovieIndexFetcher, SeriesIndexFetcher } from './Indexer';
-import { ITaskManager, ITaskManagerSymbol } from 'ipmc-interfaces';
+import { IIndexManager, IIpfsService, IIpfsServiceSymbol, ILibrary, ILibraryIndex, IObjectStore, IObjectStoreSymbol, IProfile, IProfileSymbol, ITask, ITaskManager, ITaskManagerSymbol, ITranslationService, ITranslationServiceSymbol } from 'ipmc-interfaces';
+import { IIndexFetcher, MovieIndexFetcher, SeriesIndexFetcher } from './Indexer';
 
 @injectable()
 export class IndexManager implements IIndexManager {
@@ -13,6 +12,9 @@ export class IndexManager implements IIndexManager {
 		@inject(ITaskManagerSymbol) private readonly taskManager: ITaskManager,
 		@inject(ITranslationServiceSymbol) private readonly translationService: ITranslationService,
 	) {
+		this.indexers.push(new MovieIndexFetcher(this.ipfs));
+		this.indexers.push(new SeriesIndexFetcher(this.ipfs));
+
 		for (const lib of this.profile.libraries) {
 			this.libraries.set(lib.name, new Signal<ILibrary>(lib));
 			const indexSignal = new Signal<ILibraryIndex<any> | undefined>(this.objectStore.get(this.getIndexStorageKey(lib.name)));
@@ -66,7 +68,7 @@ export class IndexManager implements IIndexManager {
 		if (library.upstream != undefined && index != undefined) {
 			try {
 				const cid = await this.ipfs.resolve(library.upstream);
-				const indexer = isMovieLibrary(library) ? new MovieIndexFetcher(this.ipfs) : isSeriesLibrary(library) ? new SeriesIndexFetcher(this.ipfs) : undefined;
+				const indexer = this.indexers.find(i => i.canIndex(library));
 				if (index.value?.cid != cid || indexer?.version !== index.value.indexer) {
 					if (indexer == undefined) {
 						throw new Error(`Unknown library type [${library.type}]`);
@@ -85,6 +87,8 @@ export class IndexManager implements IIndexManager {
 			}
 		}
 	}
+
+	private indexers: IIndexFetcher<any>[] = [];
 
 	private libraries = new Map<string, Signal<ILibrary>>();
 

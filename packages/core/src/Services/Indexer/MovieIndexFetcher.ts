@@ -1,4 +1,4 @@
-import { IFileInfo, IIpfsService, IMovieMetaData } from 'ipmc-interfaces';
+import { IFileInfo, IIpfsService, ILibrary, IMovieMetaData } from 'ipmc-interfaces';
 import { Regexes } from '../../Regexes';
 import { IIndexFetcher } from './IIndexFetcher';
 
@@ -24,16 +24,23 @@ export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 
 	public async extractMovieMetaData(node: IIpfsService, entry: IFileInfo, skeleton?: any): Promise<IMovieMetaData> {
 		const files = (await this.node.ls(entry.cid)).filter(f => f.type == 'file');
-		const videoFile = files.find(f => f.name.endsWith('.mpd'));
+		const videoFile = files.find(f => Regexes.VideoFile.exec(f.name) != null);
 
 		if (!videoFile) throw new Error('Failed to find video file in ' + entry.name + '|' + entry.cid);
 
+		const videoData = Regexes.VideoFile.exec(videoFile.name)!;
+
 		return {
 			...entry,
-			title: videoFile.name.substring(0, videoFile.name.lastIndexOf('.')),
+			title: videoData[1],
+			year: videoData[2] != null ? parseInt(videoData[2]) : undefined,
 			video: videoFile,
 			thumbnails: files.filter(f => Regexes.Thumbnail.exec(f.name) != null),
 			posters: files.filter(f => Regexes.Poster.exec(f.name) != null),
 		};
+	}
+
+	public canIndex(library: ILibrary): boolean {
+		return library.type === 'movie';
 	}
 }
