@@ -24,11 +24,11 @@ export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 
 	public async extractMovieMetaData(node: IIpfsService, entry: IFileInfo, skeleton?: any): Promise<IMovieMetaData> {
 		const files = (await this.node.ls(entry.cid)).filter(f => f.type == 'file');
-		const videoFile = files.find(f => Regexes.VideoFile.exec(f.name) != null);
+		const videoFile = files.find(f => Regexes.VideoFile('mpd').exec(f.name) != null);
 
 		if (!videoFile) throw new Error('Failed to find video file in ' + entry.name + '|' + entry.cid);
 
-		const videoData = Regexes.VideoFile.exec(videoFile.name)!;
+		const videoData = Regexes.VideoFile('mpd').exec(videoFile.name)!;
 
 		return {
 			...entry,

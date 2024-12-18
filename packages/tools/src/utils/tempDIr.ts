@@ -6,7 +6,7 @@ export interface ITempDir {
 }
 
 export function tempDir(): ITempDir {
-	const id = 'test';
+	const id = crypto.randomUUID();
 	const path = `./tmp/${id}`;
 
 	function getPath(filename?: string): string {

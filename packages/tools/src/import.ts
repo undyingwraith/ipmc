@@ -5,6 +5,10 @@ import { exec } from 'child_process';
 import { input } from '@inquirer/prompts';
 import { ITempDir, tempDir } from './utils/tempDIr';
 import chalk from 'chalk';
+import { Regexes } from 'ipmc-core';
+import path, { basename } from 'path';
+import srt2vtt from 'srt2vtt';
+import fs from 'fs';
 
 type TStream = 'Video' | 'Audio';
 
@@ -22,7 +26,7 @@ async function detectStreams(packager: string, file: string): Promise<IStream[]>
 				console.error(stderr);
 				reject(error);
 			} else {
-				console.log(stdout);
+				//console.debug(stdout);
 				const regex = /Stream \[(\d+)\] type: (\w+)\r?\n((?: [\w_]+: .+\r?\n)+)\r?\n/gm;
 				const matches = stdout.matchAll(regex);
 				const streams: IStream[] = [];
@@ -86,44 +90,80 @@ const args = yargs(hideBin(process.argv))
 		describe: 'ipfs api url',
 		default: 'http://127.0.0.1:5002/api/v0'
 	})
-	.option('file', {
-		alias: 'f',
-	})
-	.option('title', {
-		alias: 't',
-	})
-	.demandOption(['file', 'title'])
+	.array('file')
+	.alias('file', 'f')
+	.demandOption(['file'])
 	.help()
 	.parseSync();
 
 (async () => {
-	const streams = await detectStreams(args.packager, args.file as string);
-	console.log('Streams detected!');
+	const files = args.file as string[];
 
-	for (const stream of streams) {
-		if (stream.type !== 'Video') {
-			stream.lang = await input({ message: `[${stream.id}|${stream.file}] Language?`, default: stream.lang });
+	const temp = tempDir();
+	const outDir = tempDir();
+
+	try {
+
+		const streams: IStream[] = [];
+		for (const file of files) {
+			let actualFile = file;
+			if (file.endsWith('.srt')) {
+				const srtData = fs.readFileSync(file);
+				actualFile = await new Promise((resolve, reject) => {
+					srt2vtt(srtData, (err, vttData) => {
+						if (err) {
+							reject(err);
+						} else {
+							const fn = path.join(temp.getPath(), basename(file, 'srt') + 'vtt');
+							fs.writeFileSync(fn, vttData);
+							resolve(fn);
+						}
+					});
+				});
+			}
+
+			const streamsFromFile = await detectStreams(args.packager, actualFile);
+			streams.push(...streamsFromFile);
 		}
-	}
 
-	const dir = tempDir();
+		console.log(`Detected ${streams.length} streams, from ${files.length} files!`);
 
-	await packageStreams(args.packager, args.title as string, streams, dir);
-	console.log('Streams packaged!');
+		const movieData = files.map(file => Regexes.VideoFile('mp4').exec(path.basename(file))).find(r => r != null);
 
+		const title = await input({ message: 'Movie title?', default: movieData != null ? movieData[1] : undefined, required: true });
+		const year = await input({ message: 'Year?', default: movieData != null ? movieData[2] : undefined, required: true });
 
-	const node = create({ url: args.ipfs });
-	for await (const file of node.addAll(globSource(dir.getPath(), '**'), {
-		pin: false,
-		wrapWithDirectory: true
-	})) {
-		if (file.path === '') {
-			console.log(`Added to ipfs ${chalk.green(file.cid)}`);
+		for (const stream of streams) {
+			const streamDisplayName = `${stream.id}|${stream.type}|${path.basename(stream.file)}`;
+
+			if (stream.type !== 'Video') {
+				stream.lang = await input({
+					message: `[${streamDisplayName}] Language?`,
+					default: stream.lang,
+					required: true,
+					validate: (input) => Regexes.LangCheck.exec(input) != null
+				});
+			}
 		}
+
+		console.log('Packaging...');
+		await packageStreams(args.packager, `${title} (${year})`, streams, outDir);
+		console.log('Streams packaged!');
+
+		const node = create({ url: args.ipfs });
+		for await (const file of node.addAll(globSource(outDir.getPath(), '**'), {
+			pin: false,
+			wrapWithDirectory: true
+		})) {
+			if (file.path === '') {
+				console.log(`Added to ipfs ${chalk.green(file.cid)}`);
+			}
+		}
+
+		console.log('Done!');
+	} finally {
+		outDir.clean();
+		temp.clean();
 	}
-
-	dir.clean();
-
-	console.log('done');
 })();
 
