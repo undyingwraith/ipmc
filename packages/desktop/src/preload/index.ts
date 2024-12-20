@@ -20,7 +20,6 @@ import { pubsubPeerDiscovery } from '@libp2p/pubsub-peer-discovery';
 import { tcp } from '@libp2p/tcp';
 import { uPnPNAT } from '@libp2p/upnp-nat';
 import { webSockets } from '@libp2p/websockets';
-import { webTransport } from '@libp2p/webtransport';
 import { FsBlockstore } from 'blockstore-fs';
 import { LevelDatastore } from 'datastore-level';
 import { contextBridge } from 'electron';
@@ -71,7 +70,6 @@ const nodeService: INodeService = {
 					}),
 				} : {}),
 				transports: [
-					webTransport(),
 					webSockets(),
 					tcp(),
 					circuitRelayTransport({
