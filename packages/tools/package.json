@@ -20,6 +20,7 @@
 	"devDependencies": {
 		"@types/cli-progress": "^3.11.5",
 		"@types/fluent-ffmpeg": "^2.1.24",
+		"@types/node": "^22.10.2",
 		"@types/yargs": "^17.0.32",
 		"vite-node": "^2.1.8"
 	}

@@ -43,14 +43,12 @@
 		"@preact/signals-react": "^2.0.1",
 		"file-type": "^19.6.0",
 		"helia": "^4.2.2",
-		"i18next": "^23.11.2",
 		"ipmc-core": "workspace:^",
 		"ipmc-interfaces": "workspace:^",
 		"minidenticons": "^4.2.1",
 		"multiformats": "^13.1.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"react-i18next": "^14.1.1",
 		"shaka-player": "^4.11.8",
 		"wouter": "^3.2.0"
 	}

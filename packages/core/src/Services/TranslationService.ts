@@ -22,8 +22,17 @@ export class TranslationService implements ITranslationService {
 				escapeValue: false
 			}
 		});
+
+		i18next.on('languageChanged', () => {
+			this.languageChangeHandlers.forEach(handler => {
+				handler(i18next.language);
+			});
+		});
 	}
 
+	/**
+	 * @inheritdoc
+	 */
 	translate(key: string, values?: { [key: string]: string; }): string {
 		if (i18next.exists(key)) {
 			return i18next.t(key, values);
@@ -32,4 +41,38 @@ export class TranslationService implements ITranslationService {
 			return `<${key}>`;
 		}
 	}
+
+	/**
+	 * @inheritdoc
+	 */
+	get language(): string {
+		return i18next.language;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	changeLanguage(language: string): void {
+		i18next.changeLanguage(language);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	registerLanguageChange(handler: (language: string) => void): Symbol {
+		const sym = Symbol();
+		this.languageChangeHandlers.set(sym, handler);
+		return sym;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	unregisterLanguageChange(symbol: Symbol): void {
+		if (this.languageChangeHandlers.has(symbol)) {
+			this.languageChangeHandlers.delete(symbol);
+		}
+	}
+
+	private languageChangeHandlers = new Map<Symbol, (lang: string) => void>();
 }

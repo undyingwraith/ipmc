@@ -1,12 +1,10 @@
-import React from "react";
 import { Box, Typography } from "@mui/material";
-import { Loader } from "../atoms";
 import { ReadonlySignal } from '@preact/signals-react';
-import { useTranslation } from '../../hooks';
+import React from "react";
+import { Loader } from "../atoms";
 
 export function LoadScreen(props: { text?: string | ReadonlySignal<string>; }) {
 	const { text } = props;
-	const _t = useTranslation();
 
 	return (
 		<Box sx={{
@@ -17,7 +15,7 @@ export function LoadScreen(props: { text?: string | ReadonlySignal<string>; }) {
 			height: '100%'
 		}}>
 			<Box>
-				<Typography>{text ?? _t('Loading')}</Typography>
+				{text && <Typography>{text}</Typography>}
 				<Loader />
 			</Box>
 		</Box>

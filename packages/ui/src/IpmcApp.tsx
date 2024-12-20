@@ -5,26 +5,11 @@ import { AppBar } from './components/organisms/AppBar';
 import { LibraryManager } from "./components/pages/LibraryManager";
 import { AppContextProvider } from './context';
 import { ITranslationsSymbol, ITranslation } from 'ipmc-interfaces';
-
-// Setup translations
-import './i18n';
+import translations from './translations';
 
 export interface IIpmcAppProps {
 	setup?: IModule;
 }
-
-// Translations
-import en from './translations/en.json';
-import de from './translations/de.json';
-
-const resources = {
-	en: {
-		translation: en
-	},
-	de: {
-		translation: de
-	}
-};
 
 export function IpmcApp(props: IIpmcAppProps) {
 	const { setup } = props;
@@ -33,7 +18,7 @@ export function IpmcApp(props: IIpmcAppProps) {
 		<AppContextProvider setup={(app) => {
 			app.use(CoreModule);
 			app.use(BrowserModule);
-			app.registerConstantMultiple<ITranslation>(resources, ITranslationsSymbol);
+			app.registerConstantMultiple<ITranslation>(translations, ITranslationsSymbol);
 			setup && app.use(setup);
 		}}>
 			<AppBar />

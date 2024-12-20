@@ -3230,6 +3230,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:^22.10.2":
+  version: 22.10.2
+  resolution: "@types/node@npm:22.10.2"
+  dependencies:
+    undici-types: "npm:~6.20.0"
+  checksum: 10c0/2c7b71a040f1ef5320938eca8ebc946e6905caa9bbf3d5665d9b3774a8d15ea9fab1582b849a6d28c7fc80756a62c5666bc66b69f42f4d5dafd1ccb193cdb4ac
+  languageName: node
+  linkType: hard
+
 "@types/parse-json@npm:^4.0.0":
   version: 4.0.2
   resolution: "@types/parse-json@npm:4.0.2"
@@ -7605,6 +7614,7 @@ __metadata:
     "@inquirer/prompts": "npm:^7.0.1"
     "@types/cli-progress": "npm:^3.11.5"
     "@types/fluent-ffmpeg": "npm:^2.1.24"
+    "@types/node": "npm:^22.10.2"
     "@types/yargs": "npm:^17.0.32"
     chalk: "npm:^5.3.0"
     cli-progress: "npm:^3.12.0"
@@ -7634,7 +7644,6 @@ __metadata:
     "@types/react-dom": "npm:^18.3.0"
     file-type: "npm:^19.6.0"
     helia: "npm:^4.2.2"
-    i18next: "npm:^23.11.2"
     ipmc-core: "workspace:^"
     ipmc-interfaces: "workspace:^"
     jsdom: "npm:^25.0.1"
@@ -7642,7 +7651,6 @@ __metadata:
     multiformats: "npm:^13.1.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-i18next: "npm:^14.1.1"
     shaka-player: "npm:^4.11.8"
     terser: "npm:^5.31.0"
     typescript: "npm:^5.4.5"
@@ -11989,6 +11997,13 @@ __metadata:
   version: 5.26.5
   resolution: "undici-types@npm:5.26.5"
   checksum: 10c0/bb673d7876c2d411b6eb6c560e0c571eef4a01c1c19925175d16e3a30c4c428181fb8d7ae802a261f283e4166a0ac435e2f505743aa9e45d893f9a3df017b501
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~6.20.0":
+  version: 6.20.0
+  resolution: "undici-types@npm:6.20.0"
+  checksum: 10c0/68e659a98898d6a836a9a59e6adf14a5d799707f5ea629433e025ac90d239f75e408e2e5ff086afc3cace26f8b26ee52155293564593fbb4a2f666af57fc59bf
   languageName: node
   linkType: hard
 
