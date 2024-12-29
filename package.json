@@ -5,7 +5,7 @@
 	"license": "MIT",
 	"private": true,
 	"type": "module",
-	"packageManager": "yarn@4.3.1",
+	"packageManager": "yarn@4.5.3",
 	"scripts": {
 		"watch": "yarn workspaces foreach -Api run watch",
 		"build": "yarn workspaces foreach -At run build",
@@ -16,6 +16,6 @@
 		"packages/*"
 	],
 	"devDependencies": {
-		"typescript": "^5.4.5"
+		"typescript": "^5.7.2"
 	}
 }

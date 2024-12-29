@@ -9,7 +9,7 @@ exports[`FileInfoDisplay > Renders data correctly 1`] = `
         class="MuiBox-root css-0"
       >
         <h3
-          class="MuiTypography-root MuiTypography-h3 css-gepadz-MuiTypography-root"
+          class="MuiTypography-root MuiTypography-h3 css-13msox4-MuiTypography-root"
         >
           Test name
         </h3>
@@ -21,7 +21,7 @@ exports[`FileInfoDisplay > Renders data correctly 1`] = `
       class="MuiBox-root css-0"
     >
       <h3
-        class="MuiTypography-root MuiTypography-h3 css-gepadz-MuiTypography-root"
+        class="MuiTypography-root MuiTypography-h3 css-13msox4-MuiTypography-root"
       >
         Test name
       </h3>
