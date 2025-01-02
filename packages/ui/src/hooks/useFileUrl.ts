@@ -1,10 +1,10 @@
 import { IIpfsService, IIpfsServiceSymbol } from 'ipmc-interfaces';
 import { useService } from '../context/AppContext';
-import { ReadonlySignal, useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
+import { ReadonlySignal, Signal, useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
 import { useLinkedSignal } from './useLinkedSignal';
 import { fileTypeFromBuffer } from 'file-type';
 
-export function useFileUrl(cid?: string, fallback?: string): ReadonlySignal<string | undefined> {
+export function useFileUrl(cid?: string, visible?: Signal<boolean>, fallback?: string): ReadonlySignal<string | undefined> {
 	const result = useSignal<string | undefined>(undefined);
 	const heliaService = useService<IIpfsService>(IIpfsServiceSymbol);
 	const cidSig = useLinkedSignal(cid);
@@ -12,8 +12,8 @@ export function useFileUrl(cid?: string, fallback?: string): ReadonlySignal<stri
 	useSignalEffect(() => {
 		const controller = new AbortController();
 		const cid = cidSig.value;
-		if (cid !== undefined) {
-
+		const currentlyVisible = visible?.value ?? false;
+		if (cid !== undefined && currentlyVisible) {
 			(async () => {
 				const data = await heliaService.fetch(cid);
 				const fileType = await fileTypeFromBuffer(data);
