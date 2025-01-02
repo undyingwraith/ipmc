@@ -78,9 +78,7 @@ export function App() {
 									}),
 								} : {}),
 								transports: [
-									circuitRelayTransport({
-										discoverRelays: 1
-									}),
+									circuitRelayTransport(),
 									webRTC(),
 									webRTCDirect(),
 									webTransport(),
@@ -98,7 +96,9 @@ export function App() {
 									yamux(),
 									mplex()
 								],
-								connectionEncryption: [noise()],
+								connectionEncrypters: [
+									noise(),
+								],
 								services: {
 									dht: kadDHT({
 										validators: {
@@ -153,7 +153,7 @@ export function App() {
 							},
 							async resolve(name) {
 								try {
-									return (await ipns(helia).resolve(peerIdFromString(name))).cid.toString();
+									return (await ipns(helia).resolve(peerIdFromString(name).publicKey!)).cid.toString();
 								} catch (ex) {
 									return (await ipns(helia).resolveDNSLink(name)).cid.toString();
 								}

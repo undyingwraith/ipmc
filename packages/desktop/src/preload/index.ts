@@ -12,7 +12,6 @@ import { identify, identifyPush } from '@libp2p/identify';
 import { kadDHT, removePrivateAddressesMapper } from '@libp2p/kad-dht';
 import { keychain } from '@libp2p/keychain';
 import { mdns } from '@libp2p/mdns';
-import { mplex } from '@libp2p/mplex';
 import { peerIdFromString } from '@libp2p/peer-id';
 import { ping } from '@libp2p/ping';
 import { preSharedKey } from '@libp2p/pnet';
@@ -72,9 +71,7 @@ const nodeService: INodeService = {
 				transports: [
 					webSockets(),
 					tcp(),
-					circuitRelayTransport({
-						discoverRelays: 1,
-					}),
+					circuitRelayTransport(),
 				],
 				peerDiscovery: [
 					bootstrap({
@@ -88,19 +85,16 @@ const nodeService: INodeService = {
 					pubsubPeerDiscovery(),
 					mdns(),
 				],
-				connectionEncryption: [
+				connectionEncrypters: [
 					noise({
 						crypto: pureJsCrypto
 					}),
 				],
 				streamMuxers: [
 					yamux(),
-					mplex(),
 				],
 				services: {
-					relay: circuitRelayServer({
-						advertise: true,
-					}),
+					relay: circuitRelayServer(),
 					dht: kadDHT({
 						peerInfoMapper: removePrivateAddressesMapper,
 						validators: {
@@ -159,7 +153,7 @@ const nodeService: INodeService = {
 			},
 			async resolve(name) {
 				try {
-					return (await ipns(helia).resolve(peerIdFromString(name))).cid.toString();
+					return (await ipns(helia).resolve(peerIdFromString(name).publicKey!)).cid.toString();
 				} catch (ex) {
 					console.error(ex);
 					return (await ipns(helia).resolveDNSLink(name)).cid.toString();

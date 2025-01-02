@@ -8,7 +8,7 @@
 		"cli": "vite-node ./src/index.ts"
 	},
 	"dependencies": {
-		"@inquirer/prompts": "^7.2.0",
+		"@inquirer/prompts": "^7.2.1",
 		"chalk": "^5.4.0",
 		"cli-progress": "^3.12.0",
 		"fluent-ffmpeg": "^2.1.3",
