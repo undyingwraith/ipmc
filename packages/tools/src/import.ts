@@ -2,7 +2,7 @@ import { create, globSource } from 'kubo-rpc-client';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { exec } from 'child_process';
-import { input } from '@inquirer/prompts';
+import { input, confirm } from '@inquirer/prompts';
 import { ITempDir, tempDir } from './utils/tempDIr';
 import chalk from 'chalk';
 import { Regexes } from 'ipmc-core';
@@ -10,13 +10,14 @@ import path, { basename } from 'path';
 import srt2vtt from 'srt2vtt';
 import fs from 'fs';
 
-type TStream = 'Video' | 'Audio';
+type TStream = 'Video' | 'Audio' | 'Text';
 
 interface IStream {
 	type: TStream;
 	id: number;
 	lang?: string;
 	file: string;
+	forced?: boolean;
 }
 
 async function detectStreams(packager: string, file: string): Promise<IStream[]> {
@@ -64,6 +65,9 @@ async function packageStreams(packager: string, title: string, streams: IStream[
 		};
 		if (s.lang) {
 			options.lang = s.lang;
+		}
+		if (s.type === 'Text' && s.forced !== undefined) {
+			options.forced_subtitle = s.forced ? '1' : '0';
 		}
 		return `"${Object.entries(options).map(([key, value]) => key + '=' + value).join(',')}"`;
 	}
@@ -144,10 +148,18 @@ const args = yargs(hideBin(process.argv))
 					validate: (input) => Regexes.LangCheck.exec(input) != null
 				});
 			}
+
+			if (stream.type === 'Text') {
+				stream.forced = await confirm({
+					message: `[${streamDisplayName}] Forced?`,
+					default: false,
+				});
+			}
 		}
 
 		console.log('Packaging...');
-		await packageStreams(args.packager, `${title} (${year})`, streams, outDir);
+		const fileTitle = `${title} (${year})`;
+		await packageStreams(args.packager, fileTitle, streams, outDir);
 		console.log('Streams packaged!');
 
 		const node = create({ url: args.ipfs });
@@ -157,6 +169,7 @@ const args = yargs(hideBin(process.argv))
 		})) {
 			if (file.path === '') {
 				console.log(`Added to ipfs ${chalk.green(file.cid)}`);
+				console.log(`Item ${chalk.blue(fileTitle)}`);
 			}
 		}
 
