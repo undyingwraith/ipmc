@@ -2,7 +2,7 @@ import { create, globSource } from 'kubo-rpc-client';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { exec } from 'child_process';
-import { input, confirm } from '@inquirer/prompts';
+import { input, confirm, select } from '@inquirer/prompts';
 import { ITempDir, tempDir } from './utils/tempDIr';
 import chalk from 'chalk';
 import { Regexes } from 'ipmc-core';
@@ -84,6 +84,37 @@ async function packageStreams(packager: string, title: string, streams: IStream[
 	});
 }
 
+async function getMovieMetadata(files: string[]): Promise<{ year: string; title: string; fileName: string; }> {
+	const movieData = files.map(file => Regexes.VideoFile('mp4').exec(path.basename(file))).find(r => r != null);
+
+	const title = await input({ message: 'Movie title?', default: movieData != null ? movieData[1] : undefined, required: true });
+	const year = await input({ message: 'Year?', default: movieData != null ? movieData[2] : undefined, required: true });
+
+	return {
+		title,
+		year,
+		fileName: `${title} (${year})`
+	};
+}
+
+async function getEpisodeMetadata(files: string[]): Promise<{ seriesTitle: string; fileName: string; season: string; episode: string; episodeTitle?: string; }> {
+	function zeroPad(input: string) {
+		return String(input).padStart(2, '0');
+	}
+	const seriesTitle = await input({ message: 'Series title?', required: true });
+	const season = await input({ message: 'Season?', default: '1', required: true, transformer: zeroPad });
+	const episode = await input({ message: 'Episode?', default: '1', required: true, transformer: zeroPad });
+	const episodeTitle = await input({ message: 'Episode title?', required: false });
+
+	return {
+		seriesTitle,
+		season,
+		episode,
+		episodeTitle,
+		fileName: `${seriesTitle} - S${season}E${episode}`
+	};
+}
+
 const args = yargs(hideBin(process.argv))
 	.option('packager', {
 		alias: 'p',
@@ -107,7 +138,6 @@ const args = yargs(hideBin(process.argv))
 	const outDir = tempDir();
 
 	try {
-
 		const streams: IStream[] = [];
 		for (const file of files) {
 			let actualFile = file;
@@ -132,10 +162,14 @@ const args = yargs(hideBin(process.argv))
 
 		console.log(`Detected ${streams.length} streams, from ${files.length} files!`);
 
-		const movieData = files.map(file => Regexes.VideoFile('mp4').exec(path.basename(file))).find(r => r != null);
-
-		const title = await input({ message: 'Movie title?', default: movieData != null ? movieData[1] : undefined, required: true });
-		const year = await input({ message: 'Year?', default: movieData != null ? movieData[2] : undefined, required: true });
+		const mediaType = await select({
+			message: 'Media Type',
+			choices: [
+				'Movie',
+				'Episode',
+			]
+		});
+		const metaData = await (mediaType === 'Movie' ? getMovieMetadata(files) : getEpisodeMetadata(files));
 
 		for (const stream of streams) {
 			const streamDisplayName = `${stream.id}|${stream.type}|${path.basename(stream.file)}`;
@@ -158,8 +192,7 @@ const args = yargs(hideBin(process.argv))
 		}
 
 		console.log('Packaging...');
-		const fileTitle = `${title} (${year})`;
-		await packageStreams(args.packager, fileTitle, streams, outDir);
+		await packageStreams(args.packager, metaData.fileName, streams, outDir);
 		console.log('Streams packaged!');
 
 		const node = create({ url: args.ipfs });
@@ -169,7 +202,7 @@ const args = yargs(hideBin(process.argv))
 		})) {
 			if (file.path === '') {
 				console.log(`Added to ipfs ${chalk.green(file.cid)}`);
-				console.log(`Item ${chalk.blue(fileTitle)}`);
+				console.log(`Item ${chalk.blue(metaData.fileName)}`);
 			}
 		}
 
