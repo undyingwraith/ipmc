@@ -8,6 +8,11 @@ export interface ITaskStatus {
 	progress?: number;
 
 	/**
+	 * Total progress of the {@link ITask} (if available).
+	 */
+	total?: number;
+
+	/**
 	 * Title of the {@link ITask}.
 	 */
 	title: string;

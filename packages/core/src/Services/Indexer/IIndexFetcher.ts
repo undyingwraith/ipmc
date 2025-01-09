@@ -1,11 +1,12 @@
-import { ILibrary } from 'ipmc-interfaces';
+import { ILibrary, IOnProgress } from 'ipmc-interfaces';
 
 export interface IIndexFetcher<TIndex> {
 	/**
 	 * Fetches the index of the specified CID.
 	 * @param cid cid to index.
+	 * @param onProgress function to update progress.
 	 */
-	fetchIndex(cid: string): Promise<TIndex>;
+	fetchIndex(cid: string, onProgress: IOnProgress): Promise<TIndex>;
 
 	/**
 	 * Checks wheter the indexer can handler specified {@link ILibrary}.

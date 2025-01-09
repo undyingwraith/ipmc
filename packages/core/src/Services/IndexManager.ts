@@ -1,6 +1,6 @@
 import { Signal } from '@preact/signals-core';
 import { inject, injectable, postConstruct, preDestroy } from 'inversify';
-import { IIndexManager, IIpfsService, IIpfsServiceSymbol, ILibrary, ILibraryIndex, IObjectStore, IObjectStoreSymbol, IProfile, IProfileSymbol, ITask, ITaskManager, ITaskManagerSymbol, ITranslationService, ITranslationServiceSymbol } from 'ipmc-interfaces';
+import { IIndexManager, IIpfsService, IIpfsServiceSymbol, ILibrary, ILibraryIndex, IObjectStore, IObjectStoreSymbol, IOnProgress, IProfile, IProfileSymbol, ITask, ITaskManager, ITaskManagerSymbol, ITranslationService, ITranslationServiceSymbol } from 'ipmc-interfaces';
 import { IIndexFetcher, MovieIndexFetcher, SeriesIndexFetcher } from './Indexer';
 
 @injectable()
@@ -42,8 +42,6 @@ export class IndexManager implements IIndexManager {
 
 	public indexes = new Map<string, Signal<ILibraryIndex<any> | undefined>>();
 
-	public tasks = new Signal<ITask[]>([]);
-
 	private getIndexStorageKey(name: string) {
 		return `${this.profile.id}_index_${name}`;
 	}
@@ -52,8 +50,9 @@ export class IndexManager implements IIndexManager {
 		for (const library of this.libraries.values()) {
 			const lib = library.value;
 			if (!this.updates.has(lib.name)) {
+				this.updates.add(lib.name);
 				this.taskManager.runTask({
-					task: () => this.updateLibrary(lib),
+					task: (onProgress) => this.updateLibrary(lib, onProgress),
 					title: this.translationService.translate('UpdatingLibrary', { name: lib.name }),
 					onEnd: () => {
 						this.updates.delete(lib.name);
@@ -63,7 +62,7 @@ export class IndexManager implements IIndexManager {
 		}
 	}
 
-	private async updateLibrary(library: ILibrary): Promise<void> {
+	private async updateLibrary(library: ILibrary, onProgress: IOnProgress): Promise<void> {
 		const index = this.indexes.get(library.name);
 		if (library.upstream != undefined && index != undefined) {
 			try {
@@ -74,7 +73,7 @@ export class IndexManager implements IIndexManager {
 						throw new Error(`Unknown library type [${library.type}]`);
 					}
 
-					const newIndex = await indexer.fetchIndex(cid);
+					const newIndex = await indexer.fetchIndex(cid, onProgress);
 
 					index.value = {
 						cid: cid,
@@ -92,7 +91,7 @@ export class IndexManager implements IIndexManager {
 
 	private libraries = new Map<string, Signal<ILibrary>>();
 
-	private updates = new Map<string, Promise<void>>();
+	private updates = new Set<string>();
 
 	private timer: any;
 }

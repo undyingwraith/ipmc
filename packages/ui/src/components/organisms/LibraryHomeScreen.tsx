@@ -10,19 +10,26 @@ export function LibraryHomeScreen() {
 	const _t = useTranslation();
 	const taskManager = useService<ITaskManager>(ITaskManagerSymbol);
 
-	const status = useComputed(() => taskManager.status.value.length > 0 ? (
-		<Card>
-			<CardHeader title={_t('ActiveTasks')} />
-			{taskManager.status.value.map(t => (
-				<CardContent>
-					<Stack direction={"row"} gap={1}>
-						<Loader />
-						<Typography>{t.title}</Typography>
-					</Stack>
-				</CardContent>
-			))}
-		</Card>
-	) : undefined);
+	const status = useComputed(() => {
+		const status = taskManager.status.value;
+		if (status.length > 0) {
+			return (
+				<Card>
+					<CardHeader title={_t('ActiveTasks')} />
+					{taskManager.status.value.map(t => (
+						<CardContent>
+							<Stack direction={"row"} gap={1}>
+								<Loader progress={t.progress} total={t.total} />
+								<Typography>{t.title}</Typography>
+							</Stack>
+						</CardContent>
+					))}
+				</Card>
+			);
+		} else {
+			return undefined;
+		}
+	});
 
 	return (<Box>
 		<Typography>{_t('Home')}</Typography>

@@ -1,4 +1,4 @@
-import { IFileInfo, IIpfsService, ILibrary, IMovieMetaData } from 'ipmc-interfaces';
+import { IFileInfo, IIpfsService, ILibrary, IMovieMetaData, IOnProgress } from 'ipmc-interfaces';
 import { Regexes } from '../../Regexes';
 import { IIndexFetcher } from './IIndexFetcher';
 
@@ -8,15 +8,16 @@ export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 
 	public version = '0';
 
-	public async fetchIndex(cid: string): Promise<IMovieMetaData[]> {
+	public async fetchIndex(cid: string, onProgress: IOnProgress): Promise<IMovieMetaData[]> {
 		const files = (await this.node.ls(cid)).filter(f => f.type == 'dir');
 		const index = [];
-		for (const file of files) {
+		for (const [i, file] of files.entries()) {
 			try {
 				index.push(await this.extractMovieMetaData(this.node, file));
 			} catch (ex) {
 				console.error(ex);
 			}
+			onProgress(i, files.length);
 		}
 
 		return index;
