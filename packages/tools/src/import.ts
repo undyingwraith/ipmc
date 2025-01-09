@@ -56,7 +56,7 @@ async function detectStreams(packager: string, file: string): Promise<IStream[]>
 async function packageStreams(packager: string, title: string, streams: IStream[], workdir: ITempDir): Promise<void> {
 	const folder = workdir.getPath();
 	function mapStream(s: IStream): string {
-		const segmentDir = `${folder}/${s.type.toLowerCase()}${s.type == 'Video' || !s.lang ? '' : '/' + s.lang}`;
+		const segmentDir = `${folder}/${s.type.toLowerCase()}${s.type == 'Video' || !s.lang ? '' : '/' + s.lang + (s.forced ? '.forced' : '')}`;
 		const options: { [key: string]: string; } = {
 			in: s.file,
 			stream: s.type.toLowerCase(),
