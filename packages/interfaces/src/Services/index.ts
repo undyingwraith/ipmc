@@ -1,3 +1,4 @@
+export * from './INotificationService';
 export * from './ITaskManager';
 export * from './ITranslationService';
 export { type IConfigurationService } from './IConfigurationService';
