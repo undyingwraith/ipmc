@@ -16,6 +16,9 @@ export class TaskManager implements ITaskManager {
 		task.task((progress, total) => {
 			this.status.value = this.status.value.map(t => t.id === status.id ? ({ ...t, progress, total }) : t);
 		})
+			.then(() => {
+				return task.onEnd ? task.onEnd() : Promise.resolve();
+			})
 			.finally(() => {
 				this.status.value = this.status.value.filter(s => s.id !== status.id);
 			});

@@ -8,22 +8,24 @@ export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 
 	public version = '0';
 
-	public async fetchIndex(cid: string, onProgress: IOnProgress): Promise<IMovieMetaData[]> {
+	public async fetchIndex(cid: string, signal: AbortSignal, onProgress: IOnProgress): Promise<IMovieMetaData[]> {
 		const files = (await this.node.ls(cid)).filter(f => f.type == 'dir');
+		signal.throwIfAborted();
 		const index = [];
 		for (const [i, file] of files.entries()) {
 			try {
-				index.push(await this.extractMovieMetaData(this.node, file));
+				index.push(await this.extractMovieMetaData(file, signal));
 			} catch (ex) {
 				console.error(ex);
 			}
+			signal.throwIfAborted();
 			onProgress(i, files.length);
 		}
 
 		return index;
 	}
 
-	public async extractMovieMetaData(node: IIpfsService, entry: IFileInfo, skeleton?: any): Promise<IMovieMetaData> {
+	public async extractMovieMetaData(entry: IFileInfo, signal: AbortSignal, skeleton?: any): Promise<IMovieMetaData> {
 		const files = (await this.node.ls(entry.cid)).filter(f => f.type == 'file');
 		const videoFile = files.find(f => Regexes.VideoFile('mpd').exec(f.name) != null);
 

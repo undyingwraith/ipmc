@@ -49,20 +49,22 @@ export class IndexManager implements IIndexManager {
 	private triggerUpdate(): void {
 		for (const library of this.libraries.values()) {
 			const lib = library.value;
-			if (!this.updates.has(lib.name)) {
-				this.updates.add(lib.name);
-				this.taskManager.runTask({
-					task: (onProgress) => this.updateLibrary(lib, onProgress),
-					title: this.translationService.translate('UpdatingLibrary', { name: lib.name }),
-					onEnd: () => {
-						this.updates.delete(lib.name);
-					},
-				});
+			if (this.updates.has(lib.name)) {
+				this.updates.get(lib.name)!.abort();
 			}
+			const controller = new AbortController();
+			this.updates.set(lib.name, controller);
+			this.taskManager.runTask({
+				task: (onProgress) => this.updateLibrary(lib, controller.signal, onProgress),
+				title: this.translationService.translate('UpdatingLibrary', { name: lib.name }),
+				onEnd: () => {
+					this.updates.delete(lib.name);
+				},
+			});
 		}
 	}
 
-	private async updateLibrary(library: ILibrary, onProgress: IOnProgress): Promise<void> {
+	private async updateLibrary(library: ILibrary, signal: AbortSignal, onProgress: IOnProgress): Promise<void> {
 		const index = this.indexes.get(library.name);
 		if (library.upstream != undefined && index != undefined) {
 			try {
@@ -73,7 +75,7 @@ export class IndexManager implements IIndexManager {
 						throw new Error(`Unknown library type [${library.type}]`);
 					}
 
-					const newIndex = await indexer.fetchIndex(cid, onProgress);
+					const newIndex = await indexer.fetchIndex(cid, signal, onProgress);
 
 					index.value = {
 						cid: cid,
@@ -91,7 +93,7 @@ export class IndexManager implements IIndexManager {
 
 	private libraries = new Map<string, Signal<ILibrary>>();
 
-	private updates = new Set<string>();
+	private updates = new Map<string, AbortController>();
 
 	private timer: any;
 }
