@@ -11,6 +11,10 @@ export class Application implements IApplication, IApplicationRegistration {
 		this.container.bind<T>(identifier).toConstantValue(service);
 	}
 
+	public registerConstantMultiple<T>(service: T, identifier: symbol) {
+		this.container.bind<T>(identifier).toConstantValue(service);
+	}
+
 	public register<T>(service: interfaces.Newable<T>, identifier: symbol) {
 		if (this.container.isBound(identifier)) {
 			this.container.unbind(identifier);

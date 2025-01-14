@@ -9,12 +9,11 @@ import { IProfile, IProfileSymbol } from "ipmc-interfaces";
 import React from "react";
 import { Route, useLocation } from 'wouter';
 import { useService } from '../../context/AppContext';
-import { useTranslation } from '../../hooks/useTranslation';
+import { useLinkedSignal, useTranslation } from '../../hooks';
 import { ErrorBoundary } from '../atoms/ErrorBoundary';
 import { Library } from '../organisms/Library';
 import { LibraryAppBar } from "../organisms/LibraryAppBar";
 import { LibraryHomeScreen } from '../organisms/LibraryHomeScreen';
-import { useWatcher } from '../../hooks';
 
 const icons = {
 	movie: <MovieIcon />,
@@ -29,7 +28,7 @@ export function LibraryManager() {
 	const display = useSignal<Display>(Display.Poster);
 	const query = useSignal<string>('');
 	const [loc, setLocation] = useLocation();
-	const location = useWatcher(loc);
+	const location = useLinkedSignal(loc);
 
 	const sidebar = useComputed(() => (
 		<List>

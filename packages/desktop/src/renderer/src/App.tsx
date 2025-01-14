@@ -1,6 +1,6 @@
 import { IpmcLauncher, ThemeContextProvider } from "ipmc-ui";
 
-function App(): JSX.Element {
+function App() {
 	return (
 		<ThemeContextProvider>
 			<IpmcLauncher

@@ -13,7 +13,12 @@ export class TaskManager implements ITaskManager {
 			title: task.title,
 		};
 		this.status.value = [...this.status.value, status];
-		task.task()
+		task.task((progress, total) => {
+			this.status.value = this.status.value.map(t => t.id === status.id ? ({ ...t, progress, total }) : t);
+		})
+			.then(() => {
+				return task.onEnd ? task.onEnd() : Promise.resolve();
+			})
 			.finally(() => {
 				this.status.value = this.status.value.filter(s => s.id !== status.id);
 			});

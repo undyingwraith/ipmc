@@ -1,12 +1,14 @@
 import React, { PropsWithChildren } from 'react';
 import { useComputed, useSignal } from '@preact/signals-react';
 import { useTranslation } from './hooks';
-import { IConfigurationService, IIpfsService, IIpfsServiceSymbol, INodeService, IProfile, IProfileSymbol, isInternalProfile, isRemoteProfile } from 'ipmc-interfaces';
-import { createRemoteIpfs } from 'ipmc-core';
+import { IConfigurationService, IIpfsService, IIpfsServiceSymbol, INodeService, IProfile, IProfileSymbol, isInternalProfile, isRemoteProfile, ITranslation, ITranslationServiceSymbol, ITranslationsSymbol } from 'ipmc-interfaces';
+import { createRemoteIpfs, TranslationService } from 'ipmc-core';
 import { IpmcApp } from './IpmcApp';
 import { Alert, Box, Button, ButtonGroup, Stack } from '@mui/material';
 import { ProfileSelector } from './components/molecules/ProfileSelector';
 import { LoadScreen } from './components/molecules/LoadScreen';
+import { AppContextProvider } from './context';
+import translations from './translations';
 
 enum LoadState {
 	Idle,
@@ -26,6 +28,17 @@ export const IReturnToLauncherActionSymbol = Symbol.for('IReturnToLauncherAction
 export type IReturnToLauncherAction = () => void;
 
 export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
+	return (
+		<AppContextProvider setup={(app) => {
+			app.register(TranslationService, ITranslationServiceSymbol);
+			app.registerConstantMultiple<ITranslation>(translations, ITranslationsSymbol);
+		}}>
+			<IpmcLauncherUi {...props} />
+		</AppContextProvider>
+	);
+}
+
+function IpmcLauncherUi(props: PropsWithChildren<IIpmcLauncherProps>) {
 	const _t = useTranslation();
 
 	const state = useSignal<LoadState>(LoadState.Idle);
@@ -43,9 +56,10 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 
 				if (isRemoteProfile(currentProfile)) {
 					node.value = await createRemoteIpfs(currentProfile.url);
-				}
-				if (isInternalProfile(currentProfile)) {
+				} else if (isInternalProfile(currentProfile)) {
 					node.value = await props.nodeService.create(currentProfile);
+				} else {
+					throw new Error('Unknown profile type');
 				}
 
 				state.value = LoadState.Ready;

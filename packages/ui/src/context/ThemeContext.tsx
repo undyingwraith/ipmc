@@ -19,10 +19,12 @@ export function ThemeContextProvider(props: PropsWithChildren<{}>) {
 		<ThemeContext.Provider value={{
 			darkMode,
 		}}>
-			<ThemeProvider theme={theme.value}>
-				<CssBaseline />
-				{props.children}
-			</ThemeProvider>
+			{useComputed(() => (
+				<ThemeProvider theme={theme.value}>
+					<CssBaseline />
+					{props.children}
+				</ThemeProvider>
+			))}
 		</ThemeContext.Provider>
 	);
 }

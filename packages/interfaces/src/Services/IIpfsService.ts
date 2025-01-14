@@ -28,11 +28,8 @@ export interface IIpfsService {
 	ls(cid: string): Promise<IFileInfo[]>;
 
 	/**
-	 * Gets a url of the file.
-	 * @param cid cid of the file to get the url to.
+	 * Lists all connected peers.
 	 */
-	toUrl(cid: string): string;
-
 	peers(): Promise<string[]>;
 
 	/**
@@ -50,4 +47,11 @@ export interface IIpfsService {
 	 * Returns node id.
 	 */
 	id(): string;
+
+	/**
+	 * Fetches a block.
+	 * @param cid cid of the block to fetch.
+	 * @param path (optional) path inside the cid.
+	 */
+	fetch(cid: string, path?: string): Promise<Uint8Array>;
 }

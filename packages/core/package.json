@@ -2,18 +2,20 @@
 	"name": "ipmc-core",
 	"main": "./dist/index.js",
 	"type": "module",
-	"packageManager": "yarn@4.2.1",
 	"scripts": {
 		"watch": "tsc --watch",
-		"build": "tsc"
+		"build": "tsc",
+		"test": "vitest run"
 	},
 	"dependencies": {
-		"inversify": "^6.0.2",
+		"i18next": "^24.2.0",
+		"inversify": "^6.2.1",
 		"ipmc-interfaces": "workspace:^",
-		"kubo-rpc-client": "^4.1.1",
+		"kubo-rpc-client": "^5.0.2",
 		"reflect-metadata": "^0.2.2"
 	},
 	"devDependencies": {
-		"typescript": "^5.4.5"
+		"typescript": "^5.7.2",
+		"vitest": "^2.1.8"
 	}
 }

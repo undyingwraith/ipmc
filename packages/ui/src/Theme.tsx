@@ -7,7 +7,7 @@ const baseTheme = createTheme({
 	},
 });
 
-export function createDarkTheme (accentColor: string) {
+export function createDarkTheme(accentColor: string) {
 	return createTheme({
 		...baseTheme,
 		palette: {

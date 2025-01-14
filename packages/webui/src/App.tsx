@@ -1,19 +1,36 @@
-import React from 'react';
-import { IFileInfo } from 'ipmc-interfaces';
-import { IpmcLauncher, ThemeContextProvider } from 'ipmc-ui';
-import { webSockets } from '@libp2p/websockets';
-import { webTransport } from '@libp2p/webtransport';
-import { preSharedKey } from "@libp2p/pnet";
+import { gossipsub } from '@chainsafe/libp2p-gossipsub';
 import { noise } from "@chainsafe/libp2p-noise";
-import { bootstrap } from '@libp2p/bootstrap';
-import { peerIdFromString } from '@libp2p/peer-id';
+import { yamux } from '@chainsafe/libp2p-yamux';
 import { bitswap, trustlessGateway } from '@helia/block-brokers';
-import { CID } from 'multiformats';
+import { ipns } from '@helia/ipns';
+import { unixfs } from '@helia/unixfs';
+import { autoNAT } from '@libp2p/autonat';
+import { bootstrap } from '@libp2p/bootstrap';
+import { circuitRelayTransport } from '@libp2p/circuit-relay-v2';
+import { dcutr } from '@libp2p/dcutr';
+import { identify, identifyPush } from '@libp2p/identify';
+import { kadDHT } from '@libp2p/kad-dht';
+import { keychain } from '@libp2p/keychain';
+import { mplex } from '@libp2p/mplex';
+import { peerIdFromString } from '@libp2p/peer-id';
+import { ping } from '@libp2p/ping';
+import { preSharedKey } from "@libp2p/pnet";
+import { pubsubPeerDiscovery } from '@libp2p/pubsub-peer-discovery';
+import { webRTC, webRTCDirect } from '@libp2p/webrtc';
+import { webSockets } from '@libp2p/websockets';
+import { all } from '@libp2p/websockets/filters';
+import { webTransport } from '@libp2p/webtransport';
 import { IDBBlockstore } from 'blockstore-idb';
 import { IDBDatastore } from 'datastore-idb';
 import { createHelia } from 'helia';
-import { unixfs } from '@helia/unixfs';
-import { ipns } from '@helia/ipns';
+import { Defaults } from 'ipmc-core';
+import { IFileInfo } from 'ipmc-interfaces';
+import { IpmcLauncher, ThemeContextProvider } from 'ipmc-ui';
+import { ipnsSelector } from 'ipns/selector';
+import { ipnsValidator } from 'ipns/validator';
+import { CID } from 'multiformats';
+import React from 'react';
+import { concat } from 'uint8arrays';
 
 export function App() {
 	return (
@@ -21,20 +38,19 @@ export function App() {
 			<IpmcLauncher
 				configService={{
 					getProfile(name) {
-						const value = window.localStorage.getItem('profile_' + name);
-						return value ? JSON.parse(value) : undefined;
+						const value = window.localStorage.getItem('profiles');
+						return value ? JSON.parse(value)[name] : undefined;
 					},
 					getProfiles() {
 						const value = window.localStorage.getItem('profiles');
-						return value ? JSON.parse(value) : [];
+						return value ? Object.keys(JSON.parse(value)) : [];
 					},
 					setProfile(name, profile) {
-						window.localStorage.setItem('profile_' + name, JSON.stringify(profile));
-						const value = window.localStorage.getItem('profiles');
-						const profiles: string[] = value ? JSON.parse(value) : [];
-						if (!profiles.some(p => p == name)) {
-							window.localStorage.setItem('profiles', JSON.stringify([...profiles, name]));
-						}
+						const profilesString = window.localStorage.getItem('profiles');
+						const profiles = profilesString ? JSON.parse(profilesString) : {};
+						profiles[name] = profile;
+
+						window.localStorage.setItem('profiles', JSON.stringify(profiles));
 					},
 				}}
 				nodeService={{
@@ -49,26 +65,60 @@ export function App() {
 							datastore,
 							blockstore,
 							libp2p: {
+								addresses: {
+									listen: [
+										'/ws',
+										'/wss',
+										'/webrtc',
+									],
+								},
 								...(profile?.swarmKey ? {
 									connectionProtector: preSharedKey({
 										psk: new TextEncoder().encode(profile.swarmKey),
 									}),
 								} : {}),
 								transports: [
-									webSockets(),
+									circuitRelayTransport({
+										discoverRelays: 1
+									}),
+									webRTC(),
+									webRTCDirect(),
 									webTransport(),
+									webSockets({
+										filter: all
+									}),
 								],
 								peerDiscovery: [
 									bootstrap({
-										list: profile?.bootstrap ?? [
-											// a list of bootstrap peer multiaddrs to connect to on node startup
-											'/ip4/104.131.131.82/tcp/4001/ipfs/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ',
-											'/dnsaddr/bootstrap.libp2p.io/ipfs/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN',
-											'/dnsaddr/bootstrap.libp2p.io/ipfs/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa'
-										]
-									})
+										list: profile?.bootstrap ?? Defaults.Bootstrap
+									}),
+									pubsubPeerDiscovery(),
+								],
+								streamMuxers: [
+									yamux(),
+									mplex()
 								],
 								connectionEncryption: [noise()],
+								services: {
+									dht: kadDHT({
+										validators: {
+											ipns: ipnsValidator
+										},
+										selectors: {
+											ipns: ipnsSelector
+										}
+									}),
+									identify: identify(),
+									identifyPush: identifyPush(),
+									keychain: keychain(),
+									ping: ping(),
+									autoNAT: autoNAT(),
+									dcutr: dcutr(),
+									pubsub: gossipsub({
+										allowPublishToZeroTopicPeers: true,
+										canRelayMessage: true,
+									}),
+								},
 							},
 							blockBrokers: [
 								bitswap(),
@@ -95,9 +145,6 @@ export function App() {
 								await blockstore.close();
 								await datastore.close();
 							},
-							toUrl(cid: string) {
-								return `TODO ${cid}`;
-							},
 							peers() {
 								return Promise.resolve(helia.libp2p.getConnections().map(p => p.remoteAddr.toString()));
 							},
@@ -123,6 +170,15 @@ export function App() {
 								for await (const block of helia.pins.rm(CID.parse(cid))) {
 									console.log(`Pin progress ${cid}: ${block.toString()}`);
 								}
+							},
+							async fetch(cid: string, path?: string) {
+								const data: Uint8Array[] = [];
+								for await (const buf of fs.cat(CID.parse(cid), {
+									path
+								})) {
+									data.push(buf);
+								}
+								return concat(data);
 							},
 						});
 					},

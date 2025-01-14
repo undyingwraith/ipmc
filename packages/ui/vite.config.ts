@@ -3,6 +3,7 @@ import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
 import dts from 'vite-plugin-dts';
+import path from 'path';
 
 export default defineConfig(({ mode }) => ({
 	plugins: [
@@ -23,28 +24,40 @@ export default defineConfig(({ mode }) => ({
 		rollupOptions: {
 			preserveSymlinks: true,
 			external: [
-				'helia',
-				'react',
-				'react-dom',
-				'react-i18next',
-				'@mui/material',
-				'@mui/icons-material',
 				'@emotion/react',
+				'@emotion/styled',
 				'@helia/unixfs',
 				'@libp2p/pnet',
+				'@mui/icons-material',
+				'@mui/material',
 				'@preact/signals-react',
-				'i18next',
-				'minidenticons',
-				'multiformats',
+				'file-type',
+				'helia',
 				'ipmc-core',
 				'ipmc-interfaces',
+				'minidenticons',
+				'multiformats',
+				'react',
+				'react-dom',
+				'shaka-player',
+				'wouter',
 			],
 			output: {
 				// Provide global variables to use in the UMD build
 				// for externalized deps
 				globals: {
+					'@emotion/react': 'react',
+					'@emotion/styled': 'emStyled',
+					'@mui/material': 'material',
+					'@preact/signals-react': 'signalsReact',
+					'file-type': 'fileType',
 					helia: 'helia',
 					react: 'React',
+					'ipmc-core': 'ipmcCore',
+					'ipmc-interfaces': 'ipmcInterfaces',
+					minidenticons: 'minidenticons',
+					'shaka-player': 'shaka',
+					wouter: 'wouter',
 				},
 			},
 		},
@@ -53,7 +66,13 @@ export default defineConfig(({ mode }) => ({
 		manifest: false,
 		minify: mode == 'dev' ? 'esbuild' : 'terser',
 	},
+	resolve: {
+		alias: {
+			"@src": path.resolve(__dirname, "./src"),
+		}
+	},
 	test: {
 		globals: true,
+		environment: 'jsdom',
 	},
 }));

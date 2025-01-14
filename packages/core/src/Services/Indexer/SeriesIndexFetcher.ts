@@ -1,4 +1,4 @@
-import { IEpisodeMetaData, IFileInfo, IIpfsService, ISeasonMetaData, ISeriesMetaData } from 'ipmc-interfaces';
+import { IEpisodeMetaData, IFileInfo, IIpfsService, ILibrary, ISeasonMetaData, ISeriesMetaData } from 'ipmc-interfaces';
 import { Regexes } from '../../Regexes';
 import { IIndexFetcher } from './IIndexFetcher';
 
@@ -62,7 +62,7 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 			...entry,
 			posters: files.filter(f => Regexes.Poster.exec(f.name) != null),
 			title: entry.name,
-			video: files.filter(f => f.name.endsWith('.mp4'))[0],
+			video: files.filter(f => f.name.endsWith('.mpd'))[0],
 			thumbnails: files.filter(f => Regexes.Thumbnail.exec(f.name) != null),
 		};
 
@@ -71,5 +71,9 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 		}
 
 		return episode;
+	}
+
+	public canIndex(library: ILibrary): boolean {
+		return library.type === 'series';
 	}
 }

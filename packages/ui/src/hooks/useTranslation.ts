@@ -1,20 +1,25 @@
 import { ReadonlySignal, computed, useSignal, useSignalEffect } from '@preact/signals-react';
-import { useTranslation as useTrans } from 'react-i18next';
+import { useService } from '../context';
+import { ITranslationService, ITranslationServiceSymbol } from 'ipmc-interfaces';
 
-export function useTranslation(): (key: string) => ReadonlySignal<string> {
-	const [_t, i18n] = useTrans();
-	const language = useSignal(i18n.language);
+export function useTranslation(): (key: string, values?: { [key: string]: string; }) => ReadonlySignal<string> {
+	const translationService = useService<ITranslationService>(ITranslationServiceSymbol);
+	const language = useSignal(translationService.language);
 
 	useSignalEffect(() => {
-		i18n.on('languageChanged', () => {
-			language.value = i18n.language;
+		const sym = translationService.registerLanguageChange((lang: string) => {
+			language.value = lang;
 		});
+
+		return () => {
+			translationService.unregisterLanguageChange(sym);
+		};
 	});
 
 
-	function translate(key: string): ReadonlySignal<string> {
+	function translate(key: string, values?: { [key: string]: string; }): ReadonlySignal<string> {
 		return computed(() => {
-			return language.value !== undefined ? _t(key) : 'Error';
+			return language.value !== undefined ? translationService.translate(key, values) : 'Error';
 		});
 	}
 
