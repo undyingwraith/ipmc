@@ -1,4 +1,8 @@
+export { FormList } from './FormList';
+export { Identicon } from './Identicon';
 export { ImageView } from './ImageView';
 export { Loader } from './Loader';
-export { Identicon } from './Identicon';
+export { SelectInput } from './SelectInput';
+export { Spacer } from './Spacer';
+export { TextInput } from './TextInput';
 export { ThemeToggle } from './ThemeToggle';

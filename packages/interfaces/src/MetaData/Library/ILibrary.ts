@@ -1,11 +1,9 @@
-import { IMovieMetaData } from './IMovieMetaData';
-import { IGenericLibrary, isGenericLibrary } from './IGenericLibrary';
-import { ISeriesMetaData } from './ISeriesMetaData';
+import { IGenericLibrary } from './IGenericLibrary';
 
-export type IMovieLibrary = IGenericLibrary<IMovieMetaData, 'movie'>;
+export type IMovieLibrary = IGenericLibrary<'movie'>;
 
-export type ISeriesLibrary = IGenericLibrary<ISeriesMetaData, 'series'>;
+export type ISeriesLibrary = IGenericLibrary<'series'>;
 
-export type IMusicLibrary = IGenericLibrary<any, 'music'>;
+export type IMusicLibrary = IGenericLibrary<'music'>;
 
 export type ILibrary = IMovieLibrary | ISeriesLibrary | IMusicLibrary;

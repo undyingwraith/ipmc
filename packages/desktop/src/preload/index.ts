@@ -208,6 +208,9 @@ const configService: IConfigurationService = {
 		return JSON.parse(fs.readFileSync(getProfileFolder(name) + '/profile.json', 'utf-8'));
 	},
 	setProfile(name: string, profile: IProfile) {
+		if (!fs.existsSync(getProfileFolder(name))) {
+			fs.mkdirSync(getProfileFolder(name));
+		}
 		fs.writeFileSync(getProfileFolder(name) + '/profile.json', JSON.stringify(profile));
 	},
 	removeProfile(name) {

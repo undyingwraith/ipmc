@@ -1,38 +1,130 @@
+import { Button, Card, CardActions, CardContent, CardHeader } from '@mui/material';
+import Grid from '@mui/material/Grid2';
+import { Signal, useComputed, useSignal } from '@preact/signals-react';
+import { IConfigurationService, ILibrary, IProfile, isInternalProfile, isRemoteProfile } from 'ipmc-interfaces';
 import React from 'react';
-import { useComputed, useSignal } from "@preact/signals-react";
-import { Button, Card, CardActions, CardContent, CardHeader, TextField } from "@mui/material";
-import { useTranslation } from 'react-i18next';
-import { IConfigurationService } from 'ipmc-interfaces';
+import { useTranslation } from '../../hooks';
+import { FormList, SelectInput, TextInput } from '../atoms';
+import { LibraryEditor } from './LibraryEditor';
 
 export function ProfileEditor(props: { id: string, configService: IConfigurationService, onCancel: () => void, onSave: () => void; }) {
 	const { configService, id, onCancel, onSave } = props;
-	const [_t] = useTranslation();
+	const _t = useTranslation();
 
-	const profile = useComputed(() => {
-		return configService.getProfile(id);
+	const profile = useComputed<IProfile>(() => {
+		try {
+			return configService.getProfile(id);
+		} catch (ex) {
+			return {
+				id: props.id,
+				libraries: [],
+				name: '',
+				type: 'internal',
+			} as IProfile;
+		}
 	});
 
 	const name = useSignal<string>(profile.value?.name ?? id);
+	const type = useSignal<'internal' | 'remote'>(profile.value?.type ?? 'internal');
+	const apiUrl = useSignal<string>(isRemoteProfile(profile.value) ? profile.value.url ?? '' : '');
+	const swarmKey = useSignal<string>(isInternalProfile(profile.value) ? profile.value.swarmKey ?? '' : '');
+	const port = useSignal<string>(isInternalProfile(profile.value) ? profile.value.port?.toString() ?? '' : '');
+	const bootstrap = useSignal<Signal<string>[]>(isInternalProfile(profile.value) ? profile.value.bootstrap?.map(i => new Signal(i)) ?? [] : []);
+	const libraries = useSignal<Signal<ILibrary>[]>(profile.value.libraries.map(i => new Signal(i)));
 
 	function save() {
 		configService.setProfile(id, {
 			...(profile.value ?? {}),
 			name: name.value,
+			type: type.value,
+			...(type.value === 'internal' ? {
+				swarmKey: swarmKey.value === '' ? undefined : swarmKey.value,
+				port: port.value === '' ? undefined : parseInt(port.value),
+				bootstrap: bootstrap.value.map(s => s.value),
+			} : {
+				apiUrl: apiUrl.value === '' ? undefined : apiUrl.value,
+			}),
+			libraries: libraries.value.map(l => l.value),
 		});
 		onSave();
 	}
 
 	return (
-		<Card>
+		<Card sx={{ maxHeight: '100%', overflow: 'auto' }}>
 			<CardHeader title={_t('EditProfile')} />
 			<CardContent>
-				<TextField
-					label={_t('Name')}
-					value={name}
-					onChange={(ev) => {
-						name.value = ev.target.value;
-					}}
-				/>
+				<Grid container spacing={2}>
+					<Grid size={8}>
+						<TextInput
+							label={_t('Name')}
+							value={name}
+						/>
+					</Grid>
+					<Grid size={4}>
+						<SelectInput
+							value={type}
+							label={_t('ProfileType')}
+							options={{
+								'internal': _t('Internal'),
+								'remote': _t('Remote'),
+							}}
+						/>
+					</Grid>
+					{useComputed(() => type.value === 'internal' ? (<>
+						<Grid size={12}>
+							<TextInput
+								label={_t('SwarmKey')}
+								value={swarmKey}
+								key={'swarmKey'}
+								multiline={true}
+								rows={3}
+							/>
+						</Grid>
+						<Grid size={12}>
+							<TextInput
+								label={_t('Port')}
+								value={port}
+								key={'port'}
+							/>
+						</Grid>
+						<Grid size={12}>
+							<FormList
+								label={_t('Bootstrap')}
+								values={bootstrap}
+								renderControl={(item) => (
+									<TextInput
+										value={item}
+									/>
+								)}
+								createItem={() => ''}
+							/>
+						</Grid>
+					</>) : (<>
+						<Grid size={12}>
+							<TextInput
+								label={_t('ApiUrl')}
+								value={apiUrl}
+								key={'apiUrl'}
+							/>
+						</Grid>
+					</>))}
+					<Grid size={12}>
+						<FormList
+							label={_t('Libraries')}
+							values={libraries}
+							renderControl={(item) => (
+								<LibraryEditor
+									value={item}
+								/>
+							)}
+							createItem={() => ({
+								upstream: '',
+								name: '',
+								type: 'movie',
+							} as ILibrary)}
+						/>
+					</Grid>
+				</Grid>
 			</CardContent>
 			<CardActions>
 				<Button onClick={() => onCancel()}>{_t('Cancel')}</Button>
