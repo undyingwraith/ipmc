@@ -1,14 +1,15 @@
-import React, { PropsWithChildren } from 'react';
+import { Alert, Box, Button, ButtonGroup } from '@mui/material';
 import { useComputed, useSignal } from '@preact/signals-react';
-import { useTranslation } from './hooks';
-import { IConfigurationService, IIpfsService, IIpfsServiceSymbol, INodeService, IProfile, IProfileSymbol, isInternalProfile, isRemoteProfile, ITranslation, ITranslationServiceSymbol, ITranslationsSymbol } from 'ipmc-interfaces';
-import { createRemoteIpfs, TranslationService } from 'ipmc-core';
-import { IpmcApp } from './IpmcApp';
-import { Alert, Box, Button, ButtonGroup, Stack } from '@mui/material';
-import { ProfileSelector } from './components/molecules/ProfileSelector';
+import { createRemoteIpfs, IndexManager } from 'ipmc-core';
+import { IConfigurationService, IIndexManagerSymbol, IIpfsService, IIpfsServiceSymbol, INodeService, IProfile, IProfileSymbol, isInternalProfile, isRemoteProfile } from 'ipmc-interfaces';
+import React, { PropsWithChildren } from 'react';
+import { ConnectionStatus } from './components/molecules/ConnectionStatus';
 import { LoadScreen } from './components/molecules/LoadScreen';
-import { AppContextProvider } from './context';
-import translations from './translations';
+import { ProfileSelector } from './components/molecules/ProfileSelector';
+import { LibraryManager } from './components/pages/LibraryManager';
+import { AppContextProvider, useService } from './context';
+import { useTranslation } from './hooks';
+import { AppbarButtonService, AppbarButtonServiceSymbol } from './services';
 
 enum LoadState {
 	Idle,
@@ -23,27 +24,15 @@ export interface IIpmcLauncherProps {
 	nodeService: INodeService;
 }
 
-export const IReturnToLauncherActionSymbol = Symbol.for('IReturnToLauncherAction');
-
-export type IReturnToLauncherAction = () => void;
-
 export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
-	return (
-		<AppContextProvider setup={(app) => {
-			app.register(TranslationService, ITranslationServiceSymbol);
-			app.registerConstantMultiple<ITranslation>(translations, ITranslationsSymbol);
-		}}>
-			<IpmcLauncherUi {...props} />
-		</AppContextProvider>
-	);
-}
-
-function IpmcLauncherUi(props: PropsWithChildren<IIpmcLauncherProps>) {
 	const _t = useTranslation();
+	const appbarService = useService<AppbarButtonService>(AppbarButtonServiceSymbol);
 
 	const state = useSignal<LoadState>(LoadState.Idle);
 	const node = useSignal<IIpfsService | undefined>(undefined);
 	const profile = useSignal<IProfile | undefined>(undefined);
+	const nodeButton = useSignal<Symbol | undefined>(undefined);
+	const profileButton = useSignal<Symbol | undefined>(undefined);
 
 	async function start(name: string) {
 		if (name == undefined) return;
@@ -61,6 +50,18 @@ function IpmcLauncherUi(props: PropsWithChildren<IIpmcLauncherProps>) {
 				} else {
 					throw new Error('Unknown profile type');
 				}
+
+				nodeButton.value = appbarService.registerAppbarButton({
+					position: 'end',
+					component: (<ConnectionStatus ipfs={node.value} />)
+				});
+				profileButton.value = appbarService.registerAppbarButton({
+					position: 'start',
+					component: (<>
+						<Button onClick={stop}>{_t('Logout')}</Button>
+						{currentProfile.name}
+					</>)
+				});
 
 				state.value = LoadState.Ready;
 			} catch (ex) {
@@ -80,12 +81,15 @@ function IpmcLauncherUi(props: PropsWithChildren<IIpmcLauncherProps>) {
 			} catch (ex) {
 				console.error(ex);
 				state.value = LoadState.Error;
+			} finally {
+				nodeButton.value && appbarService.unRegisterAppbarButton(nodeButton.value);
+				profileButton.value && appbarService.unRegisterAppbarButton(profileButton.value);
 			}
 		}
 		state.value = LoadState.Idle;
 	}
 
-	const content = useComputed(() => {
+	return useComputed(() => {
 		const ipfs = node.value;
 		const currentState = state.value;
 		const currentProfile = profile.value;
@@ -103,7 +107,7 @@ function IpmcLauncherUi(props: PropsWithChildren<IIpmcLauncherProps>) {
 			case LoadState.Idle:
 				return (
 					<Box>
-						<ProfileSelector switchProfile={start} configService={props.configService} />
+						<ProfileSelector switchProfile={start} />
 					</Box>
 				);
 			case LoadState.Starting:
@@ -113,20 +117,16 @@ function IpmcLauncherUi(props: PropsWithChildren<IIpmcLauncherProps>) {
 				);
 			case LoadState.Ready:
 				return (
-					<IpmcApp setup={(app) => {
+					<AppContextProvider setup={(app) => {
 						app.registerConstant<IIpfsService>(ipfs!, IIpfsServiceSymbol);
 						app.registerConstant<IProfile>(currentProfile!, IProfileSymbol);
-						app.registerConstant<IReturnToLauncherAction>(stop, IReturnToLauncherActionSymbol);
-					}} />
+						app.register(IndexManager, IIndexManagerSymbol);
+					}} >
+						<LibraryManager />
+					</AppContextProvider>
 				);
 			default:
 				return (<></>);
 		}
 	});
-
-	return useComputed(() => (
-		<Stack sx={{ height: '100vh', width: '100vw', overflow: 'hidden' }}>
-			{content}
-		</Stack>
-	));
 }

@@ -1,6 +1,9 @@
-import { IFileInfo } from '../IFileInfo';
-
 export interface IGenericLibrary<TType extends string> {
+	/**
+	 * Id of the library. Must be unique.
+	 */
+	id: string;
+
 	/**
 	 * Name of the library. Must be unique.
 	 */
@@ -9,7 +12,7 @@ export interface IGenericLibrary<TType extends string> {
 	/**
 	 * IPNS path to update from.
 	 */
-	upstream?: string;
+	upstream: string;
 
 	/**
 	 * Type of the library.

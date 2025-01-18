@@ -1,3 +1,5 @@
+export const IApplicationSymbol = Symbol.for('IApplication');
+
 /**
  * The main application holding everything together.
  */

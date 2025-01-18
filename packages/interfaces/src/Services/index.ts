@@ -1,7 +1,10 @@
+export * from './IDialogService';
 export * from './INotificationService';
+export * from './IPopupService';
 export * from './ITaskManager';
 export * from './ITranslationService';
-export { type IConfigurationService } from './IConfigurationService';
+export { type IConfigurationService, IConfigurationServiceSymbol } from './IConfigurationService';
+export { type IFileExportService, IFileExportServiceSymbol } from './IFileExportService';
 export { IHotkeyServiceSymbol, type IHotkeyService, type IHotkey } from './IHotkeyService';
 export { type IIndexManager, IIndexManagerSymbol } from './IIndexManager';
 export { type IIpfsService, IIpfsServiceSymbol } from './IIpfsService';

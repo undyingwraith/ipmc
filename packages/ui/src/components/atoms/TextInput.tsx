@@ -5,9 +5,10 @@ import { ReadonlySignal, Signal, useComputed } from '@preact/signals-react';
 interface ITextInputProps {
 	label?: ReadonlySignal<string>;
 	value: Signal<string>;
-	ref?: Signal<HTMLInputElement | null>;
+	inputRef?: Signal<HTMLInputElement | null>;
 	multiline?: boolean;
 	rows?: number;
+	variant?: 'outlined' | 'filled' | 'standard';
 }
 
 export function TextInput(props: ITextInputProps) {
@@ -16,11 +17,12 @@ export function TextInput(props: ITextInputProps) {
 			fullWidth={true}
 			rows={props.rows}
 			multiline={props.multiline}
+			variant={props.variant}
 			label={props.label?.value}
 			value={props.value.value}
 			inputRef={ref => {
-				if (props.ref) {
-					props.ref.value = ref;
+				if (props.inputRef !== undefined) {
+					props.inputRef.value = ref;
 				}
 			}}
 			onChange={(ev) => {

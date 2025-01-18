@@ -1,30 +1,32 @@
 import { IProfile } from '../Profile';
 
+export const IConfigurationServiceSymbol = Symbol.for('IConfigurationService');
+
 /**
  * Service to manage app configuration.
  */
 export interface IConfigurationService {
 	/**
-	 * Gets a list of all profile names.
+	 * Gets a list of all {@link IProfile} names.
 	 */
 	getProfiles(): string[];
 
 	/**
-	 * Returns the specified Profile.
-	 * @param name name of the profile
+	 * Returns the specified {@link IProfile}.
+	 * @param id id of the {@link IProfile}.
 	 */
-	getProfile(name: string): IProfile;
+	getProfile(id: string): IProfile;
 
 	/**
-	 * Updates the specified Profile.
-	 * @param name name of the profile
-	 * @param profile updated profile
+	 * Updates the specified {@link IProfile}.
+	 * @param id id of the {@link IProfile}.
+	 * @param profile updated {@link IProfile}.
 	 */
-	setProfile(name: string, profile: IProfile): void;
+	setProfile(id: string, profile: IProfile): void;
 
 	/**
-	 * Deletes the specified Profile.
-	 * @param name name of the profile
+	 * Deletes the specified {@link IProfile}.
+	 * @param id id of the {@link IProfile}.
 	 */
-	removeProfile(name: string): void;
+	removeProfile(id: string): void;
 }

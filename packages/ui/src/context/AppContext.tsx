@@ -1,36 +1,31 @@
-import React, { useContext } from 'react';
-import { Application, IApplication, IModule } from 'ipmc-core';
-import { PropsWithChildren, createContext } from 'react';
 import { useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
+import { Application, IApplication, IModule } from 'ipmc-core';
+import React, { PropsWithChildren, createContext, useContext } from 'react';
 import { LoadScreen } from '../components/molecules/LoadScreen';
-import { ThemeContextProvider } from './ThemeContext';
 
-const AppContext = createContext({} as IApplication);
+export const AppContext = createContext<Application | undefined>(undefined);
 
 export function AppContextProvider(props: PropsWithChildren<{ setup: IModule; }>) {
-	const application = useSignal<IApplication | undefined>(undefined);
+	const application = useSignal<Application | undefined>(undefined);
+	const parentApp = useContext(AppContext);
 
 	useSignalEffect(() => {
-		const app = new Application();
+		const app = parentApp?.createChildApplication() ?? new Application();
 		app.use(props.setup);
 		application.value = app;
 	});
 
-	return (
-		<ThemeContextProvider>
-			{useComputed(() => (application.value !== undefined ? (
-				<AppContext.Provider value={application.value}>
-					{props.children}
-				</AppContext.Provider>
-			) : (
-				<LoadScreen />
-			)))}
-		</ThemeContextProvider>
-	);
+	return useComputed(() => (application.value !== undefined ? (
+		<AppContext.Provider value={application.value}>
+			{props.children}
+		</AppContext.Provider>
+	) : (
+		<LoadScreen />
+	)));
 }
 
-export function useApp() {
-	return useContext(AppContext);
+export function useApp(): IApplication {
+	return useContext(AppContext)!;
 }
 
 export function useService<T>(identifier: symbol): T {

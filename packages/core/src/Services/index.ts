@@ -1,4 +1,5 @@
 export * from './Indexer';
+export { FileExportService } from './FileExportService';
 export { HotkeyService } from './HotkeyService';
 export { IndexManager } from './IndexManager';
 export { LocalStorageKeyValueStore } from './LocalStorageKeyValueStore';

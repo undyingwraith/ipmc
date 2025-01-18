@@ -1,4 +1,4 @@
-import { Grid } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import { ReadonlySignal, useComputed, useSignal } from '@preact/signals-react';
 import { createFilter } from 'ipmc-core';
 import { IFileInfo, IIndexManager, IIndexManagerSymbol } from 'ipmc-interfaces';
@@ -17,7 +17,10 @@ export function Library(props: {
 	library: string;
 }) {
 	const { display, library, query } = props;
+	const spacing = 1;
+
 	const indexManager = useService<IIndexManager>(IIndexManagerSymbol);
+
 	const index = useLinkedSignal(indexManager.indexes.get(library)!.value);
 	const selected = useSignal<IFileInfo | undefined>(undefined);
 
@@ -40,9 +43,9 @@ export function Library(props: {
 			<LoadScreen />
 		) : (
 			<>
-				<Grid container spacing={1} sx={{ height: '100%', justifyContent: 'center' }}>
+				<Grid container spacing={spacing} sx={{ height: '100%', justifyContent: 'center', paddingTop: spacing, paddingBottom: spacing }}>
 					{(q === undefined ? i.index : i.index.filter(createFilter(q))).map(v => (
-						<Grid item key={v.cid}>
+						<Grid key={v.cid}>
 							<ErrorBoundary>
 								<FileGridItem
 									onOpen={() => {

@@ -1,14 +1,15 @@
-import React from "react";
+import { AppBar, Box, Button, ButtonGroup, Toolbar } from "@mui/material";
 import { Signal, useComputed, useSignal } from "@preact/signals-react";
-import { Display } from "../pages/LibraryManager";
-import { AppBar, Box, Button, ButtonGroup, TextField, Toolbar } from "@mui/material";
-import { useTranslation } from '../../hooks/useTranslation';
+import React from "react";
 import { useHotkey } from '../../hooks';
+import { useTranslation } from '../../hooks/useTranslation';
+import { TextInput } from '../atoms';
+import { Display } from "../pages/LibraryManager";
 
 // Icons
-import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import GridViewIcon from '@mui/icons-material/GridView';
 import ViewListIcon from '@mui/icons-material/ViewList';
+import ViewModuleIcon from '@mui/icons-material/ViewModule';
 
 export function LibraryAppBar(props: { query: Signal<string>, display: Signal<Display>; }) {
 	const { query, display } = props;
@@ -48,17 +49,13 @@ export function LibraryAppBar(props: { query: Signal<string>, display: Signal<Di
 	return (
 		<AppBar position={'relative'}>
 			<Toolbar>
-				{useComputed(() => (
-					<TextField
-						label={_t('Search')}
-						variant="standard"
-						size="small"
-						value={query.value}
-						inputRef={(ref) => searchFieldRef.value = ref}
-						onChange={(e) => query.value = e.target.value}
-					/>
-				))}
-				<Box sx={{ flexGrow: 1 }} />
+				<TextInput
+					label={_t('Search')}
+					value={query}
+					inputRef={searchFieldRef}
+					variant={'standard'}
+				/>
+				<Box sx={{ flexGrow: 1, minWidth: 75 }} />
 				{displayButtons}
 			</Toolbar>
 		</AppBar>

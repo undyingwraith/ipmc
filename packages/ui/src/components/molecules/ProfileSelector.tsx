@@ -1,16 +1,19 @@
-import { Button, ButtonGroup, Card, CardActions, CardHeader, Dialog, Stack } from "@mui/material";
+import { Box, Button, ButtonGroup, Card, CardActions, CardHeader, Container, Stack } from "@mui/material";
 import { useComputed, useSignal } from "@preact/signals-react";
-import React from "react";
-import { IConfigurationService, IProfile } from 'ipmc-interfaces';
+import { useService } from '../../context';
 import { uuid } from 'ipmc-core';
+import { IConfigurationService, IConfigurationServiceSymbol, IDialogService, IDialogServiceSymbol, IFileExportService, IFileExportServiceSymbol, IPopupService, IPopupServiceSymbol, IProfile } from 'ipmc-interfaces';
+import React from "react";
 import { useTranslation } from '../../hooks/useTranslation';
 import { ProfileEditor } from "./ProfileEditor";
 
-export function ProfileSelector(props: { profile?: IProfile, switchProfile: (name: string) => void, configService: IConfigurationService; }) {
-	const { configService } = props;
-
+export function ProfileSelector(props: { profile?: IProfile, switchProfile: (name: string) => void; }) {
 	const _t = useTranslation();
-	const editing = useSignal<string | undefined>(undefined);
+	const fileExportService = useService<IFileExportService>(IFileExportServiceSymbol);
+	const popupService = useService<IPopupService>(IPopupServiceSymbol);
+	const dialogService = useService<IDialogService>(IDialogServiceSymbol);
+	const configService = useService<IConfigurationService>(IConfigurationServiceSymbol);
+
 	const profiles = useSignal<(IProfile & { id: string; })[]>(loadProfiles());
 
 	function loadProfiles() {
@@ -20,42 +23,45 @@ export function ProfileSelector(props: { profile?: IProfile, switchProfile: (nam
 		}));
 	}
 
-	const dialog = useComputed(() => {
-		if (editing.value == undefined) {
-			return <></>;
-		}
-		return (
-			<Dialog
-				open={true}
-				onClose={() => editing.value = undefined}
-			>
-				<ProfileEditor
-					id={editing.value}
-					configService={configService}
-					onCancel={() => editing.value = undefined}
-					onSave={() => {
-						editing.value = undefined;
-						profiles.value = loadProfiles();
-					}}
-				/>
-			</Dialog>
-		);
-	});
-
 	const content = useComputed(() => profiles.value.map(p => (
 		<Card key={p.id}>
 			<CardHeader title={p.name} subheader={p.id} />
 			<CardActions>
-				<ButtonGroup>
+				<ButtonGroup fullWidth={true}>
 					<Button
 						color={"error"}
 						onClick={() => {
-							configService.removeProfile(p.id);
-							profiles.value = loadProfiles();
+							dialogService.boolDialog({
+								title: _t('ConfirmProfileDeletion')
+							})
+								.then(r => {
+									if (r) {
+										configService.removeProfile(p.id);
+										profiles.value = loadProfiles();
+									}
+								});
 						}}
 					>{_t('Delete')}</Button>
 					<Button
-						onClick={() => editing.value = p.id}
+						onClick={() => {
+							fileExportService.exportJson(p, `${p.name}.profile.json`);
+						}}
+					>{_t('Export')}</Button>
+					<Button
+						onClick={() => {
+							popupService.show({
+								content: (close) => (
+									<ProfileEditor
+										id={p.id}
+										onCancel={close}
+										onSave={() => {
+											close();
+											profiles.value = loadProfiles();
+										}}
+									/>
+								)
+							});
+						}}
 					>{_t('Edit')}</Button>
 					<Button
 						variant={'contained'}
@@ -66,13 +72,43 @@ export function ProfileSelector(props: { profile?: IProfile, switchProfile: (nam
 		</Card>
 	)));
 
-	return (<>
-		<Stack spacing={1}>
-			{content}
-			<div>
-				<Button onClick={() => editing.value = uuid()}>{_t('AddProfile')}</Button>
-			</div>
-		</Stack>
-		{dialog}
-	</>);
+	return (
+		<Container>
+			<Stack spacing={1}>
+				{content}
+				<Box>
+					<Button onClick={() => {
+						popupService.show({
+							content: (close) => (
+								<ProfileEditor
+									id={uuid()}
+									onCancel={close}
+									onSave={() => {
+										close();
+										profiles.value = loadProfiles();
+									}}
+								/>
+							)
+						});
+					}}>{_t('AddProfile')}</Button>
+					<Button onClick={() => {
+						dialogService.fileDialog({
+							title: _t('ChooseImportFile'),
+							accept: 'application/json',
+						})
+							.then(r => {
+								const id = uuid();
+								const file = r[0];
+								const fileReader = new FileReader();
+								fileReader.onloadend = () => {
+									configService.setProfile(id, { ...JSON.parse(fileReader.result as string), id: id });
+									profiles.value = loadProfiles();
+								};
+								fileReader.readAsText(file);
+							});
+					}}>{_t('ImportProfile')}</Button>
+				</Box>
+			</Stack>
+		</Container>
+	);
 }

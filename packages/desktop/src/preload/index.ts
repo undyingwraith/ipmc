@@ -45,9 +45,9 @@ const nodeService: INodeService = {
 		}
 
 		const agentVersion = `helia/2.0.0 ${libp2pInfo.name}/${libp2pInfo.version} UserAgent=${process.version}`;
-		const datastore = new LevelDatastore(`${getProfileFolder(profile.name)}/data`);
+		const datastore = new LevelDatastore(`${getProfileFolder(profile.id)}/data`);
 		await datastore.open();
-		const blockstore = new FsBlockstore(`${getProfileFolder(profile.name)}/blocks`);
+		const blockstore = new FsBlockstore(`${getProfileFolder(profile.id)}/blocks`);
 		await blockstore.open();
 
 		const helia = await createHelia({
@@ -204,17 +204,17 @@ const configService: IConfigurationService = {
 			return [];
 		}
 	},
-	getProfile(name: string): IProfile {
-		return JSON.parse(fs.readFileSync(getProfileFolder(name) + '/profile.json', 'utf-8'));
+	getProfile(id: string): IProfile {
+		return JSON.parse(fs.readFileSync(getProfileFolder(id) + '/profile.json', 'utf-8'));
 	},
-	setProfile(name: string, profile: IProfile) {
-		if (!fs.existsSync(getProfileFolder(name))) {
-			fs.mkdirSync(getProfileFolder(name));
+	setProfile(id: string, profile: IProfile) {
+		if (!fs.existsSync(getProfileFolder(id))) {
+			fs.mkdirSync(getProfileFolder(id));
 		}
-		fs.writeFileSync(getProfileFolder(name) + '/profile.json', JSON.stringify(profile));
+		fs.writeFileSync(getProfileFolder(id) + '/profile.json', JSON.stringify(profile));
 	},
-	removeProfile(name) {
-		fs.rmdirSync(getProfileFolder(name), { recursive: true });
+	removeProfile(id) {
+		fs.rmSync(getProfileFolder(id), { recursive: true });
 	},
 };
 

@@ -1,3 +1,5 @@
+export { ErrorBoundary } from './ErrorBoundary';
+export { FileInput } from './FileInput';
 export { FormList } from './FormList';
 export { Identicon } from './Identicon';
 export { ImageView } from './ImageView';

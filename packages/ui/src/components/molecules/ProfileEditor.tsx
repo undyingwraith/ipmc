@@ -1,26 +1,31 @@
 import { Button, Card, CardActions, CardContent, CardHeader } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { Signal, useComputed, useSignal } from '@preact/signals-react';
-import { IConfigurationService, ILibrary, IProfile, isInternalProfile, isRemoteProfile } from 'ipmc-interfaces';
+import { IConfigurationService, IConfigurationServiceSymbol, ILibrary, IProfile, isInternalProfile, isRemoteProfile } from 'ipmc-interfaces';
 import React from 'react';
 import { useTranslation } from '../../hooks';
 import { FormList, SelectInput, TextInput } from '../atoms';
 import { LibraryEditor } from './LibraryEditor';
+import { uuid } from 'ipmc-core';
+import { useService } from '@src/context';
 
-export function ProfileEditor(props: { id: string, configService: IConfigurationService, onCancel: () => void, onSave: () => void; }) {
-	const { configService, id, onCancel, onSave } = props;
+export function ProfileEditor(props: { id: string, onCancel: () => void, onSave: () => void; }) {
+	const { id, onCancel, onSave } = props;
+	const configService = useService<IConfigurationService>(IConfigurationServiceSymbol);
 	const _t = useTranslation();
 
 	const profile = useComputed<IProfile>(() => {
+		const defaultProfile = {
+			id: props.id,
+			libraries: [],
+			name: '',
+			type: 'internal',
+		} as IProfile;
 		try {
-			return configService.getProfile(id);
+			const profile = configService.getProfile(id);
+			return profile ?? defaultProfile;
 		} catch (ex) {
-			return {
-				id: props.id,
-				libraries: [],
-				name: '',
-				type: 'internal',
-			} as IProfile;
+			return defaultProfile;
 		}
 	});
 
@@ -118,6 +123,7 @@ export function ProfileEditor(props: { id: string, configService: IConfiguration
 								/>
 							)}
 							createItem={() => ({
+								id: uuid(),
 								upstream: '',
 								name: '',
 								type: 'movie',
