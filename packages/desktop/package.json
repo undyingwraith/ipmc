@@ -5,6 +5,7 @@
 	"main": "./out/main/index.js",
 	"author": "example.com",
 	"homepage": "https://www.electronjs.org",
+	"repository": "github:undyingwraith/ipmc",
 	"type": "module",
 	"scripts": {
 		"format": "prettier --write .",
