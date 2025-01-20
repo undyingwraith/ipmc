@@ -48,7 +48,7 @@ export function App() {
 				},
 				getProfiles() {
 					const value = window.localStorage.getItem('profiles');
-					return value ? Object.keys(JSON.parse(value)) : [];
+					return Promise.resolve(value ? Object.keys(JSON.parse(value)) : []);
 				},
 				setProfile(id, profile) {
 					const profilesString = window.localStorage.getItem('profiles');
@@ -56,6 +56,8 @@ export function App() {
 					profiles[id] = profile;
 
 					window.localStorage.setItem('profiles', JSON.stringify(profiles));
+
+					return Promise.resolve();
 				},
 				removeProfile(id: string) {
 					const profilesString = window.localStorage.getItem('profiles');
@@ -63,6 +65,8 @@ export function App() {
 					delete profiles[id];
 
 					window.localStorage.setItem('profiles', JSON.stringify(profiles));
+
+					return Promise.resolve();
 				}
 			}}
 			nodeService={{

@@ -9,24 +9,24 @@ export interface IConfigurationService {
 	/**
 	 * Gets a list of all {@link IProfile} names.
 	 */
-	getProfiles(): string[];
+	getProfiles(): Promise<string[]>;
 
 	/**
 	 * Returns the specified {@link IProfile}.
 	 * @param id id of the {@link IProfile}.
 	 */
-	getProfile(id: string): IProfile;
+	getProfile(id: string): Promise<IProfile>;
 
 	/**
 	 * Updates the specified {@link IProfile}.
 	 * @param id id of the {@link IProfile}.
 	 * @param profile updated {@link IProfile}.
 	 */
-	setProfile(id: string, profile: IProfile): void;
+	setProfile(id: string, profile: IProfile): Promise<void>;
 
 	/**
 	 * Deletes the specified {@link IProfile}.
 	 * @param id id of the {@link IProfile}.
 	 */
-	removeProfile(id: string): void;
+	removeProfile(id: string): Promise<void>;
 }

@@ -9,37 +9,22 @@ import { LibraryEditor } from './LibraryEditor';
 import { uuid } from 'ipmc-core';
 import { useService } from '@src/context';
 
-export function ProfileEditor(props: { id: string, onCancel: () => void, onSave: () => void; }) {
-	const { id, onCancel, onSave } = props;
+export function ProfileEditor(props: { profile: IProfile, onCancel: () => void, onSave: () => void; }) {
+	const { profile, onCancel, onSave } = props;
 	const configService = useService<IConfigurationService>(IConfigurationServiceSymbol);
 	const _t = useTranslation();
 
-	const profile = useComputed<IProfile>(() => {
-		const defaultProfile = {
-			id: props.id,
-			libraries: [],
-			name: '',
-			type: 'internal',
-		} as IProfile;
-		try {
-			const profile = configService.getProfile(id);
-			return profile ?? defaultProfile;
-		} catch (ex) {
-			return defaultProfile;
-		}
-	});
-
-	const name = useSignal<string>(profile.value?.name ?? id);
-	const type = useSignal<'internal' | 'remote'>(profile.value?.type ?? 'internal');
-	const apiUrl = useSignal<string>(isRemoteProfile(profile.value) ? profile.value.url ?? '' : '');
-	const swarmKey = useSignal<string>(isInternalProfile(profile.value) ? profile.value.swarmKey ?? '' : '');
-	const port = useSignal<string>(isInternalProfile(profile.value) ? profile.value.port?.toString() ?? '' : '');
-	const bootstrap = useSignal<Signal<string>[]>(isInternalProfile(profile.value) ? profile.value.bootstrap?.map(i => new Signal(i)) ?? [] : []);
-	const libraries = useSignal<Signal<ILibrary>[]>(profile.value.libraries.map(i => new Signal(i)));
+	const name = useSignal<string>(profile.name);
+	const type = useSignal<'internal' | 'remote'>(profile.type ?? 'internal');
+	const apiUrl = useSignal<string>(isRemoteProfile(profile) ? profile.url ?? '' : '');
+	const swarmKey = useSignal<string>(isInternalProfile(profile) ? profile.swarmKey ?? '' : '');
+	const port = useSignal<string>(isInternalProfile(profile) ? profile.port?.toString() ?? '' : '');
+	const bootstrap = useSignal<Signal<string>[]>(isInternalProfile(profile) ? profile.bootstrap?.map(i => new Signal(i)) ?? [] : []);
+	const libraries = useSignal<Signal<ILibrary>[]>(profile.libraries.map(i => new Signal(i)));
 
 	function save() {
-		configService.setProfile(id, {
-			...(profile.value ?? {}),
+		configService.setProfile(profile.id, {
+			...(profile ?? {}),
 			name: name.value,
 			type: type.value,
 			...(type.value === 'internal' ? {

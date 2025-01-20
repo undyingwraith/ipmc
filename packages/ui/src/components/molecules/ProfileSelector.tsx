@@ -1,5 +1,5 @@
 import { Box, Button, ButtonGroup, Card, CardActions, CardHeader, Container, Stack } from "@mui/material";
-import { useComputed, useSignal } from "@preact/signals-react";
+import { useComputed, useSignal, useSignalEffect } from "@preact/signals-react";
 import { useService } from '../../context';
 import { uuid } from 'ipmc-core';
 import { IConfigurationService, IConfigurationServiceSymbol, IDialogService, IDialogServiceSymbol, IFileExportService, IFileExportServiceSymbol, IPopupService, IPopupServiceSymbol, IProfile } from 'ipmc-interfaces';
@@ -14,13 +14,17 @@ export function ProfileSelector(props: { profile?: IProfile, switchProfile: (nam
 	const dialogService = useService<IDialogService>(IDialogServiceSymbol);
 	const configService = useService<IConfigurationService>(IConfigurationServiceSymbol);
 
-	const profiles = useSignal<(IProfile & { id: string; })[]>(loadProfiles());
+	const profiles = useSignal<(IProfile)[]>([]);
 
-	function loadProfiles() {
-		return configService.getProfiles().map(p => ({
-			...configService.getProfile(p),
+	useSignalEffect(() => {
+		loadProfiles();
+	});
+
+	async function loadProfiles(): Promise<void> {
+		profiles.value = await Promise.all((await configService.getProfiles()).map(async (p) => ({
+			...(await configService.getProfile(p)),
 			id: p,
-		}));
+		})));
 	}
 
 	const content = useComputed(() => profiles.value.map(p => (
@@ -37,7 +41,7 @@ export function ProfileSelector(props: { profile?: IProfile, switchProfile: (nam
 								.then(r => {
 									if (r) {
 										configService.removeProfile(p.id);
-										profiles.value = loadProfiles();
+										loadProfiles();
 									}
 								});
 						}}
@@ -52,11 +56,11 @@ export function ProfileSelector(props: { profile?: IProfile, switchProfile: (nam
 							popupService.show({
 								content: (close) => (
 									<ProfileEditor
-										id={p.id}
+										profile={p}
 										onCancel={close}
 										onSave={() => {
 											close();
-											profiles.value = loadProfiles();
+											loadProfiles();
 										}}
 									/>
 								)
@@ -81,11 +85,16 @@ export function ProfileSelector(props: { profile?: IProfile, switchProfile: (nam
 						popupService.show({
 							content: (close) => (
 								<ProfileEditor
-									id={uuid()}
+									profile={{
+										id: uuid(),
+										type: 'internal',
+										name: '',
+										libraries: [],
+									}}
 									onCancel={close}
 									onSave={() => {
 										close();
-										profiles.value = loadProfiles();
+										loadProfiles();
 									}}
 								/>
 							)
@@ -102,7 +111,7 @@ export function ProfileSelector(props: { profile?: IProfile, switchProfile: (nam
 								const fileReader = new FileReader();
 								fileReader.onloadend = () => {
 									configService.setProfile(id, { ...JSON.parse(fileReader.result as string), id: id });
-									profiles.value = loadProfiles();
+									loadProfiles();
 								};
 								fileReader.readAsText(file);
 							});

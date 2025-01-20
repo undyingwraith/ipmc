@@ -20,11 +20,6 @@
 		"build:mac": "electron-vite build && electron-builder --mac --config",
 		"build:linux": "electron-vite build && electron-builder --linux --config"
 	},
-	"build": {
-		"files": [
-			"out/**/*"
-		]
-	},
 	"dependencies": {
 		"@chainsafe/libp2p-gossipsub": "^13.0.0",
 		"@chainsafe/libp2p-noise": "^15.0.0",

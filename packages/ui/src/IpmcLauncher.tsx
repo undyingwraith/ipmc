@@ -37,7 +37,7 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 	async function start(name: string) {
 		if (name == undefined) return;
 
-		const currentProfile = props.configService.getProfile(name);
+		const currentProfile = await props.configService.getProfile(name);
 		if (currentProfile != undefined) {
 			profile.value = currentProfile;
 			try {

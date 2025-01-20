@@ -22,7 +22,7 @@ import { uPnPNAT } from '@libp2p/upnp-nat';
 import { webSockets } from '@libp2p/websockets';
 import { FsBlockstore } from 'blockstore-fs';
 import { LevelDatastore } from 'datastore-level';
-import { contextBridge } from 'electron';
+import { contextBridge, ipcRenderer } from 'electron';
 import fs from 'fs';
 import { createHelia } from 'helia';
 import { IConfigurationService, IFileInfo, IInternalProfile, IIpfsService, INodeService, IProfile } from 'ipmc-interfaces';
@@ -30,10 +30,12 @@ import { ipnsSelector } from 'ipns/selector';
 import { ipnsValidator } from 'ipns/validator';
 import * as libp2pInfo from 'libp2p/version';
 import { CID } from 'multiformats';
+import path from 'path';
 import { concat } from 'uint8arrays';
 
-function getProfileFolder(name: string): string {
-	return `./profiles/${name}`;
+async function getProfileFolder(id?: string): Promise<string> {
+	const appPath = path.join(await ipcRenderer.invoke('getAppPath'), 'profiles');
+	return id ? path.join(appPath, id) : appPath;
 }
 
 const nodes = new Map<string, IIpfsService>();
@@ -44,10 +46,12 @@ const nodeService: INodeService = {
 			return nodes.get(profile.id)!;
 		}
 
+		const folder = await getProfileFolder(profile.id);
+
 		const agentVersion = `helia/2.0.0 ${libp2pInfo.name}/${libp2pInfo.version} UserAgent=${process.version}`;
-		const datastore = new LevelDatastore(`${getProfileFolder(profile.id)}/data`);
+		const datastore = new LevelDatastore(path.join(folder, 'data'));
 		await datastore.open();
-		const blockstore = new FsBlockstore(`${getProfileFolder(profile.id)}/blocks`);
+		const blockstore = new FsBlockstore(path.join(folder, 'blocks'));
 		await blockstore.open();
 
 		const helia = await createHelia({
@@ -196,25 +200,28 @@ const nodeService: INodeService = {
 };
 
 const configService: IConfigurationService = {
-	getProfiles(): string[] {
+	async getProfiles(): Promise<string[]> {
 		try {
-			const profiles = fs.readdirSync('./profiles');
+			const profiles = fs.readdirSync(await getProfileFolder());
 			return profiles;
 		} catch (_) {
 			return [];
 		}
 	},
-	getProfile(id: string): IProfile {
-		return JSON.parse(fs.readFileSync(getProfileFolder(id) + '/profile.json', 'utf-8'));
+	async getProfile(id: string): Promise<IProfile> {
+		return JSON.parse(fs.readFileSync(path.join(await getProfileFolder(id), '/profile.json'), 'utf-8'));
 	},
-	setProfile(id: string, profile: IProfile) {
-		if (!fs.existsSync(getProfileFolder(id))) {
-			fs.mkdirSync(getProfileFolder(id));
+	async setProfile(id: string, profile: IProfile) {
+		const folder = await getProfileFolder(id);
+		if (!fs.existsSync(folder)) {
+			fs.mkdirSync(folder, {
+				recursive: true
+			});
 		}
-		fs.writeFileSync(getProfileFolder(id) + '/profile.json', JSON.stringify(profile));
+		fs.writeFileSync(path.join(folder, '/profile.json'), JSON.stringify(profile));
 	},
-	removeProfile(id) {
-		fs.rmSync(getProfileFolder(id), { recursive: true });
+	async removeProfile(id) {
+		fs.rmSync(await getProfileFolder(id), { recursive: true });
 	},
 };
 
