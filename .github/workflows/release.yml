@@ -18,6 +18,9 @@ jobs:
       run: yarn --immutable --check-cache
     - name: Run build
       run: yarn build
+    - name: Install snapcraft
+      run: sudo snap install snapcraft --classic
+      if: ${{ matrix.os == 'ubuntu-latest'}}
     - name: Build Electron app
       run: |
         cd ./packages/desktop

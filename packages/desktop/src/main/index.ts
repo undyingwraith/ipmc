@@ -9,7 +9,7 @@ process.on('uncaughtException', function (error) {
 });
 
 function getAppPath(): string {
-	return app.getPath('appData');
+	return join(app.getPath('appData'), app.getName(), 'Data');
 }
 
 function createWindow(): void {
