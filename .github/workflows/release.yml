@@ -1,0 +1,29 @@
+name: Release
+on:
+  release:
+    types: [published]
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+    - name: Install dependencies
+      run: yarn --immutable --check-cache
+    - name: Run build
+      run: yarn build
+    - name: Build Electron app
+      run: |
+        cd ./packages/desktop
+        yarn electron-builder
+    - name: Upload files
+      uses: AButler/upload-release-assets@v3.0
+      with:
+        files: 'packages/desktop/dist/*.{exe,deb,snap,AppImage,dmg}'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
