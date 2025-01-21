@@ -1,5 +1,5 @@
-import { Box } from '@mui/material';
 import { computed, Signal } from '@preact/signals-react';
+import { Spacer } from '../components/atoms';
 import React from 'react';
 
 export interface IAppbarButtonOptions {
@@ -22,7 +22,7 @@ export class AppbarButtonService {
 
 	public appbarButtons = computed(() => (<>
 		{this.buttons.value.filter(b => b.position === 'start').map(b => b.component)}
-		<Box sx={{ flexGrow: 1 }} />
+		<Spacer />
 		{this.buttons.value.filter(b => b.position === 'end').map(b => b.component)}
 	</>));
 

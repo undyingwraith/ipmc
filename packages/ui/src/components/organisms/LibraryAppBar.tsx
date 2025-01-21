@@ -1,9 +1,9 @@
-import { AppBar, Box, Button, ButtonGroup, Toolbar } from "@mui/material";
+import { AppBar, Button, ButtonGroup, Toolbar } from "@mui/material";
 import { Signal, useComputed, useSignal } from "@preact/signals-react";
 import React from "react";
 import { useHotkey } from '../../hooks';
 import { useTranslation } from '../../hooks/useTranslation';
-import { TextInput } from '../atoms';
+import { Spacer, TextInput } from '../atoms';
 import { Display } from "../pages/LibraryManager";
 
 // Icons
@@ -55,7 +55,7 @@ export function LibraryAppBar(props: { query: Signal<string>, display: Signal<Di
 					inputRef={searchFieldRef}
 					variant={'standard'}
 				/>
-				<Box sx={{ flexGrow: 1, minWidth: 75 }} />
+				<Spacer width={75} />
 				{displayButtons}
 			</Toolbar>
 		</AppBar>
