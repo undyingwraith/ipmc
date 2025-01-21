@@ -102,8 +102,8 @@ async function getEpisodeMetadata(files: string[]): Promise<{ seriesTitle: strin
 		return String(input).padStart(2, '0');
 	}
 	const seriesTitle = await input({ message: 'Series title?', required: true });
-	const season = await input({ message: 'Season?', default: '1', required: true, transformer: zeroPad });
-	const episode = await input({ message: 'Episode?', default: '1', required: true, transformer: zeroPad });
+	const season = await input({ message: 'Season?', default: '1', required: true });
+	const episode = await input({ message: 'Episode?', default: '1', required: true });
 	const episodeTitle = await input({ message: 'Episode title?', required: false });
 
 	return {
@@ -111,7 +111,7 @@ async function getEpisodeMetadata(files: string[]): Promise<{ seriesTitle: strin
 		season,
 		episode,
 		episodeTitle,
-		fileName: `${seriesTitle} - S${season}E${episode}`
+		fileName: `${seriesTitle} - S${zeroPad(season)}E${zeroPad(episode)}${episodeTitle && episodeTitle !== '' ? ` - ${episodeTitle}` : ''}`
 	};
 }
 
