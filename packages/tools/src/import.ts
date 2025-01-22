@@ -5,7 +5,7 @@ import { exec } from 'child_process';
 import { input, confirm, select } from '@inquirer/prompts';
 import { ITempDir, tempDir } from './utils/tempDIr';
 import chalk from 'chalk';
-import { Regexes } from 'ipmc-core';
+import { partitionArray, Regexes } from 'ipmc-core';
 import path, { basename } from 'path';
 import srt2vtt from 'srt2vtt';
 import fs from 'fs';
@@ -115,25 +115,7 @@ async function getEpisodeMetadata(files: string[]): Promise<{ seriesTitle: strin
 	};
 }
 
-const args = yargs(hideBin(process.argv))
-	.option('packager', {
-		alias: 'p',
-		describe: 'packager executable to use',
-		default: 'shaka-packager',
-	})
-	.option('ipfs', {
-		describe: 'ipfs api url',
-		default: 'http://127.0.0.1:5002/api/v0'
-	})
-	.array('file')
-	.alias('file', 'f')
-	.demandOption(['file'])
-	.help()
-	.parseSync();
-
-(async () => {
-	const files = args.file as string[];
-
+async function importFiles(files: string[]) {
 	const temp = tempDir();
 	const outDir = tempDir();
 
@@ -205,11 +187,41 @@ const args = yargs(hideBin(process.argv))
 				console.log(`Item ${chalk.blue(metaData.fileName)}`);
 			}
 		}
-
-		console.log('Done!');
 	} finally {
 		outDir.clean();
 		temp.clean();
 	}
+}
+
+const args = yargs(hideBin(process.argv))
+	.option('packager', {
+		alias: 'p',
+		describe: 'packager executable to use',
+		default: 'shaka-packager',
+	})
+	.option('ipfs', {
+		describe: 'ipfs api url',
+		default: 'http://127.0.0.1:5002/api/v0'
+	})
+	.array('file')
+	.alias('file', 'f')
+	.demandOption(['file'])
+	.help()
+	.parseSync();
+
+(async () => {
+	const paths = args.file as string[];
+
+	const [directories, files] = partitionArray(paths, path => fs.lstatSync(path).isDirectory());
+
+	for (const dir of directories) {
+		await importFiles(fs.readdirSync(dir).map(name => path.join(dir, name)));
+	}
+
+	if (files.length < 0) {
+		await importFiles(files);
+	}
+
+	console.log('Done!');
 })();
 
