@@ -23,10 +23,10 @@ export class HotkeyService implements IHotkeyService {
 
 	private handleEvent(ev: KeyboardEvent) {
 		const registration = this.registrations.find(({ hotkey }) =>
-			ev.key.toLowerCase() == hotkey.key.toLowerCase()
-			&& (hotkey.ctrl ? ev.ctrlKey : true)
-			&& (hotkey.alt ? ev.altKey : true)
-			&& (hotkey.shift ? ev.shiftKey : true)
+			ev.key.toLowerCase() === hotkey.key.toLowerCase()
+			&& ((hotkey.ctrl ?? false) === ev.ctrlKey)
+			&& ((hotkey.alt ?? false) === ev.altKey)
+			&& ((hotkey.shift ?? false) === ev.shiftKey)
 		);
 
 		if (registration !== undefined) {
