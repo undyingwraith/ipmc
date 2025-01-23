@@ -1,4 +1,5 @@
 import { Box, Stack, Typography } from '@mui/material';
+import { useComputed } from '@preact/signals-react';
 import { IFileInfo, isPosterFeature } from 'ipmc-interfaces';
 import React from 'react';
 import { useFileUrl } from '../../hooks';
@@ -14,7 +15,7 @@ export function FileInfoDisplay(props: { file: IFileInfo; }) {
 
 	return isPosterFeature(file) && file.posters.length > 0 ? (
 		<Stack direction={'row'} spacing={1}>
-			<img src={posterUrl.value} style={{ height: 250, flexGrow: 0 }} />
+			{useComputed(() => (<img src={posterUrl.value} style={{ height: 250, flexGrow: 0 }} />))}
 			{title}
 		</Stack>
 	) : (

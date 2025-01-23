@@ -12,7 +12,7 @@ export function useFileUrl(cid?: string, visible?: Signal<boolean>, fallback?: s
 	useSignalEffect(() => {
 		const controller = new AbortController();
 		const cid = cidSig.value;
-		const currentlyVisible = visible?.value ?? false;
+		const currentlyVisible = visible?.value ?? true;
 		if (cid !== undefined && currentlyVisible) {
 			(async () => {
 				const data = await heliaService.fetch(cid);
