@@ -4,14 +4,14 @@ import { concat } from 'uint8arrays';
 
 export async function createRemoteIpfs(url?: string): Promise<IIpfsService> {
 	const node = create({ url });
-	const connString = (await node.config.get('Addresses.Gateway')) as string;
-	const port = connString.substring(connString.lastIndexOf('/') + 1);
 	const id = (await node.id()).id.toString();
 
 	return {
-		async ls(cid: string) {
+		async ls(cid: string, signal) {
 			const files: IFileInfo[] = [];
-			for await (const file of node.ls(cid)) {
+			for await (const file of node.ls(cid, {
+				signal
+			})) {
 				files.push({
 					type: file.type,
 					name: file.name,

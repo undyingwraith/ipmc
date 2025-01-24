@@ -9,7 +9,7 @@ export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 	public version = '0';
 
 	public async fetchIndex(cid: string, signal: AbortSignal, onProgress: IOnProgress): Promise<IMovieMetaData[]> {
-		const files = (await this.node.ls(cid)).filter(f => f.type == 'dir');
+		const files = (await this.node.ls(cid, signal)).filter(f => f.type == 'dir');
 		signal.throwIfAborted();
 		const index = [];
 		for (const [i, file] of files.entries()) {
@@ -26,7 +26,7 @@ export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 	}
 
 	public async extractMovieMetaData(entry: IFileInfo, signal: AbortSignal, skeleton?: any): Promise<IMovieMetaData> {
-		const files = (await this.node.ls(entry.cid)).filter(f => f.type == 'file');
+		const files = (await this.node.ls(entry.cid, signal)).filter(f => f.type == 'file');
 		const videoFile = files.find(f => Regexes.VideoFile('mpd').exec(f.name) != null);
 
 		if (!videoFile) throw new Error('Failed to find video file in ' + entry.name + '|' + entry.cid);

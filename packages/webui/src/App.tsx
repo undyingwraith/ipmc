@@ -145,9 +145,11 @@ export function App() {
 					const fs = unixfs(helia);
 
 					return ({
-						async ls(cid: string) {
+						async ls(cid: string, signal) {
 							const files: IFileInfo[] = [];
-							for await (const file of fs.ls(CID.parse(cid))) {
+							for await (const file of fs.ls(CID.parse(cid), {
+								signal,
+							})) {
 								files.push({
 									type: file.type == 'directory' ? 'dir' : 'file',
 									name: file.name,

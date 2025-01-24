@@ -24,8 +24,9 @@ export interface IIpfsService {
 	/**
 	 * Lists the content of a directory.
 	 * @param cid cid of the directory to list.
+	 * @param signal {@link AbortSignal} to abort the operation.
 	 */
-	ls(cid: string): Promise<IFileInfo[]>;
+	ls(cid: string, signal?: AbortSignal): Promise<IFileInfo[]>;
 
 	/**
 	 * Lists all connected peers.
