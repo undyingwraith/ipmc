@@ -1,5 +1,5 @@
-import { Fullscreen, FullscreenExit, Pause, PlayArrow } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
+import { Fullscreen, FullscreenExit, Pause, PlayArrow, VolumeDown, VolumeUp } from '@mui/icons-material';
+import { IconButton, Slider, Stack } from '@mui/material';
 import { useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
 import { IIpfsService, IIpfsServiceSymbol, IVideoFile } from 'ipmc-interfaces';
 import React from 'react';
@@ -41,6 +41,7 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 	const languages = useSignal<string[]>([]);
 	const playing = useSignal<boolean>(props.autoPlay ?? false);
 	const fullScreen = useSignal<boolean>(false);
+	const volume = useSignal<number>(1);
 
 	useSignalEffect(() => {
 		if (videoRef.value != null && progressRef.value != null) {
@@ -79,6 +80,14 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 		}
 
 		return () => { };
+	});
+
+	useSignalEffect(() => {
+		volume.subscribe((value) => {
+			if (videoRef.value) {
+				videoRef.value.volume = value;
+			}
+		});
 	});
 
 	function scrub(e: MouseEvent) {
@@ -161,6 +170,18 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 								)))}
 							</select>
 						</div>
+						<Stack spacing={2} direction="row" sx={{ alignItems: 'center', width: 250 }}>
+							<VolumeDown />
+							{useComputed(() => (
+								<Slider
+									value={volume.value}
+									onChange={(_, value) => volume.value = value as number}
+									min={0}
+									max={1}
+									step={0.05} />
+							))}
+							<VolumeUp />
+						</Stack>
 						<IconButton onClick={() => toggleFullScreen()}>
 							{useComputed(() => playing.value ? <FullscreenExit /> : <Fullscreen />)}
 						</IconButton>
