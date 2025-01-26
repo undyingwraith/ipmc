@@ -7,5 +7,6 @@ declare const styles: {
 	readonly toolbar: string;
 	readonly progress: string;
 	readonly progressFilled: string;
+	readonly visible: string;
 };
 export default styles;

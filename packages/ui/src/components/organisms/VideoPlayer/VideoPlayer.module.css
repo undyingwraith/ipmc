@@ -20,13 +20,14 @@
 	z-index: 1;
 	width: 100%;
 	height: 100%;
-	visibility: hidden;
+	opacity: 0;
 	color: #fff;
 	background-color: #3232324d;
+	transition: all 0.3s;
 }
 
-.innerContainer:hover .videoOverlay {
-	visibility: visible;
+.videoOverlay.visible {
+	opacity: 1;
 }
 
 .video {

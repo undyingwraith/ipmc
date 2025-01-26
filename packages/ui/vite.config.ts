@@ -47,6 +47,7 @@ export default defineConfig(({ mode }) => ({
 				globals: {
 					'@emotion/react': 'react',
 					'@emotion/styled': 'emStyled',
+					'@mui/icons-material': 'iconsMaterial',
 					'@mui/material': 'material',
 					'@preact/signals-react': 'signalsReact',
 					'file-type': 'fileType',

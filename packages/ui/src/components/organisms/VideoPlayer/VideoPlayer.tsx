@@ -1,6 +1,6 @@
 import { Fullscreen, FullscreenExit, Pause, PlayArrow, VolumeDown, VolumeUp } from '@mui/icons-material';
 import { IconButton, Slider, Stack } from '@mui/material';
-import { useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
+import { computed, useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
 import { IIpfsService, IIpfsServiceSymbol, IVideoFile } from 'ipmc-interfaces';
 import React from 'react';
 //@ts-ignore
@@ -42,16 +42,39 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 	const playing = useSignal<boolean>(props.autoPlay ?? false);
 	const fullScreen = useSignal<boolean>(false);
 	const volume = useSignal<number>(1);
+	const overlayVisible = useSignal<boolean>(false);
+
+	useSignalEffect(() => {
+		if (containerRef.value != null) {
+			let timeout: NodeJS.Timeout;
+			const abortController = new AbortController();
+			containerRef.value.addEventListener('mousemove', () => {
+				overlayVisible.value = true;
+				if (timeout) {
+					clearTimeout(timeout);
+				}
+				timeout = setTimeout(() => {
+					overlayVisible.value = false;
+				}, 3000);
+			}, { signal: abortController.signal });
+
+			return () => {
+				abortController.abort();
+			};
+		}
+
+		return () => { };
+	});
 
 	useSignalEffect(() => {
 		if (videoRef.value != null && progressRef.value != null) {
 			//Event handlers
-			videoRef.value.addEventListener("timeupdate", handleProgress);
-			progressRef.value.addEventListener("click", scrub);
+			videoRef.value.addEventListener('timeupdate', handleProgress);
+			progressRef.value.addEventListener('click', scrub);
 			let mousedown = false;
-			progressRef.value.addEventListener("mousedown", () => (mousedown = true));
-			progressRef.value.addEventListener("mousemove", (e) => mousedown && scrub(e));
-			progressRef.value.addEventListener("mouseup", () => (mousedown = false));
+			progressRef.value.addEventListener('mousedown', () => (mousedown = true));
+			progressRef.value.addEventListener('mousemove', (e) => mousedown && scrub(e));
+			progressRef.value.addEventListener('mouseup', () => (mousedown = false));
 
 			// Shaka player init
 			shaka.net.NetworkingEngine.registerScheme('ipfs', createShakaIpfsPlugin(ipfs), 1, false);
@@ -135,61 +158,67 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 	useHotkey({ key: 'F' }, () => toggleFullScreen());
 	useHotkey({ key: 'Space' }, () => togglePlay());
 
+	const progress = useComputed(() => (
+		<div className={styles.progress} ref={(ref) => progressRef.value = ref}>
+			<div className={styles.progressFilled} ref={(ref) => progressBarRef.value = ref} />
+		</div>
+	));
+
 	return (
 		<div className={styles.outerContainer}>
 			<div className={styles.innerContainer} ref={(ref) => containerRef.value = ref}>
-				<div className={styles.videoOverlay}>
-					<div>
-						<FileInfoDisplay file={props.file} />
-					</div>
-					<div className={styles.spacer} />
-					<div className={styles.toolbar}>
-						<IconButton onClick={() => togglePlay()}>
-							{useComputed(() => playing.value ? <Pause /> : <PlayArrow />)}
-						</IconButton>
-						<div className={styles.spacer} />
+				{useComputed(() => (
+					<div className={`${styles.videoOverlay} ${overlayVisible.value ? styles.visible : ''}`}>
 						<div>
-							Language
-							<select>
-								{useComputed(() => languages.value.map(l => (
-									<option>{l}</option>
-								)))}
-							</select>
-							Subtitle
-							<select onChange={(ev) => {
-								if (ev.currentTarget.value !== 'null') {
-									playerRef.value.selectTextTrack(ev.currentTarget.value);
-									playerRef.value.setTextTrackVisibility(true);
-								} else {
-									playerRef.value.setTextTrackVisibility(false);
-								}
-							}}>
-								<option value="null">None</option>
-								{useComputed(() => subtitles.value.map(l => (
-									<option>{l.language}</option>
-								)))}
-							</select>
+							<FileInfoDisplay file={props.file} />
 						</div>
-						<Stack spacing={2} direction="row" sx={{ alignItems: 'center', width: 250 }}>
-							<VolumeDown />
-							{useComputed(() => (
-								<Slider
-									value={volume.value}
-									onChange={(_, value) => volume.value = value as number}
-									min={0}
-									max={1}
-									step={0.05} />
-							))}
-							<VolumeUp />
-						</Stack>
-						<IconButton onClick={() => toggleFullScreen()}>
-							{useComputed(() => playing.value ? <FullscreenExit /> : <Fullscreen />)}
-						</IconButton>
+						<div className={styles.spacer} />
+						<div className={styles.toolbar}>
+							<IconButton onClick={() => togglePlay()}>
+								{computed(() => playing.value ? <Pause /> : <PlayArrow />)}
+							</IconButton>
+							<div className={styles.spacer} />
+							<div>
+								Language
+								<select>
+									{computed(() => languages.value.map(l => (
+										<option>{l}</option>
+									)))}
+								</select>
+								Subtitle
+								<select onChange={(ev) => {
+									if (ev.currentTarget.value !== 'null') {
+										playerRef.value.selectTextTrack(ev.currentTarget.value);
+										playerRef.value.setTextTrackVisibility(true);
+									} else {
+										playerRef.value.setTextTrackVisibility(false);
+									}
+								}}>
+									<option value="null">None</option>
+									{computed(() => subtitles.value.map(l => (
+										<option>{l.language}</option>
+									)))}
+								</select>
+							</div>
+							<Stack spacing={2} direction="row" sx={{ alignItems: 'center', width: 250 }}>
+								<VolumeDown />
+								{computed(() => (
+									<Slider
+										value={volume.value}
+										onChange={(_, value) => volume.value = value as number}
+										min={0}
+										max={1}
+										step={0.05} />
+								))}
+								<VolumeUp />
+							</Stack>
+							<IconButton onClick={() => toggleFullScreen()}>
+								{computed(() => playing.value ? <FullscreenExit /> : <Fullscreen />)}
+							</IconButton>
+						</div>
+						{progress}
 					</div>
-					<div className={styles.progress} ref={(ref) => progressRef.value = ref}>
-						<div className={styles.progressFilled} ref={(ref) => progressBarRef.value = ref} />
-					</div>
-				</div>
+				))}
 				<video
 					controls={false}
 					ref={(ref) => {
