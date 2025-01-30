@@ -9,6 +9,7 @@ import { useService } from '../../../context';
 import { useHotkey } from '../../../hooks';
 import { FileInfoDisplay } from '../../atoms/FileInfoDisplay';
 import styles from './VideoPlayer.module.css';
+import { TimeDisplay } from '../../atoms/TimeDisplay';
 
 function createShakaIpfsPlugin(ipfs: IIpfsService): shaka.extern.SchemePlugin {
 	return async (uri: string, request: shaka.extern.Request, requestType: shaka.net.NetworkingEngine.RequestType, progressUpdated: shaka.extern.ProgressUpdated, headersReceived: shaka.extern.HeadersReceived, config: shaka.extern.SchemePluginConfig) => {
@@ -43,6 +44,8 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 	const fullScreen = useSignal<boolean>(false);
 	const volume = useSignal<number>(1);
 	const overlayVisible = useSignal<boolean>(false);
+	const movieDuration = useSignal<number>(0);
+	const currentPlayTime = useSignal<number>(0);
 
 	useSignalEffect(() => {
 		if (containerRef.value != null) {
@@ -70,6 +73,11 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 		if (videoRef.value != null && progressRef.value != null) {
 			//Event handlers
 			videoRef.value.addEventListener('timeupdate', handleProgress);
+			videoRef.value.addEventListener('loadedmetadata', () => {
+				if (videoRef.value) {
+					movieDuration.value = videoRef.value.duration;
+				}
+			});
 			progressRef.value.addEventListener('click', scrub);
 			let mousedown = false;
 			progressRef.value.addEventListener('mousedown', () => (mousedown = true));
@@ -151,6 +159,8 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 	function handleProgress() {
 		if (videoRef.value && progressBarRef.value) {
 			const progressPercentage = (videoRef.value.currentTime / videoRef.value.duration) * 100;
+			currentPlayTime.value = videoRef.value.currentTime;
+
 			progressBarRef.value.style.width = `${progressPercentage}%`;
 		}
 	}
@@ -158,9 +168,21 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 	useHotkey({ key: 'F' }, () => toggleFullScreen());
 	useHotkey({ key: 'Space' }, () => togglePlay());
 
-	const progress = useComputed(() => (
+	const progressBar = useComputed(() => (
 		<div className={styles.progress} ref={(ref) => progressRef.value = ref}>
 			<div className={styles.progressFilled} ref={(ref) => progressBarRef.value = ref} />
+		</div>
+	));
+
+	const progress = useComputed(() => (
+		<div className={styles.progressContainer}>
+			<TimeDisplay
+				time={currentPlayTime.value}
+			/>
+			{progressBar}
+			<TimeDisplay
+				time={movieDuration.value}
+			/>
 		</div>
 	));
 
@@ -177,7 +199,6 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 							<IconButton onClick={() => togglePlay()}>
 								{computed(() => playing.value ? <Pause /> : <PlayArrow />)}
 							</IconButton>
-							<div className={styles.spacer} />
 							<div>
 								Language
 								<select>
@@ -185,6 +206,8 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 										<option>{l}</option>
 									)))}
 								</select>
+							</div>
+							<div>
 								Subtitle
 								<select onChange={(ev) => {
 									if (ev.currentTarget.value !== 'null') {

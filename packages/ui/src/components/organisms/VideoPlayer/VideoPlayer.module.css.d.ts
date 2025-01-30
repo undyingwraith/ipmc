@@ -8,5 +8,6 @@ declare const styles: {
 	readonly progress: string;
 	readonly progressFilled: string;
 	readonly visible: string;
+	readonly progressContainer: string;
 };
 export default styles;

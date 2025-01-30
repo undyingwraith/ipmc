@@ -42,15 +42,28 @@
 
 .toolbar {
 	display: flex;
+	justify-content: space-between;
+	background-color: darkgrey;
 }
 
 .progress,
 .progressFilled {
 	height: 25px;
-	background-color: darkgray;
+	background-color: #4a4a4b;
+}
+
+.progress {
+	flex-grow: 1;
 }
 
 .progressFilled {
 	background-color: white;
 	width: 0;
+}
+
+
+.progressContainer {
+	display: flex;
+	flex-direction: row;
+	gap: 15px;
 }
