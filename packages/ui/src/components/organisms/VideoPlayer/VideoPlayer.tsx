@@ -200,7 +200,7 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 								{computed(() => playing.value ? <Pause /> : <PlayArrow />)}
 							</IconButton>
 							<div>
-								Language
+								<span className={styles.videoText}>Language</span>
 								<select>
 									{computed(() => languages.value.map(l => (
 										<option>{l}</option>
@@ -208,7 +208,7 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 								</select>
 							</div>
 							<div>
-								Subtitle
+								<span className={styles.videoText}>Subtitle</span>
 								<select onChange={(ev) => {
 									if (ev.currentTarget.value !== 'null') {
 										playerRef.value.selectTextTrack(ev.currentTarget.value);

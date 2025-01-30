@@ -43,13 +43,14 @@
 .toolbar {
 	display: flex;
 	justify-content: space-between;
-	background-color: darkgrey;
+	background-color: #969696;
 }
 
 .progress,
 .progressFilled {
 	height: 25px;
 	background-color: #4a4a4b;
+	border-radius: 0.25rem;
 }
 
 .progress {
@@ -58,6 +59,7 @@
 
 .progressFilled {
 	background-color: white;
+	border-radius: 0.25rem;
 	width: 0;
 }
 
@@ -66,4 +68,12 @@
 	display: flex;
 	flex-direction: row;
 	gap: 15px;
+}
+
+.videoText {
+	color: black;
+}
+
+select {
+	background-color: darkgray;
 }
