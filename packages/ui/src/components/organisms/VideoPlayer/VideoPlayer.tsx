@@ -7,9 +7,8 @@ import React from 'react';
 import shaka from 'shaka-player';
 import { useService } from '../../../context';
 import { useHotkey } from '../../../hooks';
-import { FileInfoDisplay } from '../../atoms/FileInfoDisplay';
+import { FileInfoDisplay, TimeDisplay } from '../../atoms';
 import styles from './VideoPlayer.module.css';
-import { TimeDisplay } from '../../atoms/TimeDisplay';
 
 function createShakaIpfsPlugin(ipfs: IIpfsService): shaka.extern.SchemePlugin {
 	return async (uri: string, request: shaka.extern.Request, requestType: shaka.net.NetworkingEngine.RequestType, progressUpdated: shaka.extern.ProgressUpdated, headersReceived: shaka.extern.HeadersReceived, config: shaka.extern.SchemePluginConfig) => {
@@ -168,20 +167,16 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 	useHotkey({ key: 'F' }, () => toggleFullScreen());
 	useHotkey({ key: 'Space' }, () => togglePlay());
 
-	const progressBar = useComputed(() => (
-		<div className={styles.progress} ref={(ref) => progressRef.value = ref}>
-			<div className={styles.progressFilled} ref={(ref) => progressBarRef.value = ref} />
-		</div>
-	));
-
 	const progress = useComputed(() => (
 		<div className={styles.progressContainer}>
 			<TimeDisplay
-				time={currentPlayTime.value}
+				time={currentPlayTime}
 			/>
-			{progressBar}
+			<div className={styles.progress} ref={(ref) => progressRef.value = ref}>
+				<div className={styles.progressFilled} ref={(ref) => progressBarRef.value = ref} />
+			</div>
 			<TimeDisplay
-				time={movieDuration.value}
+				time={movieDuration}
 			/>
 		</div>
 	));
