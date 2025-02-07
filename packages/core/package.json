@@ -3,7 +3,7 @@
 	"main": "./dist/index.js",
 	"type": "module",
 	"scripts": {
-		"watch": "tsc --watch",
+		"dev": "tsc --watch",
 		"build": "tsc",
 		"test": "vitest run"
 	},

@@ -2,7 +2,7 @@
 	"name": "ipmc-webui",
 	"type": "module",
 	"scripts": {
-		"watch": "vite",
+		"dev": "vite",
 		"build": "vite build"
 	},
 	"dependencies": {

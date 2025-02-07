@@ -26,8 +26,8 @@ The documentation can be found [here](./docs/README.md)
 ### Clone the repository
 
 ```shell
-git clone https://github.com/mfts/papermark.git
-cd papermark
+git clone https://github.com/undyingwraith/ipmc.git
+cd ipmc
 ```
 
 ### Installing dependencies
@@ -38,16 +38,8 @@ yarn install
 
 ### Running it in dev mode
 
-Run the following commands in paralell:
-
 ```shell
-yarn workspace watch
-yarn workspace ipmc-desktop run dev
-```
-
-*NOTE: for first time install you might need to run a build first*
-```shell
-yarn build
+yarn dev
 ```
 
 ## Packages
