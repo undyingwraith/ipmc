@@ -44,6 +44,7 @@ export class LogService implements ILogService {
 		} else {
 			this.writeMessage({
 				message: `${msg.name}: ${msg.message} | ${msg.cause} | ${msg.stack}`,
+				error: msg,
 				level: 'ERROR',
 			});
 		}
