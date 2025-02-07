@@ -16,7 +16,7 @@
 		"./style.css": "./dist/style.css"
 	},
 	"scripts": {
-		"watch": "vite build --watch --mode dev",
+		"dev": "vite build --watch --mode dev",
 		"build": "vite build",
 		"test": "vitest run"
 	},

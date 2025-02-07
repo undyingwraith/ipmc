@@ -7,7 +7,7 @@
 	"type": "module",
 	"packageManager": "yarn@4.6.0",
 	"scripts": {
-		"watch": "yarn workspaces foreach -Api run watch",
+		"dev": "yarn workspaces foreach -Api run dev",
 		"build": "yarn workspaces foreach -At run build",
 		"test": "yarn workspaces foreach -At run test",
 		"cli": "yarn workspace ipmc-tools run cli"

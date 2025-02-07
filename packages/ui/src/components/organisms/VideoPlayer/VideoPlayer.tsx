@@ -1,45 +1,21 @@
 import { Fullscreen, FullscreenExit, Pause, PlayArrow, VolumeDown, VolumeUp } from '@mui/icons-material';
 import { IconButton, Slider, Stack } from '@mui/material';
 import { computed, useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
-import { IIpfsService, IIpfsServiceSymbol, IVideoFile } from 'ipmc-interfaces';
+import { IMediaPlayerService, IMediaPlayerServiceSymbol } from '../../../services';
+import { IVideoFile } from 'ipmc-interfaces';
 import React from 'react';
-//@ts-ignore
-import shaka from 'shaka-player';
 import { useService } from '../../../context';
 import { useHotkey } from '../../../hooks';
 import { FileInfoDisplay, TimeDisplay } from '../../atoms';
 import styles from './VideoPlayer.module.css';
 
-function createShakaIpfsPlugin(ipfs: IIpfsService): shaka.extern.SchemePlugin {
-	return async (uri: string, request: shaka.extern.Request, requestType: shaka.net.NetworkingEngine.RequestType, progressUpdated: shaka.extern.ProgressUpdated, headersReceived: shaka.extern.HeadersReceived, config: shaka.extern.SchemePluginConfig) => {
-		const fullPath = uri.substring(uri.indexOf('://') + 3);
-		const paths = fullPath.split('/');
-		const cid = paths.shift()!;
-		const path = paths.join('/');
-
-		headersReceived({});
-
-		const data = await ipfs.fetch(cid, path);
-
-		return {
-			uri: uri,
-			originalUri: uri,
-			data: data,
-			status: 200,
-		};
-	};
-}
-
 export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
-	const ipfs = useService<IIpfsService>(IIpfsServiceSymbol);
+	const mediaPlayer = useService<IMediaPlayerService>(IMediaPlayerServiceSymbol);
+
 	const videoRef = useSignal<HTMLVideoElement | null>(null);
 	const containerRef = useSignal<HTMLDivElement | null>(null);
 	const progressRef = useSignal<HTMLDivElement | null>(null);
 	const progressBarRef = useSignal<HTMLDivElement | null>(null);
-	const playerRef = useSignal<any | null>(null);
-	const subtitles = useSignal<any[]>([]);
-	const languages = useSignal<string[]>([]);
-	const playing = useSignal<boolean>(props.autoPlay ?? false);
 	const fullScreen = useSignal<boolean>(false);
 	const volume = useSignal<number>(1);
 	const overlayVisible = useSignal<boolean>(false);
@@ -47,7 +23,7 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 	const currentPlayTime = useSignal<number>(0);
 
 	useSignalEffect(() => {
-		if (containerRef.value != null) {
+		if (containerRef.value) {
 			let timeout: NodeJS.Timeout;
 			const abortController = new AbortController();
 			containerRef.value.addEventListener('mousemove', () => {
@@ -69,7 +45,7 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 	});
 
 	useSignalEffect(() => {
-		if (videoRef.value != null && progressRef.value != null) {
+		if (videoRef.value) {
 			//Event handlers
 			videoRef.value.addEventListener('timeupdate', handleProgress);
 			videoRef.value.addEventListener('loadedmetadata', () => {
@@ -77,39 +53,20 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 					movieDuration.value = videoRef.value.duration;
 				}
 			});
+
+			return mediaPlayer.initializeVideo(videoRef.value, props.file);
+		}
+		return () => { };
+	});
+
+	useSignalEffect(() => {
+		if (progressRef.value) {
 			progressRef.value.addEventListener('click', scrub);
 			let mousedown = false;
 			progressRef.value.addEventListener('mousedown', () => (mousedown = true));
 			progressRef.value.addEventListener('mousemove', (e) => mousedown && scrub(e));
 			progressRef.value.addEventListener('mouseup', () => (mousedown = false));
-
-			// Shaka player init
-			shaka.net.NetworkingEngine.registerScheme('ipfs', createShakaIpfsPlugin(ipfs), 1, false);
-			const player = new shaka.Player();
-			player.configure({
-				streaming: {
-					rebufferingGoal: 5,
-					bufferingGoal: 30,
-				}
-			});
-			playerRef.value = player;
-			player.attach(videoRef.value)
-				.then(() => player.load(`ipfs://${props.file.cid}/${props.file.video.name}`))
-				.then(() => {
-					subtitles.value = player.getTextTracks();
-					languages.value = player.getAudioLanguages();
-				})
-				.catch((ex: any) => {
-					console.error(ex);
-				});
-
-			return () => {
-				player.unload();
-				player.destroy();
-			};
 		}
-
-		return () => { };
 	});
 
 	useSignalEffect(() => {
@@ -124,20 +81,6 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 		if (progressRef.value && videoRef.value) {
 			const scrubTime = (e.offsetX / progressRef.value.offsetWidth) * videoRef.value.duration;
 			videoRef.value.currentTime = scrubTime;
-		}
-	}
-
-	function togglePlay() {
-		if (playing.value) {
-			if (videoRef.value) {
-				videoRef.value.pause();
-				playing.value = false;
-			}
-		} else {
-			videoRef.value?.play()
-				.then(() => {
-					playing.value = true;
-				});
 		}
 	}
 
@@ -165,7 +108,7 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 	}
 
 	useHotkey({ key: 'F' }, () => toggleFullScreen());
-	useHotkey({ key: 'Space' }, () => togglePlay());
+	useHotkey({ key: 'Space' }, () => mediaPlayer.togglePlay());
 
 	const progress = useComputed(() => (
 		<div className={styles.progressContainer}>
@@ -184,59 +127,6 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 	return (
 		<div className={styles.outerContainer}>
 			<div className={styles.innerContainer} ref={(ref) => containerRef.value = ref}>
-				{useComputed(() => (
-					<div className={`${styles.videoOverlay} ${overlayVisible.value ? styles.visible : ''}`}>
-						<div>
-							<FileInfoDisplay file={props.file} />
-						</div>
-						<div className={styles.spacer} />
-						<div className={styles.toolbar}>
-							<IconButton onClick={() => togglePlay()}>
-								{computed(() => playing.value ? <Pause /> : <PlayArrow />)}
-							</IconButton>
-							<div>
-								<span className={styles.videoText}>Language</span>
-								<select>
-									{computed(() => languages.value.map(l => (
-										<option>{l}</option>
-									)))}
-								</select>
-							</div>
-							<div>
-								<span className={styles.videoText}>Subtitle</span>
-								<select onChange={(ev) => {
-									if (ev.currentTarget.value !== 'null') {
-										playerRef.value.selectTextTrack(ev.currentTarget.value);
-										playerRef.value.setTextTrackVisibility(true);
-									} else {
-										playerRef.value.setTextTrackVisibility(false);
-									}
-								}}>
-									<option value="null">None</option>
-									{computed(() => subtitles.value.map(l => (
-										<option>{l.language}</option>
-									)))}
-								</select>
-							</div>
-							<Stack spacing={2} direction="row" sx={{ alignItems: 'center', width: 250 }}>
-								<VolumeDown />
-								{computed(() => (
-									<Slider
-										value={volume.value}
-										onChange={(_, value) => volume.value = value as number}
-										min={0}
-										max={1}
-										step={0.05} />
-								))}
-								<VolumeUp />
-							</Stack>
-							<IconButton onClick={() => toggleFullScreen()}>
-								{computed(() => playing.value ? <FullscreenExit /> : <Fullscreen />)}
-							</IconButton>
-						</div>
-						{progress}
-					</div>
-				))}
 				<video
 					controls={false}
 					ref={(ref) => {
@@ -245,7 +135,59 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 					preload={'metadata'}
 					className={styles.video}
 				/>
+				{useComputed(() => (
+					<div className={`${styles.videoOverlay} ${overlayVisible.value ? styles.visible : ''}`}>
+						<div>
+							<FileInfoDisplay file={props.file} />
+						</div>
+						<div className={styles.spacer} onClick={() => mediaPlayer.togglePlay()} onDoubleClick={() => toggleFullScreen()} />
+						<div className={styles.toolbar}>
+							<IconButton onClick={() => mediaPlayer.togglePlay()}>
+								{computed(() => mediaPlayer.playing.value ? <Pause /> : <PlayArrow />)}
+							</IconButton>
+							<div>
+								<span className={styles.videoText}>Language</span>
+								<select>
+									{computed(() => mediaPlayer.languages.value.map(l => (
+										<option>{l}</option>
+									)))}
+								</select>
+							</div>
+							<div>
+								<span className={styles.videoText}>Subtitle</span>
+								<select onChange={(ev) => {
+									mediaPlayer.selectSubtitle(ev.currentTarget.value !== 'null' ? ev.currentTarget.value : undefined);
+								}}>
+									<option value="null">None</option>
+									{computed(() => mediaPlayer.subtitles.value.map(l => (
+										<option>{l.language}</option>
+									)))}
+								</select>
+							</div>
+							<Stack spacing={2} direction="row" sx={{ alignItems: 'center', width: 250 }}>
+								<IconButton onClick={() => { volume.value = 0; }}>
+									<VolumeDown />
+								</IconButton>
+								{computed(() => (
+									<Slider
+										value={volume.value}
+										onChange={(_, value) => volume.value = value as number}
+										min={0}
+										max={1}
+										step={0.05} />
+								))}
+								<IconButton onClick={() => { volume.value = 1; }}>
+									<VolumeUp />
+								</IconButton>
+							</Stack>
+							<IconButton onClick={() => toggleFullScreen()}>
+								{computed(() => fullScreen.value ? <FullscreenExit /> : <Fullscreen />)}
+							</IconButton>
+						</div>
+						{progress}
+					</div>
+				))}
 			</div>
 		</div>
 	);
-}
+};
