@@ -10,6 +10,13 @@ export interface IApplicationRegistration {
 	register<T>(service: interfaces.ServiceIdentifier<T>, identifier: symbol): void;
 
 	/**
+	 * Registers a new service without removing previous registrations.
+	 * @param service service to register.
+	 * @param identifier symbol for the service.
+	 */
+	registerMultiple<T>(service: interfaces.Newable<T>, identifier: symbol): void;
+
+	/**
 	 * Registers a new constant.
 	 * @param service service to register.
 	 * @param identifier symbol for the service.

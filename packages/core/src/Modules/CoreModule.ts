@@ -1,13 +1,8 @@
-import { IIndexManagerSymbol, IKeyValueStoreSymbol, IObjectStoreSymbol, ITranslationServiceSymbol, ITranslationsSymbol } from 'ipmc-interfaces';
-import { MemoryKeyValueStore } from '../Services/MemoryKeyValueStore';
-import { ObjectStore } from '../Services/ObjectStore';
-import { IModule } from './IModule';
-import { IndexManager } from '../Services/IndexManager';
-import { TaskManager } from '../Services/TaskManager';
-import { ITaskManagerSymbol } from 'ipmc-interfaces';
-import { TranslationService } from '../Services/TranslationService';
-import en from '../translations/en.json';
+import { IIndexManagerSymbol, IKeyValueStoreSymbol, ILogServiceSymbol, IObjectStoreSymbol, ITaskManagerSymbol, ITranslationServiceSymbol, ITranslationsSymbol } from 'ipmc-interfaces';
+import { IndexManager, LogService, MemoryKeyValueStore, ObjectStore, TaskManager, TranslationService } from '../Services';
 import de from '../translations/de.json';
+import en from '../translations/en.json';
+import { IModule } from './IModule';
 
 export const CoreModule: IModule = (app) => {
 	app.register(MemoryKeyValueStore, IKeyValueStoreSymbol);
@@ -15,6 +10,7 @@ export const CoreModule: IModule = (app) => {
 	app.register(IndexManager, IIndexManagerSymbol);
 	app.register(TaskManager, ITaskManagerSymbol);
 	app.register(TranslationService, ITranslationServiceSymbol);
+	app.register(LogService, ILogServiceSymbol);
 	app.registerConstantMultiple({
 		en: {
 			translation: en,

@@ -1,6 +1,6 @@
+import { ILogServiceSymbol, ILogSinkSymbol, ITranslation, ITranslationService, ITranslationServiceSymbol, ITranslationsSymbol } from 'ipmc-interfaces';
 import { describe, expect, test, vi } from 'vitest';
-import { Application, CoreModule, TranslationService } from '../../src';
-import { ITranslation, ITranslationService, ITranslationServiceSymbol, ITranslationsSymbol } from 'ipmc-interfaces';
+import { Application, LogService, MemoryLogSink, TranslationService } from '../../src';
 
 const translations: ITranslation = {
 	en: {
@@ -19,6 +19,8 @@ const translations: ITranslation = {
 
 describe('TranslationService', () => {
 	const app = new Application();
+	app.register(LogService, ILogServiceSymbol);
+	app.register(MemoryLogSink, ILogSinkSymbol);
 	app.register(TranslationService, ITranslationServiceSymbol);
 	app.registerConstantMultiple(translations, ITranslationsSymbol);
 
@@ -44,8 +46,11 @@ describe('TranslationService', () => {
 
 	test('Invalid key returns key as result', () => {
 		const translationService = app.getService<ITranslationService>(ITranslationServiceSymbol)!;
+		const sink = app.getService<MemoryLogSink>(ILogSinkSymbol)!;
 
 		expect(translationService.translate('InvalidKey')).toBe('<InvalidKey>');
+		expect(sink.logs.length).toBe(1);
+		expect(sink.logs[0].message).toBe('Missing translation key <InvalidKey>');
 	});
 
 	test('language change event gets triggered', () => {

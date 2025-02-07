@@ -1,4 +1,5 @@
 export * from './IDialogService';
+export * from './ILogService';
 export * from './INotificationService';
 export * from './IPopupService';
 export * from './ITaskManager';

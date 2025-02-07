@@ -1,10 +1,13 @@
 import i18next from 'i18next';
-import { multiInject, injectable, optional } from 'inversify';
-import { ITranslationService, ITranslationsSymbol, ITranslation } from 'ipmc-interfaces';
+import { multiInject, injectable, optional, inject } from 'inversify';
+import { ITranslationService, ITranslationsSymbol, ITranslation, ILogServiceSymbol, ILogService } from 'ipmc-interfaces';
 
 @injectable()
 export class TranslationService implements ITranslationService {
-	constructor(@multiInject(ITranslationsSymbol) @optional() translations: ITranslation[]) {
+	constructor(
+		@multiInject(ITranslationsSymbol) @optional() translations: ITranslation[],
+		@inject(ILogServiceSymbol) private readonly log: ILogService,
+	) {
 		const resources: ITranslation = {};
 		for (const translationSet of translations) {
 			for (const [lang, values] of Object.entries(translationSet)) {
@@ -37,7 +40,7 @@ export class TranslationService implements ITranslationService {
 		if (i18next.exists(key)) {
 			return i18next.t(key, values);
 		} else {
-			console.warn(`Missing translation key <${key}>`);
+			this.log.warn(`Missing translation key <${key}>`);
 			return `<${key}>`;
 		}
 	}

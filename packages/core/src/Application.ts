@@ -29,6 +29,10 @@ export class Application implements IApplication, IApplicationRegistration {
 		this.container.bind<T>(identifier).to(service);
 	}
 
+	public registerMultiple<T>(service: interfaces.Newable<T>, identifier: symbol) {
+		this.container.bind<T>(identifier).to(service);
+	}
+
 	public use(module: IModule): void {
 		module(this);
 	}
