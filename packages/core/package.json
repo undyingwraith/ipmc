@@ -1,6 +1,6 @@
 {
 	"name": "ipmc-core",
-	"main": "./dist/index.js",
+	"main": "./dist/src/index.js",
 	"type": "module",
 	"scripts": {
 		"dev": "tsc --watch",
