@@ -4,7 +4,6 @@ import { createFilter } from 'ipmc-core';
 import { IFileInfo, IIndexManager, IIndexManagerSymbol } from 'ipmc-interfaces';
 import React from 'react';
 import { useService } from '../../context/AppContext';
-import { useLinkedSignal } from '../../hooks';
 import { ErrorBoundary } from '../atoms/ErrorBoundary';
 import { FileGridItem } from '../molecules/FileGridItem';
 import { LoadScreen } from '../molecules/LoadScreen';
@@ -21,7 +20,7 @@ export function Library(props: {
 
 	const indexManager = useService<IIndexManager>(IIndexManagerSymbol);
 
-	const index = useLinkedSignal(indexManager.indexes.get(library)!.value);
+	const index = indexManager.indexes.get(library)!;
 	const selected = useSignal<IFileInfo | undefined>(undefined);
 
 

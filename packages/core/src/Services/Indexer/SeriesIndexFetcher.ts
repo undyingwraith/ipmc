@@ -8,40 +8,42 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 
 	public version = '0';
 
-	public async fetchIndex(cid: string): Promise<ISeriesMetaData[]> {
+	public async fetchIndex(libraryId: string, cid: string): Promise<ISeriesMetaData[]> {
 		const files = (await this.node.ls(cid)).filter(f => f.type == 'dir');
 		const index = [];
 		for (const file of files) {
-			index.push(await this.extractSeriesMetaData(this.node, file));
+			index.push(await this.extractSeriesMetaData(libraryId, file));
 		}
 
 		return index;
 	}
 
-	public async extractSeriesMetaData(node: IIpfsService, entry: IFileInfo): Promise<ISeriesMetaData> {
+	public async extractSeriesMetaData(libraryId: string, entry: IFileInfo): Promise<ISeriesMetaData> {
 		const entries = await this.node.ls(entry.cid);
 		const files = entries.filter(f => f.type == 'file');
 		const folders = entries.filter(f => f.type !== 'file');
 
 		const serie: Omit<ISeriesMetaData, 'items'> = {
 			...entry,
+			pinId: `${libraryId}/${entry.name}`,
 			title: entry.name,
 			posters: files.filter(f => Regexes.Poster.exec(f.name) != null),
 		};
 
 		return {
 			...serie,
-			items: await Promise.all(folders.map(season => this.extractSeasonMetaData(node, season, serie))),
+			items: await Promise.all(folders.map(season => this.extractSeasonMetaData(season, serie))),
 		};
 	}
 
-	public async extractSeasonMetaData(node: IIpfsService, entry: IFileInfo, parent: Omit<ISeriesMetaData, 'items'>): Promise<ISeasonMetaData> {
+	public async extractSeasonMetaData(entry: IFileInfo, parent: Omit<ISeriesMetaData, 'items'>): Promise<ISeasonMetaData> {
 		const entries = await this.node.ls(entry.cid);
 		const files = entries.filter(f => f.type == 'file');
 		const folders = entries.filter(f => f.type !== 'file');
 
 		const season: Omit<ISeasonMetaData, 'items'> = {
 			...entry,
+			pinId: `${parent.pinId}/${entry.name}`,
 			posters: files.filter(f => Regexes.Poster.exec(f.name) != null),
 		};
 
@@ -51,15 +53,16 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 
 		return {
 			...season,
-			items: await Promise.all(folders.map(episode => this.extractEpisodeMetaData(node, episode, season))),
+			items: await Promise.all(folders.map(episode => this.extractEpisodeMetaData(episode, season))),
 		};
 	}
 
-	public async extractEpisodeMetaData(node: IIpfsService, entry: IFileInfo, parent: Omit<ISeasonMetaData, 'items'>): Promise<IEpisodeMetaData> {
+	public async extractEpisodeMetaData(entry: IFileInfo, parent: Omit<ISeasonMetaData, 'items'>): Promise<IEpisodeMetaData> {
 		const files = (await this.node.ls(entry.cid)).filter(f => f.type == 'file');
 
 		const episode = {
 			...entry,
+			pinId: `${parent.pinId}/${entry.name}`,
 			posters: files.filter(f => Regexes.Poster.exec(f.name) != null),
 			title: entry.name,
 			video: files.filter(f => f.name.endsWith('.mpd'))[0],
