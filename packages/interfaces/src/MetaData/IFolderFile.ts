@@ -5,5 +5,5 @@ export interface IFolderFile extends IFileInfo {
 }
 
 export function isIFolderFile(item: any): item is IFolderFile {
-	return typeof item.items === 'object' && isIFileInfo(item);
+	return Object.hasOwn(item, 'items') && typeof item.items === 'object' && isIFileInfo(item);
 }

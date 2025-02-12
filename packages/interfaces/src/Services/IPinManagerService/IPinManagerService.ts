@@ -1,4 +1,4 @@
-import { HasPinAbility } from '../../MetaData';
+import { HasPinAbility, IFileInfo } from '../../MetaData';
 import { IPinItem } from './IPinItem';
 import { Signal } from '@preact/signals-core';
 
@@ -36,6 +36,13 @@ export interface IPinManagerService {
 	 * List all currently pinned items.
 	 */
 	listPins(): IPinItem[];
+
+	/**
+	 * Resolves a {@link IPinItem} to its original {@link IFileInfo}.
+	 * @param item The item to resolve.
+	 * @returns The resolved {@link IFileInfo} or undefined.
+	 */
+	resolvePin(item: IPinItem): IFileInfo | undefined;
 
 	/**
 	 * A list of all currently pinned items.

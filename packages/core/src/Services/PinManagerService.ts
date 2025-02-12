@@ -1,6 +1,6 @@
 import { Signal } from '@preact/signals-core';
 import { inject, injectable } from 'inversify';
-import { HasPinAbility, IIpfsService, IIpfsServiceSymbol, IObjectStore, IObjectStoreSymbol, IPinItem, IPinManagerService, ITaskManager, ITaskManagerSymbol, ITranslationService, ITranslationServiceSymbol, IVideoFile, PinStatus } from 'ipmc-interfaces';
+import { HasPinAbility, IFileInfo, IIndexManager, IIndexManagerSymbol, IIpfsService, IIpfsServiceSymbol, IObjectStore, IObjectStoreSymbol, IPinItem, IPinManagerService, isIFolderFile, ITaskManager, ITaskManagerSymbol, ITranslationService, ITranslationServiceSymbol, PinStatus } from 'ipmc-interfaces';
 
 @injectable()
 export class PinManagerService implements IPinManagerService {
@@ -9,6 +9,7 @@ export class PinManagerService implements IPinManagerService {
 		@inject(IObjectStoreSymbol) private readonly store: IObjectStore,
 		@inject(ITaskManagerSymbol) private readonly taskManager: ITaskManager,
 		@inject(ITranslationServiceSymbol) private readonly translationService: ITranslationService,
+		@inject(IIndexManagerSymbol) private readonly indexManager: IIndexManager,
 	) {
 		this.pins.value = this.store.get('pinItems') ?? [];
 		this.pins.subscribe((value) => {
@@ -77,6 +78,32 @@ export class PinManagerService implements IPinManagerService {
 	 */
 	public listPins(): IPinItem[] {
 		return this.pins.value;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public resolvePin(item: IPinItem): IFileInfo | undefined {
+		const libId = item.itemId.substring(0, item.itemId.indexOf('/'));
+		const index = this.indexManager.indexes.get(libId)?.value?.index;
+		if (index) {
+			return this.walkPath(item.itemId.substring(item.itemId.indexOf('/') + 1), index);
+		}
+		return undefined;
+	}
+
+	/**
+	 * Walks a path in an index.
+	 * @param path path to walk.
+	 * @param items items to walk the path in.
+	 * @returns The found item or undefined.
+	 */
+	public walkPath(path: string, items: IFileInfo[]): IFileInfo | undefined {
+		const item = items.find(i => i.name == path.substring(0, path.indexOf('/') > 0 ? path.indexOf('/') : undefined));
+		if (path.indexOf('/') > -1) {
+			return isIFolderFile(item) ? this.walkPath(path.substring(path.indexOf('/') + 1), item.items) : undefined;
+		}
+		return item;
 	}
 
 	/**
