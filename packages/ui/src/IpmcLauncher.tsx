@@ -1,7 +1,7 @@
 import { Alert, Box, Button, ButtonGroup } from '@mui/material';
 import { useComputed, useSignal } from '@preact/signals-react';
 import { createRemoteIpfs, IndexManager } from 'ipmc-core';
-import { IConfigurationService, IIndexManagerSymbol, IIpfsService, IIpfsServiceSymbol, INodeService, IProfile, IProfileSymbol, isInternalProfile, isRemoteProfile } from 'ipmc-interfaces';
+import { IConfigurationService, IIndexManagerSymbol, IIpfsService, IIpfsServiceSymbol, ILogService, ILogServiceSymbol, INodeService, IProfile, IProfileSymbol, isInternalProfile, isRemoteProfile } from 'ipmc-interfaces';
 import React, { PropsWithChildren } from 'react';
 import { ConnectionStatus } from './components/molecules/ConnectionStatus';
 import { LoadScreen } from './components/molecules/LoadScreen';
@@ -27,6 +27,7 @@ export interface IIpmcLauncherProps {
 export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 	const _t = useTranslation();
 	const appbarService = useService<AppbarButtonService>(AppbarButtonServiceSymbol);
+	const log = useService<ILogService>(ILogServiceSymbol);
 
 	const state = useSignal<LoadState>(LoadState.Idle);
 	const node = useSignal<IIpfsService | undefined>(undefined);
@@ -65,7 +66,7 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 
 				state.value = LoadState.Ready;
 			} catch (ex) {
-				console.error(ex);
+				log.error(ex);
 				state.value = LoadState.Error;
 			}
 		}
@@ -79,7 +80,7 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 				node.value = undefined;
 				profile.value = undefined;
 			} catch (ex) {
-				console.error(ex);
+				log.error(ex);
 				state.value = LoadState.Error;
 			} finally {
 				nodeButton.value && appbarService.unRegisterAppbarButton(nodeButton.value);

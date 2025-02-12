@@ -1,9 +1,10 @@
 import { ReadonlySignal, useSignal } from '@preact/signals-react';
-import { HasPinAbility, IPinManagerService, IPinManagerServiceSymbol, PinStatus } from 'ipmc-interfaces';
+import { HasPinAbility, ILogService, ILogServiceSymbol, IPinManagerService, IPinManagerServiceSymbol, PinStatus } from 'ipmc-interfaces';
 import { useService } from '../context/AppContext';
 
 export function usePinManager(item: HasPinAbility): [ReadonlySignal<PinStatus>, setState: (pin: boolean) => void] {
 	const pinManager = useService<IPinManagerService>(IPinManagerServiceSymbol);
+	const log = useService<ILogService>(ILogServiceSymbol);
 	const status = useSignal<PinStatus>(pinManager.isPinned(item));
 
 	function setState(pin: boolean) {
@@ -13,7 +14,7 @@ export function usePinManager(item: HasPinAbility): [ReadonlySignal<PinStatus>, 
 				.then(() => {
 					status.value = PinStatus.UnPinned;
 				}).catch((ex) => {
-					console.error(ex);
+					log.error(ex);
 					status.value = PinStatus.Pinned;
 				});
 		} else if (status.value == PinStatus.UnPinned && pin) {
@@ -22,7 +23,7 @@ export function usePinManager(item: HasPinAbility): [ReadonlySignal<PinStatus>, 
 				.then(() => {
 					status.value = PinStatus.Pinned;
 				}).catch((ex) => {
-					console.error(ex);
+					log.error(ex);
 					status.value = PinStatus.UnPinned;
 				});
 		}

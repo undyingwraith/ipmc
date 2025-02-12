@@ -1,9 +1,9 @@
-import { IFileInfo, IIpfsService, ILibrary, IMovieMetaData, IOnProgress } from 'ipmc-interfaces';
+import { IFileInfo, IIpfsService, ILibrary, ILogService, IMovieMetaData, IOnProgress } from 'ipmc-interfaces';
 import { Regexes } from '../../Regexes';
 import { IIndexFetcher } from './IIndexFetcher';
 
 export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
-	constructor(private readonly node: IIpfsService) {
+	constructor(private readonly node: IIpfsService, private readonly log: ILogService) {
 	}
 
 	public version = '0';
@@ -15,8 +15,8 @@ export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 		for (const [i, file] of files.entries()) {
 			try {
 				index.push(await this.extractMovieMetaData(libraryId, file, signal));
-			} catch (ex) {
-				console.error(ex);
+			} catch (ex: any) {
+				this.log.error(ex);
 			}
 			signal.throwIfAborted();
 			onProgress(i, files.length);

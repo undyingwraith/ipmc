@@ -13,7 +13,7 @@ export class IndexManager implements IIndexManager {
 		@inject(ITranslationServiceSymbol) private readonly translationService: ITranslationService,
 		@inject(ILogServiceSymbol) private readonly log: ILogService,
 	) {
-		this.indexers.push(new MovieIndexFetcher(this.ipfs));
+		this.indexers.push(new MovieIndexFetcher(this.ipfs, this.log));
 		this.indexers.push(new SeriesIndexFetcher(this.ipfs));
 
 		for (const lib of this.profile.libraries) {
