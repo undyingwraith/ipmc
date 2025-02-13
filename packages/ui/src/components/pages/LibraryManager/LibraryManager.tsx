@@ -3,18 +3,19 @@ import LiveTvIcon from '@mui/icons-material/LiveTv';
 import MovieIcon from '@mui/icons-material/Movie';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
-import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Stack } from '@mui/material';
+import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper } from '@mui/material';
 import { Signal, useComputed, useSignal } from "@preact/signals-react";
 import { IIndexManager, IIndexManagerSymbol, IProfile, IProfileSymbol } from "ipmc-interfaces";
 import React from "react";
 import { Redirect, Route, useLocation } from 'wouter';
-import { useService } from '../../context/AppContext';
-import { useLinkedSignal, useTranslation } from '../../hooks';
-import { ErrorBoundary } from '../atoms/ErrorBoundary';
-import { LibraryPage } from './LibraryPage';
-import { LibraryAppBar } from "../organisms/LibraryAppBar";
-import { LibraryHomeScreen } from '../organisms/LibraryHomeScreen';
-import { ItemRouter } from './ItemRouter';
+import { useService } from '../../../context/AppContext';
+import { useLinkedSignal, useTranslation } from '../../../hooks';
+import { ErrorBoundary } from '../../atoms/ErrorBoundary';
+import { LibraryAppBar } from "../../organisms/LibraryAppBar";
+import { ItemRouter } from '../ItemRouter';
+import { LibraryHomePage } from '../LibraryHomePage';
+import { LibraryPage } from '../LibraryPage';
+import styles from './LibraryManager.module.css';
 
 const icons = {
 	movie: <MovieIcon />,
@@ -64,41 +65,39 @@ export function LibraryManager() {
 	));
 
 	return (
-		<Stack direction={"row"} sx={{ flexGrow: 1, width: '100vw', height: '100%', overflow: 'hidden' }}>
-			<Paper sx={{ width: '25vw', flexShrink: 0 }}>
+		<div className={styles.container}>
+			<Paper className={styles.sidebar}>
 				{sidebar}
 			</Paper>
-			<Box sx={{ flexGrow: 1 }}>
-				<Stack sx={{ maxHeight: '100%', height: '100%', overflow: 'hidden' }}>
-					<LibraryAppBar display={display} query={query} />
-					<Box sx={{ overflow: 'auto', flexGrow: 1 }}>
-						<Route path={'/'}>
-							<ErrorBoundary>
-								<LibraryHomeScreen />
-							</ErrorBoundary>
-						</Route>
-						<Route path={'/:library'} nest>
-							{(params) => {
-								if (libraries.some(l => l.id === params.library)) {
-									const items = indexManager.indexes.get(params.library)!;
-									return (
-										<ErrorBoundary>
-											<Route path={'/'}>
-												<LibraryPage key={params.library} display={display} library={params.library} query={query} />
-											</Route>
-											<ItemRouter items={items.value!.index} display={display} />
-										</ErrorBoundary>
-									);
-								}
+			<div className={styles.contentContainer}>
+				<LibraryAppBar display={display} query={query} />
+				<Box className={styles.content}>
+					<Route path={'/'}>
+						<ErrorBoundary>
+							<LibraryHomePage />
+						</ErrorBoundary>
+					</Route>
+					<Route path={'/:library'} nest>
+						{(params) => {
+							if (libraries.some(l => l.id === params.library)) {
+								const items = indexManager.indexes.get(params.library)!;
 								return (
-									<Redirect to='/' />
+									<ErrorBoundary>
+										<Route path={'/'}>
+											<LibraryPage key={params.library} display={display} library={params.library} query={query} />
+										</Route>
+										<ItemRouter items={items.value!.index} display={display} />
+									</ErrorBoundary>
 								);
-							}}
-						</Route>
-					</Box>
-				</Stack>
-			</Box>
-		</Stack>
+							}
+							return (
+								<Redirect to='/' />
+							);
+						}}
+					</Route>
+				</Box>
+			</div>
+		</div>
 	);
 }
 
