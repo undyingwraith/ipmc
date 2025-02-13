@@ -28,6 +28,8 @@ export function TextInput(props: ITextInputProps) {
 			onChange={(ev) => {
 				props.value.value = ev.target.value;
 			}}
+
+
 		/>
 	));
 }

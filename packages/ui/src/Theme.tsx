@@ -1,6 +1,7 @@
 import { createTheme } from "@mui/material";
 
 const baseTheme = createTheme({
+
 	typography: {
 		//fontFamily: '\'Roboto Condensed\', sans-serif',
 		fontSize: 14,
@@ -10,13 +11,17 @@ const baseTheme = createTheme({
 export function createDarkTheme(accentColor: string) {
 	return createTheme({
 		...baseTheme,
+		cssVariables: true,
 		palette: {
 			mode: 'dark',
 			primary: {
-				main: accentColor,
+				main: '#e0e0e0',
 			},
 			secondary: {
 				main: '#fafafa',
+			},
+			warning: {
+				main: accentColor,
 			},
 		},
 	});
@@ -25,12 +30,16 @@ export function createDarkTheme(accentColor: string) {
 export function createLightTheme(accentColor: string) {
 	return createTheme({
 		...baseTheme,
+		cssVariables: true,
 		palette: {
 			mode: 'light',
 			primary: {
-				main: '#e0e0e0',
+				main: '#fafafa',
 			},
 			secondary: {
+				main: '#e0e0e0',
+			},
+			warning: {
 				main: accentColor,
 			},
 		},

@@ -1,4 +1,4 @@
-import { Alert, Box, Button, ButtonGroup } from '@mui/material';
+import { Alert, Box, Button, ButtonGroup /*, colors*/ } from '@mui/material';
 import { useComputed, useSignal } from '@preact/signals-react';
 import { createRemoteIpfs, IndexManager } from 'ipmc-core';
 import { IConfigurationService, IIndexManagerSymbol, IIpfsService, IIpfsServiceSymbol, ILogService, ILogServiceSymbol, INodeService, IProfile, IProfileSymbol, isInternalProfile, isRemoteProfile } from 'ipmc-interfaces';
@@ -59,7 +59,7 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 				profileButton.value = appbarService.registerAppbarButton({
 					position: 'start',
 					component: (<>
-						<Button onClick={stop}>{_t('Logout')}</Button>
+						<Button onClick={stop} color={'warning'}>{_t('Logout')}</Button>
 						{currentProfile.name}
 					</>)
 				});

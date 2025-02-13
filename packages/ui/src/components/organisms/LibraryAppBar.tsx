@@ -5,6 +5,7 @@ import { useHotkey } from '../../hooks';
 import { useTranslation } from '../../hooks/useTranslation';
 import { Spacer, TextInput } from '../atoms';
 import { Display } from "../pages/LibraryManager";
+import styles from './LibraryAppBar.module.css';
 
 // Icons
 import GridViewIcon from '@mui/icons-material/GridView';
@@ -49,12 +50,14 @@ export function LibraryAppBar(props: { query: Signal<string>, display: Signal<Di
 	return (
 		<AppBar position={'relative'}>
 			<Toolbar>
-				<TextInput
-					label={_t('Search')}
-					value={query}
-					inputRef={searchFieldRef}
-					variant={'standard'}
-				/>
+				<div className={styles.searchBar}>
+					<TextInput
+						label={_t('Search')}
+						value={query}
+						inputRef={searchFieldRef}
+						variant={'standard'}
+					/>
+				</div>
 				<Spacer width={75} />
 				{displayButtons}
 			</Toolbar>
