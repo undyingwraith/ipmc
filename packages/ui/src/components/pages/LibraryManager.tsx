@@ -5,15 +5,16 @@ import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Stack } from '@mui/material';
 import { Signal, useComputed, useSignal } from "@preact/signals-react";
-import { IProfile, IProfileSymbol } from "ipmc-interfaces";
+import { IIndexManager, IIndexManagerSymbol, IProfile, IProfileSymbol } from "ipmc-interfaces";
 import React from "react";
 import { Redirect, Route, useLocation } from 'wouter';
 import { useService } from '../../context/AppContext';
 import { useLinkedSignal, useTranslation } from '../../hooks';
 import { ErrorBoundary } from '../atoms/ErrorBoundary';
-import { Library } from '../organisms/Library';
+import { LibraryPage } from './LibraryPage';
 import { LibraryAppBar } from "../organisms/LibraryAppBar";
 import { LibraryHomeScreen } from '../organisms/LibraryHomeScreen';
+import { ItemRouter } from './ItemRouter';
 
 const icons = {
 	movie: <MovieIcon />,
@@ -23,6 +24,7 @@ const icons = {
 
 export function LibraryManager() {
 	const profile = useService<IProfile>(IProfileSymbol);
+	const indexManager = useService<IIndexManager>(IIndexManagerSymbol);
 	const _t = useTranslation();
 	const libraries = profile.libraries;
 	const display = useSignal<Display>(Display.Poster);
@@ -47,7 +49,7 @@ export function LibraryManager() {
 			{libraries.map((lib) => (
 				<ListItem key={lib.name} disablePadding>
 					<ListItemButton
-						selected={location.value === '/' + lib.id}
+						selected={location.value.startsWith('/' + lib.id)}
 						onClick={() => {
 							setLocation('/' + lib.id);
 						}}>
@@ -75,14 +77,23 @@ export function LibraryManager() {
 								<LibraryHomeScreen />
 							</ErrorBoundary>
 						</Route>
-						<Route path={'/:library'}>
-							{(params) => libraries.some(l => l.id === params.library) ? (
-								<ErrorBoundary>
-									<Library key={params.library} display={display} library={params.library} query={query} />
-								</ErrorBoundary>
-							) : (
-								<Redirect to='/' />
-							)}
+						<Route path={'/:library'} nest>
+							{(params) => {
+								if (libraries.some(l => l.id === params.library)) {
+									const items = indexManager.indexes.get(params.library)!;
+									return (
+										<ErrorBoundary>
+											<Route path={'/'}>
+												<LibraryPage key={params.library} display={display} library={params.library} query={query} />
+											</Route>
+											<ItemRouter items={items.value!.index} display={display} />
+										</ErrorBoundary>
+									);
+								}
+								return (
+									<Redirect to='/' />
+								);
+							}}
 						</Route>
 					</Box>
 				</Stack>

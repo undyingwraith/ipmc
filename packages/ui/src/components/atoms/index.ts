@@ -1,9 +1,12 @@
+export { DetailOverlay } from './DetailOverlay';
 export { ErrorBoundary } from './ErrorBoundary';
+export { FileInfoDisplay } from './FileInfoDisplay';
 export { FileInput } from './FileInput';
 export { FormList } from './FormList';
 export { Identicon } from './Identicon';
 export { ImageView } from './ImageView';
 export { Loader } from './Loader';
+export { PinButton } from './PinButton';
 export { SelectInput } from './SelectInput';
 export { Spacer } from './Spacer';
 export { TextInput } from './TextInput';
