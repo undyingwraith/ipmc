@@ -1,47 +1,33 @@
-import { ReadonlySignal, useSignal, useSignalEffect } from '@preact/signals-react';
+import { ReadonlySignal, useSignal } from '@preact/signals-react';
+import { HasPinAbility, ILogService, ILogServiceSymbol, IPinManagerService, IPinManagerServiceSymbol, PinStatus } from 'ipmc-interfaces';
 import { useService } from '../context/AppContext';
-import { IIpfsService, IIpfsServiceSymbol } from 'ipmc-interfaces';
 
-export enum PinStatus {
-	Unknown,
-	UnPinned,
-	Pinned,
-	Pinning,
-	UnPinning,
-}
-
-export function usePinManager(cid: string): [ReadonlySignal<PinStatus>, setState: (pin: boolean) => void] {
-	const ipfs = useService<IIpfsService>(IIpfsServiceSymbol);
-	const status = useSignal<PinStatus>(PinStatus.Unknown);
+export function usePinManager(item: HasPinAbility): [ReadonlySignal<PinStatus>, setState: (pin: boolean) => void] {
+	const pinManager = useService<IPinManagerService>(IPinManagerServiceSymbol);
+	const log = useService<ILogService>(ILogServiceSymbol);
+	const status = useSignal<PinStatus>(pinManager.isPinned(item));
 
 	function setState(pin: boolean) {
 		if (status.value == PinStatus.Pinned && !pin) {
-			status.value = PinStatus.UnPinning;
-			ipfs.rmPin(cid)
+			status.value = PinStatus.Working;
+			pinManager.removePin(item)
 				.then(() => {
 					status.value = PinStatus.UnPinned;
 				}).catch((ex) => {
-					console.error(ex);
+					log.error(ex);
 					status.value = PinStatus.Pinned;
 				});
 		} else if (status.value == PinStatus.UnPinned && pin) {
-			status.value = PinStatus.Pinning;
-			ipfs.addPin(cid)
+			status.value = PinStatus.Working;
+			pinManager.addPin(item)
 				.then(() => {
 					status.value = PinStatus.Pinned;
 				}).catch((ex) => {
-					console.error(ex);
+					log.error(ex);
 					status.value = PinStatus.UnPinned;
 				});
 		}
 	}
-
-	useSignalEffect(() => {
-		ipfs.isPinned(cid)
-			.then(r => {
-				status.value = r ? PinStatus.Pinned : PinStatus.UnPinned;
-			});
-	});
 
 	return [status, setState];
 }

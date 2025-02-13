@@ -1,3 +1,5 @@
 {
-	"UpdatingLibrary": "Aktualisieren von {{name}}"
+	"UpdatingLibrary": "Aktualisieren von {{name}}",
+	"AddingPin": "Hinzuzfügen von pin auf {{title}}",
+	"RemovingPin": "Entfernen von pin auf {{title}}"
 }

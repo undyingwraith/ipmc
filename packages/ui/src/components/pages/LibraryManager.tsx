@@ -7,7 +7,7 @@ import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper,
 import { Signal, useComputed, useSignal } from "@preact/signals-react";
 import { IProfile, IProfileSymbol } from "ipmc-interfaces";
 import React from "react";
-import { Route, useLocation } from 'wouter';
+import { Redirect, Route, useLocation } from 'wouter';
 import { useService } from '../../context/AppContext';
 import { useLinkedSignal, useTranslation } from '../../hooks';
 import { ErrorBoundary } from '../atoms/ErrorBoundary';
@@ -47,9 +47,9 @@ export function LibraryManager() {
 			{libraries.map((lib) => (
 				<ListItem key={lib.name} disablePadding>
 					<ListItemButton
-						selected={location.value === '/' + lib.name}
+						selected={location.value === '/' + lib.id}
 						onClick={() => {
-							setLocation('/' + lib.name);
+							setLocation('/' + lib.id);
 						}}>
 						<ListItemIcon>
 							{icons[lib.type] ?? <QuestionMarkIcon />}
@@ -76,10 +76,12 @@ export function LibraryManager() {
 							</ErrorBoundary>
 						</Route>
 						<Route path={'/:library'}>
-							{(params) => (
+							{(params) => libraries.some(l => l.id === params.library) ? (
 								<ErrorBoundary>
-									<Library display={display} library={params.library} query={query} />
+									<Library key={params.library} display={display} library={params.library} query={query} />
 								</ErrorBoundary>
+							) : (
+								<Redirect to='/' />
 							)}
 						</Route>
 					</Box>

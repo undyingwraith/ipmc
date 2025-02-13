@@ -1,6 +1,7 @@
 export * from './IDialogService';
 export * from './ILogService';
 export * from './INotificationService';
+export * from './IPinManagerService';
 export * from './IPopupService';
 export * from './ITaskManager';
 export * from './ITranslationService';

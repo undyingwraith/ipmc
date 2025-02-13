@@ -1,3 +1,5 @@
 {
-	"UpdatingLibrary": "Updating library {{name}}"
+	"UpdatingLibrary": "Updating library {{name}}",
+	"AddingPin": "Adding pin on item {{title}}",
+	"RemovingPin": "Removing pin on item {{title}}"
 }

@@ -1,11 +1,11 @@
 import { Fullscreen, FullscreenExit, Pause, PlayArrow, VolumeDown, VolumeUp } from '@mui/icons-material';
 import { IconButton, Slider, Stack } from '@mui/material';
 import { computed, useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
-import { IMediaPlayerService, IMediaPlayerServiceSymbol } from '../../../services';
 import { IVideoFile } from 'ipmc-interfaces';
 import React from 'react';
 import { useService } from '../../../context';
 import { useHotkey } from '../../../hooks';
+import { IMediaPlayerService, IMediaPlayerServiceSymbol } from '../../../services';
 import { FileInfoDisplay, TimeDisplay } from '../../atoms';
 import styles from './VideoPlayer.module.css';
 
