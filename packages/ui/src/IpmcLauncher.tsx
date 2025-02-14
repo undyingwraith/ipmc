@@ -3,12 +3,11 @@ import { useComputed, useSignal } from '@preact/signals-react';
 import { createRemoteIpfs, IndexManager } from 'ipmc-core';
 import { IConfigurationService, IIndexManagerSymbol, IIpfsService, IIpfsServiceSymbol, ILogService, ILogServiceSymbol, INodeService, IProfile, IProfileSymbol, isInternalProfile, isRemoteProfile } from 'ipmc-interfaces';
 import React, { PropsWithChildren } from 'react';
-import { ConnectionStatus } from './components/molecules/ConnectionStatus';
-import { LoadScreen } from './components/molecules/LoadScreen';
-import { ProfileSelector } from './components/molecules/ProfileSelector';
-import { LibraryManager } from './components/pages/LibraryManager';
+import { ThemeToggle } from './components/atoms';
+import { ConnectionStatus, LanguageSelector, LoadScreen, ProfileSelector } from './components/molecules';
+import { LibraryManager } from './components/pages';
 import { AppContextProvider, useService } from './context';
-import { useTranslation } from './hooks';
+import { useAppbarButtons, useTranslation } from './hooks';
 import { AppbarButtonService, AppbarButtonServiceSymbol } from './services';
 
 enum LoadState {
@@ -34,6 +33,16 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 	const profile = useSignal<IProfile | undefined>(undefined);
 	const nodeButton = useSignal<Symbol | undefined>(undefined);
 	const profileButton = useSignal<Symbol | undefined>(undefined);
+
+	useAppbarButtons([{
+		component: (<ThemeToggle />),
+		position: 'end',
+		sortIndex: 9,
+	}, {
+		component: (<LanguageSelector />),
+		position: 'end',
+		sortIndex: 10,
+	}]);
 
 	async function start(name: string) {
 		if (name == undefined) return;

@@ -1,27 +1,39 @@
 import Grid from '@mui/material/Grid2';
-import { ReadonlySignal, useComputed } from '@preact/signals-react';
+import { useComputed, useSignal } from '@preact/signals-react';
 import { createFilter } from 'ipmc-core';
 import { IIndexManager, IIndexManagerSymbol } from 'ipmc-interfaces';
 import React from 'react';
 import { useLocation } from 'wouter';
 import { useService } from '../../context/AppContext';
-import { ErrorBoundary } from '../atoms/ErrorBoundary';
-import { FileGridItem } from '../molecules/FileGridItem';
-import { LoadScreen } from '../molecules/LoadScreen';
-import { Display } from './LibraryManager';
+import { useAppbarButtons } from '../../hooks';
+import { ErrorBoundary } from '../atoms';
+import { FileGridItem, LoadScreen, SearchField } from '../molecules';
+import { Display, DisplayButtons } from '../molecules/DisplayButtons';
 
 export function LibraryPage(props: {
-	display: ReadonlySignal<Display>;
-	query: ReadonlySignal<string | undefined>;
 	library: string;
 }) {
-	const { display, library, query } = props;
+	const { library } = props;
 	const [_, setLocation] = useLocation();
 	const spacing = 1;
 
 	const indexManager = useService<IIndexManager>(IIndexManagerSymbol);
 
+	const query = useSignal('');
+	const display = useSignal<Display>(Display.Poster);
+
 	const index = indexManager.indexes.get(library)!;
+
+	useAppbarButtons([
+		{
+			component: (<SearchField query={query} />),
+			position: 'start'
+		},
+		{
+			component: (<DisplayButtons display={display} />),
+			position: 'end'
+		}
+	]);
 
 	return useComputed(() => {
 		const i = index.value;

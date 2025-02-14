@@ -7,7 +7,7 @@ import { useService } from '../../../context';
 import { useTranslation } from '../../../hooks/useTranslation';
 import { Loader } from '../../atoms';
 import { FileGridItem } from '../../molecules/FileGridItem';
-import { Display } from '../LibraryManager';
+import { Display } from '../../molecules';
 import styles from './LibraryHomePage.module.css';
 
 export function LibraryHomePage() {

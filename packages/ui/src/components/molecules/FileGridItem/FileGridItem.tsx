@@ -4,7 +4,7 @@ import { IFileInfo, isIVideoFile, isPinFeature, isPosterFeature, isTitleFeature,
 import React, { useRef } from 'react';
 import { useFileUrl, useIsVisible, useTranslation } from '../../../hooks';
 import { PinButton } from '../../atoms/PinButton';
-import { Display } from '../../pages/LibraryManager';
+import { Display } from '../DisplayButtons';
 import posterFallback from './no-poster.png';
 import thumbFallback from './no-thumbnail.png';
 

@@ -1,1 +1,1 @@
-export { LibraryManager, Display } from './LibraryManager';
+export { LibraryManager } from './LibraryManager';
