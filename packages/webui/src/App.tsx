@@ -29,7 +29,6 @@ import { IpmcApp } from 'ipmc-ui';
 import { ipnsSelector } from 'ipns/selector';
 import { ipnsValidator } from 'ipns/validator';
 import { CID } from 'multiformats';
-import React from 'react';
 import { concat } from 'uint8arrays';
 
 export function App() {

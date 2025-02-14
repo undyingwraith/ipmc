@@ -1,8 +1,7 @@
 import { Alert, Box, Button, ButtonGroup } from '@mui/material';
-import { useComputed, useSignal } from '@preact/signals-react';
+import { useComputed, useSignal } from '@preact/signals';
 import { createRemoteIpfs, IndexManager } from 'ipmc-core';
 import { IConfigurationService, IIndexManagerSymbol, IIpfsService, IIpfsServiceSymbol, ILogService, ILogServiceSymbol, INodeService, IProfile, IProfileSymbol, isInternalProfile, isRemoteProfile } from 'ipmc-interfaces';
-import React, { PropsWithChildren } from 'react';
 import { ThemeToggle } from './components/atoms';
 import { ConnectionStatus, LanguageSelector, LoadScreen, ProfileSelector } from './components/molecules';
 import { LibraryManager } from './components/pages';
@@ -23,7 +22,7 @@ export interface IIpmcLauncherProps {
 	nodeService: INodeService;
 }
 
-export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
+export function IpmcLauncher(props: IIpmcLauncherProps) {
 	const _t = useTranslation();
 	const appbarService = useService<AppbarButtonService>(AppbarButtonServiceSymbol);
 	const log = useService<ILogService>(ILogServiceSymbol);
@@ -63,7 +62,7 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 
 				nodeButton.value = appbarService.registerAppbarButton({
 					position: 'end',
-					component: (<ConnectionStatus ipfs={node.value} />)
+					component: (<ConnectionStatus />)
 				});
 				profileButton.value = appbarService.registerAppbarButton({
 					position: 'start',

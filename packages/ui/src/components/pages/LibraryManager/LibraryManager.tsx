@@ -4,9 +4,8 @@ import MovieIcon from '@mui/icons-material/Movie';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper } from '@mui/material';
-import { useComputed } from "@preact/signals-react";
+import { useComputed } from "@preact/signals";
 import { IIndexManager, IIndexManagerSymbol, IProfile, IProfileSymbol } from "ipmc-interfaces";
-import React from "react";
 import { Redirect, Route, useLocation } from 'wouter';
 import { AppContextProvider, useService } from '../../../context/AppContext';
 import { useLinkedSignal, useTranslation } from '../../../hooks';
@@ -82,7 +81,7 @@ export function LibraryManager() {
 							</ErrorBoundary>
 						</Route>
 						<Route path={'/:library'} nest>
-							{(params) => {
+							{(params: { library: string; }) => {
 								if (libraries.some(l => l.id === params.library)) {
 									const items = indexManager.indexes.get(params.library)!;
 									return (

@@ -1,8 +1,7 @@
 import Grid from '@mui/material/Grid2';
-import { useComputed, useSignal } from '@preact/signals-react';
+import { useComputed, useSignal } from '@preact/signals';
 import { createFilter } from 'ipmc-core';
 import { IIndexManager, IIndexManagerSymbol } from 'ipmc-interfaces';
-import React from 'react';
 import { useLocation } from 'wouter';
 import { useService } from '../../context/AppContext';
 import { useAppbarButtons } from '../../hooks';

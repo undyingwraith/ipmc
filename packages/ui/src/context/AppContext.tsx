@@ -1,11 +1,15 @@
-import { useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
+import { useComputed, useSignal, useSignalEffect } from '@preact/signals';
 import { Application, IApplication, IModule } from 'ipmc-core';
-import React, { PropsWithChildren, createContext, useContext } from 'react';
+import { ComponentChildren, createContext } from 'preact';
+import { useContext } from 'preact/compat';
 import { LoadScreen } from '../components/molecules/LoadScreen';
 
 export const AppContext = createContext<Application | undefined>(undefined);
 
-export function AppContextProvider(props: PropsWithChildren<{ setup: IModule; }>) {
+export function AppContextProvider(props: {
+	setup: IModule;
+	children: ComponentChildren;
+}) {
 	const application = useSignal<Application | undefined>(undefined);
 	const parentApp = useContext(AppContext);
 

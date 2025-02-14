@@ -2,11 +2,10 @@ import { Dialog } from '@mui/material';
 import { inject, injectable, preDestroy } from 'inversify';
 import { Application, IApplicationSymbol } from 'ipmc-core';
 import { IPopupOptions, IPopupService } from 'ipmc-interfaces';
-import React, { PropsWithChildren } from 'react';
-import { createRoot } from 'react-dom/client';
 import { ThemeProvider } from '../context';
 import { AppContext } from '../context/AppContext';
 import { ErrorBoundary } from '../components/atoms/ErrorBoundary';
+import { ComponentChildren, render } from 'preact';
 
 @injectable()
 export class PopupService implements IPopupService {
@@ -19,19 +18,17 @@ export class PopupService implements IPopupService {
 
 	show(options: IPopupOptions): Promise<void> {
 		return new Promise(resolve => {
-			const root = createRoot(this.mountPoint);
 			const close = () => {
-				root.unmount();
 				resolve();
 			};
-			root.render(<AppContext.Provider value={this.app}>
+			render(<AppContext.Provider value={this.app}>
 				<ThemeProvider>
 					<Popup
 						onClose={close}
 						closeOnOutsideClick={options.closeOnOutsideClick ?? true}
 					>{options.content(close)}</Popup>
 				</ThemeProvider>
-			</AppContext.Provider>);
+			</AppContext.Provider>, this.mountPoint);
 		});
 	}
 
@@ -47,9 +44,10 @@ export class PopupService implements IPopupService {
 interface IPopupProps {
 	onClose: () => void;
 	closeOnOutsideClick?: boolean;
+	children: ComponentChildren;
 }
 
-function Popup(props: PropsWithChildren<IPopupProps>) {
+function Popup(props: IPopupProps) {
 	return (
 		<Dialog
 			open={true}

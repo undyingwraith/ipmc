@@ -1,4 +1,4 @@
-import { computed, Signal } from '@preact/signals-react';
+import { computed, Signal } from '@preact/signals';
 
 export interface IAppbarButtonOptions {
 	position: 'start' | 'end';

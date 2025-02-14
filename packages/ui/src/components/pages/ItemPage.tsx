@@ -1,9 +1,8 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { useSignal } from '@preact/signals-react';
+import { useSignal } from '@preact/signals';
 import { IFileInfo, isIFolderFile, isIVideoFile, isPinFeature } from 'ipmc-interfaces';
-import React from 'react';
 import { useLocation } from 'wouter';
 import { useAppbarButtons, useTitle, useTranslation } from '../../hooks';
 import { IAppbarButtonOptions } from '../../services/AppbarButtonService';

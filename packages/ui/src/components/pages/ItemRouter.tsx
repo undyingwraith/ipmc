@@ -1,5 +1,4 @@
 import { IFileInfo, isIFolderFile } from 'ipmc-interfaces';
-import React from 'react';
 import { Route } from 'wouter';
 import { ItemPage } from './ItemPage';
 
@@ -8,7 +7,7 @@ export function ItemRouter(props: {
 }) {
 	return (
 		<Route path={'/:item'} nest>
-			{(params) => {
+			{(params: { item: string; }) => {
 				const item = props.items.find(i => i.name === params.item);
 				return (<>
 					<Route path={'/'}>

@@ -1,4 +1,4 @@
-import { ReadonlySignal, useSignal } from '@preact/signals-react';
+import { ReadonlySignal, useSignal } from '@preact/signals';
 import { HasPinAbility, ILogService, ILogServiceSymbol, IPinManagerService, IPinManagerServiceSymbol, PinStatus } from 'ipmc-interfaces';
 import { useService } from '../context/AppContext';
 

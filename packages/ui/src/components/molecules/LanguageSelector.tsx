@@ -1,8 +1,8 @@
-import { Button, IconButton, Popover, Stack } from "@mui/material";
-import React, { useState } from "react";
 import LanguageIcon from '@mui/icons-material/Language';
-import { useService } from '@src/context';
+import { Button, IconButton, Popover, Stack } from "@mui/material";
 import { ITranslationService, ITranslationServiceSymbol } from 'ipmc-interfaces';
+import { useState } from 'preact/hooks';
+import { useService } from '../../context';
 
 export function LanguageSelector() {
 	const translationService = useService<ITranslationService>(ITranslationServiceSymbol);

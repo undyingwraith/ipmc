@@ -1,7 +1,6 @@
 import { Alert, Box, Card, CardContent, CardHeader, Stack, Typography } from '@mui/material';
-import { Signal, useComputed } from '@preact/signals-react';
+import { Signal, useComputed } from '@preact/signals';
 import { IPinItem, IPinManagerService, IPinManagerServiceSymbol, IProfile, IProfileSymbol, ITaskManager, ITaskManagerSymbol } from 'ipmc-interfaces';
-import React from 'react';
 import { useLocation } from 'wouter';
 import { useService } from '../../../context';
 import { useTranslation } from '../../../hooks/useTranslation';

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect } from 'preact/hooks';
 import { useService } from '../context';
 import { AppbarButtonService, AppbarButtonServiceSymbol } from '../services';
 import { IAppbarButtonOptions } from '../services/AppbarButtonService';

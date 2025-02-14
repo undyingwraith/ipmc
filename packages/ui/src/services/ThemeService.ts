@@ -1,4 +1,4 @@
-import { computed, Signal } from '@preact/signals-react';
+import { computed, Signal } from '@preact/signals';
 import { createDarkTheme, createLightTheme } from '../Theme';
 
 export const ThemeServiceSymbol = Symbol.for('ThemeService');

@@ -9,6 +9,7 @@
 		"test": "vitest run"
 	},
 	"dependencies": {
+		"@preact/signals-core": "^1.8.0",
 		"i18next": "^24.2.0",
 		"inversify": "^6.2.1",
 		"ipmc-interfaces": "workspace:^",

@@ -1,8 +1,7 @@
 import { Fullscreen, FullscreenExit, Pause, PlayArrow, VolumeDown, VolumeUp } from '@mui/icons-material';
 import { IconButton, Slider, Stack } from '@mui/material';
-import { computed, useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
+import { computed, useComputed, useSignal, useSignalEffect } from '@preact/signals';
 import { IVideoFile } from 'ipmc-interfaces';
-import React from 'react';
 import { useService } from '../../../context';
 import { useHotkey } from '../../../hooks';
 import { IMediaPlayerService, IMediaPlayerServiceSymbol } from '../../../services';
@@ -123,7 +122,7 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 						<div>
 							<FileInfoDisplay file={props.file} />
 						</div>
-						<div className={styles.spacer} onClick={() => mediaPlayer.togglePlay()} onDoubleClick={() => toggleFullScreen()} />
+						<div className={styles.spacer} onClick={() => mediaPlayer.togglePlay()} onDblClick={() => toggleFullScreen()} />
 						<div className={styles.toolbar}>
 							<IconButton onClick={() => mediaPlayer.togglePlay()}>
 								{computed(() => mediaPlayer.playing.value ? <Pause /> : <PlayArrow />)}

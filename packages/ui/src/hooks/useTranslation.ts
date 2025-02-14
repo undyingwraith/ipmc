@@ -1,4 +1,4 @@
-import { ReadonlySignal, computed, useSignal, useSignalEffect } from '@preact/signals-react';
+import { ReadonlySignal, computed, useSignal, useSignalEffect } from '@preact/signals';
 import { useService } from '../context';
 import { ITranslationService, ITranslationServiceSymbol } from 'ipmc-interfaces';
 

@@ -1,7 +1,9 @@
-import React, { PropsWithChildren } from 'react';
 import { Backdrop } from '@mui/material';
+import { ComponentChildren } from 'preact';
 
-export function DetailOverlay(props: PropsWithChildren<{}>) {
+export function DetailOverlay(props: {
+	children: ComponentChildren;
+}) {
 	return (
 		<Backdrop
 			open={true}

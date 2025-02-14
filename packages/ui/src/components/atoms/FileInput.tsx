@@ -1,6 +1,5 @@
 import { Box, Button } from '@mui/material';
-import { ReadonlySignal, Signal, useComputed } from '@preact/signals-react';
-import React from 'react';
+import { ReadonlySignal, Signal, useComputed } from '@preact/signals';
 import { useTranslation } from '../../hooks';
 
 interface IFileInputProps {
@@ -24,7 +23,7 @@ export function FileInput(props: IFileInputProps) {
 					hidden
 					accept={props.accept}
 					onChange={(ev) => {
-						props.value.value = Array.from(ev.target.files!);
+						props.value.value = Array.from(ev.currentTarget.files!);
 					}}
 				/>
 			</Button>

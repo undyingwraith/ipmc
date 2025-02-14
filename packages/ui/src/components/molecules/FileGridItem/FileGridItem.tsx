@@ -1,7 +1,7 @@
 import { Button, Card, CardActions, CardHeader, CardMedia } from '@mui/material';
-import { ReadonlySignal, useComputed } from '@preact/signals-react';
+import { ReadonlySignal, useComputed } from '@preact/signals';
 import { IFileInfo, isIVideoFile, isPinFeature, isPosterFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
-import React, { useRef } from 'react';
+import { useRef } from 'preact/hooks';
 import { useFileUrl, useIsVisible, useTranslation } from '../../../hooks';
 import { PinButton } from '../../atoms/PinButton';
 import { Display } from '../DisplayButtons';

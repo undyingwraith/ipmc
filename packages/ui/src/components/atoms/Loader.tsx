@@ -1,5 +1,4 @@
 import { CircularProgress } from "@mui/material";
-import React from "react";
 
 const normalise = (value?: number, max: number = 100) => value ? (value * 100) / max : undefined;
 

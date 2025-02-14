@@ -1,6 +1,5 @@
-import React from 'react';
 import { TextField } from '@mui/material';
-import { ReadonlySignal, Signal, useComputed } from '@preact/signals-react';
+import { ReadonlySignal, Signal, useComputed } from '@preact/signals';
 
 interface ITextInputProps {
 	label?: ReadonlySignal<string>;
@@ -20,12 +19,12 @@ export function TextInput(props: ITextInputProps) {
 			variant={props.variant}
 			label={props.label?.value}
 			value={props.value.value}
-			inputRef={ref => {
+			inputRef={(ref: HTMLInputElement | null) => {
 				if (props.inputRef !== undefined) {
 					props.inputRef.value = ref;
 				}
 			}}
-			onChange={(ev) => {
+			onChange={(ev: any) => {
 				props.value.value = ev.target.value;
 			}}
 		/>

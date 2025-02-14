@@ -1,7 +1,6 @@
 import { Box, Stack, Typography } from '@mui/material';
-import { useComputed } from '@preact/signals-react';
+import { useComputed } from '@preact/signals';
 import { IFileInfo, isPosterFeature } from 'ipmc-interfaces';
-import React from 'react';
 import { useFileUrl } from '../../hooks';
 import { useTitle } from '../../hooks/useTitle';
 

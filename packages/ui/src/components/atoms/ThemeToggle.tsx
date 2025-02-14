@@ -1,8 +1,7 @@
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import { IconButton } from '@mui/material';
-import { useComputed } from '@preact/signals-react';
-import React from 'react';
+import { useComputed } from '@preact/signals';
 import { useService } from '../../context';
 import { ThemeService, ThemeServiceSymbol } from '../../services';
 

@@ -1,11 +1,11 @@
 import { Button, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { ReadonlySignal, Signal, useComputed } from '@preact/signals-react';
-import { useTranslation } from '@src/hooks';
-import React, { ReactNode } from 'react';
+import { ReadonlySignal, Signal, useComputed } from '@preact/signals';
+import { VNode } from 'preact';
+import { useTranslation } from '../../hooks';
 
 interface IFormListProps<TData> {
-	renderControl: (data: Signal<TData>) => ReactNode;
+	renderControl: (data: Signal<TData>) => VNode<any>;
 	values: Signal<Signal<TData>[]>;
 	createItem: () => TData;
 	label: ReadonlySignal<string>;

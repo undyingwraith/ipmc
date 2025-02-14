@@ -9,6 +9,7 @@
 	"compilerOptions": {
 		"composite": true,
 		"jsx": "react-jsx",
+		"jsxImportSource": "preact",
 		"baseUrl": ".",
 		"lib": [
 			"ES2015",

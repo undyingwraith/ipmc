@@ -1,4 +1,5 @@
-/// <reference types="vitest" />
+/// <reference types='vitest' />
+import preact from '@preact/preset-vite';
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
@@ -6,6 +7,7 @@ import dts from 'vite-plugin-dts';
 
 export default defineConfig(({ mode }) => ({
 	plugins: [
+		preact(),
 		dts({
 			insertTypesEntry: true,
 		}),
@@ -29,15 +31,14 @@ export default defineConfig(({ mode }) => ({
 				'@libp2p/pnet',
 				'@mui/icons-material',
 				'@mui/material',
-				'@preact/signals-react',
+				'@preact/signals',
 				'file-type',
 				'helia',
 				'ipmc-core',
 				'ipmc-interfaces',
 				'minidenticons',
 				'multiformats',
-				'react',
-				'react-dom',
+				'preact',
 				'shaka-player',
 				'wouter',
 			],
@@ -49,13 +50,13 @@ export default defineConfig(({ mode }) => ({
 					'@emotion/styled': 'emStyled',
 					'@mui/icons-material': 'iconsMaterial',
 					'@mui/material': 'material',
-					'@preact/signals-react': 'signalsReact',
+					'@preact/signals': 'signals',
 					'file-type': 'fileType',
 					helia: 'helia',
-					react: 'React',
 					'ipmc-core': 'ipmcCore',
 					'ipmc-interfaces': 'ipmcInterfaces',
 					minidenticons: 'minidenticons',
+					'preact': 'preact',
 					'shaka-player': 'shaka',
 					wouter: 'wouter',
 				},
@@ -68,7 +69,9 @@ export default defineConfig(({ mode }) => ({
 	},
 	resolve: {
 		alias: {
-			"@src": resolve(__dirname, "./src"),
+			'@src': resolve(__dirname, './src'),
+			'react': 'preact/compat',
+			'react-dom': 'preact/compat',
 		}
 	},
 	test: {

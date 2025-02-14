@@ -1,6 +1,5 @@
 import { Button, ButtonGroup } from '@mui/material';
-import { Signal, useComputed } from '@preact/signals-react';
-import React from 'react';
+import { Signal, useComputed } from '@preact/signals';
 
 // Icons
 import GridViewIcon from '@mui/icons-material/GridView';

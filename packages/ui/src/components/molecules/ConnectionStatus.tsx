@@ -1,13 +1,13 @@
 import { Badge, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
-import { useComputed, useSignal, useSignalEffect } from "@preact/signals-react";
-import React from "react";
-import { IIpfsService, ILogService, ILogServiceSymbol } from 'ipmc-interfaces';
-import { Identicon } from '../atoms';
+import { useComputed, useSignal, useSignalEffect } from '@preact/signals';
+import { IIpfsService, IIpfsServiceSymbol, ILogService, ILogServiceSymbol } from 'ipmc-interfaces';
+import { useService } from '../../context';
 import { useTranslation } from '../../hooks/useTranslation';
-import { useService } from '@src/context';
+import { Identicon } from '../atoms';
 
-export function ConnectionStatus(props: { ipfs: IIpfsService; }) {
+export function ConnectionStatus() {
 	const log = useService<ILogService>(ILogServiceSymbol);
+	const ipfs = useService<IIpfsService>(IIpfsServiceSymbol);
 	const peers = useSignal<string[]>([]);
 	const anchor = useSignal<HTMLButtonElement | undefined>(undefined);
 	const count = useComputed(() => peers.value.length);
@@ -16,7 +16,7 @@ export function ConnectionStatus(props: { ipfs: IIpfsService; }) {
 
 	useSignalEffect(() => {
 		const updatePeers = () => {
-			props.ipfs.peers()
+			ipfs.peers()
 				.then(r => {
 					peers.value = r;
 				})
@@ -66,8 +66,8 @@ export function ConnectionStatus(props: { ipfs: IIpfsService; }) {
 			badgeContent={<>{count}</>}
 			color={'primary'}
 		>
-			<IconButton onClick={(ev) => anchor.value = ev.currentTarget}>
-				<Identicon value={props.ipfs.id()} />
+			<IconButton onClick={(ev: any) => anchor.value = ev.currentTarget}>
+				<Identicon value={ipfs.id()} />
 			</IconButton>
 		</Badge>
 		{popover}

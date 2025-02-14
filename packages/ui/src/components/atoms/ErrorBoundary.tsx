@@ -1,7 +1,8 @@
 import { Alert, Typography } from '@mui/material';
-import React, { PropsWithChildren } from 'react';
+import { Component } from 'preact';
+import { PropsWithChildren } from 'preact/compat';
 
-export class ErrorBoundary extends React.Component<PropsWithChildren<{}>, { hasError: boolean; error?: Error; }> {
+export class ErrorBoundary extends Component<PropsWithChildren<{}>, { hasError: boolean; error?: Error; }> {
 	constructor(props: PropsWithChildren<{}>) {
 		super(props);
 		this.state = { hasError: false };

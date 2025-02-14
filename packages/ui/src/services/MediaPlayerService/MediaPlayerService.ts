@@ -1,4 +1,4 @@
-import { Signal } from '@preact/signals-react';
+import { Signal } from '@preact/signals';
 import { inject, injectable } from 'inversify';
 import { type IIpfsService, IIpfsServiceSymbol, type ILogService, ILogServiceSymbol, IVideoFile } from 'ipmc-interfaces';
 import { IMediaPlayerService } from './IMediaPlayerService';

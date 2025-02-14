@@ -1,5 +1,6 @@
-import { Signal, useSignal } from '@preact/signals-react';
-import { RefObject, useEffect } from 'react';
+import { Signal, useSignal } from '@preact/signals';
+import { RefObject } from 'preact';
+import { useEffect } from 'preact/hooks';
 
 
 let listenerCallbacks = new WeakMap();

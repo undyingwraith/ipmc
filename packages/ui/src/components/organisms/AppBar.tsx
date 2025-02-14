@@ -1,5 +1,4 @@
 import { Paper, Toolbar } from "@mui/material";
-import React from "react";
 import { useService } from '../../context';
 import { AppbarButtonService, AppbarButtonServiceSymbol } from '../../services';
 import { Spacer } from '../atoms';

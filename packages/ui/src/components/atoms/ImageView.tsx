@@ -1,4 +1,3 @@
-import React from "react";
 import { useFileUrl } from "../../hooks/useFileUrl";
 
 export function ImageView(props: { cid: string; }) {

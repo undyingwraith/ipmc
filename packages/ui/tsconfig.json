@@ -10,7 +10,8 @@
 		"experimentalDecorators": true,
 		"forceConsistentCasingInFileNames": true,
 		"outDir": "./dist",
-		"jsx": "react",
+		"jsx": "react-jsx",
+		"jsxImportSource": "preact",
 		"lib": [
 			"esnext",
 			"dom",

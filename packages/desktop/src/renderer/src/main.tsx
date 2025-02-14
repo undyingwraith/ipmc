@@ -1,17 +1,12 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
 import 'ipmc-ui/style.css';
+import { render } from 'preact';
+import App from './App';
 
 function tryRender() {
 	if (!window.configService) {
 		setTimeout(tryRender, 100);
 	} else {
-		ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-			<React.StrictMode>
-				<App />
-			</React.StrictMode>
-		);
+		render(<App />, document.getElementById('root')!);
 	}
 }
 

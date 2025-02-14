@@ -1,6 +1,5 @@
 import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
-import { ReadonlySignal, Signal, useComputed } from '@preact/signals-react';
-import React from 'react';
+import { ReadonlySignal, Signal, useComputed } from '@preact/signals';
 
 interface ISelectInputProps {
 	label?: ReadonlySignal<string>;

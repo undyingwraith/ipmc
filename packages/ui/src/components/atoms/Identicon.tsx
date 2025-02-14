@@ -1,4 +1,3 @@
-import React from 'react';
 import { minidenticon } from 'minidenticons';
 
 export function Identicon(props: { value: string; }) {

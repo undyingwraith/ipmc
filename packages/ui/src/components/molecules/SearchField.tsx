@@ -1,5 +1,4 @@
-import { Signal, useSignal } from '@preact/signals-react';
-import React from 'react';
+import { Signal, useSignal } from '@preact/signals';
 import { useHotkey, useTranslation } from '../../hooks';
 import { TextInput } from '../atoms';
 

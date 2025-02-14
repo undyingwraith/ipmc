@@ -1,8 +1,7 @@
 import { Button, Card, CardActions, CardContent, CardHeader } from '@mui/material';
-import { computed, Signal } from '@preact/signals-react';
+import { computed, Signal } from '@preact/signals';
 import { inject, injectable } from 'inversify';
 import { IDialogOptions, IDialogService, IFileDialogOptions, type IPopupService, IPopupServiceSymbol, type ITranslationService, ITranslationServiceSymbol } from 'ipmc-interfaces';
-import React from 'react';
 import { FileInput, TextInput } from '../components/atoms';
 
 @injectable()

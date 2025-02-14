@@ -1,6 +1,6 @@
 import { IIpfsService, IIpfsServiceSymbol } from 'ipmc-interfaces';
 import { useService } from '../context/AppContext';
-import { ReadonlySignal, Signal, useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
+import { ReadonlySignal, Signal, useComputed, useSignal, useSignalEffect } from '@preact/signals';
 import { useLinkedSignal } from './useLinkedSignal';
 import { fileTypeFromBuffer } from 'file-type';
 

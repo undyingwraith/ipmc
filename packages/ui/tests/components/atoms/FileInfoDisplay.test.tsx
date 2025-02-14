@@ -1,10 +1,9 @@
-import React from 'react';
-import { describe, expect, test } from 'vitest';
-import { render } from '@testing-library/react';
+import { FileInfoDisplay } from '@src/components/atoms';
+import { AppContextProvider } from '@src/context';
+import { render } from '@testing-library/preact';
 import { BrowserModule, CoreModule } from 'ipmc-core';
 import { IFileInfo, IIpfsServiceSymbol } from 'ipmc-interfaces';
-import { FileInfoDisplay } from '@src/components/atoms/FileInfoDisplay';
-import { AppContextProvider } from '@src/context';
+import { describe, expect, test } from 'vitest';
 
 describe('FileInfoDisplay', () => {
 	test('Renders data correctly', () => {

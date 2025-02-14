@@ -1,6 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import { ReadonlySignal } from '@preact/signals-react';
-import React from "react";
+import { ReadonlySignal } from '@preact/signals';
 import { Loader } from "../atoms";
 
 export function LoadScreen(props: { text?: string | ReadonlySignal<string>; }) {

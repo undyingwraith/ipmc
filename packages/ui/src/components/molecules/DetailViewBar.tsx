@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button, Paper, Stack, Typography } from '@mui/material';
 import { Spacer } from '../atoms/Spacer';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';

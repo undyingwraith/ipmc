@@ -1,4 +1,4 @@
-import { useSignalEffect } from '@preact/signals-react';
+import { useSignalEffect } from '@preact/signals';
 import { IHotkey, IHotkeyService, IHotkeyServiceSymbol } from 'ipmc-interfaces';
 import { useService } from '../context/AppContext';
 

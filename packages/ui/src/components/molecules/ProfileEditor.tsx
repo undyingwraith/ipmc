@@ -1,13 +1,12 @@
 import { Button, Card, CardActions, CardContent, CardHeader } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { Signal, useComputed, useSignal } from '@preact/signals-react';
+import { Signal, useComputed, useSignal } from '@preact/signals';
 import { IConfigurationService, IConfigurationServiceSymbol, ILibrary, IProfile, isInternalProfile, isRemoteProfile } from 'ipmc-interfaces';
-import React from 'react';
 import { useTranslation } from '../../hooks';
 import { FormList, SelectInput, TextInput } from '../atoms';
 import { LibraryEditor } from './LibraryEditor';
 import { uuid } from 'ipmc-core';
-import { useService } from '@src/context';
+import { useService } from '../../context';
 
 export function ProfileEditor(props: { profile: IProfile, onCancel: () => void, onSave: () => void; }) {
 	const { profile, onCancel, onSave } = props;

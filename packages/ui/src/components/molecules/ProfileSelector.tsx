@@ -1,9 +1,8 @@
 import { Box, Button, ButtonGroup, Card, CardActions, CardHeader, Container, Stack } from "@mui/material";
-import { useComputed, useSignal, useSignalEffect } from "@preact/signals-react";
+import { useComputed, useSignal, useSignalEffect } from '@preact/signals';
 import { useService } from '../../context';
 import { uuid } from 'ipmc-core';
 import { IConfigurationService, IConfigurationServiceSymbol, IDialogService, IDialogServiceSymbol, IFileExportService, IFileExportServiceSymbol, IPopupService, IPopupServiceSymbol, IProfile } from 'ipmc-interfaces';
-import React from "react";
 import { useTranslation } from '../../hooks/useTranslation';
 import { ProfileEditor } from "./ProfileEditor";
 

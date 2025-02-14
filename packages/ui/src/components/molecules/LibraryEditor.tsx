@@ -1,8 +1,8 @@
 import Grid from '@mui/material/Grid2';
-import { Signal, useSignal } from '@preact/signals-react';
-import { useTranslation } from '@src/hooks';
+import { Signal, useSignal } from '@preact/signals';
 import { ILibrary } from 'ipmc-interfaces';
-import React, { useEffect } from 'react';
+import { useEffect } from 'preact/hooks';
+import { useTranslation } from '../../hooks';
 import { SelectInput, TextInput } from '../atoms';
 
 interface ILibraryEditorProps {
