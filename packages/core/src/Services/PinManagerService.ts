@@ -36,15 +36,19 @@ export class PinManagerService implements IPinManagerService {
 		pin = { itemId: item.pinId, cid: item.cid };
 		this.updates.push(pin);
 
-		return new Promise<void>((resolve) => {
+		return new Promise<void>((resolve, reject) => {
 			this.taskManager.runTask({
 				task: () => this.ipfs.addPin(item.cid),
-				onEnd: () => {
-					this.pins.value = [...this.pins.value, pin];
+				onEnd: (ex) => {
 					this.updates = this.updates.filter(pin => pin.itemId !== item.pinId);
-					resolve();
+					if (ex) {
+						reject(ex);
+					} else {
+						this.pins.value = [...this.pins.value, pin];
+						resolve();
+					}
 				},
-				title: this.translationService.translate('AddingPin', { title: item.pinId }),
+				title: this.translationService.translate('AddingPin', { title: item.pinId.substring(item.pinId.lastIndexOf('/') + 1) }),
 			});
 		});
 	}
@@ -68,7 +72,7 @@ export class PinManagerService implements IPinManagerService {
 					this.updates = this.updates.filter(pin => pin.itemId !== item.pinId);
 					resolve();
 				},
-				title: this.translationService.translate('RemovingPin', { title: item.pinId }),
+				title: this.translationService.translate('RemovingPin', { title: item.pinId.substring(item.pinId.lastIndexOf('/') + 1) }),
 			});
 		});
 	}
