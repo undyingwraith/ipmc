@@ -12,7 +12,7 @@
 		"i18next": "^24.2.2",
 		"inversify": "^6.2.2",
 		"ipmc-interfaces": "workspace:^",
-		"kubo-rpc-client": "^5.0.2",
+		"kubo-rpc-client": "^5.1.0",
 		"reflect-metadata": "^0.2.2"
 	},
 	"devDependencies": {
