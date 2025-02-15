@@ -42,16 +42,16 @@
 		"@mui/icons-material": "^6.4.4",
 		"@mui/material": "^6.4.4",
 		"@preact/signals": "^2.0.1",
-		"file-type": "^19.6.0",
+		"file-type": "^20.1.0",
 		"helia": "^5.2.1",
 		"ipmc-core": "workspace:^",
 		"ipmc-interfaces": "workspace:^",
 		"minidenticons": "^4.2.1",
-		"multiformats": "^13.1.0",
+		"multiformats": "^13.3.2",
 		"preact": "^10.25.4",
 		"react": "npm:@preact/compat@*",
 		"react-dom": "npm:@preact/compat@*",
-		"shaka-player": "^4.13.2",
+		"shaka-player": "^4.12.5",
 		"wouter-preact": "^3.6.0"
 	}
 }
