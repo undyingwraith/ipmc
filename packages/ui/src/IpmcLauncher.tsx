@@ -62,7 +62,7 @@ export function IpmcLauncher(props: IIpmcLauncherProps) {
 
 				nodeButton.value = appbarService.registerAppbarButton({
 					position: 'end',
-					component: (<ConnectionStatus />)
+					component: (<ConnectionStatus ipfs={node.peek()!} />)
 				});
 				profileButton.value = appbarService.registerAppbarButton({
 					position: 'start',

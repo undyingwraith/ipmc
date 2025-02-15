@@ -1,13 +1,13 @@
 import { Badge, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 import { useComputed, useSignal, useSignalEffect } from '@preact/signals';
-import { IIpfsService, IIpfsServiceSymbol, ILogService, ILogServiceSymbol } from 'ipmc-interfaces';
+import { IIpfsService, ILogService, ILogServiceSymbol } from 'ipmc-interfaces';
 import { useService } from '../../context';
 import { useTranslation } from '../../hooks/useTranslation';
 import { Identicon } from '../atoms';
 
-export function ConnectionStatus() {
+export function ConnectionStatus(props: { ipfs: IIpfsService; }) {
+	const { ipfs } = props;
 	const log = useService<ILogService>(ILogServiceSymbol);
-	const ipfs = useService<IIpfsService>(IIpfsServiceSymbol);
 	const peers = useSignal<string[]>([]);
 	const anchor = useSignal<HTMLButtonElement | undefined>(undefined);
 	const count = useComputed(() => peers.value.length);
