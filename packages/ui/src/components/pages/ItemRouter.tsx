@@ -1,5 +1,5 @@
 import { IFileInfo, isIFolderFile } from 'ipmc-interfaces';
-import { Route } from 'wouter';
+import { Route } from 'wouter-preact';
 import { ItemPage } from './ItemPage';
 
 export function ItemRouter(props: {

@@ -40,7 +40,7 @@ export default defineConfig(({ mode }) => ({
 				'multiformats',
 				'preact',
 				'shaka-player',
-				'wouter',
+				'wouter-preact',
 			],
 			output: {
 				// Provide global variables to use in the UMD build
@@ -58,7 +58,7 @@ export default defineConfig(({ mode }) => ({
 					minidenticons: 'minidenticons',
 					'preact': 'preact',
 					'shaka-player': 'shaka',
-					wouter: 'wouter',
+					'wouter-preact': 'wouterPreact',
 				},
 			},
 		},
@@ -70,8 +70,6 @@ export default defineConfig(({ mode }) => ({
 	resolve: {
 		alias: {
 			'@src': resolve(__dirname, './src'),
-			'react': 'preact/compat',
-			'react-dom': 'preact/compat',
 		}
 	},
 	test: {

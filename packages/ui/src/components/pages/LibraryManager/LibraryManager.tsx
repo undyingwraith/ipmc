@@ -6,7 +6,7 @@ import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper } from '@mui/material';
 import { useComputed } from "@preact/signals";
 import { IIndexManager, IIndexManagerSymbol, IProfile, IProfileSymbol } from "ipmc-interfaces";
-import { Redirect, Route, useLocation } from 'wouter';
+import { Redirect, Route, useLocation } from 'wouter-preact';
 import { AppContextProvider, useService } from '../../../context/AppContext';
 import { useLinkedSignal, useTranslation } from '../../../hooks';
 import { AppbarButtonService, AppbarButtonServiceSymbol } from '../../../services';

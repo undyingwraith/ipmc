@@ -1,8 +1,8 @@
 import { Box, CssBaseline } from '@mui/material';
 import { BrowserModule, CoreModule, FileExportService, IModule } from 'ipmc-core';
 import { IConfigurationService, IConfigurationServiceSymbol, IFileExportServiceSymbol, INodeService, ITranslation, ITranslationsSymbol } from 'ipmc-interfaces';
-import { Router, Switch } from 'wouter';
-import { useHashLocation } from 'wouter/use-hash-location';
+import { Router, Switch } from 'wouter-preact';
+import { useHashLocation } from 'wouter-preact/use-hash-location';
 import { AppBar } from './components/organisms/AppBar';
 import { AppContextProvider, ThemeProvider } from './context';
 import { IpmcLauncher } from './IpmcLauncher';

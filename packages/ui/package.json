@@ -50,6 +50,6 @@
 		"multiformats": "^13.1.0",
 		"preact": "^10.25.4",
 		"shaka-player": "^4.12.5",
-		"wouter": "^3.3.5"
+		"wouter-preact": "^3.6.0"
 	}
 }

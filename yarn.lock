@@ -7730,7 +7730,7 @@ __metadata:
     vite-plugin-checker: "npm:^0.8.0"
     vite-plugin-dts: "npm:^4.4.0"
     vitest: "npm:^2.1.8"
-    wouter: "npm:^3.3.5"
+    wouter-preact: "npm:^3.6.0"
   languageName: unknown
   linkType: soft
 
@@ -12123,15 +12123,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-sync-external-store@npm:^1.0.0":
-  version: 1.2.2
-  resolution: "use-sync-external-store@npm:1.2.2"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 10c0/23b1597c10adf15b26ade9e8c318d8cc0abc9ec0ab5fc7ca7338da92e89c2536abd150a5891bf076836c352fdfa104fc7231fb48f806fd9960e0cbe03601abaf
-  languageName: node
-  linkType: hard
-
 "utf8-byte-length@npm:^1.0.1":
   version: 1.0.5
   resolution: "utf8-byte-length@npm:1.0.5"
@@ -12687,16 +12678,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wouter@npm:^3.3.5":
-  version: 3.3.5
-  resolution: "wouter@npm:3.3.5"
+"wouter-preact@npm:^3.6.0":
+  version: 3.6.0
+  resolution: "wouter-preact@npm:3.6.0"
   dependencies:
     mitt: "npm:^3.0.1"
     regexparam: "npm:^3.0.0"
-    use-sync-external-store: "npm:^1.0.0"
   peerDependencies:
-    react: ">=16.8.0"
-  checksum: 10c0/67967fdb4d6b6a921880ebb67ad29298b46f9f7048554cedc583b5e05f7aebedb85cd3ac33cd954027aa73f0aa8adc521cea4f34d485912a891e14f7e0d34d41
+    preact: ^10.0.0
+  checksum: 10c0/5f0124e64d0ae6795f4afb753760469a80f3c51feab33ee908f998d2dc86141821c066fcc67233b34d35762091b79c506e26744e92ad6f5345d3e108e3d8e486
   languageName: node
   linkType: hard
 

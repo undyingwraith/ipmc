@@ -2,7 +2,7 @@ import Grid from '@mui/material/Grid2';
 import { useComputed, useSignal } from '@preact/signals';
 import { createFilter } from 'ipmc-core';
 import { IIndexManager, IIndexManagerSymbol } from 'ipmc-interfaces';
-import { useLocation } from 'wouter';
+import { useLocation } from 'wouter-preact';
 import { useService } from '../../context/AppContext';
 import { useAppbarButtons } from '../../hooks';
 import { ErrorBoundary } from '../atoms';
