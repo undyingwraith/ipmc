@@ -7723,6 +7723,8 @@ __metadata:
     minidenticons: "npm:^4.2.1"
     multiformats: "npm:^13.1.0"
     preact: "npm:^10.25.4"
+    react: "npm:@preact/compat@*"
+    react-dom: "npm:@preact/compat@*"
     shaka-player: "npm:^4.12.5"
     terser: "npm:^5.37.0"
     typescript: "npm:^5.7.2"
@@ -10455,6 +10457,15 @@ __metadata:
   bin:
     rc: ./cli.js
   checksum: 10c0/24a07653150f0d9ac7168e52943cc3cb4b7a22c0e43c7dff3219977c2fdca5a2760a304a029c20811a0e79d351f57d46c9bde216193a0f73978496afc2b85b15
+  languageName: node
+  linkType: hard
+
+"react-dom@npm:@preact/compat@*, react@npm:@preact/compat@*":
+  version: 18.3.1
+  resolution: "@preact/compat@npm:18.3.1"
+  peerDependencies:
+    preact: "*"
+  checksum: 10c0/7997c4b761098c9ff6ca3850362784982a4e0b3fee847eda7c1f2e5e8211cc55a1fa1ed4e91711ac8c197a1096335b0f019fa8eeb86a9ed738c0bf6e7647ceb2
   languageName: node
   linkType: hard
 
