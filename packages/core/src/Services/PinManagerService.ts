@@ -38,7 +38,7 @@ export class PinManagerService implements IPinManagerService {
 
 		return new Promise<void>((resolve, reject) => {
 			this.taskManager.runTask({
-				task: () => this.ipfs.addPin(item.cid),
+				task: () => this.ipfs.isPinned(item.cid).then((res) => res ? Promise.resolve() : this.ipfs.addPin(item.cid)),
 				onEnd: (ex) => {
 					this.updates = this.updates.filter(pin => pin.itemId !== item.pinId);
 					if (ex) {
