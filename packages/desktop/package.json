@@ -22,7 +22,7 @@
 	},
 	"dependencies": {
 		"@chainsafe/libp2p-gossipsub": "^14.1.0",
-		"@chainsafe/libp2p-noise": "^16.0.0",
+		"@chainsafe/libp2p-noise": "^16.0.1",
 		"@helia/ipns": "^8.1.0",
 		"@helia/unixfs": "^4.0.2",
 		"@libp2p/bootstrap": "^11.0.20",
@@ -55,14 +55,14 @@
 		"@electron-toolkit/utils": "^3.0.0",
 		"@preact/preset-vite": "^2.10.1",
 		"@types/babel__core": "^7",
-		"@types/node": "^20.17.10",
+		"@types/node": "^22.13.4",
 		"electron": "30.0.7",
 		"electron-builder": "^24.13.3",
-		"electron-vite": "^2.2.0",
+		"electron-vite": "^2.3.0",
 		"eslint": "^8.57.0",
 		"prettier": "^3.4.2",
-		"typescript": "^5.7.2",
-		"vite": "^5.2.11",
+		"typescript": "^5.7.3",
+		"vite": "^5.4.14",
 		"vite-plugin-commonjs": "^0.10.4"
 	}
 }

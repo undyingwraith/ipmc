@@ -45,6 +45,7 @@ export function ItemPage(props: {
 		<Stack sx={{ overflow: 'auto' }} spacing={1}>
 			<Paper>
 				<FileInfoDisplay file={file} />
+				{isPinFeature(file) && <PinButton item={file} />}
 			</Paper>
 			<Grid container spacing={1} sx={{ width: '100%' }}>
 				{file.items.length === 0 ? (
