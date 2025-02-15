@@ -19,6 +19,7 @@ export class PopupService implements IPopupService {
 	show(options: IPopupOptions): Promise<void> {
 		return new Promise(resolve => {
 			const close = () => {
+				render(null, this.mountPoint);
 				resolve();
 			};
 			render(<AppContext.Provider value={this.app}>
@@ -35,6 +36,7 @@ export class PopupService implements IPopupService {
 	@preDestroy()
 	//@ts-ignore
 	private deconstructor(): void {
+		render(null, this.mountPoint);
 		document.getElementsByTagName('body')[0].removeChild(this.mountPoint);
 	}
 
