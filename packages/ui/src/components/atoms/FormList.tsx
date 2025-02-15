@@ -1,6 +1,6 @@
 import { Button, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { ReadonlySignal, Signal, useComputed } from '@preact/signals';
+import { Signal } from '@preact/signals';
 import { VNode } from 'preact';
 import { useTranslation } from '../../hooks';
 
@@ -8,7 +8,7 @@ interface IFormListProps<TData> {
 	renderControl: (data: Signal<TData>) => VNode<any>;
 	values: Signal<Signal<TData>[]>;
 	createItem: () => TData;
-	label: ReadonlySignal<string>;
+	label: string;
 }
 
 export function FormList<TData>(props: IFormListProps<TData>) {
@@ -29,14 +29,14 @@ export function FormList<TData>(props: IFormListProps<TData>) {
 					{_t('Add')}
 				</Button>
 			</Grid>
-			{useComputed(() => props.values.value.map((item, index) => (
+			{props.values.value.map((item, index) => (
 				<Grid size={12}>
 					{props.renderControl(item)}
 					<Button onClick={() => {
 						props.values.value = props.values.value.toSpliced(index, 1);
 					}}>{_t('Remove')}</Button>
 				</Grid>
-			)))}
+			))}
 		</Grid>
 	);
 }

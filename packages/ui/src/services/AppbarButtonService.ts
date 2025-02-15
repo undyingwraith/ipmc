@@ -1,8 +1,9 @@
 import { computed, Signal } from '@preact/signals';
+import { VNode } from 'preact';
 
 export interface IAppbarButtonOptions {
 	position: 'start' | 'end';
-	component: any;
+	component: VNode<any>;
 	sortIndex?: number;
 }
 

@@ -11,9 +11,9 @@ export function AppBar(props: {
 	return (
 		<Paper elevation={props.elevation ?? 0} sx={{ borderRadius: 0 }}>
 			<Toolbar>
-				{appbarService.startButtons}
+				{appbarService.startButtons.value}
 				<Spacer width={15} />
-				{appbarService.endButtons}
+				{appbarService.endButtons.value}
 			</Toolbar>
 		</Paper>
 	);

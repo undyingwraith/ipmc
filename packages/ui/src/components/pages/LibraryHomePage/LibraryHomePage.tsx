@@ -69,8 +69,8 @@ export function LibraryHomePage() {
 		<Box sx={{ padding: 5, width: '100%' }}>
 			<Typography variant={'h3'}>{_t('Home')}</Typography>
 			<Stack spacing={1}>
-				{status}
-				{pins}
+				{status.value}
+				{pins.value}
 			</Stack>
 		</Box>
 	);

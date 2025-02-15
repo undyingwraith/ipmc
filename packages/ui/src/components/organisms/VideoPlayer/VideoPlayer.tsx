@@ -1,6 +1,6 @@
 import { Fullscreen, FullscreenExit, Pause, PlayArrow, VolumeDown, VolumeUp } from '@mui/icons-material';
 import { IconButton, Slider, Stack } from '@mui/material';
-import { computed, useComputed, useSignal, useSignalEffect } from '@preact/signals';
+import { useComputed, useSignal, useSignalEffect } from '@preact/signals';
 import { IVideoFile } from 'ipmc-interfaces';
 import { useService } from '../../../context';
 import { useHotkey } from '../../../hooks';
@@ -106,68 +106,68 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 		</div>
 	));
 
+	const video = useComputed(() => (
+		<video
+			controls={false}
+			ref={(ref) => {
+				videoRef.value = ref;
+			}}
+			preload={'metadata'}
+			className={styles.video}
+		/>
+	));
+
 	return (
 		<div className={styles.outerContainer}>
 			<div className={styles.innerContainer} ref={(ref) => containerRef.value = ref}>
-				<video
-					controls={false}
-					ref={(ref) => {
-						videoRef.value = ref;
-					}}
-					preload={'metadata'}
-					className={styles.video}
-				/>
-				{useComputed(() => (
-					<div className={`${styles.videoOverlay} ${overlayVisible.value ? styles.visible : ''}`}>
-						<div>
-							<FileInfoDisplay file={props.file} />
-						</div>
-						<div className={styles.spacer} onClick={() => mediaPlayer.togglePlay()} onDblClick={() => toggleFullScreen()} />
-						<div className={styles.toolbar}>
-							<IconButton onClick={() => mediaPlayer.togglePlay()}>
-								{computed(() => mediaPlayer.playing.value ? <Pause /> : <PlayArrow />)}
-							</IconButton>
-							<div className={styles.spacer} />
-							<div>
-								Language
-								<select>
-									{computed(() => mediaPlayer.languages.value.map(l => (
-										<option>{l}</option>
-									)))}
-								</select>
-								Subtitle
-								<select onChange={(ev) => {
-									mediaPlayer.selectSubtitle(ev.currentTarget.value !== 'null' ? ev.currentTarget.value : undefined);
-								}}>
-									<option value="null">None</option>
-									{computed(() => mediaPlayer.subtitles.value.map(l => (
-										<option>{l.language}</option>
-									)))}
-								</select>
-							</div>
-							<Stack spacing={2} direction="row" sx={{ alignItems: 'center', width: 250 }}>
-								<IconButton onClick={() => { volume.value = 0; }}>
-									<VolumeDown />
-								</IconButton>
-								{computed(() => (
-									<Slider
-										value={volume.value}
-										onChange={(_, value) => volume.value = value as number}
-										min={0}
-										max={1}
-										step={0.05} />
-								))}
-								<IconButton onClick={() => { volume.value = 1; }}>
-									<VolumeUp />
-								</IconButton>
-							</Stack>
-							<IconButton onClick={() => toggleFullScreen()}>
-								{computed(() => fullScreen.value ? <FullscreenExit /> : <Fullscreen />)}
-							</IconButton>
-						</div>
-						{progress}
+				{video.value}
+				<div className={`${styles.videoOverlay} ${overlayVisible.value ? styles.visible : ''}`}>
+					<div>
+						<FileInfoDisplay file={props.file} />
 					</div>
-				))}
+					<div className={styles.spacer} onClick={() => mediaPlayer.togglePlay()} onDblClick={() => toggleFullScreen()} />
+					<div className={styles.toolbar}>
+						<IconButton onClick={() => mediaPlayer.togglePlay()}>
+							{mediaPlayer.playing.value ? <Pause /> : <PlayArrow />}
+						</IconButton>
+						<div className={styles.spacer} />
+						<div>
+							Language
+							<select>
+								{mediaPlayer.languages.value.map(l => (
+									<option>{l}</option>
+								))}
+							</select>
+							Subtitle
+							<select onChange={(ev) => {
+								mediaPlayer.selectSubtitle(ev.currentTarget.value !== 'null' ? ev.currentTarget.value : undefined);
+							}}>
+								<option value="null">None</option>
+								{mediaPlayer.subtitles.value.map(l => (
+									<option>{l.language}</option>
+								))}
+							</select>
+						</div>
+						<Stack spacing={2} direction="row" sx={{ alignItems: 'center', width: 250 }}>
+							<IconButton onClick={() => { volume.value = 0; }}>
+								<VolumeDown />
+							</IconButton>
+							<Slider
+								value={volume.value}
+								onChange={(_, value) => volume.value = value as number}
+								min={0}
+								max={1}
+								step={0.05} />
+							<IconButton onClick={() => { volume.value = 1; }}>
+								<VolumeUp />
+							</IconButton>
+						</Stack>
+						<IconButton onClick={() => toggleFullScreen()}>
+							{fullScreen.value ? <FullscreenExit /> : <Fullscreen />}
+						</IconButton>
+					</div>
+					{progress.value}
+				</div>
 			</div>
 		</div>
 	);

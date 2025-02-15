@@ -1,5 +1,5 @@
 import { Alert, Box, Button, ButtonGroup } from '@mui/material';
-import { useComputed, useSignal } from '@preact/signals';
+import { useSignal } from '@preact/signals';
 import { createRemoteIpfs, IndexManager } from 'ipmc-core';
 import { IConfigurationService, IIndexManagerSymbol, IIpfsService, IIpfsServiceSymbol, ILogService, ILogServiceSymbol, INodeService, IProfile, IProfileSymbol, isInternalProfile, isRemoteProfile } from 'ipmc-interfaces';
 import { ThemeToggle } from './components/atoms';
@@ -98,44 +98,38 @@ export function IpmcLauncher(props: IIpmcLauncherProps) {
 		state.value = LoadState.Idle;
 	}
 
-	return useComputed(() => {
-		const ipfs = node.value;
-		const currentState = state.value;
-		const currentProfile = profile.value;
-
-		switch (currentState) {
-			case LoadState.Error:
-				return (
-					<Box>
-						<Alert severity="error">An error occured.</Alert>
-						<ButtonGroup>
-							<Button onClick={() => state.value = LoadState.Idle}>Home</Button>
-						</ButtonGroup>
-					</Box>
-				);
-			case LoadState.Idle:
-				return (
-					<Box>
-						<ProfileSelector switchProfile={start} />
-					</Box>
-				);
-			case LoadState.Starting:
-			case LoadState.Stopping:
-				return (
-					<LoadScreen text={_t(currentState == LoadState.Starting ? 'Starting' : 'Stopping')} />
-				);
-			case LoadState.Ready:
-				return (
-					<AppContextProvider setup={(app) => {
-						app.registerConstant<IIpfsService>(ipfs!, IIpfsServiceSymbol);
-						app.registerConstant<IProfile>(currentProfile!, IProfileSymbol);
-						app.register(IndexManager, IIndexManagerSymbol);
-					}} >
-						<LibraryManager />
-					</AppContextProvider>
-				);
-			default:
-				return (<></>);
-		}
-	});
+	switch (state.value) {
+		case LoadState.Error:
+			return (
+				<Box>
+					<Alert severity="error">An error occured.</Alert>
+					<ButtonGroup>
+						<Button onClick={() => state.value = LoadState.Idle}>Home</Button>
+					</ButtonGroup>
+				</Box>
+			);
+		case LoadState.Idle:
+			return (
+				<Box>
+					<ProfileSelector switchProfile={start} />
+				</Box>
+			);
+		case LoadState.Starting:
+		case LoadState.Stopping:
+			return (
+				<LoadScreen text={_t(state.value == LoadState.Starting ? 'Starting' : 'Stopping')} />
+			);
+		case LoadState.Ready:
+			return (
+				<AppContextProvider setup={(app) => {
+					app.registerConstant<IIpfsService>(node.value!, IIpfsServiceSymbol);
+					app.registerConstant<IProfile>(profile.value!, IProfileSymbol);
+					app.register(IndexManager, IIndexManagerSymbol);
+				}} >
+					<LibraryManager />
+				</AppContextProvider>
+			);
+		default:
+			return (<></>);
+	}
 }

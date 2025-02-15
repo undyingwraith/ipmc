@@ -4,11 +4,10 @@ import MovieIcon from '@mui/icons-material/Movie';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper } from '@mui/material';
-import { useComputed } from "@preact/signals";
 import { IIndexManager, IIndexManagerSymbol, IProfile, IProfileSymbol } from "ipmc-interfaces";
 import { Redirect, Route, useLocation } from 'wouter-preact';
 import { AppContextProvider, useService } from '../../../context/AppContext';
-import { useLinkedSignal, useTranslation } from '../../../hooks';
+import { useTranslation } from '../../../hooks';
 import { AppbarButtonService, AppbarButtonServiceSymbol } from '../../../services';
 import { ErrorBoundary } from '../../atoms/ErrorBoundary';
 import { AppBar } from '../../organisms';
@@ -28,44 +27,40 @@ export function LibraryManager() {
 	const indexManager = useService<IIndexManager>(IIndexManagerSymbol);
 	const _t = useTranslation();
 	const libraries = profile.libraries;
-	const [loc, setLocation] = useLocation();
-	const location = useLinkedSignal(loc);
+	const [location, setLocation] = useLocation();
 
-	const sidebar = useComputed(() => (
-		<List>
-			<ListItem disablePadding>
-				<ListItemButton
-					selected={location.value === '/'}
-					onClick={() => {
-						setLocation('/');
-					}}>
-					<ListItemIcon>
-						<HomeIcon />
-					</ListItemIcon>
-					<ListItemText primary={_t('Home')} />
-				</ListItemButton>
-			</ListItem>
-			{libraries.map((lib) => (
-				<ListItem key={lib.name} disablePadding>
-					<ListItemButton
-						selected={location.value.startsWith('/' + lib.id)}
-						onClick={() => {
-							setLocation('/' + lib.id);
-						}}>
-						<ListItemIcon>
-							{icons[lib.type] ?? <QuestionMarkIcon />}
-						</ListItemIcon>
-						<ListItemText primary={lib.name} />
-					</ListItemButton>
-				</ListItem>
-			))}
-		</List>
-	));
 
 	return (
 		<div className={styles.container}>
 			<Paper className={styles.sidebar} sx={{ borderRadius: 0 }}>
-				{sidebar}
+				<List>
+					<ListItem disablePadding>
+						<ListItemButton
+							selected={location === '/'}
+							onClick={() => {
+								setLocation('/');
+							}}>
+							<ListItemIcon>
+								<HomeIcon />
+							</ListItemIcon>
+							<ListItemText primary={_t('Home')} />
+						</ListItemButton>
+					</ListItem>
+					{libraries.map((lib) => (
+						<ListItem key={lib.name} disablePadding>
+							<ListItemButton
+								selected={location.startsWith('/' + lib.id)}
+								onClick={() => {
+									setLocation('/' + lib.id);
+								}}>
+								<ListItemIcon>
+									{icons[lib.type] ?? <QuestionMarkIcon />}
+								</ListItemIcon>
+								<ListItemText primary={lib.name} />
+							</ListItemButton>
+						</ListItem>
+					))}
+				</List>
 			</Paper>
 			<div className={styles.contentContainer}>
 				<AppContextProvider

@@ -1,8 +1,8 @@
-import { ReadonlySignal, computed, useSignal, useSignalEffect } from '@preact/signals';
-import { useService } from '../context';
+import { useSignal, useSignalEffect } from '@preact/signals';
 import { ITranslationService, ITranslationServiceSymbol } from 'ipmc-interfaces';
+import { useService } from '../context';
 
-export function useTranslation(): (key: string, values?: { [key: string]: string; }) => ReadonlySignal<string> {
+export function useTranslation(): (key: string, values?: { [key: string]: string; }) => string {
 	const translationService = useService<ITranslationService>(ITranslationServiceSymbol);
 	const language = useSignal(translationService.language);
 
@@ -17,10 +17,8 @@ export function useTranslation(): (key: string, values?: { [key: string]: string
 	});
 
 
-	function translate(key: string, values?: { [key: string]: string; }): ReadonlySignal<string> {
-		return computed(() => {
-			return language.value !== undefined ? translationService.translate(key, values) : 'Error';
-		});
+	function translate(key: string, values?: { [key: string]: string; }): string {
+		return language.value !== undefined ? translationService.translate(key, values) : 'Error';
 	}
 
 	return translate;

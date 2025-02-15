@@ -1,12 +1,12 @@
 import { Button, Card, CardActions, CardContent, CardHeader } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { Signal, useComputed, useSignal } from '@preact/signals';
+import { Signal, useSignal } from '@preact/signals';
+import { uuid } from 'ipmc-core';
 import { IConfigurationService, IConfigurationServiceSymbol, ILibrary, IProfile, isInternalProfile, isRemoteProfile } from 'ipmc-interfaces';
+import { useService } from '../../context';
 import { useTranslation } from '../../hooks';
 import { FormList, SelectInput, TextInput } from '../atoms';
 import { LibraryEditor } from './LibraryEditor';
-import { uuid } from 'ipmc-core';
-import { useService } from '../../context';
 
 export function ProfileEditor(props: { profile: IProfile, onCancel: () => void, onSave: () => void; }) {
 	const { profile, onCancel, onSave } = props;
@@ -59,7 +59,7 @@ export function ProfileEditor(props: { profile: IProfile, onCancel: () => void, 
 							}}
 						/>
 					</Grid>
-					{useComputed(() => type.value === 'internal' ? (<>
+					{type.value === 'internal' ? (<>
 						<Grid size={12}>
 							<TextInput
 								label={_t('SwarmKey')}
@@ -96,7 +96,7 @@ export function ProfileEditor(props: { profile: IProfile, onCancel: () => void, 
 								key={'apiUrl'}
 							/>
 						</Grid>
-					</>))}
+					</>)}
 					<Grid size={12}>
 						<FormList
 							label={_t('Libraries')}

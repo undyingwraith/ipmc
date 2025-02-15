@@ -1,8 +1,8 @@
 import { TextField } from '@mui/material';
-import { ReadonlySignal, Signal, useComputed } from '@preact/signals';
+import { Signal } from '@preact/signals';
 
 interface ITextInputProps {
-	label?: ReadonlySignal<string>;
+	label?: string;
 	value: Signal<string>;
 	inputRef?: Signal<HTMLInputElement | null>;
 	multiline?: boolean;
@@ -11,13 +11,13 @@ interface ITextInputProps {
 }
 
 export function TextInput(props: ITextInputProps) {
-	return useComputed(() => (
+	return (
 		<TextField
 			fullWidth={true}
 			rows={props.rows}
 			multiline={props.multiline}
 			variant={props.variant}
-			label={props.label?.value}
+			label={props.label}
 			value={props.value.value}
 			inputRef={(ref: HTMLInputElement | null) => {
 				if (props.inputRef !== undefined) {
@@ -28,5 +28,5 @@ export function TextInput(props: ITextInputProps) {
 				props.value.value = ev.target.value;
 			}}
 		/>
-	));
+	);
 }

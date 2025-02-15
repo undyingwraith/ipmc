@@ -1,7 +1,7 @@
 import { useComputed, useSignal, useSignalEffect } from '@preact/signals';
 import { Application, IApplication, IModule } from 'ipmc-core';
 import { ComponentChildren, createContext } from 'preact';
-import { useContext } from 'preact/compat';
+import { useContext } from 'preact/hooks';
 import { LoadScreen } from '../components/molecules/LoadScreen';
 
 export const AppContext = createContext<Application | undefined>(undefined);

@@ -78,7 +78,7 @@ export function ProfileSelector(props: { profile?: IProfile, switchProfile: (nam
 	return (
 		<Container>
 			<Stack spacing={1}>
-				{content}
+				{content.value}
 				<Box>
 					<Button onClick={() => {
 						popupService.show({
