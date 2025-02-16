@@ -2,7 +2,7 @@
 	"name": "ipmc-core",
 	"main": "./dist/src/index.js",
 	"type": "module",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"scripts": {
 		"dev": "tsc --watch",
 		"build": "tsc",
