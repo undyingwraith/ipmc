@@ -10,11 +10,11 @@
 	],
 	"exports": {
 		".": {
+			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js",
-			"require": "./dist/index.umd.cjs",
-			"types": "./dist/index.d.ts"
+			"require": "./dist/index.umd.cjs"
 		},
-		"./style.css": "./dist/style.css"
+		"./style.css": "./dist/index.css"
 	},
 	"scripts": {
 		"dev": "vite build --watch --mode dev",
@@ -23,16 +23,21 @@
 	},
 	"devDependencies": {
 		"@babel/core": "^7.26.9",
+		"@babel/plugin-proposal-class-properties": "^7.18.6",
+		"@babel/plugin-proposal-decorators": "^7.25.9",
+		"@babel/preset-typescript": "^7.26.0",
 		"@preact/preset-vite": "^2.10.1",
 		"@testing-library/preact": "^3.2.4",
-		"@types/babel__core": "^7",
-		"jsdom": "^25.0.1",
+		"@types/babel__core": "^7.20.5",
+		"@types/node": "^22.13.4",
+		"babel-plugin-parameter-decorator": "^1.0.16",
+		"jsdom": "^26.0.0",
 		"terser": "^5.39.0",
 		"typescript": "^5.7.3",
-		"vite": "^5.4.14",
-		"vite-plugin-checker": "^0.8.0",
+		"vite": "^6.1.0",
 		"vite-plugin-dts": "^4.5.0",
-		"vitest": "^2.1.9"
+		"vite-tsconfig-paths": "^5.1.4",
+		"vitest": "^3.0.5"
 	},
 	"dependencies": {
 		"@emotion/react": "^11.14.0",
@@ -44,13 +49,15 @@
 		"@preact/signals": "^2.0.1",
 		"file-type": "^20.1.0",
 		"helia": "^5.2.1",
+		"inversify": "^6.2.2",
 		"ipmc-core": "workspace:^",
 		"ipmc-interfaces": "workspace:^",
 		"minidenticons": "^4.2.1",
 		"multiformats": "^13.3.2",
-		"preact": "^10.25.4",
+		"preact": "^10.26.0",
 		"react": "npm:@preact/compat@*",
 		"react-dom": "npm:@preact/compat@*",
+		"reflect-metadata": "^0.2.2",
 		"shaka-player": "^4.12.5",
 		"wouter-preact": "^3.6.0"
 	}

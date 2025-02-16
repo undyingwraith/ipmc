@@ -30,18 +30,13 @@
 		"target": "ESNext",
 		"downlevelIteration": true,
 		"isolatedModules": true,
-		"baseUrl": ".",
-		"paths": {
-			"@src/*": [
-				"./src/*"
-			]
-		}
+		"baseUrl": "."
 	},
 	"include": [
 		"src",
+		"tests",
+		"testing",
 		"typings.d.ts",
-		"vite.config.ts",
-		".eslintrc.js",
-		".prettierrc.js"
+		"vite.config.ts"
 	]
 }

@@ -22,13 +22,13 @@
 		"ipmc-core": "workspace:^",
 		"ipmc-ui": "workspace:^",
 		"libp2p": "^2.6.2",
-		"preact": "^10.25.4",
+		"preact": "^10.26.0",
 		"util": "^0.12.5",
-		"web-streams-polyfill": "^4.0.0"
+		"web-streams-polyfill": "^4.1.0"
 	},
 	"devDependencies": {
 		"typescript": "^5.7.3",
-		"vite": "^5.4.14",
+		"vite": "^6.1.0",
 		"vite-plugin-node-polyfills": "^0.23.0"
 	}
 }

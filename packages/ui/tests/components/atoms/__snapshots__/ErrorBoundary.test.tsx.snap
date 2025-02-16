@@ -1,0 +1,7 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ErrorBoundary > Renders component if no error is present 1`] = `
+<div>
+  This is a test
+</div>
+`;
