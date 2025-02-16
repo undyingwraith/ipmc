@@ -1,6 +1,6 @@
 import { Signal } from '@preact/signals-core';
 import { inject, injectable } from 'inversify';
-import { HasPinAbility, IFileInfo, IIndexManager, IIndexManagerSymbol, IIpfsService, IIpfsServiceSymbol, IObjectStore, IObjectStoreSymbol, IPinItem, IPinManagerService, isIFolderFile, ITaskManager, ITaskManagerSymbol, ITranslationService, ITranslationServiceSymbol, PinStatus } from 'ipmc-interfaces';
+import { HasPinAbility, IFileInfo, IIndexManager, IIndexManagerSymbol, IIpfsService, IIpfsServiceSymbol, IObjectStore, IObjectStoreSymbol, IPinItem, IPinManagerService, IProfile, IProfileSymbol, isIFolderFile, ITaskManager, ITaskManagerSymbol, ITranslationService, ITranslationServiceSymbol, PinStatus } from 'ipmc-interfaces';
 
 @injectable()
 export class PinManagerService implements IPinManagerService {
@@ -10,10 +10,12 @@ export class PinManagerService implements IPinManagerService {
 		@inject(ITaskManagerSymbol) private readonly taskManager: ITaskManager,
 		@inject(ITranslationServiceSymbol) private readonly translationService: ITranslationService,
 		@inject(IIndexManagerSymbol) private readonly indexManager: IIndexManager,
+		@inject(IProfileSymbol) profile: IProfile,
 	) {
-		this.pins.value = this.store.get('pinItems') ?? [];
+		const storageKey = `${profile.id}_pinItems`;
+		this.pins.value = this.store.get(storageKey) ?? [];
 		this.pins.subscribe((value) => {
-			this.store.set('pinItems', value);
+			this.store.set(storageKey, value);
 		});
 	}
 
