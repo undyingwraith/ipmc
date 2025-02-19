@@ -1,10 +1,10 @@
 import { Badge, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 import { useComputed, useSignal, useSignalEffect } from "@preact/signals-react";
-import React from "react";
 import { IIpfsService, ILogService, ILogServiceSymbol } from 'ipmc-interfaces';
-import { Identicon } from '../atoms';
+import React from "react";
+import { useService } from '../../context';
 import { useTranslation } from '../../hooks/useTranslation';
-import { useService } from '@src/context';
+import { Identicon } from '../atoms';
 
 export function ConnectionStatus(props: { ipfs: IIpfsService; }) {
 	const log = useService<ILogService>(ILogServiceSymbol);

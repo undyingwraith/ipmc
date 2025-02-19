@@ -20,7 +20,7 @@ export class ErrorBoundary extends React.Component<PropsWithChildren<{}>, { hasE
 		if (this.state.hasError) {
 			return (
 				<Alert severity="error">
-					<Typography>{this.state.error?.name}: {this.state.error?.message}</Typography>
+					<Typography data-testid={'error-message'}>{this.state.error?.name}: {this.state.error?.message}</Typography>
 				</Alert>
 			);
 		}

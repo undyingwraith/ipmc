@@ -3,8 +3,8 @@ import { describe, expect, test } from 'vitest';
 import { render } from '@testing-library/react';
 import { BrowserModule, CoreModule } from 'ipmc-core';
 import { IFileInfo, IIpfsServiceSymbol } from 'ipmc-interfaces';
-import { FileInfoDisplay } from '@src/components/atoms/FileInfoDisplay';
-import { AppContextProvider } from '@src/context';
+import { FileInfoDisplay } from 'src/components/atoms/FileInfoDisplay';
+import { AppContextProvider } from 'src/context';
 
 describe('FileInfoDisplay', () => {
 	test('Renders data correctly', () => {

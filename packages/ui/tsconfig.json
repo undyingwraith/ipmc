@@ -29,15 +29,12 @@
 		"target": "ESNext",
 		"downlevelIteration": true,
 		"isolatedModules": true,
-		"baseUrl": ".",
-		"paths": {
-			"@src/*": [
-				"./src/*"
-			]
-		}
+		"baseUrl": "."
 	},
 	"include": [
 		"src",
+		"testing",
+		"tests",
 		"typings.d.ts",
 		"vite.config.ts",
 		".eslintrc.js",
