@@ -17,7 +17,7 @@ export function DisplayButtons(props: { display: Signal<Display>; }) {
 	const { display } = props;
 
 	return useComputed(() => (
-		<ButtonGroup>
+		<ButtonGroup color='info'>
 			<Button
 				onClick={() => display.value = Display.Poster}
 				variant={display.value == Display.Poster ? 'contained' : 'outlined'}
@@ -33,8 +33,9 @@ export function DisplayButtons(props: { display: Signal<Display>; }) {
 			<Button
 				onClick={() => display.value = Display.List}
 				variant={display.value == Display.List ? 'contained' : 'outlined'}
+
 			>
-				<ViewListIcon />
+				<ViewListIcon className='buttonStyle' />
 			</Button>
 		</ButtonGroup>
 	));

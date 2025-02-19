@@ -68,7 +68,7 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 				profileButton.value = appbarService.registerAppbarButton({
 					position: 'start',
 					component: (<>
-						<Button onClick={stop} color={'warning'}>{_t('Logout')}</Button>
+						<Button onClick={stop} color={'info'}>{_t('Logout')}</Button>
 						{currentProfile.name}
 					</>)
 				});

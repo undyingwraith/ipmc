@@ -6,6 +6,11 @@ const baseTheme = createTheme({
 		//fontFamily: '\'Roboto Condensed\', sans-serif',
 		fontSize: 14,
 	},
+	palette: {
+		warning: {
+			main: '#ff8c00'
+		}
+	}
 });
 
 export function createDarkTheme(accentColor: string) {
@@ -20,7 +25,7 @@ export function createDarkTheme(accentColor: string) {
 			secondary: {
 				main: '#fafafa',
 			},
-			warning: {
+			info: {
 				main: accentColor,
 			},
 		},
@@ -34,14 +39,15 @@ export function createLightTheme(accentColor: string) {
 		palette: {
 			mode: 'light',
 			primary: {
-				main: '#fafafa',
+				main: '#909090',
 			},
 			secondary: {
 				main: '#e0e0e0',
 			},
-			warning: {
+			info: {
 				main: accentColor,
 			},
+
 		},
 	});
 }
