@@ -17,7 +17,7 @@ export interface ITask {
 	/**
 	 * End event handler.
 	 */
-	onEnd?: () => void | Promise<void>;
+	onEnd?: (error?: Error) => void | Promise<void>;
 }
 
 export type IOnProgress = (progress: number, total?: number) => void;

@@ -1,10 +1,14 @@
 import { Signal } from '@preact/signals-core';
-import { injectable } from 'inversify';
-import { ITask, ITaskManager, ITaskStatus } from 'ipmc-interfaces';
+import { inject, injectable } from 'inversify';
+import { ILogService, ILogServiceSymbol, ITask, ITaskManager, ITaskStatus } from 'ipmc-interfaces';
 import { uuid } from '../util';
 
 @injectable()
 export class TaskManager implements ITaskManager {
+	constructor(
+		@inject(ILogServiceSymbol) private readonly log: ILogService
+	) { }
+
 	public status: Signal<ITaskStatus[]> = new Signal<ITaskStatus[]>([]);
 
 	public runTask(task: ITask): void {
@@ -18,6 +22,10 @@ export class TaskManager implements ITaskManager {
 		})
 			.then(() => {
 				return task.onEnd ? task.onEnd() : Promise.resolve();
+			})
+			.catch(ex => {
+				this.log.error(ex);
+				return task.onEnd ? task.onEnd(ex) : Promise.resolve();
 			})
 			.finally(() => {
 				this.status.value = this.status.value.filter(s => s.id !== status.id);

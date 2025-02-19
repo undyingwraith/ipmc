@@ -1,0 +1,1 @@
+export { LibraryManager } from './LibraryManager';

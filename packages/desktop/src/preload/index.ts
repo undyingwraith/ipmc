@@ -76,9 +76,7 @@ const nodeService: INodeService = {
 				transports: [
 					webSockets(),
 					tcp(),
-					circuitRelayTransport({
-						discoverRelays: 1,
-					}),
+					circuitRelayTransport(),
 				],
 				peerDiscovery: [
 					bootstrap({
@@ -92,7 +90,7 @@ const nodeService: INodeService = {
 					pubsubPeerDiscovery(),
 					mdns(),
 				],
-				connectionEncryption: [
+				connectionEncrypters: [
 					noise({
 						crypto: pureJsCrypto
 					}),
@@ -102,9 +100,7 @@ const nodeService: INodeService = {
 					mplex(),
 				],
 				services: {
-					relay: circuitRelayServer({
-						advertise: true,
-					}),
+					relay: circuitRelayServer(),
 					dht: kadDHT({
 						peerInfoMapper: removePrivateAddressesMapper,
 						validators: {
@@ -165,7 +161,7 @@ const nodeService: INodeService = {
 			},
 			async resolve(name) {
 				try {
-					return (await ipns(helia).resolve(peerIdFromString(name))).cid.toString();
+					return (await ipns(helia).resolve(peerIdFromString(name).publicKey!)).cid.toString();
 				} catch (ex) {
 					console.error(ex);
 					return (await ipns(helia).resolveDNSLink(name)).cid.toString();

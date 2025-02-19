@@ -1,6 +1,6 @@
 import { Signal } from '@preact/signals-core';
 import { inject, injectable } from 'inversify';
-import { HasPinAbility, IFileInfo, IIndexManager, IIndexManagerSymbol, IIpfsService, IIpfsServiceSymbol, IObjectStore, IObjectStoreSymbol, IPinItem, IPinManagerService, isIFolderFile, ITaskManager, ITaskManagerSymbol, ITranslationService, ITranslationServiceSymbol, PinStatus } from 'ipmc-interfaces';
+import { HasPinAbility, IFileInfo, IIndexManager, IIndexManagerSymbol, IIpfsService, IIpfsServiceSymbol, IObjectStore, IObjectStoreSymbol, IPinItem, IPinManagerService, IProfile, IProfileSymbol, isIFolderFile, ITaskManager, ITaskManagerSymbol, ITranslationService, ITranslationServiceSymbol, PinStatus } from 'ipmc-interfaces';
 
 @injectable()
 export class PinManagerService implements IPinManagerService {
@@ -10,10 +10,12 @@ export class PinManagerService implements IPinManagerService {
 		@inject(ITaskManagerSymbol) private readonly taskManager: ITaskManager,
 		@inject(ITranslationServiceSymbol) private readonly translationService: ITranslationService,
 		@inject(IIndexManagerSymbol) private readonly indexManager: IIndexManager,
+		@inject(IProfileSymbol) profile: IProfile,
 	) {
-		this.pins.value = this.store.get('pinItems') ?? [];
+		const storageKey = `${profile.id}_pinItems`;
+		this.pins.value = this.store.get(storageKey) ?? [];
 		this.pins.subscribe((value) => {
-			this.store.set('pinItems', value);
+			this.store.set(storageKey, value);
 		});
 	}
 
@@ -36,15 +38,19 @@ export class PinManagerService implements IPinManagerService {
 		pin = { itemId: item.pinId, cid: item.cid };
 		this.updates.push(pin);
 
-		return new Promise<void>((resolve) => {
+		return new Promise<void>((resolve, reject) => {
 			this.taskManager.runTask({
-				task: () => this.ipfs.addPin(item.cid),
-				onEnd: () => {
-					this.pins.value = [...this.pins.value, pin];
+				task: () => this.ipfs.isPinned(item.cid).then((res) => res ? Promise.resolve() : this.ipfs.addPin(item.cid)),
+				onEnd: (ex) => {
 					this.updates = this.updates.filter(pin => pin.itemId !== item.pinId);
-					resolve();
+					if (ex) {
+						reject(ex);
+					} else {
+						this.pins.value = [...this.pins.value, pin];
+						resolve();
+					}
 				},
-				title: this.translationService.translate('AddingPin', { title: item.pinId }),
+				title: this.translationService.translate('AddingPin', { title: item.pinId.substring(item.pinId.lastIndexOf('/') + 1) }),
 			});
 		});
 	}
@@ -68,7 +74,7 @@ export class PinManagerService implements IPinManagerService {
 					this.updates = this.updates.filter(pin => pin.itemId !== item.pinId);
 					resolve();
 				},
-				title: this.translationService.translate('RemovingPin', { title: item.pinId }),
+				title: this.translationService.translate('RemovingPin', { title: item.pinId.substring(item.pinId.lastIndexOf('/') + 1) }),
 			});
 		});
 	}

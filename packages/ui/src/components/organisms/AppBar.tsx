@@ -1,20 +1,21 @@
-import { Box, Toolbar } from "@mui/material";
+import { Paper, Toolbar } from "@mui/material";
 import React from "react";
 import { useService } from '../../context';
 import { AppbarButtonService, AppbarButtonServiceSymbol } from '../../services';
-import { ThemeToggle } from '../atoms/ThemeToggle';
-import { LanguageSelector } from "../molecules/LanguageSelector";
+import { Spacer } from '../atoms';
 
-export function AppBar() {
+export function AppBar(props: {
+	elevation?: number;
+}) {
 	const appbarService = useService<AppbarButtonService>(AppbarButtonServiceSymbol);
 
 	return (
-		<Box sx={{ backgroundColor: 'primary' }}>
+		<Paper elevation={props.elevation ?? 0} sx={{ borderRadius: 0 }}>
 			<Toolbar>
-				{appbarService.appbarButtons}
-				<ThemeToggle />
-				<LanguageSelector />
+				{appbarService.startButtons}
+				<Spacer width={15} />
+				{appbarService.endButtons}
 			</Toolbar>
-		</Box>
+		</Paper>
 	);
 }

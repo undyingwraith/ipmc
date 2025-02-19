@@ -1,0 +1,10 @@
+.carousel {
+	display: flex;
+	gap: 5px;
+	flex-direction: row;
+	overflow: auto;
+}
+
+.carousel * {
+	flex-shrink: 0;
+}
