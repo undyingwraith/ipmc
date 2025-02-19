@@ -1,4 +1,4 @@
-import { useSignalEffect } from '@preact/signals';
+import { useEffect } from 'preact/hooks';
 import { useService } from '../context';
 import { AppbarButtonService, AppbarButtonServiceSymbol } from '../services';
 import { IAppbarButtonOptions } from '../services/AppbarButtonService';
@@ -6,7 +6,7 @@ import { IAppbarButtonOptions } from '../services/AppbarButtonService';
 export function useAppbarButtons(buttons: IAppbarButtonOptions[]) {
 	const appbarService = useService<AppbarButtonService>(AppbarButtonServiceSymbol);
 
-	useSignalEffect(() => {
+	useEffect(() => {
 		const ids: Symbol[] = [];
 
 		for (const btn of buttons) {
@@ -18,5 +18,5 @@ export function useAppbarButtons(buttons: IAppbarButtonOptions[]) {
 				appbarService.unRegisterAppbarButton(id);
 			}
 		};
-	});
+	}, []);
 }

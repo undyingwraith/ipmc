@@ -23,6 +23,8 @@
 		"ipmc-ui": "workspace:^",
 		"libp2p": "^2.6.2",
 		"preact": "^10.26.0",
+		"react": "npm:@preact/compat@*",
+		"react-dom": "npm:@preact/compat@*",
 		"util": "^0.12.5",
 		"web-streams-polyfill": "^4.1.0"
 	},
