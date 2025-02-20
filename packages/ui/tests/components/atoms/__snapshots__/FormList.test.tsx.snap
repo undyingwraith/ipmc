@@ -1,0 +1,31 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`FormList > Add button works 1`] = `
+<div>
+  <div
+    class="MuiGrid2-root MuiGrid2-container MuiGrid2-direction-xs-row MuiGrid2-spacing-xs-1 css-octady-MuiGrid2-root"
+  >
+    <div
+      class="MuiGrid2-root MuiGrid2-direction-xs-row MuiGrid2-grid-xs-8 css-1cdctrw-MuiGrid2-root"
+    >
+      <p
+        class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
+      >
+        Test
+      </p>
+    </div>
+    <div
+      class="MuiGrid2-root MuiGrid2-direction-xs-row MuiGrid2-grid-xs-4 css-17yh78r-MuiGrid2-root"
+    >
+      <button
+        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-fullWidth MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-fullWidth css-uf9a8-MuiButtonBase-root-MuiButton-root"
+        id=":r0:"
+        tabindex="0"
+        type="button"
+      >
+        &lt;Add&gt;
+      </button>
+    </div>
+  </div>
+</div>
+`;

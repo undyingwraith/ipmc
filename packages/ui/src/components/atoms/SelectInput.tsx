@@ -14,6 +14,8 @@ export function SelectInput(props: ISelectInputProps) {
 			<InputLabel>{props.label}</InputLabel>
 			{useComputed(() => (
 				<Select
+					//@ts-ignore works but typing does not support it
+					slotProps={{ input: { 'data-testid': 'content-input' } }}
 					label={props.label?.value}
 					value={props.value.value}
 					onChange={(ev) => {
