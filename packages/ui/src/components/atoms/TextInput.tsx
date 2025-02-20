@@ -13,6 +13,7 @@ interface ITextInputProps {
 export function TextInput(props: ITextInputProps) {
 	return (
 		<TextField
+			slotProps={{ htmlInput: { 'data-testid': 'content-input' } }}
 			fullWidth={true}
 			rows={props.rows}
 			multiline={props.multiline}

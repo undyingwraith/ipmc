@@ -34,8 +34,8 @@
 	},
 	"include": [
 		"src",
-		"tests",
 		"testing",
+		"tests",
 		"typings.d.ts",
 		"vite.config.ts"
 	]

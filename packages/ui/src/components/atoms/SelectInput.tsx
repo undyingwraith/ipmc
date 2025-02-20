@@ -12,6 +12,8 @@ export function SelectInput(props: ISelectInputProps) {
 		<FormControl fullWidth>
 			<InputLabel>{props.label}</InputLabel>
 			<Select
+				//@ts-ignore works but typing does not support it
+				slotProps={{ input: { 'data-testid': 'content-input' } }}
 				label={props.label}
 				value={props.value.value}
 				onChange={(ev) => {
