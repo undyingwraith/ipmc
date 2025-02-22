@@ -20,13 +20,10 @@ export function createDarkTheme(accentColor: string) {
 		palette: {
 			mode: 'dark',
 			primary: {
-				main: '#e0e0e0',
+				main: accentColor,
 			},
 			secondary: {
 				main: '#fafafa',
-			},
-			info: {
-				main: accentColor,
 			},
 		},
 	});
@@ -39,15 +36,11 @@ export function createLightTheme(accentColor: string) {
 		palette: {
 			mode: 'light',
 			primary: {
-				main: '#909090',
+				main: accentColor,
 			},
 			secondary: {
 				main: '#e0e0e0',
 			},
-			info: {
-				main: accentColor,
-			},
-
 		},
 	});
 }
