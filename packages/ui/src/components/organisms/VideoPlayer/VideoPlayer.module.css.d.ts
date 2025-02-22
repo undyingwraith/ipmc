@@ -9,6 +9,5 @@ declare const styles: {
 	readonly progressFilled: string;
 	readonly visible: string;
 	readonly progressContainer: string;
-	readonly videoText: string;
 };
 export default styles;

@@ -103,7 +103,7 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 			const progressPercentage = (videoRef.value.currentTime / videoRef.value.duration) * 100;
 			currentPlayTime.value = videoRef.value.currentTime;
 
-			progressBarRef.value.style.clipPath = `inset(0 0 0 ${progressPercentage})`;
+			progressBarRef.value.style.clipPath = `inset(0 0 0 ${progressPercentage}%)`;
 		}
 	}
 
@@ -145,8 +145,9 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 							<IconButton onClick={() => mediaPlayer.togglePlay()}>
 								{computed(() => mediaPlayer.playing.value ? <Pause /> : <PlayArrow />)}
 							</IconButton>
+							<div className={styles.spacer} />
 							<div>
-								<span className={styles.videoText}>Language</span>
+								<span>Language</span>
 								<select>
 									{computed(() => mediaPlayer.languages.value.map(l => (
 										<option>{l}</option>
@@ -154,7 +155,7 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 								</select>
 							</div>
 							<div>
-								<span className={styles.videoText}>Subtitle</span>
+								<span>Subtitle</span>
 								<select onChange={(ev) => {
 									mediaPlayer.selectSubtitle(ev.currentTarget.value !== 'null' ? ev.currentTarget.value : undefined);
 								}}>
