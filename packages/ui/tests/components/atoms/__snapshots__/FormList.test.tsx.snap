@@ -19,7 +19,6 @@ exports[`FormList > Add button works 1`] = `
     >
       <button
         class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-fullWidth MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-fullWidth css-uf9a8-MuiButtonBase-root-MuiButton-root"
-        id=":r0:"
         tabindex="0"
         type="button"
       >

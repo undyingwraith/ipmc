@@ -9,28 +9,28 @@
 	"dependencies": {
 		"@helia/ipns": "^8.1.0",
 		"@helia/unixfs": "^4.0.2",
-		"@libp2p/kad-dht": "14.2.5",
-		"@libp2p/pnet": "^2.0.22",
-		"@libp2p/webtransport": "^5.0.27",
+		"@libp2p/kad-dht": "14.2.9",
+		"@libp2p/pnet": "^2.0.26",
+		"@libp2p/webtransport": "^5.0.31",
 		"blockstore-idb": "^2.0.1",
 		"buffer": "^6.0.3",
 		"crypto": "^1.0.1",
-		"crypto-browserify": "^3.12.0",
+		"crypto-browserify": "^3.12.1",
 		"datastore-idb": "^3.0.1",
 		"helia": "^5.2.1",
 		"ipmc-core": "workspace:^",
 		"ipmc-ui": "workspace:^",
-		"libp2p": "^2.6.2",
+		"libp2p": "^2.7.2",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"util": "^0.12.5",
-		"web-streams-polyfill": "^4.0.0"
+		"web-streams-polyfill": "^4.1.0"
 	},
 	"devDependencies": {
 		"@types/react": "^18.3.18",
 		"@types/react-dom": "^18.3.5",
 		"typescript": "^5.7.3",
-		"vite": "^5.4.14",
+		"vite": "^6.1.1",
 		"vite-plugin-node-polyfills": "^0.23.0"
 	}
 }
