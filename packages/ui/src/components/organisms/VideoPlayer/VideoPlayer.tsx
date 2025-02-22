@@ -6,7 +6,7 @@ import React from 'react';
 import { useService } from '../../../context';
 import { useHotkey } from '../../../hooks';
 import { IMediaPlayerService, IMediaPlayerServiceSymbol } from '../../../services';
-import { FileInfoDisplay } from '../../atoms/FileInfoDisplay';
+import { FileInfoDisplay, TimeDisplay } from '../../atoms';
 import styles from './VideoPlayer.module.css';
 
 export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
@@ -19,6 +19,8 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 	const fullScreen = useSignal<boolean>(false);
 	const volume = useSignal<number>(1);
 	const overlayVisible = useSignal<boolean>(false);
+	const movieDuration = useSignal<number>(0);
+	const currentPlayTime = useSignal<number>(0);
 
 	useSignalEffect(() => {
 		if (containerRef.value) {
@@ -46,6 +48,11 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 		if (videoRef.value) {
 			//Event handlers
 			videoRef.value.addEventListener('timeupdate', handleProgress);
+			videoRef.value.addEventListener('loadedmetadata', () => {
+				if (videoRef.value) {
+					movieDuration.value = videoRef.value.duration;
+				}
+			});
 
 			return mediaPlayer.initializeVideo(videoRef.value, props.file);
 		}
@@ -94,7 +101,9 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 	function handleProgress() {
 		if (videoRef.value && progressBarRef.value) {
 			const progressPercentage = (videoRef.value.currentTime / videoRef.value.duration) * 100;
-			progressBarRef.value.style.width = `${progressPercentage}%`;
+			currentPlayTime.value = videoRef.value.currentTime;
+
+			progressBarRef.value.style.clipPath = `inset(0 0 0 ${progressPercentage}%)`;
 		}
 	}
 
@@ -102,8 +111,16 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 	useHotkey({ key: 'Space' }, () => mediaPlayer.togglePlay());
 
 	const progress = useComputed(() => (
-		<div className={styles.progress} ref={(ref) => progressRef.value = ref}>
-			<div className={styles.progressFilled} ref={(ref) => progressBarRef.value = ref} />
+		<div className={styles.progressContainer}>
+			<TimeDisplay
+				time={currentPlayTime}
+			/>
+			<div className={styles.progress} ref={(ref) => progressRef.value = ref}>
+				<div className={styles.progressFilled} ref={(ref) => progressBarRef.value = ref} />
+			</div>
+			<TimeDisplay
+				time={movieDuration}
+			/>
 		</div>
 	));
 
@@ -130,13 +147,15 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 							</IconButton>
 							<div className={styles.spacer} />
 							<div>
-								Language
+								<span>Language</span>
 								<select>
 									{computed(() => mediaPlayer.languages.value.map(l => (
 										<option>{l}</option>
 									)))}
 								</select>
-								Subtitle
+							</div>
+							<div>
+								<span>Subtitle</span>
 								<select onChange={(ev) => {
 									mediaPlayer.selectSubtitle(ev.currentTarget.value !== 'null' ? ev.currentTarget.value : undefined);
 								}}>

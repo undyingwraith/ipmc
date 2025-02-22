@@ -1,10 +1,16 @@
 import { createTheme } from "@mui/material";
 
 const baseTheme = createTheme({
+	cssVariables: true,
 	typography: {
 		//fontFamily: '\'Roboto Condensed\', sans-serif',
 		fontSize: 14,
 	},
+	palette: {
+		warning: {
+			main: '#ff8c00'
+		}
+	}
 });
 
 export function createDarkTheme(accentColor: string) {
@@ -28,10 +34,10 @@ export function createLightTheme(accentColor: string) {
 		palette: {
 			mode: 'light',
 			primary: {
-				main: '#e0e0e0',
+				main: accentColor,
 			},
 			secondary: {
-				main: accentColor,
+				main: '#e0e0e0',
 			},
 		},
 	});
