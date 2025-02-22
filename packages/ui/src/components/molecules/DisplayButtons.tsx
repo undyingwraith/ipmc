@@ -33,7 +33,6 @@ export function DisplayButtons(props: { display: Signal<Display>; }) {
 			<Button
 				onClick={() => display.value = Display.List}
 				variant={display.value == Display.List ? 'contained' : 'outlined'}
-
 			>
 				<ViewListIcon />
 			</Button>
