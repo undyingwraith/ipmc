@@ -1,5 +1,5 @@
 export { DetailOverlay } from './DetailOverlay';
-export { ErrorBoundary } from './ErrorBoundary';
+export { ErrorDisplay } from './ErrorDisplay';
 export { FileInfoDisplay } from './FileInfoDisplay';
 export { FileInput } from './FileInput';
 export { FormList } from './FormList';

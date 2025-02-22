@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 import React from 'react';
-import { ErrorBoundary } from 'src/components/atoms';
+import { ErrorBoundary } from 'src/components/molecules';
 import { describe, expect, test } from 'vitest';
 
 describe('ErrorBoundary', () => {

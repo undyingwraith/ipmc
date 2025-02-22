@@ -7,8 +7,8 @@ import React from 'react';
 import { useLocation } from 'wouter';
 import { useAppbarButtons, useTitle, useTranslation } from '../../hooks';
 import { IAppbarButtonOptions } from '../../services/AppbarButtonService';
-import { ErrorBoundary, FileInfoDisplay, PinButton } from '../atoms';
-import { Display, DisplayButtons, FileGridItem } from '../molecules';
+import { FileInfoDisplay, PinButton } from '../atoms';
+import { Display, DisplayButtons, ErrorBoundary, FileGridItem } from '../molecules';
 import { VideoPlayer } from '../organisms';
 
 export function ItemPage(props: {

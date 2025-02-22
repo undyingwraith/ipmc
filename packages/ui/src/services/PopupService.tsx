@@ -4,9 +4,9 @@ import { Application, IApplicationSymbol } from 'ipmc-core';
 import { IPopupOptions, IPopupService } from 'ipmc-interfaces';
 import React, { PropsWithChildren } from 'react';
 import { createRoot } from 'react-dom/client';
+import { ErrorBoundary } from '../components/molecules';
 import { ThemeProvider } from '../context';
 import { AppContext } from '../context/AppContext';
-import { ErrorBoundary } from '../components/atoms/ErrorBoundary';
 
 @injectable()
 export class PopupService implements IPopupService {

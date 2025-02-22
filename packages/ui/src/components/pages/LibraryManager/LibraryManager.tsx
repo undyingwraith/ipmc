@@ -11,7 +11,7 @@ import { Redirect, Route, useLocation } from 'wouter';
 import { AppContextProvider, useService } from '../../../context/AppContext';
 import { useLinkedSignal, useTranslation } from '../../../hooks';
 import { AppbarButtonService, AppbarButtonServiceSymbol } from '../../../services';
-import { ErrorBoundary } from '../../atoms/ErrorBoundary';
+import { ErrorBoundary } from '../../molecules';
 import { AppBar } from '../../organisms';
 import { ItemRouter } from '../ItemRouter';
 import { LibraryHomePage } from '../LibraryHomePage';

@@ -6,8 +6,7 @@ import React from 'react';
 import { useLocation } from 'wouter';
 import { useService } from '../../context/AppContext';
 import { useAppbarButtons } from '../../hooks';
-import { ErrorBoundary } from '../atoms';
-import { FileGridItem, LoadScreen, SearchField } from '../molecules';
+import { ErrorBoundary, FileGridItem, LoadScreen, SearchField } from '../molecules';
 import { Display, DisplayButtons } from '../molecules/DisplayButtons';
 
 export function LibraryPage(props: {
