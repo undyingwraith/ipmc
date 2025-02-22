@@ -1,7 +1,6 @@
 import { createTheme } from "@mui/material";
 
 const baseTheme = createTheme({
-	cssVariables: true,
 	typography: {
 		//fontFamily: '\'Roboto Condensed\', sans-serif',
 		fontSize: 14,
@@ -16,6 +15,7 @@ const baseTheme = createTheme({
 export function createDarkTheme(accentColor: string) {
 	return createTheme({
 		...baseTheme,
+		cssVariables: true,
 		palette: {
 			mode: 'dark',
 			primary: {
@@ -31,6 +31,7 @@ export function createDarkTheme(accentColor: string) {
 export function createLightTheme(accentColor: string) {
 	return createTheme({
 		...baseTheme,
+		cssVariables: true,
 		palette: {
 			mode: 'light',
 			primary: {
