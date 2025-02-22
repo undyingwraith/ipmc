@@ -1,7 +1,6 @@
 import { createTheme } from "@mui/material";
 
 const baseTheme = createTheme({
-
 	typography: {
 		//fontFamily: '\'Roboto Condensed\', sans-serif',
 		fontSize: 14,
