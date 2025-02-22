@@ -2769,7 +2769,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@preact/signals-core@npm:^1.7.0":
+"@preact/signals-core@npm:^1.7.0, @preact/signals-core@npm:^1.8.0":
   version: 1.8.0
   resolution: "@preact/signals-core@npm:1.8.0"
   checksum: 10c0/fa773157621d881e7aefddb8dbded805d8203600211040cc4b5907726e288a163fa58558c1d36bc7085d75e6488af0a806322bbbed005d08be76a76f40244246
@@ -7768,6 +7768,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "ipmc-core@workspace:packages/core"
   dependencies:
+    "@preact/signals-core": "npm:^1.8.0"
     i18next: "npm:^24.2.2"
     inversify: "npm:^6.2.2"
     ipmc-interfaces: "workspace:^"
@@ -7875,6 +7876,7 @@ __metadata:
     "@types/react-dom": "npm:^18.3.5"
     file-type: "npm:^20.1.0"
     helia: "npm:^5.2.1"
+    inversify: "npm:^6.2.2"
     ipmc-core: "workspace:^"
     ipmc-interfaces: "workspace:^"
     jsdom: "npm:^25.0.1"
@@ -7882,6 +7884,7 @@ __metadata:
     multiformats: "npm:^13.3.2"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
+    reflect-metadata: "npm:^0.2.2"
     shaka-player: "npm:^4.12.5"
     terser: "npm:^5.39.0"
     typescript: "npm:^5.7.3"

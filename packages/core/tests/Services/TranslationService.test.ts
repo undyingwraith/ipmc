@@ -1,6 +1,6 @@
-import { ILogServiceSymbol, ILogSinkSymbol, ITranslation, ITranslationService, ITranslationServiceSymbol, ITranslationsSymbol } from 'ipmc-interfaces';
+import { IKeyValueStoreSymbol, ILogServiceSymbol, ILogSinkSymbol, IObjectStoreSymbol, IPersistentSignalServiceSymbol, ITranslation, ITranslationService, ITranslationServiceSymbol, ITranslationsSymbol } from 'ipmc-interfaces';
 import { describe, expect, test, vi } from 'vitest';
-import { Application, LogService, MemoryLogSink, TranslationService } from '../../src';
+import { Application, LogService, MemoryKeyValueStore, MemoryLogSink, ObjectStore, PersistentSignalService, TranslationService } from '../../src';
 
 const translations: ITranslation = {
 	en: {
@@ -22,6 +22,9 @@ describe('TranslationService', () => {
 	app.register(LogService, ILogServiceSymbol);
 	app.register(MemoryLogSink, ILogSinkSymbol);
 	app.register(TranslationService, ITranslationServiceSymbol);
+	app.register(MemoryKeyValueStore, IKeyValueStoreSymbol);
+	app.register(ObjectStore, IObjectStoreSymbol);
+	app.register(PersistentSignalService, IPersistentSignalServiceSymbol);
 	app.registerConstantMultiple(translations, ITranslationsSymbol);
 
 	test('correctly translates a string', () => {
@@ -51,29 +54,5 @@ describe('TranslationService', () => {
 		expect(translationService.translate('InvalidKey')).toBe('<InvalidKey>');
 		expect(sink.logs.length).toBe(1);
 		expect(sink.logs[0].message).toBe('Missing translation key <InvalidKey>');
-	});
-
-	test('language change event gets triggered', () => {
-		const translationService = app.getService<ITranslationService>(ITranslationServiceSymbol)!;
-		translationService.changeLanguage('en');
-
-		const handler = {
-			handle: () => {
-				//NOOP
-			}
-		};
-		const spy = vi.spyOn(handler, 'handle');
-
-		const sym = translationService.registerLanguageChange(handler.handle);
-		translationService.changeLanguage('de');
-
-		expect(spy).toBeCalledTimes(1);
-		expect(translationService.language).toBe('de');
-
-		translationService.unregisterLanguageChange(sym);
-		translationService.changeLanguage('en');
-
-		expect(spy).toBeCalledTimes(1);
-		expect(translationService.language).toBe('en');
 	});
 });

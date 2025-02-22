@@ -7,7 +7,7 @@ export class ObjectStore implements IObjectStore {
 		@inject(IKeyValueStoreSymbol) private readonly store: IKeyValueStore
 	) { }
 
-	public set<T extends object>(key: string, value: T) {
+	public set<T>(key: string, value: T) {
 		this.store.set(key, JSON.stringify(value));
 	}
 
