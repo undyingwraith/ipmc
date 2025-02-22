@@ -50,17 +50,15 @@
 .progressFilled {
 	height: 25px;
 	background-color: var(--mui-palette-secondary-main);
-	border-radius: 15px;
+	border-radius: 12.5px;
 }
 
 .progress {
 	flex-grow: 1;
-
 }
 
 .progressFilled {
 	background-color: var(--mui-palette-primary-dark);
-	width: 0;
 }
 
 

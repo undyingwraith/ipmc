@@ -103,7 +103,7 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 			const progressPercentage = (videoRef.value.currentTime / videoRef.value.duration) * 100;
 			currentPlayTime.value = videoRef.value.currentTime;
 
-			progressBarRef.value.style.width = `${progressPercentage}%`;
+			progressBarRef.value.style.clipPath = `inset(0 0 0 ${progressPercentage})`;
 		}
 	}
 
