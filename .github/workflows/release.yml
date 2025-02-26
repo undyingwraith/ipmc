@@ -26,7 +26,7 @@ jobs:
       uses: thedoctor0/zip-release@0.7.5
       with:
        type: zip
-       directory: ./packages/webui/dist
+       path: ./packages/webui/dist
        filename: ./webui.zip
     - name: Upload webui files
       uses: AButler/upload-release-assets@v3.0
