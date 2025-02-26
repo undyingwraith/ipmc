@@ -22,13 +22,12 @@ jobs:
       run: yarn --immutable --check-cache
     - name: Run build
       run: yarn build
-    - name: Compress Directory
-      uses: somaz94/compress-decompress@v1
+    - name: Package webui
+      uses: thedoctor0/zip-release@0.7.5
       with:
-       command: compress
-       source: ./packages/webui/dist
-       format: zip
-       dest: ./webui.zip
+       type: zip
+       directory: ./packages/webui/dist
+       filename: ./webui.zip
     - name: Upload webui files
       uses: AButler/upload-release-assets@v3.0
       with:
