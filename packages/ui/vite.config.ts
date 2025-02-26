@@ -3,6 +3,7 @@ import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
 import dts from 'vite-plugin-dts';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig(({ mode }) => ({
 	plugins: [
@@ -12,6 +13,7 @@ export default defineConfig(({ mode }) => ({
 		checker({
 			typescript: { buildMode: true }
 		}),
+		tsconfigPaths(),
 	],
 	build: {
 		lib: {
@@ -65,11 +67,6 @@ export default defineConfig(({ mode }) => ({
 		sourcemap: mode == 'dev',
 		manifest: false,
 		minify: mode == 'dev' ? 'esbuild' : 'terser',
-	},
-	resolve: {
-		alias: {
-			"@src": resolve(__dirname, "./src"),
-		}
 	},
 	test: {
 		globals: true,

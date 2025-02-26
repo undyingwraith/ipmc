@@ -1,9 +1,9 @@
-import { Alert, Box, Button, ButtonGroup } from '@mui/material';
-import { useComputed, useSignal } from '@preact/signals-react';
+import { Box, Button, ButtonGroup } from '@mui/material';
+import { batch, useComputed, useSignal } from '@preact/signals-react';
 import { createRemoteIpfs, IndexManager } from 'ipmc-core';
 import { IConfigurationService, IIndexManagerSymbol, IIpfsService, IIpfsServiceSymbol, ILogService, ILogServiceSymbol, INodeService, IProfile, IProfileSymbol, isInternalProfile, isRemoteProfile } from 'ipmc-interfaces';
 import React, { PropsWithChildren } from 'react';
-import { ThemeToggle } from './components/atoms';
+import { ErrorDisplay, ThemeToggle } from './components/atoms';
 import { ConnectionStatus, LanguageSelector, LoadScreen, ProfileSelector } from './components/molecules';
 import { LibraryManager } from './components/pages';
 import { AppContextProvider, useService } from './context';
@@ -33,6 +33,7 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 	const profile = useSignal<IProfile | undefined>(undefined);
 	const nodeButton = useSignal<Symbol | undefined>(undefined);
 	const profileButton = useSignal<Symbol | undefined>(undefined);
+	const error = useSignal<Error | undefined>(undefined);
 
 	useAppbarButtons([{
 		component: (<ThemeToggle />),
@@ -53,30 +54,37 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 			try {
 				state.value = LoadState.Starting;
 
+				let ipfs: IIpfsService;
 				if (isRemoteProfile(currentProfile)) {
-					node.value = await createRemoteIpfs(currentProfile.url);
+					ipfs = await createRemoteIpfs(currentProfile.url);
 				} else if (isInternalProfile(currentProfile)) {
-					node.value = await props.nodeService.create(currentProfile);
+					ipfs = await props.nodeService.create(currentProfile);
 				} else {
 					throw new Error('Unknown profile type');
 				}
 
-				nodeButton.value = appbarService.registerAppbarButton({
-					position: 'end',
-					component: (<ConnectionStatus ipfs={node.value} />)
-				});
-				profileButton.value = appbarService.registerAppbarButton({
-					position: 'start',
-					component: (<>
-						<Button onClick={stop}>{_t('Logout')}</Button>
-						{currentProfile.name}
-					</>)
+				batch(() => {
+					node.value = ipfs;
+					nodeButton.value = appbarService.registerAppbarButton({
+						position: 'end',
+						component: (<ConnectionStatus ipfs={ipfs} />)
+					});
+					profileButton.value = appbarService.registerAppbarButton({
+						position: 'start',
+						component: (<>
+							<Button onClick={stop}>{_t('Logout')}</Button>
+							{currentProfile.name}
+						</>)
+					});
 				});
 
 				state.value = LoadState.Ready;
 			} catch (ex) {
 				log.error(ex);
-				state.value = LoadState.Error;
+				batch(() => {
+					error.value = ex;
+					state.value = LoadState.Error;
+				});
 			}
 		}
 	}
@@ -86,8 +94,10 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 			state.value = LoadState.Stopping;
 			try {
 				await node.value!.stop();
-				node.value = undefined;
-				profile.value = undefined;
+				batch(() => {
+					node.value = undefined;
+					profile.value = undefined;
+				});
 			} catch (ex) {
 				log.error(ex);
 				state.value = LoadState.Error;
@@ -108,7 +118,7 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 			case LoadState.Error:
 				return (
 					<Box>
-						<Alert severity="error">An error occured.</Alert>
+						<ErrorDisplay error={error.value!} />
 						<ButtonGroup>
 							<Button onClick={() => state.value = LoadState.Idle}>Home</Button>
 						</ButtonGroup>

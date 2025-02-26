@@ -1,5 +1,5 @@
-import { Alert, Typography } from '@mui/material';
 import React, { PropsWithChildren } from 'react';
+import { ErrorDisplay } from '../atoms';
 
 export class ErrorBoundary extends React.Component<PropsWithChildren<{}>, { hasError: boolean; error?: Error; }> {
 	constructor(props: PropsWithChildren<{}>) {
@@ -18,11 +18,7 @@ export class ErrorBoundary extends React.Component<PropsWithChildren<{}>, { hasE
 
 	render() {
 		if (this.state.hasError) {
-			return (
-				<Alert severity="error">
-					<Typography>{this.state.error?.name}: {this.state.error?.message}</Typography>
-				</Alert>
-			);
+			return (<ErrorDisplay error={this.state.error!} />);
 		}
 
 		return this.props.children;

@@ -1,6 +1,7 @@
 export * from './FileGridItem';
 export { ConnectionStatus } from './ConnectionStatus';
 export { DisplayButtons, Display } from './DisplayButtons';
+export { ErrorBoundary } from './ErrorBoundary';
 export { LanguageSelector } from './LanguageSelector';
 export { LibraryEditor } from './LibraryEditor';
 export { LoadScreen } from './LoadScreen';

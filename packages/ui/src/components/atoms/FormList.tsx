@@ -1,8 +1,8 @@
 import { Button, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { ReadonlySignal, Signal, useComputed } from '@preact/signals-react';
-import { useTranslation } from '@src/hooks';
 import React, { ReactNode } from 'react';
+import { useTranslation } from '../../hooks';
 
 interface IFormListProps<TData> {
 	renderControl: (data: Signal<TData>) => ReactNode;

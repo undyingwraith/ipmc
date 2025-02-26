@@ -1,12 +1,14 @@
+import { Signal } from '@preact/signals-core';
 import i18next from 'i18next';
-import { multiInject, injectable, optional, inject } from 'inversify';
-import { ITranslationService, ITranslationsSymbol, ITranslation, ILogServiceSymbol, ILogService } from 'ipmc-interfaces';
+import { inject, injectable, multiInject, optional } from 'inversify';
+import { ILogService, ILogServiceSymbol, IPersistentSignalService, IPersistentSignalServiceSymbol, ITranslation, ITranslationService, ITranslationsSymbol } from 'ipmc-interfaces';
 
 @injectable()
 export class TranslationService implements ITranslationService {
 	constructor(
 		@multiInject(ITranslationsSymbol) @optional() translations: ITranslation[],
 		@inject(ILogServiceSymbol) private readonly log: ILogService,
+		@inject(IPersistentSignalServiceSymbol) signalService: IPersistentSignalService,
 	) {
 		const resources: ITranslation = {};
 		for (const translationSet of translations) {
@@ -18,18 +20,18 @@ export class TranslationService implements ITranslationService {
 			}
 		}
 
+		this.language = signalService.get('language', 'en');
+
 		i18next.init({
 			resources,
-			lng: "en",
+			lng: this.language.peek(),
 			interpolation: {
 				escapeValue: false
 			}
 		});
 
-		i18next.on('languageChanged', () => {
-			this.languageChangeHandlers.forEach(handler => {
-				handler(i18next.language);
-			});
+		this.language.subscribe((language) => {
+			i18next.changeLanguage(language);
 		});
 	}
 
@@ -48,34 +50,12 @@ export class TranslationService implements ITranslationService {
 	/**
 	 * @inheritdoc
 	 */
-	get language(): string {
-		return i18next.language;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
 	changeLanguage(language: string): void {
-		i18next.changeLanguage(language);
+		this.language.value = language;
 	}
 
 	/**
 	 * @inheritdoc
 	 */
-	registerLanguageChange(handler: (language: string) => void): Symbol {
-		const sym = Symbol();
-		this.languageChangeHandlers.set(sym, handler);
-		return sym;
-	}
-
-	/**
-	 * @inheritdoc
-	 */
-	unregisterLanguageChange(symbol: Symbol): void {
-		if (this.languageChangeHandlers.has(symbol)) {
-			this.languageChangeHandlers.delete(symbol);
-		}
-	}
-
-	private languageChangeHandlers = new Map<Symbol, (lang: string) => void>();
+	public language: Signal<string>;
 }

@@ -1,5 +1,5 @@
 export { DetailOverlay } from './DetailOverlay';
-export { ErrorBoundary } from './ErrorBoundary';
+export { ErrorDisplay } from './ErrorDisplay';
 export { FileInfoDisplay } from './FileInfoDisplay';
 export { FileInput } from './FileInput';
 export { FormList } from './FormList';
@@ -11,3 +11,4 @@ export { SelectInput } from './SelectInput';
 export { Spacer } from './Spacer';
 export { TextInput } from './TextInput';
 export { ThemeToggle } from './ThemeToggle';
+export { TimeDisplay } from './TimeDisplay';

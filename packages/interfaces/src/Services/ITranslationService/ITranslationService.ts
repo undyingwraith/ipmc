@@ -1,3 +1,5 @@
+import { Signal } from '@preact/signals-core';
+
 export const ITranslationServiceSymbol = Symbol.for('ITranslationService');
 
 export interface ITranslationService {
@@ -9,25 +11,13 @@ export interface ITranslationService {
 	translate(key: string, values?: { [key: string]: string; }): string;
 
 	/**
-	 * Gets current language.
-	 */
-	get language(): string;
-
-	/**
 	 * Changes the current language.
 	 * @param language language to set.
 	 */
 	changeLanguage(language: string): void;
 
 	/**
-	 * Registers an event handler for language change.
-	 * @param handler the event handler to register.
+	 * A {@link Signal} holding the value of the current language.
 	 */
-	registerLanguageChange(handler: (language: string) => void): Symbol;
-
-	/**
-	 * Unregisters an event handler for language change.
-	 * @param symbol the symbol of the handler to unregister.
-	 */
-	unregisterLanguageChange(symbol: Symbol): void;
+	language: Signal<string>;
 }

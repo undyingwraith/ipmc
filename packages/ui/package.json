@@ -10,11 +10,11 @@
 	],
 	"exports": {
 		".": {
+			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js",
-			"require": "./dist/index.umd.cjs",
-			"types": "./dist/index.d.ts"
+			"require": "./dist/index.umd.cjs"
 		},
-		"./style.css": "./dist/style.css"
+		"./style.css": "./dist/index.css"
 	},
 	"scripts": {
 		"dev": "vite build --watch --mode dev",
@@ -23,34 +23,37 @@
 	},
 	"devDependencies": {
 		"@testing-library/dom": "^10.4.0",
-		"@testing-library/react": "^16.1.0",
+		"@testing-library/react": "^16.2.0",
 		"@types/react": "^18.3.18",
 		"@types/react-dom": "^18.3.5",
 		"jsdom": "^25.0.1",
-		"terser": "^5.37.0",
-		"typescript": "^5.7.2",
-		"vite": "^5.2.11",
-		"vite-plugin-checker": "^0.8.0",
-		"vite-plugin-dts": "^4.4.0",
-		"vitest": "^2.1.8"
+		"terser": "^5.39.0",
+		"typescript": "^5.7.3",
+		"vite": "^6.1.1",
+		"vite-plugin-checker": "^0.9.0",
+		"vite-plugin-dts": "^4.5.0",
+		"vite-tsconfig-paths": "^5.1.4",
+		"vitest": "^3.0.6"
 	},
 	"dependencies": {
 		"@emotion/react": "^11.14.0",
 		"@emotion/styled": "^11.14.0",
-		"@helia/unixfs": "^3.0.6",
-		"@libp2p/pnet": "^1.0.1",
-		"@mui/icons-material": "^6.2.1",
-		"@mui/material": "^6.2.1",
-		"@preact/signals-react": "^2.3.0",
-		"file-type": "^19.6.0",
-		"helia": "^4.2.2",
+		"@helia/unixfs": "^4.0.2",
+		"@libp2p/pnet": "^2.0.26",
+		"@mui/icons-material": "^6.4.5",
+		"@mui/material": "^6.4.5",
+		"@preact/signals-react": "^3.0.1",
+		"file-type": "^20.1.0",
+		"helia": "^5.2.1",
+		"inversify": "^6.2.2",
 		"ipmc-core": "workspace:^",
 		"ipmc-interfaces": "workspace:^",
 		"minidenticons": "^4.2.1",
-		"multiformats": "^13.1.0",
+		"multiformats": "^13.3.2",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
+		"reflect-metadata": "^0.2.2",
 		"shaka-player": "^4.12.5",
-		"wouter": "^3.3.5"
+		"wouter": "^3.6.0"
 	}
 }
