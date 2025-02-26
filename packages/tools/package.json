@@ -22,6 +22,6 @@
 		"@types/fluent-ffmpeg": "^2.1.27",
 		"@types/node": "^22.13.5",
 		"@types/yargs": "^17.0.33",
-		"vite-node": "^3.0.6"
+		"vite-node": "^3.0.7"
 	}
 }
