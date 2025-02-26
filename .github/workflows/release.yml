@@ -22,11 +22,23 @@ jobs:
       run: yarn --immutable --check-cache
     - name: Run build
       run: yarn build
+    - name: Compress Directory
+      uses: somaz94/compress-decompress@v1
+      with:
+       command: compress
+       source: ./packages/webui/dist
+       format: zip
+       dest: ./webui.zip
+    - name: Upload webui files
+      uses: AButler/upload-release-assets@v3.0
+      with:
+        files: 'webui.zip'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Build Electron app
       run: |
         cd ./packages/desktop
         yarn electron-builder --publish never
-    - name: Upload files
+    - name: Upload electron files
       uses: AButler/upload-release-assets@v3.0
       with:
         files: 'packages/desktop/dist/*.{exe,deb,snap,AppImage,dmg}'
