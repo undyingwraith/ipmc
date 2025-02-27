@@ -76,9 +76,8 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 							{currentProfile.name}
 						</>)
 					});
+					state.value = LoadState.Ready;
 				});
-
-				state.value = LoadState.Ready;
 			} catch (ex) {
 				log.error(ex);
 				batch(() => {

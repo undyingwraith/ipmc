@@ -11,7 +11,6 @@ import { dcutr } from '@libp2p/dcutr';
 import { identify, identifyPush } from '@libp2p/identify';
 import { kadDHT } from '@libp2p/kad-dht';
 import { keychain } from '@libp2p/keychain';
-import { mplex } from '@libp2p/mplex';
 import { peerIdFromString } from '@libp2p/peer-id';
 import { ping } from '@libp2p/ping';
 import { preSharedKey } from "@libp2p/pnet";
@@ -26,8 +25,6 @@ import { createHelia } from 'helia';
 import { Defaults } from 'ipmc-core';
 import { IFileInfo } from 'ipmc-interfaces';
 import { IpmcApp } from 'ipmc-ui';
-import { ipnsSelector } from 'ipns/selector';
-import { ipnsValidator } from 'ipns/validator';
 import { CID } from 'multiformats';
 import React from 'react';
 import { concat } from 'uint8arrays';
@@ -86,6 +83,7 @@ export function App() {
 									'/ws',
 									'/wss',
 									'/webrtc',
+									'/webrtc-direct',
 								],
 							},
 							...(profile?.swarmKey ? {
@@ -110,18 +108,10 @@ export function App() {
 							],
 							streamMuxers: [
 								yamux(),
-								mplex()
 							],
 							connectionEncrypters: [noise()],
 							services: {
-								dht: kadDHT({
-									validators: {
-										ipns: ipnsValidator
-									},
-									selectors: {
-										ipns: ipnsSelector
-									}
-								}),
+								dht: kadDHT(),
 								identify: identify(),
 								identifyPush: identifyPush(),
 								keychain: keychain(),
@@ -139,6 +129,8 @@ export function App() {
 							...(profile?.swarmKey == undefined ? [trustlessGateway()] : [])
 						],
 					});
+
+					console.log(helia.libp2p.getMultiaddrs().map(a => a.toString()));
 
 					const fs = unixfs(helia);
 

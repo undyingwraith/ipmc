@@ -9,16 +9,16 @@ import { bootstrap } from '@libp2p/bootstrap';
 import { circuitRelayServer, circuitRelayTransport } from '@libp2p/circuit-relay-v2';
 import { dcutr } from '@libp2p/dcutr';
 import { identify, identifyPush } from '@libp2p/identify';
-import { kadDHT, removePrivateAddressesMapper } from '@libp2p/kad-dht';
+import { kadDHT } from '@libp2p/kad-dht';
 import { keychain } from '@libp2p/keychain';
 import { mdns } from '@libp2p/mdns';
-import { mplex } from '@libp2p/mplex';
 import { peerIdFromString } from '@libp2p/peer-id';
 import { ping } from '@libp2p/ping';
 import { preSharedKey } from '@libp2p/pnet';
 import { pubsubPeerDiscovery } from '@libp2p/pubsub-peer-discovery';
 import { tcp } from '@libp2p/tcp';
 import { uPnPNAT } from '@libp2p/upnp-nat';
+import { webRTC, webRTCDirect } from '@libp2p/webrtc';
 import { webSockets } from '@libp2p/websockets';
 import { FsBlockstore } from 'blockstore-fs';
 import { LevelDatastore } from 'datastore-level';
@@ -26,8 +26,6 @@ import { contextBridge, ipcRenderer } from 'electron';
 import fs from 'fs';
 import { createHelia } from 'helia';
 import { IConfigurationService, IFileInfo, IInternalProfile, IIpfsService, INodeService, IProfile } from 'ipmc-interfaces';
-import { ipnsSelector } from 'ipns/selector';
-import { ipnsValidator } from 'ipns/validator';
 import * as libp2pInfo from 'libp2p/version';
 import { CID } from 'multiformats';
 import path from 'path';
@@ -65,7 +63,8 @@ const nodeService: INodeService = {
 						`/ip6/::/tcp/${profile.port ?? 0}`,
 						'/ws',
 						'/wss',
-						'/webrtc',
+						`/ip4/0.0.0.0/udp/${profile.port ?? 0}/webrtc`,
+						`/ip4/0.0.0.0/udp/${profile.port ?? 0}/webrtc-direct`,
 					],
 				},
 				...(profile.swarmKey ? {
@@ -77,14 +76,18 @@ const nodeService: INodeService = {
 					webSockets(),
 					tcp(),
 					circuitRelayTransport(),
+					webRTC(),
+					webRTCDirect(),
 				],
 				peerDiscovery: [
 					bootstrap({
 						list: profile.bootstrap ?? (profile.swarmKey != undefined ? [] : [
 							//TODO: replace with Defaults from core module
-							'/ip4/104.131.131.82/tcp/4001/ipfs/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ',
-							'/dnsaddr/bootstrap.libp2p.io/ipfs/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN',
-							'/dnsaddr/bootstrap.libp2p.io/ipfs/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa',
+							'/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN',
+							'/dnsaddr/bootstrap.libp2p.io/p2p/QmbLHAnMoJPWSCR5Zhtx6BHJX9KiKNN6tpvbUcqanj75Nb',
+							'/dnsaddr/bootstrap.libp2p.io/p2p/QmcZf59bWwK5XFi76CZX8cbJ4BhTzzA3gU1ZjYZcYW3dwt',
+							'/dnsaddr/va1.bootstrap.libp2p.io/p2p/12D3KooWKnDdG3iXw9eTFijk3EWSunZcFi54Zka4wmtqtt6rPxc8',
+							'/ip4/104.131.131.82/tcp/4001/p2p/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ',
 						]),
 					}),
 					pubsubPeerDiscovery(),
@@ -97,19 +100,10 @@ const nodeService: INodeService = {
 				],
 				streamMuxers: [
 					yamux(),
-					mplex(),
 				],
 				services: {
 					relay: circuitRelayServer(),
-					dht: kadDHT({
-						peerInfoMapper: removePrivateAddressesMapper,
-						validators: {
-							ipns: ipnsValidator
-						},
-						selectors: {
-							ipns: ipnsSelector
-						}
-					}),
+					dht: kadDHT(),
 					identify: identify({ agentVersion }),
 					identifyPush: identifyPush({ agentVersion }),
 					keychain: keychain(),
