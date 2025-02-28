@@ -1,3 +1,4 @@
+import { List } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { useComputed, useSignal } from '@preact/signals-react';
 import { createFilter } from 'ipmc-core';
@@ -5,10 +6,9 @@ import { IIndexManager, IIndexManagerSymbol } from 'ipmc-interfaces';
 import React from 'react';
 import { useLocation } from 'wouter';
 import { useService } from '../../context/AppContext';
-import { useAppbarButtons } from '../../hooks';
+import { useAppbarButtons, usePersistentSignal } from '../../hooks';
 import { ErrorBoundary, FileGridItem, FileListItem, LoadScreen, SearchField } from '../molecules';
 import { Display, DisplayButtons } from '../molecules/DisplayButtons';
-import { List } from '@mui/material';
 
 export function LibraryPage(props: {
 	library: string;
@@ -20,7 +20,7 @@ export function LibraryPage(props: {
 	const indexManager = useService<IIndexManager>(IIndexManagerSymbol);
 
 	const query = useSignal('');
-	const display = useSignal<Display>(Display.Poster);
+	const display = usePersistentSignal<Display>(Display.Poster, 'display');
 
 	const index = indexManager.indexes.get(library)!;
 

@@ -1,4 +1,4 @@
-import { HasPinAbility, IFileInfo, IFolderFile, IIpfsServiceSymbol, IKeyValueStoreSymbol, IPinManagerService, IPinManagerServiceSymbol, IProfile, IProfileSymbol, PinStatus } from 'ipmc-interfaces';
+import { HasPinAbility, IFolderFile, IIpfsServiceSymbol, IKeyValueStoreSymbol, IPinManagerService, IPinManagerServiceSymbol, IProfile, IProfileSymbol, PinStatus } from 'ipmc-interfaces';
 import { describe, expect, test } from 'vitest';
 import { Application, CoreModule, MemoryKeyValueStore, PinManagerService } from '../../src';
 import { MockIpfsService, TestProfile } from '../../testing';

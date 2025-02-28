@@ -1,11 +1,10 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { useSignal } from '@preact/signals-react';
 import { IFileInfo, isIFolderFile, isIVideoFile, isPinFeature } from 'ipmc-interfaces';
 import React from 'react';
 import { useLocation } from 'wouter';
-import { useAppbarButtons, useTitle, useTranslation } from '../../hooks';
+import { useAppbarButtons, usePersistentSignal, useTitle, useTranslation } from '../../hooks';
 import { IAppbarButtonOptions } from '../../services/AppbarButtonService';
 import { FileInfoDisplay, PinButton } from '../atoms';
 import { Display, DisplayButtons, ErrorBoundary, FileGridItem } from '../molecules';
@@ -19,7 +18,7 @@ export function ItemPage(props: {
 	const [_, setLocation] = useLocation();
 	const title = useTitle(file);
 
-	const display = useSignal<Display>(Display.Poster);
+	const display = usePersistentSignal<Display>(Display.Poster, 'display');
 
 	useAppbarButtons([
 		{
