@@ -8,7 +8,7 @@ import { useService } from '../../context/AppContext';
 import { useAppbarButtons } from '../../hooks';
 import { ErrorBoundary, FileGridItem, FileListItem, LoadScreen, SearchField } from '../molecules';
 import { Display, DisplayButtons } from '../molecules/DisplayButtons';
-import { List, ListItem } from '@mui/material';
+import { List } from '@mui/material';
 
 export function LibraryPage(props: {
 	library: string;
