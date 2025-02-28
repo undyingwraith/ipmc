@@ -6,8 +6,9 @@ import React from 'react';
 import { useLocation } from 'wouter';
 import { useService } from '../../context/AppContext';
 import { useAppbarButtons } from '../../hooks';
-import { ErrorBoundary, FileGridItem, LoadScreen, SearchField } from '../molecules';
+import { ErrorBoundary, FileGridItem, FileListItem, LoadScreen, SearchField } from '../molecules';
 import { Display, DisplayButtons } from '../molecules/DisplayButtons';
+import { List, ListItem } from '@mui/material';
 
 export function LibraryPage(props: {
 	library: string;
@@ -40,9 +41,21 @@ export function LibraryPage(props: {
 
 		return i?.cid == undefined ? (
 			<LoadScreen />
+		) : display.value == Display.List ? (
+			<List>
+				{(i.index.filter(createFilter(q))).map(v => (
+					<FileListItem
+						file={v}
+						onOpen={() => {
+							setLocation(`/${v.name}`);
+						}}
+					/>
+				))}
+			</List>
+
 		) : (
 			<Grid container spacing={spacing} sx={{ height: '100%', justifyContent: 'center', paddingTop: spacing, paddingBottom: spacing }}>
-				{(q === undefined ? i.index : i.index.filter(createFilter(q))).map(v => (
+				{(i.index.filter(createFilter(q))).map(v => (
 					<Grid key={v.cid}>
 						<ErrorBoundary>
 							<FileGridItem
