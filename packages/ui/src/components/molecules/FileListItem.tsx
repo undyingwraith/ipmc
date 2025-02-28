@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, ListItem, ListItemText } from '@mui/material';
-import { IFileInfo, isPinFeature } from 'ipmc-interfaces';
+import { IFileInfo, isPinFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
 import { useTranslation } from '../../hooks';
 import { PinButton } from '../atoms';
 
@@ -16,7 +16,10 @@ export function FileListItem(props: { file: IFileInfo; onOpen: () => void; }) {
 				</>
 
 			}>
-			<ListItemText>{props.file.name}</ListItemText>
+			<ListItemText
+				primary={isTitleFeature(props.file) && props.file.title}
+				secondary={isYearFeature(props.file) && props.file.year}
+			/>
 		</ListItem>
 	);
 }

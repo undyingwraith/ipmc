@@ -44,12 +44,14 @@ export function LibraryPage(props: {
 		) : display.value == Display.List ? (
 			<List>
 				{(i.index.filter(createFilter(q))).map(v => (
-					<FileListItem
-						file={v}
-						onOpen={() => {
-							setLocation(`/${v.name}`);
-						}}
-					/>
+					<ErrorBoundary key={v.cid}>
+						<FileListItem
+							file={v}
+							onOpen={() => {
+								setLocation(`/${v.name}`);
+							}}
+						/>
+					</ErrorBoundary>
 				))}
 			</List>
 
