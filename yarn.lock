@@ -1599,52 +1599,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@inversifyjs/common@npm:1.5.0":
-  version: 1.5.0
-  resolution: "@inversifyjs/common@npm:1.5.0"
-  checksum: 10c0/be0da03561d27abd9eb0c20c7f46c69bf8338a5027b0169242939908cebc037bfb6b7ea894c199d2a5a4e643864a5155206a0c154080001c643671e1d90b4554
+"@inversifyjs/common@npm:1.4.0":
+  version: 1.4.0
+  resolution: "@inversifyjs/common@npm:1.4.0"
+  checksum: 10c0/03f76538de4d678f09c1d8a84351bcbedd5add502c46af27b8ce439d07162c428fccf26d23f0452e2adf1aaa893e179372c04f2aa9bfc3554e3125e43a76dd2b
   languageName: node
   linkType: hard
 
-"@inversifyjs/container@npm:1.5.2":
-  version: 1.5.2
-  resolution: "@inversifyjs/container@npm:1.5.2"
+"@inversifyjs/core@npm:1.3.5":
+  version: 1.3.5
+  resolution: "@inversifyjs/core@npm:1.3.5"
   dependencies:
-    "@inversifyjs/common": "npm:1.5.0"
-    "@inversifyjs/core": "npm:4.0.0"
-    "@inversifyjs/reflect-metadata-utils": "npm:1.1.0"
-  peerDependencies:
-    reflect-metadata: ~0.2.2
-  checksum: 10c0/3584616cd04766b858c7be3ed2b13289ef48f4abd9770acc26194fca8e0836f4587dcf2815fd0a557d3f8a9736841ad35bb0ed654d565d37bb6ad0e0079b891d
+    "@inversifyjs/common": "npm:1.4.0"
+    "@inversifyjs/reflect-metadata-utils": "npm:0.2.4"
+  checksum: 10c0/c0b08d574be8a5a6b4c69910b443491b9b48f37a122e606e5b1a23c5d988f89f87571ef06c01465d20284515941a86685fd0eb1967be3d2e4957f8ea1fb602e5
   languageName: node
   linkType: hard
 
-"@inversifyjs/core@npm:4.0.0":
-  version: 4.0.0
-  resolution: "@inversifyjs/core@npm:4.0.0"
-  dependencies:
-    "@inversifyjs/common": "npm:1.5.0"
-    "@inversifyjs/prototype-utils": "npm:0.1.0"
-    "@inversifyjs/reflect-metadata-utils": "npm:1.1.0"
-  checksum: 10c0/cf6191272d5e261d35c31bb2774e0cf64be2888e5f09206f7e38219ab9af477ca2b63c5dd9e02a7d1c1edbce8921bcfbca9148f55e9cb6253c80b9d1edeafe56
-  languageName: node
-  linkType: hard
-
-"@inversifyjs/prototype-utils@npm:0.1.0":
-  version: 0.1.0
-  resolution: "@inversifyjs/prototype-utils@npm:0.1.0"
-  dependencies:
-    "@inversifyjs/common": "npm:1.5.0"
-  checksum: 10c0/8c57b268ecad77b0ce4dc7d9658adec3ba6fbda29eb9d6d851518c78c4d09dbffc1433f4bc1b0a270058b58ef0e38a32ea732e689e5b266630d7abd13a78ecd8
-  languageName: node
-  linkType: hard
-
-"@inversifyjs/reflect-metadata-utils@npm:1.1.0":
-  version: 1.1.0
-  resolution: "@inversifyjs/reflect-metadata-utils@npm:1.1.0"
+"@inversifyjs/reflect-metadata-utils@npm:0.2.4":
+  version: 0.2.4
+  resolution: "@inversifyjs/reflect-metadata-utils@npm:0.2.4"
   peerDependencies:
     reflect-metadata: 0.2.2
-  checksum: 10c0/e654a2f390efc3abe1fd36629d680ecadf40a7f27c20e06435b9b7b60f9b33c619387faad5a862ac89764e8da877c29147cb92f868488ea25ce565b8f81660dd
+  checksum: 10c0/cfe93bf2366ea8fbf8e968c06e422b93ad20e5a264706aa632bca481a35f2324c38f826d639b8039181760e6a2a8cf9ef89ca57b7cec9851638cf99a1377596a
   languageName: node
   linkType: hard
 
@@ -7669,16 +7646,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"inversify@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "inversify@npm:7.0.0"
+"inversify@npm:^6.2.2":
+  version: 6.2.2
+  resolution: "inversify@npm:6.2.2"
   dependencies:
-    "@inversifyjs/common": "npm:1.5.0"
-    "@inversifyjs/container": "npm:1.5.2"
-    "@inversifyjs/core": "npm:4.0.0"
+    "@inversifyjs/common": "npm:1.4.0"
+    "@inversifyjs/core": "npm:1.3.5"
   peerDependencies:
     reflect-metadata: ~0.2.2
-  checksum: 10c0/0c0200d7b6298f627e597d5c1663837aa66cf8d4bffcc4392fc92142ab8555d25009008033f37694a38400d7a8271f74fa512bd1bea4f5cd59e17dff722b6290
+  checksum: 10c0/f4acff320cebec022b408c7f081192e7e96296d40ee9cbc3915c6fe331333af53f4a418058e31c9d760bb00e36e97d4ae3ef5e4e18096f60f46f45b9a6540aeb
   languageName: node
   linkType: hard
 
@@ -7762,7 +7738,7 @@ __metadata:
   dependencies:
     "@preact/signals-core": "npm:^1.8.0"
     i18next: "npm:^24.2.2"
-    inversify: "npm:^7.0.0"
+    inversify: "npm:^6.2.2"
     ipmc-interfaces: "workspace:^"
     kubo-rpc-client: "npm:^5.1.0"
     reflect-metadata: "npm:^0.2.2"
@@ -7875,7 +7851,7 @@ __metadata:
     "@types/react": "npm:^18.3.18"
     "@types/react-dom": "npm:^18.3.5"
     file-type: "npm:^20.4.0"
-    inversify: "npm:^7.0.0"
+    inversify: "npm:^6.2.2"
     ipmc-core: "workspace:^"
     ipmc-interfaces: "workspace:^"
     jsdom: "npm:^26.0.0"

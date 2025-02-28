@@ -7,7 +7,7 @@ describe('PinManagerService', () => {
 	const app = new Application();
 	app.use(CoreModule);
 	app.register(MockIpfsService, IIpfsServiceSymbol);
-	//app.register(MemoryKeyValueStore, IKeyValueStoreSymbol);
+	app.register(MemoryKeyValueStore, IKeyValueStoreSymbol);
 	app.registerConstant<IProfile>(TestProfile, IProfileSymbol);
 
 	test('Can add and remove a pin', async () => {

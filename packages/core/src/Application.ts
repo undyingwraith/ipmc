@@ -1,14 +1,13 @@
-import { Container, Newable } from 'inversify';
+import { Container, interfaces } from 'inversify';
 import { IApplication, IApplicationSymbol } from './IApplication';
 import { IModule } from './Modules/IModule';
 import { IApplicationRegistration } from './IApplicationRegistration';
 
 export class Application implements IApplication, IApplicationRegistration {
 	public constructor(container?: Container) {
-		this.container = new Container({
-			defaultScope: 'Singleton',
-			parent: container,
-		});
+		if (container) {
+			this.container = container;
+		}
 		this.container.bind(IApplicationSymbol).toConstantValue(this);
 	}
 
@@ -23,14 +22,14 @@ export class Application implements IApplication, IApplicationRegistration {
 		this.container.bind<T>(identifier).toConstantValue(service);
 	}
 
-	public register<T>(service: Newable<T>, identifier: symbol) {
+	public register<T>(service: interfaces.Newable<T>, identifier: symbol) {
 		if (this.container.isCurrentBound(identifier)) {
 			this.container.unbind(identifier);
 		}
 		this.container.bind<T>(identifier).to(service);
 	}
 
-	public registerMultiple<T>(service: Newable<T>, identifier: symbol) {
+	public registerMultiple<T>(service: interfaces.Newable<T>, identifier: symbol) {
 		this.container.bind<T>(identifier).to(service);
 	}
 
@@ -43,11 +42,13 @@ export class Application implements IApplication, IApplicationRegistration {
 	}
 
 	public createChildApplication(): Application {
-		return new Application(this.container);
+		return new Application(this.container.createChild());
 	}
 
 	/**
 	 * The IOC {@link Container} of the {@link IApplication}.
 	 */
-	private readonly container: Container;
+	private readonly container = new Container({
+		defaultScope: 'Singleton',
+	});
 }

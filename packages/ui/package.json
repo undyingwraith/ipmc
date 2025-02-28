@@ -42,7 +42,7 @@
 		"@mui/material": "^6.4.6",
 		"@preact/signals-react": "^3.0.1",
 		"file-type": "^20.4.0",
-		"inversify": "^7.0.0",
+		"inversify": "^6.2.2",
 		"ipmc-core": "workspace:^",
 		"ipmc-interfaces": "workspace:^",
 		"minidenticons": "^4.2.1",
