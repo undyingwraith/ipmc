@@ -4,7 +4,7 @@
 	"main": "index.js",
 	"license": "MIT",
 	"scripts": {
-		"import": "vite-node ./src/import.ts",
+		"import": "vite-node ./src/import/index.ts",
 		"cli": "vite-node ./src/index.ts"
 	},
 	"dependencies": {
