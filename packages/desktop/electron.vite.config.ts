@@ -40,6 +40,8 @@ export default defineConfig({
 			},
 		},
 		plugins: [
+			//TODO: fix externalized dependencies
+			//externalizeDepsPlugin(),
 			react({
 				babel: {
 					plugins: [["module:@preact/signals-react-transform"]]

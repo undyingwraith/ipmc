@@ -24,7 +24,6 @@ function createWindow(): void {
 			nodeIntegration: false,
 			contextIsolation: true,
 			preload: join(__dirname, '../preload/index.mjs'),
-			//preload: fileURLToPath(new URL('../preload/index.cjs', import.meta.url)),
 			sandbox: false, // https://www.electronjs.org/docs/latest/tutorial/esm#summary-esm-support-matrix
 		},
 	});
