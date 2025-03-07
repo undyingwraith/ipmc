@@ -115,34 +115,47 @@ async function getEpisodeMetadata(files: string[]): Promise<{ seriesTitle: strin
 	};
 }
 
+type IConverter = (file: string, temp: ITempDir) => Promise<string>;
+
+const nullConverter: IConverter = (s) => Promise.resolve(s);
+const converters: { [key: string]: IConverter; } = {
+	'mp4': nullConverter,
+	'webvtt': nullConverter,
+	'srt': async (file, temp) => {
+		const srtData = fs.readFileSync(file);
+		return await new Promise((resolve, reject) => {
+			srt2vtt(srtData, (err, vttData) => {
+				if (err) {
+					reject(err);
+				} else {
+					const fn = path.join(temp.getPath(), basename(file, 'srt') + 'vtt');
+					fs.writeFileSync(fn, vttData);
+					resolve(fn);
+				}
+			});
+		});
+	}
+};
+
 async function importFiles(files: string[]) {
 	const temp = tempDir();
 	const outDir = tempDir();
 
 	try {
 		const streams: IStream[] = [];
+		const otherFiles: string[] = [];
 		for (const file of files) {
-			let actualFile = file;
-			if (file.endsWith('.srt')) {
-				const srtData = fs.readFileSync(file);
-				actualFile = await new Promise((resolve, reject) => {
-					srt2vtt(srtData, (err, vttData) => {
-						if (err) {
-							reject(err);
-						} else {
-							const fn = path.join(temp.getPath(), basename(file, 'srt') + 'vtt');
-							fs.writeFileSync(fn, vttData);
-							resolve(fn);
-						}
-					});
-				});
+			const converter = Object.entries(converters).find(([k, _]) => file.endsWith(`.${k}`));
+			if (converter) {
+				const actualFile = await converter[1](file, temp);
+				const streamsFromFile = await detectStreams(args.packager, actualFile);
+				streams.push(...streamsFromFile);
+			} else if (['png', 'jpg', 'jpeg'].some(k => file.endsWith(`.${k}`))) {
+				otherFiles.push(file);
 			}
-
-			const streamsFromFile = await detectStreams(args.packager, actualFile);
-			streams.push(...streamsFromFile);
 		}
 
-		console.log(`Detected ${streams.length} streams, from ${files.length} files!`);
+		console.log(`Detected ${streams.length} streams and ${otherFiles.length} other files, from ${files.length} files!`);
 
 		const mediaType = await select({
 			message: 'Media Type',
@@ -170,6 +183,30 @@ async function importFiles(files: string[]) {
 					message: `[${streamDisplayName}] Forced?`,
 					default: false,
 				});
+			}
+		}
+
+		for (const file of otherFiles) {
+			const use = await confirm({
+				message: `[${file}] Use file?`,
+				default: true,
+			});
+
+			if (use) {
+				if (['png', 'jpg', 'jpeg'].some(k => file.endsWith(`.${k}`))) {
+					const imageType = await select({
+						message: 'Image Type',
+						choices: [
+							'Poster',
+						]
+					});
+
+					switch (imageType) {
+						case 'Poster':
+							fs.copyFileSync(file, path.join(outDir.getPath(), `${metaData.fileName}-poster.${file.substring(file.lastIndexOf('.') + 1)}`));
+							break;
+					}
+				}
 			}
 		}
 
@@ -218,7 +255,7 @@ const args = yargs(hideBin(process.argv))
 		await importFiles(fs.readdirSync(dir).map(name => path.join(dir, name)));
 	}
 
-	if (files.length < 0) {
+	if (files.length > 0) {
 		await importFiles(files);
 	}
 
