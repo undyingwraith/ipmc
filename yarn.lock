@@ -7804,7 +7804,6 @@ __metadata:
     react-dom: "npm:^18.3.1"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.7.3"
-    vite: "npm:^6.2.0"
     vite-plugin-commonjs: "npm:^0.10.4"
   languageName: unknown
   linkType: soft

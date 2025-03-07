@@ -15,6 +15,7 @@
 		"typecheck": "yarn run typecheck:node && yarn run typecheck:web",
 		"start": "electron-vite preview",
 		"dev": "electron-vite dev",
+		"preview": "electron-vite preview",
 		"build": "yarn run typecheck && electron-vite build",
 		"build:win": "yarn run build && electron-builder --win --config",
 		"build:mac": "electron-vite build && electron-builder --mac --config",
@@ -76,7 +77,6 @@
 		"eslint-plugin-react": "^7.37.4",
 		"prettier": "^3.5.2",
 		"typescript": "^5.7.3",
-		"vite": "^6.2.0",
 		"vite-plugin-commonjs": "^0.10.4"
 	}
 }
