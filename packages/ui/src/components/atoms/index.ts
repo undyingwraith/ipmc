@@ -7,6 +7,7 @@ export { Identicon } from './Identicon';
 export { ImageView } from './ImageView';
 export { Loader } from './Loader';
 export { PinButton } from './PinButton';
+export { ProcessDisplay } from './ProcessDisplay';
 export { SelectInput } from './SelectInput';
 export { Spacer } from './Spacer';
 export { TextInput } from './TextInput';

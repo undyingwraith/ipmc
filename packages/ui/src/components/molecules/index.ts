@@ -1,4 +1,5 @@
 export * from './FileGridItem';
+export { ActiveProcessesButton } from './ActiveProcessesButton';
 export { ConnectionStatus } from './ConnectionStatus';
 export { DisplayButtons, Display } from './DisplayButtons';
 export { ErrorBoundary } from './ErrorBoundary';

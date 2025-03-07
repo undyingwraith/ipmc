@@ -5,9 +5,9 @@ import React from 'react';
 import { useLocation } from 'wouter';
 import { useService } from '../../../context';
 import { useTranslation } from '../../../hooks/useTranslation';
-import { Loader } from '../../atoms';
-import { FileGridItem } from '../../molecules/FileGridItem';
+import { ProcessDisplay } from '../../atoms';
 import { Display } from '../../molecules';
+import { FileGridItem } from '../../molecules/FileGridItem';
 import styles from './LibraryHomePage.module.css';
 
 export function LibraryHomePage() {
@@ -23,14 +23,9 @@ export function LibraryHomePage() {
 			return (
 				<Card>
 					<CardHeader title={_t('ActiveTasks')} />
-					{status.map(t => (
-						<CardContent>
-							<Stack direction={'row'} gap={1} sx={{ overflow: 'auto' }}>
-								<Loader progress={t.progress} total={t.total} />
-								<Typography>{t.title}</Typography>
-							</Stack>
-						</CardContent>
-					))}
+					<CardContent>
+						{status.map(t => (<ProcessDisplay task={t} />))}
+					</CardContent>
 				</Card>
 			);
 		} else {
