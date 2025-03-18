@@ -7,6 +7,7 @@ declare const styles: {
 	readonly toolbar: string;
 	readonly progress: string;
 	readonly progressFilled: string;
+	readonly progressBuffered: string;
 	readonly visible: string;
 	readonly progressContainer: string;
 };

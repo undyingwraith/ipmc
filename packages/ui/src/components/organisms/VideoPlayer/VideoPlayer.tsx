@@ -16,6 +16,7 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 	const containerRef = useSignal<HTMLDivElement | null>(null);
 	const progressRef = useSignal<HTMLDivElement | null>(null);
 	const progressBarRef = useSignal<HTMLDivElement | null>(null);
+	const progressBarBufferedRef = useSignal<HTMLDivElement | null>(null);
 	const fullScreen = useSignal<boolean>(false);
 	const volume = useSignal<number>(1);
 	const overlayVisible = useSignal<boolean>(false);
@@ -73,6 +74,7 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 			progressRef.value.addEventListener('mousedown', () => (mousedown = true));
 			progressRef.value.addEventListener('mousemove', (e) => mousedown && scrub(e));
 			progressRef.value.addEventListener('mouseup', () => (mousedown = false));
+			progressRef.value.addEventListener('mouseleave', () => (mousedown = false));
 		}
 	});
 
@@ -106,16 +108,18 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 	}
 
 	function handleProgress() {
-		if (videoRef.value && progressBarRef.value) {
-			const progressPercentage = (videoRef.value.currentTime / videoRef.value.duration) * 100;
+		if (videoRef.value && progressBarRef.value && progressBarBufferedRef.value) {
+			const progressPercentage = 100 - ((videoRef.value.currentTime / videoRef.value.duration) * 100);
+			const bufferedPercentage = 100 - ((videoRef.value.buffered.end(0) / videoRef.value.duration) * 100);
 			currentPlayTime.value = videoRef.value.currentTime;
 
-			progressBarRef.value.style.clipPath = `inset(0 0 0 ${progressPercentage}%)`;
+			progressBarRef.value.style.clipPath = `inset(0 ${progressPercentage}% 0 0)`;
+			progressBarBufferedRef.value.style.clipPath = `inset(0 ${bufferedPercentage}% 0 0)`;
 		}
 	}
 
 	useHotkey({ key: 'F' }, () => toggleFullScreen());
-	useHotkey({ key: 'Space' }, () => mediaPlayer.togglePlay());
+	useHotkey({ key: ' ' }, () => mediaPlayer.togglePlay());
 
 	const progress = useComputed(() => (
 		<div className={styles.progressContainer}>
@@ -123,6 +127,7 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 				time={currentPlayTime}
 			/>
 			<div className={styles.progress} ref={(ref) => progressRef.value = ref}>
+				<div className={styles.progressBuffered} ref={(ref) => progressBarBufferedRef.value = ref} />
 				<div className={styles.progressFilled} ref={(ref) => progressBarRef.value = ref} />
 			</div>
 			<TimeDisplay

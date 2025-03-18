@@ -55,18 +55,31 @@
 }
 
 .progress,
-.progressFilled {
+.progressFilled,
+.progressBuffered {
 	height: 25px;
-	background-color: var(--mui-palette-primary-main);
 	border-radius: 12.5px;
 }
 
+.progressFilled,
+.progressBuffered {
+	grid-column: 1;
+	grid-row: 1;
+	clip-path: inset(0 100% 0 0);
+}
+
 .progress {
+	display: grid;
 	flex-grow: 1;
+	background-color: var(--mui-palette-primary-dark);
 }
 
 .progressFilled {
-	background-color: var(--mui-palette-primary-dark);
+	background-color: var(--mui-palette-primary-light);
+}
+
+.progressBuffered {
+	background-color: var(--mui-palette-primary-main);
 }
 
 .progressContainer {
