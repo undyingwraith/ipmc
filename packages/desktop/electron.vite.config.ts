@@ -34,12 +34,22 @@ export default defineConfig({
 		],
 	},
 	renderer: {
+		server: {
+			port: 5174,
+		},
+		build: {
+			rollupOptions: {
+				treeshake: true
+			}
+		},
 		resolve: {
 			alias: {
 				'@renderer': resolve('src/renderer/src'),
 			},
 		},
 		plugins: [
+			//TODO: fix externalized dependencies
+			//externalizeDepsPlugin(),
 			react({
 				babel: {
 					plugins: [["module:@preact/signals-react-transform"]]

@@ -5,7 +5,16 @@ artifactName: ${productName}-${version}.${ext}
 directories:
   buildResources: build
 files:
-  - 'out/**/*'
+  - filter:
+      - 'out/**/*'
+  - from: '../../node_modules/stun/src/node_modules'
+    to: 'node_modules/stun/src/node_modules'
+    filter:
+      - '**/*'
+  - from: '../../node_modules/binary-data/src/node_modules'
+    to: 'node_modules/binary-data/src/node_modules'
+    filter:
+      - '**/*'
 asarUnpack:
   - resources/**
 win:

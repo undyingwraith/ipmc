@@ -1,13 +1,13 @@
-import { Alert, Box, Card, CardContent, CardHeader, Stack, Typography } from '@mui/material';
+import { Box, Card, CardContent, CardHeader, Stack, Typography } from '@mui/material';
 import { Signal, useComputed } from '@preact/signals-react';
-import { IPinItem, IPinManagerService, IPinManagerServiceSymbol, IProfile, IProfileSymbol, ITaskManager, ITaskManagerSymbol } from 'ipmc-interfaces';
+import { IPinItem, IPinManagerService, IPinManagerServiceSymbol, IProfile, IProfileSymbol, ISortAndFilterService, ISortAndFilterServiceSymbol, ITaskManager, ITaskManagerSymbol } from 'ipmc-interfaces';
 import React from 'react';
 import { useLocation } from 'wouter';
 import { useService } from '../../../context';
 import { useTranslation } from '../../../hooks/useTranslation';
-import { Loader } from '../../atoms';
-import { FileGridItem } from '../../molecules/FileGridItem';
+import { ProcessDisplay } from '../../atoms';
 import { Display } from '../../molecules';
+import { FileGridItem } from '../../molecules/FileGridItem';
 import styles from './LibraryHomePage.module.css';
 
 export function LibraryHomePage() {
@@ -16,6 +16,7 @@ export function LibraryHomePage() {
 	const taskManager = useService<ITaskManager>(ITaskManagerSymbol);
 	const pinManager = useService<IPinManagerService>(IPinManagerServiceSymbol);
 	const profile = useService<IProfile>(IProfileSymbol);
+	const sortAndFilterService = useService<ISortAndFilterService>(ISortAndFilterServiceSymbol);
 
 	const status = useComputed(() => {
 		const status = taskManager.status.value;
@@ -23,14 +24,9 @@ export function LibraryHomePage() {
 			return (
 				<Card>
 					<CardHeader title={_t('ActiveTasks')} />
-					{status.map(t => (
-						<CardContent>
-							<Stack direction={'row'} gap={1} sx={{ overflow: 'auto' }}>
-								<Loader progress={t.progress} total={t.total} />
-								<Typography>{t.title}</Typography>
-							</Stack>
-						</CardContent>
-					))}
+					<CardContent>
+						{status.map(t => (<ProcessDisplay task={t} />))}
+					</CardContent>
 				</Card>
 			);
 		} else {
@@ -47,16 +43,9 @@ export function LibraryHomePage() {
 						<Box>
 							<Typography variant={'h6'}>{profile.libraries.find(l => l.id === cat)?.name ?? cat}</Typography>
 							<div className={styles.carousel}>
-								{items.map(p => {
-									const resolved = pinManager.resolvePin(p);
-									return resolved ? (
-										<FileGridItem file={resolved} onOpen={() => setLocation(p.itemId)} display={new Signal(Display.Poster)} />
-									) : (
-										<Alert severity={'error'}>
-											Failed to find media.
-										</Alert>
-									);
-								})}
+								{sortAndFilterService.createFilteredList(items.map(p => pinManager.resolvePin(p)).filter(p => p !== undefined)).map(p => (
+									<FileGridItem file={p} onOpen={() => setLocation(p.pinId)} display={new Signal(Display.Poster)} />
+								))}
 							</div>
 						</Box>
 					)) : (

@@ -9,7 +9,7 @@ import { bootstrap } from '@libp2p/bootstrap';
 import { circuitRelayTransport } from '@libp2p/circuit-relay-v2';
 import { dcutr } from '@libp2p/dcutr';
 import { identify, identifyPush } from '@libp2p/identify';
-import { kadDHT } from '@libp2p/kad-dht';
+import { kadDHT, removePrivateAddressesMapper, removePublicAddressesMapper } from '@libp2p/kad-dht';
 import { keychain } from '@libp2p/keychain';
 import { peerIdFromString } from '@libp2p/peer-id';
 import { ping } from '@libp2p/ping';
@@ -80,10 +80,8 @@ export function App() {
 						libp2p: {
 							addresses: {
 								listen: [
-									'/ws',
-									'/wss',
+									'/p2p-circuit',
 									'/webrtc',
-									'/webrtc-direct',
 								],
 							},
 							...(profile?.swarmKey ? {
@@ -111,7 +109,21 @@ export function App() {
 							],
 							connectionEncrypters: [noise()],
 							services: {
-								dht: kadDHT(),
+								lanDHT: kadDHT({
+									protocol: '/ipfs/lan/kad/1.0.0',
+									peerInfoMapper: removePublicAddressesMapper,
+									clientMode: false,
+									logPrefix: 'libp2p:dht-lan',
+									datastorePrefix: '/dht-lan',
+									metricsPrefix: 'libp2p_dht_lan'
+								}),
+								aminoDHT: kadDHT({
+									protocol: '/ipfs/kad/1.0.0',
+									peerInfoMapper: removePrivateAddressesMapper,
+									logPrefix: 'libp2p:dht-amino',
+									datastorePrefix: '/dht-amino',
+									metricsPrefix: 'libp2p_dht_amino'
+								}),
 								identify: identify(),
 								identifyPush: identifyPush(),
 								keychain: keychain(),

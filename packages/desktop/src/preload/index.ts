@@ -9,7 +9,7 @@ import { bootstrap } from '@libp2p/bootstrap';
 import { circuitRelayServer, circuitRelayTransport } from '@libp2p/circuit-relay-v2';
 import { dcutr } from '@libp2p/dcutr';
 import { identify, identifyPush } from '@libp2p/identify';
-import { kadDHT } from '@libp2p/kad-dht';
+import { kadDHT, removePrivateAddressesMapper, removePublicAddressesMapper } from '@libp2p/kad-dht';
 import { keychain } from '@libp2p/keychain';
 import { mdns } from '@libp2p/mdns';
 import { peerIdFromString } from '@libp2p/peer-id';
@@ -57,14 +57,20 @@ const nodeService: INodeService = {
 			datastore,
 			blockstore,
 			libp2p: {
+				nodeInfo: {
+					userAgent: agentVersion
+				},
 				addresses: {
 					listen: [
 						`/ip4/0.0.0.0/tcp/${profile.port ?? 0}`,
 						`/ip6/::/tcp/${profile.port ?? 0}`,
-						'/ws',
-						'/wss',
-						`/ip4/0.0.0.0/udp/${profile.port ?? 0}/webrtc`,
+						`/ip4/0.0.0.0/udp/${profile.port ?? 0}/quic-v1`,
+						`/ip6/::/udp/${profile.port ?? 0}/quic-v1`,
 						`/ip4/0.0.0.0/udp/${profile.port ?? 0}/webrtc-direct`,
+						`/ip6/::/udp/${profile.port ?? 0}/webrtc-direct`,
+						'/ip4/0.0.0.0/tcp/0/ws',
+						'/ip6/::/tcp/0/ws',
+						'/p2p-circuit',
 					],
 				},
 				...(profile.swarmKey ? {
@@ -103,16 +109,29 @@ const nodeService: INodeService = {
 				],
 				services: {
 					relay: circuitRelayServer(),
-					dht: kadDHT(),
-					identify: identify({ agentVersion }),
-					identifyPush: identifyPush({ agentVersion }),
+					lanDHT: kadDHT({
+						protocol: '/ipfs/lan/kad/1.0.0',
+						peerInfoMapper: removePublicAddressesMapper,
+						clientMode: false,
+						logPrefix: 'libp2p:dht-lan',
+						datastorePrefix: '/dht-lan',
+						metricsPrefix: 'libp2p_dht_lan'
+					}),
+					aminoDHT: kadDHT({
+						protocol: '/ipfs/kad/1.0.0',
+						peerInfoMapper: removePrivateAddressesMapper,
+						logPrefix: 'libp2p:dht-amino',
+						datastorePrefix: '/dht-amino',
+						metricsPrefix: 'libp2p_dht_amino'
+					}),
+					identify: identify(),
+					identifyPush: identifyPush(),
 					keychain: keychain(),
 					ping: ping(),
 					autoNAT: autoNAT(),
 					dcutr: dcutr(),
 					upnp: uPnPNAT(),
 					pubsub: gossipsub({
-						allowPublishToZeroTopicPeers: true,
 						canRelayMessage: true,
 					}),
 				},
@@ -124,6 +143,8 @@ const nodeService: INodeService = {
 		});
 
 		console.log(helia.libp2p.getMultiaddrs().map(a => a.toString()));
+		helia.libp2p.addEventListener('peer:discovery', console.log);
+		helia.libp2p.addEventListener('peer:connect', console.log);
 
 		const fs = unixfs(helia);
 

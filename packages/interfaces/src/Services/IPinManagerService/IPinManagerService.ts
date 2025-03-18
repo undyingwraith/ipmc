@@ -42,7 +42,7 @@ export interface IPinManagerService {
 	 * @param item The item to resolve.
 	 * @returns The resolved {@link IFileInfo} or undefined.
 	 */
-	resolvePin(item: IPinItem): IFileInfo | undefined;
+	resolvePin(item: IPinItem): (IFileInfo & HasPinAbility) | undefined;
 
 	/**
 	 * A list of all currently pinned items.

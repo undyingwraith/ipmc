@@ -10,5 +10,6 @@ export { NotificationService } from './NotificationService';
 export { ObjectStore } from './ObjectStore';
 export { PersistentSignalService } from './PersistentSignalService';
 export { PinManagerService } from './PinManagerService';
+export { SortAndFilterService } from './SortAndFilterService';
 export { TaskManager } from './TaskManager';
 export { TranslationService } from './TranslationService';

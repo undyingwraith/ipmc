@@ -1,6 +1,6 @@
 import { Signal } from '@preact/signals-core';
 import { inject, injectable, postConstruct, preDestroy } from 'inversify';
-import { IIndexManager, IIpfsService, IIpfsServiceSymbol, ILibrary, ILibraryIndex, ILogService, ILogServiceSymbol, IObjectStore, IObjectStoreSymbol, IOnProgress, IProfile, IProfileSymbol, ITask, ITaskManager, ITaskManagerSymbol, ITranslationService, ITranslationServiceSymbol } from 'ipmc-interfaces';
+import { IIndexManager, IIpfsService, IIpfsServiceSymbol, ILibrary, ILibraryIndex, ILogService, ILogServiceSymbol, IObjectStore, IObjectStoreSymbol, IOnProgress, IProfile, IProfileSymbol, ITaskManager, ITaskManagerSymbol, ITranslationService, ITranslationServiceSymbol } from 'ipmc-interfaces';
 import { IIndexFetcher, MovieIndexFetcher, SeriesIndexFetcher } from './Indexer';
 
 @injectable()
@@ -73,8 +73,15 @@ export class IndexManager implements IIndexManager {
 					if (indexer == undefined) {
 						throw new Error(`Unknown library type [${library.type}]`);
 					}
+					const old = indexer.version !== index.value?.indexer ? undefined : index.value.index;
 
-					const newIndex = await indexer.fetchIndex(library.id, cid, signal, onProgress);
+					const newIndex = await indexer.fetchIndex({
+						libraryId: library.id,
+						cid,
+						abortSignal: signal,
+						onProgress,
+						old,
+					});
 
 					index.value = {
 						cid: cid,

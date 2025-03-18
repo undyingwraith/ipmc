@@ -1,6 +1,6 @@
 import { Signal } from '@preact/signals-core';
 import { inject, injectable } from 'inversify';
-import { HasPinAbility, IFileInfo, IIndexManager, IIndexManagerSymbol, IIpfsService, IIpfsServiceSymbol, IObjectStore, IObjectStoreSymbol, IPinItem, IPinManagerService, IProfile, IProfileSymbol, isIFolderFile, ITaskManager, ITaskManagerSymbol, ITranslationService, ITranslationServiceSymbol, PinStatus } from 'ipmc-interfaces';
+import { HasPinAbility, IFileInfo, IIndexManager, IIndexManagerSymbol, IIpfsService, IIpfsServiceSymbol, IObjectStore, IObjectStoreSymbol, IPinItem, IPinManagerService, IProfile, IProfileSymbol, isIFolderFile, isPinFeature, ITaskManager, ITaskManagerSymbol, ITranslationService, ITranslationServiceSymbol, PinStatus } from 'ipmc-interfaces';
 
 @injectable()
 export class PinManagerService implements IPinManagerService {
@@ -89,7 +89,7 @@ export class PinManagerService implements IPinManagerService {
 	/**
 	 * @inheritdoc
 	 */
-	public resolvePin(item: IPinItem): IFileInfo | undefined {
+	public resolvePin(item: IPinItem): (IFileInfo & HasPinAbility) | undefined {
 		const libId = item.itemId.substring(0, item.itemId.indexOf('/'));
 		const index = this.indexManager.indexes.get(libId)?.value?.index;
 		if (index) {
@@ -104,10 +104,10 @@ export class PinManagerService implements IPinManagerService {
 	 * @param items items to walk the path in.
 	 * @returns The found item or undefined.
 	 */
-	public walkPath(path: string, items: IFileInfo[]): IFileInfo | undefined {
+	public walkPath(path: string, items: (IFileInfo & HasPinAbility)[]): (IFileInfo & HasPinAbility) | undefined {
 		const item = items.find(i => i.name == path.substring(0, path.indexOf('/') > 0 ? path.indexOf('/') : undefined));
 		if (path.indexOf('/') > -1) {
-			return isIFolderFile(item) ? this.walkPath(path.substring(path.indexOf('/') + 1), item.items) : undefined;
+			return isIFolderFile(item) ? this.walkPath(path.substring(path.indexOf('/') + 1), item.items.filter(i => isPinFeature(i))) : undefined;
 		}
 		return item;
 	}

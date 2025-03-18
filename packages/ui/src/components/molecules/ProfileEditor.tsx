@@ -32,7 +32,7 @@ export function ProfileEditor(props: { profile: IProfile, onCancel: () => void, 
 				port: port.value === '' ? undefined : parseInt(port.value),
 				bootstrap: bootstrap.value.map(s => s.value),
 			} : {
-				apiUrl: apiUrl.value === '' ? undefined : apiUrl.value,
+				url: apiUrl.value === '' ? undefined : apiUrl.value,
 			}),
 			libraries: libraries.value.map(l => l.value),
 		});

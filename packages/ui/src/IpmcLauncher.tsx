@@ -4,7 +4,7 @@ import { createRemoteIpfs, IndexManager } from 'ipmc-core';
 import { IConfigurationService, IIndexManagerSymbol, IIpfsService, IIpfsServiceSymbol, ILogService, ILogServiceSymbol, INodeService, IProfile, IProfileSymbol, isInternalProfile, isRemoteProfile } from 'ipmc-interfaces';
 import React, { PropsWithChildren } from 'react';
 import { ErrorDisplay, ThemeToggle } from './components/atoms';
-import { ConnectionStatus, LanguageSelector, LoadScreen, ProfileSelector } from './components/molecules';
+import { ActiveProcessesButton, ConnectionStatus, LanguageSelector, LoadScreen, ProfileSelector } from './components/molecules';
 import { LibraryManager } from './components/pages';
 import { AppContextProvider, useService } from './context';
 import { useAppbarButtons, useTranslation } from './hooks';
@@ -36,6 +36,10 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 	const error = useSignal<Error | undefined>(undefined);
 
 	useAppbarButtons([{
+		component: (<ActiveProcessesButton />),
+		position: 'end',
+		sortIndex: -1,
+	}, {
 		component: (<ThemeToggle />),
 		position: 'end',
 		sortIndex: 9,
