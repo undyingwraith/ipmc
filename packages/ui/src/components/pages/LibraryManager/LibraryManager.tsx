@@ -47,7 +47,7 @@ export function LibraryManager() {
 				</ListItemButton>
 			</ListItem>
 			{libraries.map((lib) => (
-				<ListItem key={lib.name} disablePadding>
+				<ListItem key={lib.id} disablePadding>
 					<ListItemButton
 						selected={location.value.startsWith('/' + lib.id)}
 						onClick={() => {

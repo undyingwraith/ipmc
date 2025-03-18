@@ -23,7 +23,7 @@ export function SelectInput(props: ISelectInputProps) {
 					}}
 				>
 					{Object.entries(props.options).map(([value, label]) => (
-						<MenuItem value={value}>{label}</MenuItem>
+						<MenuItem value={value} key={value}>{label}</MenuItem>
 					))}
 				</Select>
 			))}
