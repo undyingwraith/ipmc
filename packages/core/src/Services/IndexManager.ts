@@ -73,8 +73,15 @@ export class IndexManager implements IIndexManager {
 					if (indexer == undefined) {
 						throw new Error(`Unknown library type [${library.type}]`);
 					}
+					const old = indexer.version !== index.value?.indexer ? undefined : index.value.index;
 
-					const newIndex = await indexer.fetchIndex(library.id, cid, signal, onProgress);
+					const newIndex = await indexer.fetchIndex({
+						libraryId: library.id,
+						cid,
+						abortSignal: signal,
+						onProgress,
+						old,
+					});
 
 					index.value = {
 						cid: cid,
