@@ -6,7 +6,7 @@ import React from 'react';
 import { useService } from '../../../context';
 import { useHotkey } from '../../../hooks';
 import { IMediaPlayerService, IMediaPlayerServiceSymbol } from '../../../services';
-import { FileInfoDisplay, TimeDisplay } from '../../atoms';
+import { FileInfoDisplay, Loader, TimeDisplay } from '../../atoms';
 import styles from './VideoPlayer.module.css';
 
 export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
@@ -21,6 +21,7 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 	const overlayVisible = useSignal<boolean>(false);
 	const movieDuration = useSignal<number>(0);
 	const currentPlayTime = useSignal<number>(0);
+	const loading = useSignal<boolean>(true);
 
 	useSignalEffect(() => {
 		if (containerRef.value) {
@@ -52,6 +53,12 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 				if (videoRef.value) {
 					movieDuration.value = videoRef.value.duration;
 				}
+			});
+			videoRef.value.addEventListener('waiting', () => {
+				loading.value = true;
+			});
+			videoRef.value.addEventListener('canplay', () => {
+				loading.value = false;
 			});
 
 			return mediaPlayer.initializeVideo(videoRef.value, props.file);
@@ -140,7 +147,9 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 						<div>
 							<FileInfoDisplay file={props.file} />
 						</div>
-						<div className={styles.spacer} onClick={() => mediaPlayer.togglePlay()} onDoubleClick={() => toggleFullScreen()} />
+						<div className={styles.spacer} onClick={() => mediaPlayer.togglePlay()} onDoubleClick={() => toggleFullScreen()}>
+							{loading.value && <Loader />}
+						</div>
 						<div className={styles.toolbar}>
 							<IconButton onClick={() => mediaPlayer.togglePlay()}>
 								{computed(() => mediaPlayer.playing.value ? <Pause /> : <PlayArrow />)}
