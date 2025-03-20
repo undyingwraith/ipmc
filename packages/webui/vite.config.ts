@@ -5,8 +5,8 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills';
 export default defineConfig(({ command, mode }) => {
 	const isProd = mode === 'production';
 	return {
+		base: './',
 		build: {
-			base: './',
 			outDir: 'dist',
 			emptyOutDir: true,
 			minify: isProd,
