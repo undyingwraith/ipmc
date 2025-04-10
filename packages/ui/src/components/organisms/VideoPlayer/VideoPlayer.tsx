@@ -6,7 +6,8 @@ import React from 'react';
 import { useService } from '../../../context';
 import { useHotkey } from '../../../hooks';
 import { IMediaPlayerService, IMediaPlayerServiceSymbol } from '../../../services';
-import { FileInfoDisplay, Loader, TimeDisplay } from '../../atoms';
+import { FileInfoDisplay, Loader } from '../../atoms';
+import { VideoProgressBar } from '../../molecules';
 import styles from './VideoPlayer.module.css';
 
 export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
@@ -14,14 +15,9 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 
 	const videoRef = useSignal<HTMLVideoElement | null>(null);
 	const containerRef = useSignal<HTMLDivElement | null>(null);
-	const progressRef = useSignal<HTMLDivElement | null>(null);
-	const progressBarRef = useSignal<HTMLDivElement | null>(null);
-	const progressBarBufferedRef = useSignal<HTMLDivElement | null>(null);
 	const fullScreen = useSignal<boolean>(false);
 	const volume = useSignal<number>(1);
 	const overlayVisible = useSignal<boolean>(false);
-	const movieDuration = useSignal<number>(0);
-	const currentPlayTime = useSignal<number>(0);
 	const loading = useSignal<boolean>(true);
 
 	useSignalEffect(() => {
@@ -47,14 +43,8 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 	});
 
 	useSignalEffect(() => {
-		if (videoRef.value) {
+		if (videoRef.value && containerRef.value) {
 			//Event handlers
-			videoRef.value.addEventListener('timeupdate', handleProgress);
-			videoRef.value.addEventListener('loadedmetadata', () => {
-				if (videoRef.value) {
-					movieDuration.value = videoRef.value.duration;
-				}
-			});
 			videoRef.value.addEventListener('waiting', () => {
 				loading.value = true;
 			});
@@ -68,30 +58,12 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 	});
 
 	useSignalEffect(() => {
-		if (progressRef.value) {
-			progressRef.value.addEventListener('click', scrub);
-			let mousedown = false;
-			progressRef.value.addEventListener('mousedown', () => (mousedown = true));
-			progressRef.value.addEventListener('mousemove', (e) => mousedown && scrub(e));
-			progressRef.value.addEventListener('mouseup', () => (mousedown = false));
-			progressRef.value.addEventListener('mouseleave', () => (mousedown = false));
-		}
-	});
-
-	useSignalEffect(() => {
 		volume.subscribe((value) => {
 			if (videoRef.value) {
 				videoRef.value.volume = value;
 			}
 		});
 	});
-
-	function scrub(e: MouseEvent) {
-		if (progressRef.value && videoRef.value) {
-			const scrubTime = (e.offsetX / progressRef.value.offsetWidth) * videoRef.value.duration;
-			videoRef.value.currentTime = scrubTime;
-		}
-	}
 
 	function toggleFullScreen() {
 		if (fullScreen.value) {
@@ -107,34 +79,8 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 		}
 	}
 
-	function handleProgress() {
-		if (videoRef.value && progressBarRef.value && progressBarBufferedRef.value) {
-			const progressPercentage = 100 - ((videoRef.value.currentTime / videoRef.value.duration) * 100);
-			const bufferedPercentage = 100 - ((videoRef.value.buffered.end(0) / videoRef.value.duration) * 100);
-			currentPlayTime.value = videoRef.value.currentTime;
-
-			progressBarRef.value.style.clipPath = `inset(0 ${progressPercentage}% 0 0)`;
-			progressBarBufferedRef.value.style.clipPath = `inset(0 ${bufferedPercentage}% 0 0)`;
-		}
-	}
-
 	useHotkey({ key: 'F' }, () => toggleFullScreen());
 	useHotkey({ key: ' ' }, () => mediaPlayer.togglePlay());
-
-	const progress = useComputed(() => (
-		<div className={styles.progressContainer}>
-			<TimeDisplay
-				time={currentPlayTime}
-			/>
-			<div className={styles.progress} ref={(ref) => progressRef.value = ref}>
-				<div className={styles.progressBuffered} ref={(ref) => progressBarBufferedRef.value = ref} />
-				<div className={styles.progressFilled} ref={(ref) => progressBarRef.value = ref} />
-			</div>
-			<TimeDisplay
-				time={movieDuration}
-			/>
-		</div>
-	));
 
 	return (
 		<div className={styles.outerContainer}>
@@ -162,21 +108,23 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 							<div className={styles.spacer} />
 							<div>
 								<span>Language</span>
-								<select>
-									{computed(() => mediaPlayer.languages.value.map(l => (
+								<select onChange={(ev) => {
+									mediaPlayer.selectLanguage(ev.currentTarget.value);
+								}}>
+									{props.file.languages.map(l => (
 										<option>{l}</option>
-									)))}
+									))}
 								</select>
 							</div>
 							<div>
 								<span>Subtitle</span>
 								<select onChange={(ev) => {
-									mediaPlayer.selectSubtitle(ev.currentTarget.value !== 'null' ? ev.currentTarget.value : undefined);
+									mediaPlayer.selectSubtitle(ev.currentTarget.value !== 'null' ? JSON.parse(ev.currentTarget.value) : undefined);
 								}}>
 									<option value="null">None</option>
-									{computed(() => mediaPlayer.subtitles.value.map(l => (
-										<option>{l.language}</option>
-									)))}
+									{props.file.subtitles.map(s => (
+										<option value={JSON.stringify(s)}>{s.language}{s.forced && ' - forced'}</option>
+									))}
 								</select>
 							</div>
 							<Stack spacing={2} direction="row" sx={{ alignItems: 'center', width: 250 }}>
@@ -199,7 +147,7 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 								{computed(() => fullScreen.value ? <FullscreenExit /> : <Fullscreen />)}
 							</IconButton>
 						</div>
-						{progress}
+						<VideoProgressBar videoRef={videoRef} />
 					</div>
 				))}
 			</div>

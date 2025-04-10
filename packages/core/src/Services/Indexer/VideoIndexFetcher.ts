@@ -24,6 +24,7 @@ export class VideoIndexFetcher {
 				subtitles.push({
 					language: track.getAttribute('lang') ?? 'none',
 					forced: track.getElementsByTagName('Role')[0].getAttribute('value') === 'forced-subtitle',
+					role: track.getElementsByTagName('Role')[0].getAttribute('value')!,
 				});
 			}
 		}
@@ -40,5 +41,5 @@ export class VideoIndexFetcher {
 		return finalize(files, result);
 	}
 
-	public version = '0';
+	public version = '1';
 }
