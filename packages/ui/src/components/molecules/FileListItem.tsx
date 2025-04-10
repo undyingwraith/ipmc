@@ -17,8 +17,8 @@ export function FileListItem(props: { file: IFileInfo; onOpen: () => void; }) {
 
 			}>
 			<ListItemText
-				primary={isTitleFeature(props.file) && props.file.title}
-				secondary={isYearFeature(props.file) && props.file.year}
+				primary={isTitleFeature(props.file) ? props.file.title : props.file.name}
+				secondary={isYearFeature(props.file) ? props.file.year : undefined}
 			/>
 		</ListItem>
 	);
