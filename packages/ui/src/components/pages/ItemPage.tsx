@@ -51,7 +51,7 @@ export function ItemPage(props: {
 			</Paper>
 			{file.items.length === 0 ? (
 				<div>{_t('NoItems')}</div>
-			) : (
+			) : useComputed(() => (
 				display.value == Display.List ? (
 					<List>
 						{file.items.map(i => (
@@ -79,7 +79,7 @@ export function ItemPage(props: {
 						))}
 					</Grid>
 				)
-			)}
+			))}
 		</Stack >
 	) : (
 		<Box>
