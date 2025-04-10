@@ -38,6 +38,9 @@ export class IndexManager implements IIndexManager {
 	@preDestroy()
 	public stop(): void {
 		clearInterval(this.timer);
+		this.updates.forEach(e => {
+			e.abort();
+		});
 	}
 
 	public indexes = new Map<string, Signal<ILibraryIndex<any> | undefined>>();

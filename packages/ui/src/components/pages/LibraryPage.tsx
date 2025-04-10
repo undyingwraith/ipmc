@@ -1,4 +1,4 @@
-import Grid from '@mui/material/Grid2';
+import { Grid } from '@mui/material';
 import { useComputed, useSignal } from '@preact/signals-react';
 import { IIndexManager, IIndexManagerSymbol, ISortAndFilterService, ISortAndFilterServiceSymbol } from 'ipmc-interfaces';
 import React from 'react';

@@ -1,4 +1,4 @@
-import Grid from '@mui/material/Grid2';
+import { Grid } from '@mui/material';
 import { Signal, useSignal } from '@preact/signals-react';
 import { ILibrary } from 'ipmc-interfaces';
 import React, { useEffect } from 'react';

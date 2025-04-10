@@ -1,5 +1,4 @@
-import { Button, Typography } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import { Button, Typography, Grid } from '@mui/material';
 import { ReadonlySignal, Signal, useComputed } from '@preact/signals-react';
 import React, { ReactNode } from 'react';
 import { useTranslation } from '../../hooks';
