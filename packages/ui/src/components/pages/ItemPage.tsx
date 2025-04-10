@@ -61,8 +61,7 @@ export function ItemPage(props: {
 									onOpen={() => setLocation(`/${i.name}`)}
 								/>
 							</ErrorBoundary>
-						)
-						)}
+						))}
 					</List>
 				) : (
 					<Grid container spacing={1} sx={{ width: '100%' }}>
