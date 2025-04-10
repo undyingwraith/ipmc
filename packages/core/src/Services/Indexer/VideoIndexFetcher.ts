@@ -2,9 +2,19 @@ import { HasPinAbility, IFileInfo, IIpfsService, IVideoFile } from 'ipmc-interfa
 import { Regexes } from '../../Regexes';
 import { ISubtitleMetadata } from 'ipmc-interfaces';
 
+/**
+ * A generic index fetcher to fetch {@link IVideoFile} metadata.
+ */
 export class VideoIndexFetcher {
 	constructor(private readonly node: IIpfsService) { }
 
+	/**
+	 * Fetches the metadata of a {@link IVideoFile}.
+	 * @param parentId id of the parent item.
+	 * @param entry the item to fetch the metadata of.
+	 * @param signal {@link AbortSignal}.
+	 * @param finalize function to add additional metadata.
+	 */
 	async fetch<T extends (IVideoFile & HasPinAbility)>(parentId: string, entry: IFileInfo, signal: AbortSignal, finalize: (files: IFileInfo[], video: (IVideoFile & HasPinAbility)) => T): Promise<T> {
 		const entries = await this.node.ls(entry.cid, signal);
 		const files = entries.filter(f => f.type == 'file');
@@ -41,5 +51,8 @@ export class VideoIndexFetcher {
 		return finalize(files, result);
 	}
 
+	/**
+	 * The current version of the {@link VideoIndexFetcher}.
+	 */
 	public version = '1';
 }
