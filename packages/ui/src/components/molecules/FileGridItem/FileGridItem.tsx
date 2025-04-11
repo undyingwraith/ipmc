@@ -1,18 +1,17 @@
-import { Button, Card, CardActionArea, CardActions, CardContent, CardHeader, CardMedia, Chip } from '@mui/material';
+import LanguageIcon from '@mui/icons-material/Language';
+import SubtitlesIcon from '@mui/icons-material/Subtitles';
+import { Card, CardActionArea, CardActions, CardContent, CardHeader, CardMedia, Chip } from '@mui/material';
 import { ReadonlySignal, useComputed } from '@preact/signals-react';
-import { IFileInfo, isIVideoFile, isPinFeature, isPosterFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
+import { IFileInfo, isIVideoFile, isPosterFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
 import React, { useRef } from 'react';
-import { useFileUrl, useIsVisible, useTranslation } from '../../../hooks';
-import { PinButton } from '../../atoms/PinButton';
+import { useFileUrl, useIsVisible } from '../../../hooks';
 import { Display } from '../DisplayButtons';
+import { MediaItemActions } from '../MediaItemActions';
 import posterFallback from './no-poster.png';
 import thumbFallback from './no-thumbnail.png';
-import SubtitlesIcon from '@mui/icons-material/Subtitles';
-import LanguageIcon from '@mui/icons-material/Language';
 
 export function FileGridItem(props: { file: IFileInfo; onOpen: () => void; display: ReadonlySignal<Display>; }) {
 	const { file, display, onOpen } = props;
-	const _t = useTranslation();
 	const imgRef = useRef<HTMLDivElement>(null);
 	const visible = useIsVisible(imgRef);
 
@@ -53,8 +52,7 @@ export function FileGridItem(props: { file: IFileInfo; onOpen: () => void; displ
 				)}
 			</CardActionArea>
 			<CardActions>
-				{isPinFeature(file) && <PinButton item={file} />}
-				<Button onClick={onOpen}>{_t('Open')}</Button>
+				<MediaItemActions file={file} onOpen={onOpen} />
 			</CardActions>
 		</Card>
 	));
