@@ -17,13 +17,6 @@ export function FileGridItem(props: { file: IFileInfo; onOpen: () => void; displ
 
 	const posterUrl = useFileUrl(isPosterFeature(file) && file.posters.length > 0 ? file.posters[0]?.cid : undefined, visible, posterFallback);
 	const thumbUrl = useFileUrl(isIVideoFile(file) && file.thumbnails.length > 0 ? file.thumbnails[0]?.cid : undefined, visible, thumbFallback);
-	const size = useComputed<{ width: number; height: number; }>(() => display.value == Display.Poster ? {
-		width: 240,
-		height: 360,
-	} : {
-		width: 640,
-		height: 360,
-	});
 	const url = useComputed(() => {
 		switch (display.value) {
 			case Display.Poster:
@@ -36,9 +29,9 @@ export function FileGridItem(props: { file: IFileInfo; onOpen: () => void; displ
 	});
 
 	return useComputed(() => (
-		<Card sx={{ width: size.value.width }} ref={imgRef} className={styles.card}>
+		<Card ref={imgRef} className={styles.card}>
 			<CardActionArea onClick={onOpen} className={styles.actionArea}>
-				<CardMedia image={url.value} sx={{ height: size.value.height, width: size.value.width }} />
+				<CardMedia image={url.value} className={`${styles.media} ${display.value === Display.Thumbnail && styles.thumbnail}`} />
 				<CardHeader title={isTitleFeature(file) ? file.title : file.name} subheader={isYearFeature(file) ? file.year : undefined} className={styles.title} />
 				{isIVideoFile(file) && (
 					<CardContent>

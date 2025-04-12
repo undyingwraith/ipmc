@@ -1,21 +1,18 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
-import { Grid } from '@mui/material';
 import { IFileInfo, isIFolderFile, isIVideoFile, isPinFeature } from 'ipmc-interfaces';
 import React from 'react';
-import { useLocation } from 'wouter';
 import { useAppbarButtons, usePersistentSignal, useTitle, useTranslation } from '../../hooks';
 import { IAppbarButtonOptions } from '../../services/AppbarButtonService';
 import { FileInfoDisplay, PinButton } from '../atoms';
-import { Display, DisplayButtons, ErrorBoundary, FileGridItem } from '../molecules';
-import { VideoPlayer } from '../organisms';
+import { Display, DisplayButtons } from '../molecules';
+import { FileGrid, VideoPlayer } from '../organisms';
 
 export function ItemPage(props: {
 	item: IFileInfo;
 }) {
 	const file = props.item;
 	const _t = useTranslation();
-	const [_, setLocation] = useLocation();
 	const title = useTitle(file);
 
 	const display = usePersistentSignal<Display>(Display.Poster, 'display');
@@ -47,21 +44,14 @@ export function ItemPage(props: {
 				<FileInfoDisplay file={file} />
 				{isPinFeature(file) && <PinButton item={file} />}
 			</Paper>
-			<Grid container spacing={1} sx={{ width: '100%' }}>
-				{file.items.length === 0 ? (
-					<Grid>{_t('NoItems')}</Grid>
-				) : file.items.map(i => (
-					<Grid key={i.cid}>
-						<ErrorBoundary>
-							<FileGridItem
-								file={i}
-								onOpen={() => setLocation(`/${i.name}`)}
-								display={display}
-							/>
-						</ErrorBoundary>
-					</Grid>
-				))}
-			</Grid>
+			{file.items.length === 0 ? (
+				<Box>{_t('NoItems')}</Box>
+			) : (
+				<FileGrid
+					display={display}
+					files={file.items}
+				/>
+			)}
 		</Stack>
 	) : (
 		<Box>

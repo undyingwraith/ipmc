@@ -1,3 +1,4 @@
+export * from './LanguageDisplay';
 export { DetailOverlay } from './DetailOverlay';
 export { ErrorDisplay } from './ErrorDisplay';
 export { FileInfoDisplay } from './FileInfoDisplay';
@@ -5,7 +6,6 @@ export { FileInput } from './FileInput';
 export { FormList } from './FormList';
 export { Identicon } from './Identicon';
 export { ImageView } from './ImageView';
-export { LanguageDisplay } from './LanguageDisplay';
 export { Loader } from './Loader';
 export { PinButton } from './PinButton';
 export { ProcessDisplay } from './ProcessDisplay';

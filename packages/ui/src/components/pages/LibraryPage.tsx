@@ -1,20 +1,18 @@
-import { Grid } from '@mui/material';
+import { Box } from '@mui/material';
 import { useComputed, useSignal } from '@preact/signals-react';
 import { IIndexManager, IIndexManagerSymbol, ISortAndFilterService, ISortAndFilterServiceSymbol } from 'ipmc-interfaces';
 import React from 'react';
-import { useLocation } from 'wouter';
 import { useService } from '../../context/AppContext';
 import { useAppbarButtons, usePersistentSignal, useTranslation } from '../../hooks';
-import { ErrorBoundary, FileGridItem, LoadScreen, SearchField } from '../molecules';
+import { LoadScreen, SearchField } from '../molecules';
 import { Display, DisplayButtons } from '../molecules/DisplayButtons';
+import { FileGrid } from '../organisms';
 
 export function LibraryPage(props: {
 	library: string;
 }) {
 	const { library } = props;
-	const [_, setLocation] = useLocation();
 	const _t = useTranslation();
-	const spacing = 1;
 
 	const indexManager = useService<IIndexManager>(IIndexManagerSymbol);
 	const sortAndFilterService = useService<ISortAndFilterService>(ISortAndFilterServiceSymbol);
@@ -40,23 +38,14 @@ export function LibraryPage(props: {
 		return sorted.value == undefined ? (
 			<LoadScreen />
 		) : (
-			<Grid container spacing={spacing} sx={{ justifyContent: 'center', paddingTop: spacing, paddingBottom: spacing, alignContent: 'stretch' }}>
-				{sorted.value.length === 0 ? (
-					<Grid>{_t('NoItems')}</Grid>
-				) : sorted.value.map(v => (
-					<Grid key={v.cid}>
-						<ErrorBoundary>
-							<FileGridItem
-								onOpen={() => {
-									setLocation(`/${v.name}`);
-								}}
-								file={v}
-								display={display}
-							/>
-						</ErrorBoundary>
-					</Grid>
-				))}
-			</Grid>
+			sorted.value.length === 0 ? (
+				<Box>{_t('NoItems')}</Box>
+			) : (
+				<FileGrid
+					display={display}
+					files={sorted.value}
+				/>
+			)
 		);
 	});
 }
