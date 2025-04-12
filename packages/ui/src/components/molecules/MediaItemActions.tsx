@@ -10,7 +10,7 @@ export function MediaItemActions(props: { file: IFileInfo; onOpen: () => void; }
 	const _t = useTranslation();
 
 	return (
-		<ButtonGroup>
+		<ButtonGroup variant={'text'}>
 			{isPinFeature(file) && <PinButton item={file} />}
 			{<Button onClick={onOpen}>{_t('Open')}</Button>}
 		</ButtonGroup>

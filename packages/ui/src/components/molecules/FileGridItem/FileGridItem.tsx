@@ -1,10 +1,9 @@
-import LanguageIcon from '@mui/icons-material/Language';
-import SubtitlesIcon from '@mui/icons-material/Subtitles';
-import { Card, CardActionArea, CardActions, CardContent, CardHeader, CardMedia, Chip } from '@mui/material';
+import { Card, CardActionArea, CardActions, CardContent, CardHeader, CardMedia } from '@mui/material';
 import { ReadonlySignal, useComputed } from '@preact/signals-react';
 import { IFileInfo, isIVideoFile, isPosterFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
 import React, { useRef } from 'react';
 import { useFileUrl, useIsVisible } from '../../../hooks';
+import { LanguageDisplay } from '../../atoms';
 import { Display } from '../DisplayButtons';
 import { MediaItemActions } from '../MediaItemActions';
 import posterFallback from './no-poster.png';
@@ -42,12 +41,7 @@ export function FileGridItem(props: { file: IFileInfo; onOpen: () => void; displ
 				<CardHeader title={isTitleFeature(file) ? file.title : file.name} subheader={isYearFeature(file) ? file.year : undefined}></CardHeader>
 				{isIVideoFile(file) && (
 					<CardContent>
-						{file.languages?.map(l => (
-							<Chip size="small" label={l} key={l} icon={<LanguageIcon />} />
-						))}
-						{file.subtitles?.filter(s => !s.forced).map(s => (
-							<Chip size="small" label={s.language} key={s.language} icon={<SubtitlesIcon />} />
-						))}
+						<LanguageDisplay video={file} />
 					</CardContent>
 				)}
 			</CardActionArea>
