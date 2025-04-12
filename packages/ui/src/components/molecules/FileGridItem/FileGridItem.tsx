@@ -6,6 +6,7 @@ import { useFileUrl, useIsVisible } from '../../../hooks';
 import { LanguageDisplay } from '../../atoms';
 import { Display } from '../DisplayButtons';
 import { MediaItemActions } from '../MediaItemActions';
+import styles from './FileGridItem.module.css';
 import posterFallback from './no-poster.png';
 import thumbFallback from './no-thumbnail.png';
 
@@ -35,10 +36,10 @@ export function FileGridItem(props: { file: IFileInfo; onOpen: () => void; displ
 	});
 
 	return useComputed(() => (
-		<Card sx={{ width: size.value.width }} ref={imgRef}>
-			<CardActionArea onClick={onOpen}>
+		<Card sx={{ width: size.value.width }} ref={imgRef} className={styles.card}>
+			<CardActionArea onClick={onOpen} className={styles.actionArea}>
 				<CardMedia image={url.value} sx={{ height: size.value.height, width: size.value.width }} />
-				<CardHeader title={isTitleFeature(file) ? file.title : file.name} subheader={isYearFeature(file) ? file.year : undefined}></CardHeader>
+				<CardHeader title={isTitleFeature(file) ? file.title : file.name} subheader={isYearFeature(file) ? file.year : undefined} className={styles.title} />
 				{isIVideoFile(file) && (
 					<CardContent>
 						<LanguageDisplay video={file} />

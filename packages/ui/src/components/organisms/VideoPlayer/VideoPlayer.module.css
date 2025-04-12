@@ -50,6 +50,6 @@
 	display: flex;
 	align-items: center;
 	gap: 5px;
-	background: linear-gradient(0deg, var(--mui-palette-common-background) 75%, rgba(0, 0, 0, 0) 100%);
+	background: linear-gradient(0deg, rgb(from var(--mui-palette-common-background) r g b / 50%) 75%, rgba(0, 0, 0, 0) 100%);
 	color: var(--mui-palette-common-onBackground);
 }

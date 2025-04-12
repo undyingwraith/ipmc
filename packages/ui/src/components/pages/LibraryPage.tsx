@@ -40,7 +40,7 @@ export function LibraryPage(props: {
 		return sorted.value == undefined ? (
 			<LoadScreen />
 		) : (
-			<Grid container spacing={spacing} sx={{ height: '100%', justifyContent: 'center', paddingTop: spacing, paddingBottom: spacing }}>
+			<Grid container spacing={spacing} sx={{ justifyContent: 'center', paddingTop: spacing, paddingBottom: spacing, alignContent: 'stretch' }}>
 				{sorted.value.length === 0 ? (
 					<Grid>{_t('NoItems')}</Grid>
 				) : sorted.value.map(v => (

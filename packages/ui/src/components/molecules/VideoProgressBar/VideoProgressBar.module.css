@@ -31,5 +31,5 @@
 	display: flex;
 	flex-direction: row;
 	gap: 15px;
-	background-color: var(--mui-palette-common-background);
+	background-color: rgb(from var(--mui-palette-common-background) r g b / 50%);
 }
