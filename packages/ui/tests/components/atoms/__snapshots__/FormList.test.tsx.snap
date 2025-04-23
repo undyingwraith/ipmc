@@ -3,10 +3,10 @@
 exports[`FormList > Add button works 1`] = `
 <div>
   <div
-    class="MuiGrid2-root MuiGrid2-container MuiGrid2-direction-xs-row MuiGrid2-spacing-xs-1 css-octady-MuiGrid2-root"
+    class="MuiGrid-root MuiGrid-container MuiGrid-direction-xs-row MuiGrid-spacing-xs-1 css-1yvsbrk-MuiGrid-root"
   >
     <div
-      class="MuiGrid2-root MuiGrid2-direction-xs-row MuiGrid2-grid-xs-8 css-1cdctrw-MuiGrid2-root"
+      class="MuiGrid-root MuiGrid-direction-xs-row MuiGrid-grid-xs-8 css-1hw9i25-MuiGrid-root"
     >
       <p
         class="MuiTypography-root MuiTypography-body1 css-rizt0-MuiTypography-root"
@@ -15,7 +15,7 @@ exports[`FormList > Add button works 1`] = `
       </p>
     </div>
     <div
-      class="MuiGrid2-root MuiGrid2-direction-xs-row MuiGrid2-grid-xs-4 css-17yh78r-MuiGrid2-root"
+      class="MuiGrid-root MuiGrid-direction-xs-row MuiGrid-grid-xs-4 css-1oxte1b-MuiGrid-root"
     >
       <button
         class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-fullWidth MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-colorPrimary MuiButton-fullWidth css-uf9a8-MuiButtonBase-root-MuiButton-root"

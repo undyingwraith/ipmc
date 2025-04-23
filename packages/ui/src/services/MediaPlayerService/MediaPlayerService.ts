@@ -1,6 +1,6 @@
 import { Signal } from '@preact/signals-react';
 import { inject, injectable } from 'inversify';
-import { type IIpfsService, IIpfsServiceSymbol, type ILogService, ILogServiceSymbol, IVideoFile } from 'ipmc-interfaces';
+import { type IIpfsService, IIpfsServiceSymbol, type ILogService, ILogServiceSymbol, ISubtitleMetadata, type ITranslationService, ITranslationServiceSymbol, IVideoFile } from 'ipmc-interfaces';
 import { IMediaPlayerService } from './IMediaPlayerService';
 //@ts-ignore
 import shaka from 'shaka-player';
@@ -16,6 +16,7 @@ export class MediaPlayerService implements IMediaPlayerService {
 	public constructor(
 		@inject(IIpfsServiceSymbol) private readonly ipfs: IIpfsService,
 		@inject(ILogServiceSymbol) private readonly log: ILogService,
+		@inject(ITranslationServiceSymbol) private readonly translationService: ITranslationService,
 	) {
 		this.shakaPlugin = this.shakaPlugin.bind(this);
 		shaka.net.NetworkingEngine.registerScheme('ipfs', this.shakaPlugin, 1, false);
@@ -27,24 +28,21 @@ export class MediaPlayerService implements IMediaPlayerService {
 		this.player = player;
 		player.addEventListener('error', (error: any) => this.log.error(`Error code ${error.code} object ${error}`));
 		player.configure({
+			preferredTextLanguage: this.translationService.language.value,
+			preferredAudioLanguage: this.translationService.language.value,
 			streaming: {
+				alwaysStreamText: true,
 				rebufferingGoal: 5,
 				bufferingGoal: 30,
-			}
+			},
 		});
 		player.attach(el)
 			.then(() => player.load(`ipfs://${file.cid}/${file.video.name}`))
-			.then(() => {
-				this.subtitles.value = player.getTextTracks();
-				this.languages.value = player.getAudioLanguages();
-			})
 			.catch((ex: any) => {
 				this.log.error(ex);
 			});
 
 		return () => {
-			this.languages.value = [];
-			this.subtitles.value = [];
 			this.videoEl = undefined;
 			this.player = undefined;
 			player.unload();
@@ -67,19 +65,18 @@ export class MediaPlayerService implements IMediaPlayerService {
 		}
 	}
 
-	public selectSubtitle(trackName?: string) {
-		if (trackName) {
-			this.player.value.selectTextTrack(trackName);
-			this.player.value.setTextTrackVisibility(true);
+	public selectSubtitle(subtitle?: ISubtitleMetadata) {
+		if (subtitle) {
+			this.player.selectTextLanguage(subtitle.language, subtitle.role, subtitle.forced);
+			this.player.setTextTrackVisibility(true);
 		} else {
-			this.player.value.setTextTrackVisibility(false);
+			this.player.setTextTrackVisibility(false);
 		}
-
 	}
 
-	public languages = new Signal([]);
-
-	public subtitles = new Signal([]);
+	public selectLanguage(language: string) {
+		this.player.selectAudioLanguage(language);
+	}
 
 	public playing = new Signal(false);
 

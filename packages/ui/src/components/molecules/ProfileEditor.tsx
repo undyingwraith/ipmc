@@ -1,5 +1,5 @@
 import { Button, Card, CardActions, CardContent, CardHeader } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import { Grid } from '@mui/material';
 import { Signal, useComputed, useSignal } from '@preact/signals-react';
 import { uuid } from 'ipmc-core';
 import { IConfigurationService, IConfigurationServiceSymbol, ILibrary, IProfile, isInternalProfile, isRemoteProfile } from 'ipmc-interfaces';

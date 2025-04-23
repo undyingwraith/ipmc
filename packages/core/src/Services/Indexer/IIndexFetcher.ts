@@ -1,33 +1,9 @@
-import { ILibrary, IOnProgress } from 'ipmc-interfaces';
+import { ILibrary } from 'ipmc-interfaces';
+import { IFetchOptions } from './IFetchOptions';
 
-export interface IFetchOptions<TIndex> {
-	/**
-	 * Id of the library.
-	 */
-	libraryId: string;
-
-	/**
-	 * The old index if available.
-	 */
-	old?: TIndex;
-
-	/**
-	 * cid to index.
-	 */
-
-	cid: string;
-
-	/**
-	 * Signal to abort the process.
-	 */
-	abortSignal: AbortSignal;
-
-	/**
-	 * function to update progress.
-	 */
-	onProgress: IOnProgress;
-}
-
+/**
+ * A class that fetches a index of type {@link TIndex}.
+ */
 export interface IIndexFetcher<TIndex> {
 	/**
 	 * Fetches the index of the specified CID.
@@ -43,5 +19,5 @@ export interface IIndexFetcher<TIndex> {
 	/**
 	 * Version of the indexer.
 	 */
-	version: string;
+	get version(): string;
 }

@@ -5,8 +5,8 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills';
 export default defineConfig(({ command, mode }) => {
 	const isProd = mode === 'production';
 	return {
+		base: './',
 		build: {
-			base: './',
 			outDir: 'dist',
 			emptyOutDir: true,
 			minify: isProd,
@@ -18,10 +18,8 @@ export default defineConfig(({ command, mode }) => {
 						if (id.includes('node_modules')) {
 							if (['@mui', '@emotion'].some(i => id.includes(i))) {
 								return 'mui';
-							} else if (['helia', 'libp2p', '@chainsafe', 'datastore-idb', 'blockstore-idb'].some(i => id.includes(i))) {
-								return 'helia';
-							} else if (['buffer', 'crypto', 'util', 'web-streams-polyfill'].some(i => id.includes(i))) {
-								return 'polyfill';
+							} else if (id.includes('shaka-player')) {
+								return 'shaka';
 							}
 
 							return 'vendor';

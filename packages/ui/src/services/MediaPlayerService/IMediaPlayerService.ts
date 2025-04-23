@@ -1,5 +1,5 @@
 import { Signal } from '@preact/signals-react';
-import { IVideoFile } from 'ipmc-interfaces';
+import { ISubtitleMetadata, IVideoFile } from 'ipmc-interfaces';
 
 export const IMediaPlayerServiceSymbol = Symbol.for('MediaPlayerSymbol');
 
@@ -21,19 +21,15 @@ export interface IMediaPlayerService {
 
 	/**
 	 * Select a subtitle track.
-	 * @param trackName Subtitle track to use (undefined if none).
+	 * @param subtitle Subtitle track to use (undefined if none).
 	 */
-	selectSubtitle(trackName?: string): void;
+	selectSubtitle(subtitle?: ISubtitleMetadata): void;
 
 	/**
-	 * Available languages, only available for videos.
+	 * Select a audio language.
+	 * @param language language to select.
 	 */
-	languages: Signal<any[]>;
-
-	/**
-	 * Available subtitles, only available for videos.
-	 */
-	subtitles: Signal<any[]>;
+	selectLanguage(language: string): void;
 
 	/**
 	 * Whether or not media is currently playing.

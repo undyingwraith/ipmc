@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { gossipsub } from '@chainsafe/libp2p-gossipsub';
 import { noise } from "@chainsafe/libp2p-noise";
 import { yamux } from '@chainsafe/libp2p-yamux';

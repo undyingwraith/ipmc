@@ -1,13 +1,13 @@
-import { List } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import { Box, List } from '@mui/material';
 import { useComputed, useSignal } from '@preact/signals-react';
 import { IIndexManager, IIndexManagerSymbol, ISortAndFilterService, ISortAndFilterServiceSymbol } from 'ipmc-interfaces';
 import React from 'react';
 import { useLocation } from 'wouter';
 import { useService } from '../../context/AppContext';
 import { useAppbarButtons, usePersistentSignal, useTranslation } from '../../hooks';
-import { ErrorBoundary, FileGridItem, FileListItem, LoadScreen, SearchField } from '../molecules';
+import { ErrorBoundary, FileListItem, LoadScreen, SearchField } from '../molecules';
 import { Display, DisplayButtons } from '../molecules/DisplayButtons';
+import { FileGrid } from '../organisms';
 
 export function LibraryPage(props: {
 	library: string;
@@ -15,7 +15,6 @@ export function LibraryPage(props: {
 	const { library } = props;
 	const [_, setLocation] = useLocation();
 	const _t = useTranslation();
-	const spacing = 1;
 
 	const indexManager = useService<IIndexManager>(IIndexManagerSymbol);
 	const sortAndFilterService = useService<ISortAndFilterService>(ISortAndFilterServiceSymbol);
@@ -40,39 +39,28 @@ export function LibraryPage(props: {
 	return useComputed(() => {
 		return sorted.value == undefined ? (
 			<LoadScreen />
-		) : display.value == Display.List ? (
-			<List>
-				{sorted.value.map(v => (
-					<ErrorBoundary key={v.cid}>
-						<FileListItem
-							file={v}
-							onOpen={() => {
-								setLocation(`/${v.name}`);
-							}}
-						/>
-					</ErrorBoundary>
-				))}
-			</List>
-
 		) : (
-			<Grid container spacing={spacing} sx={{ height: '100%', justifyContent: 'center', paddingTop: spacing, paddingBottom: spacing }}>;
-				{sorted.value.length === 0 ? (
-					<Grid>{_t('NoItems')}</Grid>
-				) : sorted.value.map(v => (
-					<Grid key={v.cid}>
-						<ErrorBoundary>
-							<FileGridItem
+			sorted.value.length === 0 ? (
+				<Box>{_t('NoItems')}</Box>
+			) : display.value == Display.List ? (
+				<List>
+					{sorted.value.map(v => (
+						<ErrorBoundary key={v.cid}>
+							<FileListItem
+								file={v}
 								onOpen={() => {
 									setLocation(`/${v.name}`);
 								}}
-								file={v}
-								display={display}
 							/>
 						</ErrorBoundary>
-					</Grid>
-				))
-				}
-			</Grid >
+					))}
+				</List>
+			) : (
+				<FileGrid
+					display={display}
+					files={sorted.value}
+				/>
+			)
 		);
 	});
 }

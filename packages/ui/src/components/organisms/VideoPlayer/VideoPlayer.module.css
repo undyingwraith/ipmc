@@ -50,29 +50,6 @@
 	display: flex;
 	align-items: center;
 	gap: 5px;
-	background: linear-gradient(0deg, var(--mui-palette-common-background) 75%, rgba(0, 0, 0, 0) 100%);
+	background: linear-gradient(0deg, rgb(from var(--mui-palette-common-background) r g b / 50%) 75%, rgba(0, 0, 0, 0) 100%);
 	color: var(--mui-palette-common-onBackground);
-}
-
-.progress,
-.progressFilled {
-	height: 25px;
-	background-color: var(--mui-palette-primary-main);
-	border-radius: 12.5px;
-}
-
-.progress {
-	flex-grow: 1;
-}
-
-.progressFilled {
-	background-color: var(--mui-palette-primary-dark);
-}
-
-.progressContainer {
-	padding: 5px;
-	display: flex;
-	flex-direction: row;
-	gap: 15px;
-	background-color: var(--mui-palette-common-background);
 }

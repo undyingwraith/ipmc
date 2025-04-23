@@ -1,0 +1,16 @@
+.container {
+	--spacing: 10px;
+	justify-content: flex-start;
+	align-content: stretch;
+	padding: var(--spacing);
+	gap: var(--spacing);
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.item {
+	width: 240px;
+	min-width: 240px;
+	max-width: 480px;
+	flex: 1 0 240px;
+}

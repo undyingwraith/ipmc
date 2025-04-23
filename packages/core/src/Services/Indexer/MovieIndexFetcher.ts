@@ -1,16 +1,28 @@
 import { IFileInfo, IIpfsService, ILibrary, ILogService, IMovieMetaData, IOnProgress } from 'ipmc-interfaces';
 import { Regexes } from '../../Regexes';
-import { IFetchOptions, IIndexFetcher } from './IIndexFetcher';
+import { IIndexFetcher } from './IIndexFetcher';
 import { VideoIndexFetcher } from './VideoIndexFetcher';
+import { IFetchOptions } from './IFetchOptions';
 
 export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 	constructor(private readonly node: IIpfsService, private readonly log: ILogService) {
 		this.videoIndexer = new VideoIndexFetcher(node);
 	}
 
+	/**
+	 * @inheritdoc
+	 */
 	public get version() {
 		return `0_${this.videoIndexer.version}`;
 	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public canIndex(library: ILibrary): boolean {
+		return library.type === 'movie';
+	}
+
 
 	/**
 	 * @inheritdoc
@@ -33,6 +45,13 @@ export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 		return index;
 	}
 
+	/**
+	 * Extracts the metadat of a single {@link IMovieMetaData}.
+	 * @param libraryId id of the {@link ILibrary}.
+	 * @param entry the entry to fetch data from.
+	 * @param signal {@link AbortSignal}.
+	 * @returns the extracted {@link IMovieMetaData}.
+	 */
 	public async extractMovieMetaData(libraryId: string, entry: IFileInfo, signal: AbortSignal): Promise<IMovieMetaData> {
 		return this.videoIndexer.fetch<IMovieMetaData>(libraryId, entry, signal, (files, video) => {
 			const videoData = Regexes.VideoFile('mpd').exec(video.video.name)!;
@@ -44,10 +63,6 @@ export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 				posters: files.filter(f => Regexes.Poster.exec(f.name) != null),
 			};
 		});
-	}
-
-	public canIndex(library: ILibrary): boolean {
-		return library.type === 'movie';
 	}
 
 	private videoIndexer: VideoIndexFetcher;

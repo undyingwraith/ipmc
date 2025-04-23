@@ -1,11 +1,11 @@
-import React from 'react';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import HeartBrokenIcon from '@mui/icons-material/HeartBroken';
-import { usePinManager } from '../../hooks/usePinManager';
+import { Button } from '@mui/material';
 import { useComputed } from '@preact/signals-react';
-import { IconButton } from '@mui/material';
 import { HasPinAbility, PinStatus } from 'ipmc-interfaces';
+import React from 'react';
+import { usePinManager } from '../../hooks/usePinManager';
 
 export function PinButton(props: { item: HasPinAbility; }) {
 	const [status, toggleStatus] = usePinManager(props.item);
@@ -15,7 +15,7 @@ export function PinButton(props: { item: HasPinAbility; }) {
 		return s == PinStatus.Pinned ? <FavoriteIcon /> : s == PinStatus.UnPinned ? <FavoriteBorderIcon /> : <HeartBrokenIcon />;
 	});
 
-	return <IconButton onClick={() => toggleStatus(status.value == PinStatus.UnPinned)}>
+	return <Button onClick={() => toggleStatus(status.value == PinStatus.UnPinned)}>
 		{icon}
-	</IconButton>;
+	</Button>;
 }

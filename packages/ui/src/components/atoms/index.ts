@@ -1,3 +1,4 @@
+export * from './LanguageDisplay';
 export { DetailOverlay } from './DetailOverlay';
 export { ErrorDisplay } from './ErrorDisplay';
 export { FileInfoDisplay } from './FileInfoDisplay';
