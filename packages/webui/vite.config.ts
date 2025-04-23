@@ -20,6 +20,10 @@ export default defineConfig(({ command, mode }) => {
 								return 'mui';
 							} else if (id.includes('shaka-player')) {
 								return 'shaka';
+							} else if (['cborg', 'multiformats', 'dag-jose'].some(i => id.includes(i))) {
+								return 'ipfs';
+							} else if (['asn1js', 'webcrypto-core', 'acme-client'].some(i => id.includes(i))) {
+								return 'crypto';
 							}
 
 							return 'vendor';
