@@ -112,6 +112,7 @@ export async function importFiles(files: string[], packager: string, ipfs: strin
 			}
 		}
 
+		const fileCount = new Map<string, number>();
 		for (const file of otherFiles) {
 			const use = await confirm({
 				message: `[${file}] Use file?`,
@@ -120,16 +121,19 @@ export async function importFiles(files: string[], packager: string, ipfs: strin
 
 			if (use) {
 				if (['png', 'jpg', 'jpeg'].some(k => file.endsWith(`.${k}`))) {
-					const imageType = await select({
+					const imageType = await select<string>({
 						message: 'Image Type',
 						choices: [
 							'Poster',
-						]
+						],
 					});
+
+					const n = fileCount.get(imageType) ?? 0;
+					fileCount.set(imageType, n + 1);
 
 					switch (imageType) {
 						case 'Poster':
-							fs.copyFileSync(file, path.join(outDir.getPath(), `${metaData.fileName}-poster.${file.substring(file.lastIndexOf('.') + 1)}`));
+							fs.copyFileSync(file, path.join(outDir.getPath(), `${metaData.fileName}-poster${n === 0 ? '' : n}.${file.substring(file.lastIndexOf('.') + 1)}`));
 							break;
 					}
 				}
