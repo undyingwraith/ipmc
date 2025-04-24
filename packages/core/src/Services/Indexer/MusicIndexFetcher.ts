@@ -43,10 +43,11 @@ export class MusicIndexFetcher implements IIndexFetcher<IMusicMetaData[]> {
 		const entries = await this.node.ls(entry.cid, signal);
 		const files = entries.filter(f => f.type == 'file');
 		const musicFile = files.find(f => f.name.endsWith('.mp3'));
-		const tags = NodeID3.read(musicFile);
 
 		if (!musicFile) throw new Error('Failed to find music file in ' + entry.name + '|' + entry.cid);
 
+		const track = Buffer.from(await this.node.fetch(musicFile?.cid));
+		const tags = NodeID3.read(track);
 
 
 		const result: IMusicMetaData = {
