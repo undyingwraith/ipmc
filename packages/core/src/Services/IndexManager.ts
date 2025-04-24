@@ -2,6 +2,7 @@ import { Signal } from '@preact/signals-core';
 import { inject, injectable, postConstruct, preDestroy } from 'inversify';
 import { IIndexManager, IIpfsService, IIpfsServiceSymbol, ILibrary, ILibraryIndex, ILogService, ILogServiceSymbol, IObjectStore, IObjectStoreSymbol, IOnProgress, IProfile, IProfileSymbol, ITaskManager, ITaskManagerSymbol, ITranslationService, ITranslationServiceSymbol } from 'ipmc-interfaces';
 import { IIndexFetcher, MovieIndexFetcher, SeriesIndexFetcher } from './Indexer';
+import { MusicIndexFetcher } from './Indexer/MusicIndexFetcher';
 
 @injectable()
 export class IndexManager implements IIndexManager {
@@ -15,6 +16,7 @@ export class IndexManager implements IIndexManager {
 	) {
 		this.indexers.push(new MovieIndexFetcher(this.ipfs, this.log));
 		this.indexers.push(new SeriesIndexFetcher(this.ipfs));
+		this.indexers.push(new MusicIndexFetcher(this.ipfs, this.log));
 
 		for (const lib of this.profile.libraries) {
 			const indexSignal = new Signal<ILibraryIndex<any> | undefined>(this.objectStore.get(this.getIndexStorageKey(lib.id)));

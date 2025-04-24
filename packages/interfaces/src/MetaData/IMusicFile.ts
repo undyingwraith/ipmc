@@ -4,8 +4,7 @@ import { ISubtitleMetadata } from './ISubtitleMetadata';
 export interface IMusicFile extends IFileInfo {
 	music: IFileInfo;
 	thumbnails: IFileInfo[];
-	lyrics: string;
-
+	lyrics?: string;
 }
 
 export function isIMusicFile(item: any): item is IMusicFile {

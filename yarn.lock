@@ -7290,6 +7290,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"iconv-lite@npm:0.6.2":
+  version: 0.6.2
+  resolution: "iconv-lite@npm:0.6.2"
+  dependencies:
+    safer-buffer: "npm:>= 2.1.2 < 3.0.0"
+  checksum: 10c0/e2655b4185225d25f9b69d736d0224f91275a5bd7bb27a37d0d1adc0727d32d28c428a9a48c8046b49588f2ab34d37f53ea8d5652dcf3afadc10261f343cde1c
+  languageName: node
+  linkType: hard
+
 "iconv-lite@npm:0.6.3, iconv-lite@npm:^0.6.2":
   version: 0.6.3
   resolution: "iconv-lite@npm:0.6.3"
@@ -7524,6 +7533,7 @@ __metadata:
     inversify: "npm:^6.2.2"
     ipmc-interfaces: "workspace:^"
     kubo-rpc-client: "npm:^5.1.0"
+    node-id3: "npm:^0.2.9"
     reflect-metadata: "npm:^0.2.2"
     typescript: "npm:^5.8.3"
     vitest: "npm:^3.1.1"
@@ -9547,6 +9557,15 @@ __metadata:
   bin:
     node-gyp: bin/node-gyp.js
   checksum: 10c0/9cc821111ca244a01fb7f054db7523ab0a0cd837f665267eb962eb87695d71fb1e681f9e21464cc2fd7c05530dc4c81b810bca1a88f7d7186909b74477491a3c
+  languageName: node
+  linkType: hard
+
+"node-id3@npm:^0.2.9":
+  version: 0.2.9
+  resolution: "node-id3@npm:0.2.9"
+  dependencies:
+    iconv-lite: "npm:0.6.2"
+  checksum: 10c0/4b06f71d5d04f6e4562e015402be17e974edf93e993702a5c47f97bb1a9e8c3c536c8720694260de378ab037130090e5e765baa0986fe14bb676d76876f8d28e
   languageName: node
   linkType: hard
 
