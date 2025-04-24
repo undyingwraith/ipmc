@@ -1,14 +1,18 @@
-import { IEpisodeMetaData, IFileInfo, IIpfsService, ILibrary, ISeasonMetaData, ISeriesMetaData } from 'ipmc-interfaces';
+import { inject } from 'inversify';
+import { IEpisodeMetaData, IFileInfo, IIpfsService, IIpfsServiceSymbol, ILibrary, ILogService, ILogServiceSymbol, IOnProgress, ISeasonMetaData, ISeriesMetaData } from 'ipmc-interfaces';
 import { Regexes } from '../../Regexes';
+import { IFetchOptions } from './IFetchOptions';
 import { IIndexFetcher } from './IIndexFetcher';
 import { VideoIndexFetcher } from './VideoIndexFetcher';
-import { IFetchOptions } from './IFetchOptions';
 
 /**
  * Fetches a index for an {@link ILibrary} of type series.
  */
 export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
-	constructor(private readonly node: IIpfsService) {
+	constructor(
+		@inject(IIpfsServiceSymbol) private readonly node: IIpfsService,
+		@inject(ILogServiceSymbol) private readonly log: ILogService,
+	) {
 		this.videoIndexer = new VideoIndexFetcher(node);
 	}
 
@@ -30,11 +34,13 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 	 * @inheritdoc
 	 */
 	public async fetchIndex(options: IFetchOptions<ISeriesMetaData[]>): Promise<ISeriesMetaData[]> {
-		const { libraryId, cid, abortSignal } = options;
-		const files = (await this.node.ls(cid)).filter(f => f.type == 'dir');
+		const { libraryId, cid, abortSignal, onProgress } = options;
+		const folders = (await this.node.ls(cid)).filter(f => f.type == 'dir');
+
 		const index = [];
-		for (const file of files) {
-			index.push(await this.extractSeriesMetaData(libraryId, file, abortSignal));
+		for (const [i, file] of folders.entries()) {
+			index.push(await this.extractSeriesMetaData(libraryId, file, this.createSubProgress(onProgress, i, folders.length), abortSignal));
+			onProgress(i + 1, folders.length);
 		}
 
 		return index;
@@ -47,7 +53,7 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 	 * @param signal {@link AbortSignal}.
 	 * @returns the extracted {@link ISeriesMetaData}.
 	 */
-	public async extractSeriesMetaData(libraryId: string, entry: IFileInfo, signal: AbortSignal): Promise<ISeriesMetaData> {
+	public async extractSeriesMetaData(libraryId: string, entry: IFileInfo, onProgress: IOnProgress, signal: AbortSignal): Promise<ISeriesMetaData> {
 		const entries = await this.node.ls(entry.cid);
 		const files = entries.filter(f => f.type == 'file');
 		const folders = entries.filter(f => f.type !== 'file');
@@ -59,9 +65,19 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 			posters: files.filter(f => Regexes.Poster.exec(f.name) != null),
 		};
 
+		const items = [];
+		for (const [i, file] of folders.entries()) {
+			try {
+				items.push(await this.extractSeasonMetaData(file, serie, this.createSubProgress(onProgress, i, folders.length), signal));
+				onProgress(i + 1, folders.length);
+			} catch (ex: any) {
+				this.log.error(ex);
+			}
+		}
+
 		return {
 			...serie,
-			items: await Promise.all(folders.map(season => this.extractSeasonMetaData(season, serie, signal))),
+			items,
 		};
 	}
 
@@ -72,7 +88,7 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 	 * @param signal {@link AbortSignal}.
 	 * @returns the extracted {@link ISeasonMetaData}.
 	 */
-	public async extractSeasonMetaData(entry: IFileInfo, parent: Omit<ISeriesMetaData, 'items'>, signal: AbortSignal): Promise<ISeasonMetaData> {
+	public async extractSeasonMetaData(entry: IFileInfo, parent: Omit<ISeriesMetaData, 'items'>, onProgress: IOnProgress, signal: AbortSignal): Promise<ISeasonMetaData> {
 		const entries = await this.node.ls(entry.cid);
 		const files = entries.filter(f => f.type == 'file');
 		const folders = entries.filter(f => f.type !== 'file');
@@ -87,9 +103,19 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 			season.posters = parent.posters;
 		}
 
+		const items = [];
+		for (const [i, file] of folders.entries()) {
+			try {
+				items.push(await this.extractEpisodeMetaData(file, season, signal));
+				onProgress(i + 1, folders.length);
+			} catch (ex: any) {
+				this.log.error(ex);
+			}
+		}
+
 		return {
 			...season,
-			items: await Promise.all(folders.map(episode => this.extractEpisodeMetaData(episode, season, signal))),
+			items,
 		};
 	}
 
@@ -113,6 +139,12 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 				title: video.name,
 			};
 		});
+	}
+
+	public createSubProgress(onProgress: IOnProgress, progress: number, total: number): IOnProgress {
+		return (subProgress, subTotal) => {
+			onProgress(progress + (subProgress / (subTotal ?? 100)), total);
+		};
 	}
 
 	private videoIndexer: VideoIndexFetcher;
