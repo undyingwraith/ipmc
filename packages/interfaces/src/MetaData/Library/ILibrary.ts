@@ -1,9 +1,21 @@
-import { IGenericLibrary } from './IGenericLibrary';
+export interface ILibrary {
+	/**
+	 * Id of the library. Must be unique.
+	 */
+	id: string;
 
-export type IMovieLibrary = IGenericLibrary<'movie'>;
+	/**
+	 * Name of the library. Must be unique.
+	 */
+	name: string;
 
-export type ISeriesLibrary = IGenericLibrary<'series'>;
+	/**
+	 * IPNS path to update from.
+	 */
+	upstream: string;
 
-export type IMusicLibrary = IGenericLibrary<'music'>;
-
-export type ILibrary = IMovieLibrary | ISeriesLibrary | IMusicLibrary;
+	/**
+	 * Type of the library.
+	 */
+	type: 'music' | 'movie' | 'series';
+}

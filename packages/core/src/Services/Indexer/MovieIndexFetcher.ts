@@ -4,6 +4,9 @@ import { IIndexFetcher } from './IIndexFetcher';
 import { VideoIndexFetcher } from './VideoIndexFetcher';
 import { IFetchOptions } from './IFetchOptions';
 
+/**
+ * Fetches a index for an {@link ILibrary} of type movie.
+ */
 export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 	constructor(private readonly node: IIpfsService, private readonly log: ILogService) {
 		this.videoIndexer = new VideoIndexFetcher(node);

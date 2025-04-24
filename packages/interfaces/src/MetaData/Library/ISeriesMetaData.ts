@@ -1,18 +1,23 @@
-import { HasPinAbility, HasPoster } from '../Features';
-import { IFileInfo } from '../IFileInfo';
+import { HasPinAbility, HasPoster, HasTitle } from '../Features';
 import { IFolderFile } from '../IFolderFile';
 import { IVideoFile } from '../IVideoFile';
 
-export type ISeriesMetaData = IFolderFile & HasPinAbility & {
-	title: string;
-	posters: IFileInfo[];
+/**
+ * The metadata of a series.
+ */
+export type ISeriesMetaData = IFolderFile & HasPinAbility & HasTitle & HasPoster & {
 	yearStart?: number;
 	yearEnd?: number;
 };
 
+/**
+ * The metadata of a season.
+ */
 export type ISeasonMetaData = IFolderFile & HasPoster & HasPinAbility;
 
-export type IEpisodeMetaData = IVideoFile & HasPinAbility & {
-	title: string;
+/**
+ * The metadata of an episode.
+ */
+export type IEpisodeMetaData = IVideoFile & HasPinAbility & HasTitle & {
 	date?: string;
 };
