@@ -1,3 +1,6 @@
+/**
+ * A Library.
+ */
 export interface ILibrary {
 	/**
 	 * Id of the library. Must be unique.

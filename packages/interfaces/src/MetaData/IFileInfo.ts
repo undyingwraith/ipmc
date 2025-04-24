@@ -23,6 +23,11 @@ export interface IFileInfo {
 	type: 'dir' | 'file';
 }
 
+/**
+ * Checks whether the specified item is a {@link IFileInfo}.
+ * @param item item to check.
+ * @returns whether the specified item is a {@link IFileInfo}.
+ */
 export function isIFileInfo(item: any): item is IFileInfo {
 	return (
 		typeof item === 'object' &&
