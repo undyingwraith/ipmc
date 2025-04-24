@@ -1,10 +1,8 @@
-import React from 'react';
-import { Button, Chip, ListItem, ListItemText } from '@mui/material';
+import { Button, ListItem, ListItemText } from '@mui/material';
 import { IFileInfo, isIVideoFile, isPinFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
+import React from 'react';
 import { useTranslation } from '../../hooks';
-import { PinButton } from '../atoms';
-import SubtitlesIcon from '@mui/icons-material/Subtitles';
-import LanguageIcon from '@mui/icons-material/Language';
+import { LanguageDisplay, PinButton } from '../atoms';
 
 export function FileListItem(props: { file: IFileInfo; onOpen: () => void; }) {
 	const _t = useTranslation();
@@ -13,16 +11,7 @@ export function FileListItem(props: { file: IFileInfo; onOpen: () => void; }) {
 		<ListItem
 			secondaryAction={
 				<>
-					{isIVideoFile(props.file) && (
-						<>
-							{props.file.languages?.map(l => (
-								<Chip size="small" label={l} key={l} icon={<LanguageIcon />} />
-							))}
-							{props.file.subtitles?.filter(s => !s.forced).map(s => (
-								<Chip size="small" label={s.language} key={s.language} icon={<SubtitlesIcon />} />
-							))}
-						</>
-					)}
+					{isIVideoFile(props.file) && (<LanguageDisplay video={props.file} />)}
 					{isPinFeature(props.file) && <PinButton item={props.file} />}
 					<Button onClick={props.onOpen}>{_t('Open')}</Button>
 				</>
