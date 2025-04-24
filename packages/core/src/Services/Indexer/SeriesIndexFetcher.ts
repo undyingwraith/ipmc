@@ -29,8 +29,12 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 	public async fetchIndex(options: IFetchOptions<ISeriesMetaData[]>): Promise<ISeriesMetaData[]> {
 		const { libraryId, cid, abortSignal } = options;
 		const files = (await this.node.ls(cid, abortSignal)).filter(f => f.type == 'dir');
+
+		abortSignal.throwIfAborted();
+
 		const index = [];
 		for (const file of files) {
+			//TODO: Try Catch
 			index.push(await this.extractSeriesMetaData(libraryId, file, abortSignal));
 		}
 
