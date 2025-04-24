@@ -4,6 +4,9 @@ import { IIndexFetcher } from './IIndexFetcher';
 import { VideoIndexFetcher } from './VideoIndexFetcher';
 import { IFetchOptions } from './IFetchOptions';
 
+/**
+ * Fetches a index for an {@link ILibrary} of type series.
+ */
 export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 	constructor(private readonly node: IIpfsService) {
 		this.videoIndexer = new VideoIndexFetcher(node);
@@ -17,8 +20,8 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 	}
 
 	/**
-		 * @inheritdoc
-		 */
+	 * @inheritdoc
+	 */
 	public canIndex(library: ILibrary): boolean {
 		return library.type === 'series';
 	}

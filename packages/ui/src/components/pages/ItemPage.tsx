@@ -1,14 +1,13 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Box, Button, Paper, Stack, Typography, List } from '@mui/material';
+import { Box, Button, Paper, Stack, Typography } from '@mui/material';
+import { useComputed } from '@preact/signals-react';
 import { IFileInfo, isIFolderFile, isIVideoFile, isPinFeature } from 'ipmc-interfaces';
 import React from 'react';
-import { useLocation } from 'wouter';
 import { useAppbarButtons, usePersistentSignal, useTitle, useTranslation } from '../../hooks';
 import { IAppbarButtonOptions } from '../../services/AppbarButtonService';
 import { FileInfoDisplay, PinButton } from '../atoms';
-import { Display, DisplayButtons, ErrorBoundary, FileListItem } from '../molecules';
-import { FileGrid, VideoPlayer } from '../organisms';
-import { useComputed } from '@preact/signals-react';
+import { Display, DisplayButtons } from '../molecules';
+import { FileGrid, FileList, VideoPlayer } from '../organisms';
 
 
 export function ItemPage(props: {
@@ -16,7 +15,6 @@ export function ItemPage(props: {
 }) {
 	const file = props.item;
 	const _t = useTranslation();
-	const [_, setLocation] = useLocation();
 	const title = useTitle(file);
 
 	const display = usePersistentSignal<Display>(Display.Poster, 'display');
@@ -52,16 +50,9 @@ export function ItemPage(props: {
 				<Box>{_t('NoItems')}</Box>
 			) : useComputed(() =>
 				display.value == Display.List ? (
-					<List>
-						{file.items.map(i => (
-							<ErrorBoundary key={i.cid}>
-								<FileListItem
-									file={i}
-									onOpen={() => setLocation(`/${i.name}`)}
-								/>
-							</ErrorBoundary>
-						))}
-					</List>
+					<FileList
+						files={file.items}
+					/>
 				) : (
 					<FileGrid
 						display={display}

@@ -1,8 +1,9 @@
-import { IBaseProfile } from "./IBaseProfile";
+import { IBaseProfile, isIBaseProfile } from "./IBaseProfile";
 
-export interface IInternalProfile extends IBaseProfile {
-	type: 'internal';
-
+/**
+ * A {@link IProfile} for a internal ipfs node.
+ */
+export interface IInternalProfile extends IBaseProfile<'internal'> {
 	/**
 	 * Optional port number for the node to use (default: any available port).
 	 */
@@ -19,6 +20,11 @@ export interface IInternalProfile extends IBaseProfile {
 	bootstrap?: string[];
 }
 
+/**
+ * Checks whether the specified item is a {@link IInternalProfile}.
+ * @param profile item to check.
+ * @returns whether the specified item is a {@link IInternalProfile}.
+ */
 export function isInternalProfile(profile: any): profile is IInternalProfile {
-	return profile.type == 'internal';
+	return isIBaseProfile(profile) && profile.type == 'internal';
 } 
