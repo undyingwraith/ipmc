@@ -49,10 +49,28 @@ async function getEpisodeMetadata(files: string[]): Promise<{ seriesTitle: strin
 	function zeroPad(input: string) {
 		return String(input).padStart(2, '0');
 	}
-	const seriesTitle = await input({ message: 'Series title?', required: true });
-	const season = await input({ message: 'Season?', default: '1', required: true });
-	const episode = await input({ message: 'Episode?', default: '1', required: true });
-	const episodeTitle = await input({ message: 'Episode title?', required: false });
+
+	const seriesData = files.map(file => Regexes.EpisodeFile('mp4').exec(path.basename(file))).find(r => r != null);
+	const seriesTitle = await input({
+		message: 'Series title?',
+		default: seriesData != null ? seriesData[1] : undefined,
+		required: true
+	});
+	const season = await input({
+		message: 'Season?',
+		default: seriesData != null ? seriesData[2] : '1',
+		required: true
+	});
+	const episode = await input({
+		message: 'Episode?',
+		default: seriesData != null ? seriesData[3] : '1',
+		required: true
+	});
+	const episodeTitle = await input({
+		message: 'Episode title?',
+		default: seriesData != null ? seriesData[4] : undefined,
+		required: false
+	});
 
 	return {
 		seriesTitle,
