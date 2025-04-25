@@ -1,4 +1,4 @@
-import { Fullscreen, FullscreenExit, Pause, PlayArrow, VolumeDown, VolumeUp } from '@mui/icons-material';
+import { Forward30, Fullscreen, FullscreenExit, Pause, PlayArrow, Replay30, VolumeDown, VolumeUp } from '@mui/icons-material';
 import { IconButton, Slider, Stack } from '@mui/material';
 import { computed, useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
 import { IVideoFile } from 'ipmc-interfaces';
@@ -12,6 +12,8 @@ import styles from './VideoPlayer.module.css';
 
 export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 	const mediaPlayer = useService<IMediaPlayerService>(IMediaPlayerServiceSymbol);
+	const volumeStep = 0.1;
+	let clickTimeout: NodeJS.Timeout | undefined;
 
 	const videoRef = useSignal<HTMLVideoElement | null>(null);
 	const containerRef = useSignal<HTMLDivElement | null>(null);
@@ -48,6 +50,9 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 			videoRef.value.addEventListener('waiting', () => {
 				loading.value = true;
 			});
+			videoRef.value.addEventListener('stalled', () => {
+				loading.value = true;
+			});
 			videoRef.value.addEventListener('canplay', () => {
 				loading.value = false;
 			});
@@ -79,8 +84,28 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 		}
 	}
 
-	useHotkey({ key: 'F' }, () => toggleFullScreen());
+	function replay() {
+		mediaPlayer.jumpRelative(-30);
+	}
+
+	function forward() {
+		mediaPlayer.jumpRelative(30);
+	}
+
+	useHotkey({ key: 'F' }, toggleFullScreen);
 	useHotkey({ key: ' ' }, () => mediaPlayer.togglePlay());
+	useHotkey({ key: 'ArrowRight' }, forward);
+	useHotkey({ key: 'ArrowLeft' }, replay);
+	useHotkey({ key: 'ArrowUp' }, () => {
+		if (volume.peek() + volumeStep < 1) {
+			volume.value += volumeStep;
+		}
+	});
+	useHotkey({ key: 'ArrowDown' }, () => {
+		if (volume.peek() + volumeStep >= 0) {
+			volume.value -= volumeStep;
+		}
+	});
 
 	return (
 		<div className={styles.outerContainer}>
@@ -90,20 +115,43 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 					ref={(ref) => {
 						videoRef.value = ref;
 					}}
-					preload={'metadata'}
+					preload={'auto'}
 					className={styles.video}
 				/>
+				<div className={`${styles.videoOverlay} ${styles.visible}`}>
+					<div className={styles.spacer}>
+						{useComputed(() => loading.value && <Loader />)}
+					</div>
+				</div>
 				{useComputed(() => (
 					<div className={`${styles.videoOverlay} ${overlayVisible.value ? styles.visible : ''}`}>
 						<div>
 							<FileInfoDisplay file={props.file} />
 						</div>
-						<div className={styles.spacer} onClick={() => mediaPlayer.togglePlay()} onDoubleClick={() => toggleFullScreen()}>
-							{loading.value && <Loader />}
+						<div className={styles.spacer} onClick={() => {
+							if (clickTimeout !== undefined) {
+								clearTimeout(clickTimeout);
+								return;
+							}
+
+							clickTimeout = setTimeout(() => {
+								clickTimeout = undefined;
+								mediaPlayer.togglePlay();
+							}, 300);
+						}}>
+							<div className={styles.spacer} onDoubleClick={replay} />
+							<div className={`${styles.spacer} ${styles.center}`} onDoubleClick={toggleFullScreen} />
+							<div className={styles.spacer} onDoubleClick={forward} />
 						</div>
 						<div className={styles.toolbar}>
+							<IconButton onClick={() => replay()}>
+								<Replay30 />
+							</IconButton>
 							<IconButton onClick={() => mediaPlayer.togglePlay()}>
 								{computed(() => mediaPlayer.playing.value ? <Pause /> : <PlayArrow />)}
+							</IconButton>
+							<IconButton onClick={() => forward()}>
+								<Forward30 />
 							</IconButton>
 							<div className={styles.spacer} />
 							<div>
@@ -137,7 +185,7 @@ export function VideoPlayer(props: { file: IVideoFile; autoPlay?: boolean; }) {
 										onChange={(_, value) => volume.value = value as number}
 										min={0}
 										max={1}
-										step={0.05} />
+										step={volumeStep} />
 								))}
 								<IconButton onClick={() => { volume.value = 1; }}>
 									<VolumeUp />

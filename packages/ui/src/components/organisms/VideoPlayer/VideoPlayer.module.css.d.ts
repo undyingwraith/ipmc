@@ -6,5 +6,6 @@ declare const styles: {
 	readonly spacer: string;
 	readonly toolbar: string;
 	readonly visible: string;
+	readonly center: string;
 };
 export default styles;

@@ -20,6 +20,12 @@ export interface IMediaPlayerService {
 	togglePlay(): void;
 
 	/**
+	 * Jumps the current time by specified amount.
+	 * @param amount The amount to jump by in seconds (default: 30).
+	 */
+	jumpRelative(amount: number): void;
+
+	/**
 	 * Select a subtitle track.
 	 * @param subtitle Subtitle track to use (undefined if none).
 	 */

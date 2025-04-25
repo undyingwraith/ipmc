@@ -32,8 +32,8 @@ export class MediaPlayerService implements IMediaPlayerService {
 			preferredAudioLanguage: this.translationService.language.value,
 			streaming: {
 				alwaysStreamText: true,
-				rebufferingGoal: 5,
-				bufferingGoal: 30,
+				rebufferingGoal: 10,
+				bufferingGoal: 60,
 			},
 		});
 		player.attach(el)
@@ -76,6 +76,12 @@ export class MediaPlayerService implements IMediaPlayerService {
 
 	public selectLanguage(language: string) {
 		this.player.selectAudioLanguage(language);
+	}
+
+	public jumpRelative(amount: number) {
+		if (this.videoEl) {
+			this.videoEl.currentTime = this.videoEl.currentTime + amount;
+		}
 	}
 
 	public playing = new Signal(false);
