@@ -2,8 +2,6 @@ import { gossipsub } from '@chainsafe/libp2p-gossipsub';
 import { noise, pureJsCrypto } from '@chainsafe/libp2p-noise';
 import { yamux } from '@chainsafe/libp2p-yamux';
 import { bitswap, trustlessGateway } from '@helia/block-brokers';
-import { ipns } from '@helia/ipns';
-import { unixfs } from '@helia/unixfs';
 import { autoNAT } from '@libp2p/autonat';
 import { bootstrap } from '@libp2p/bootstrap';
 import { circuitRelayServer, circuitRelayTransport } from '@libp2p/circuit-relay-v2';
@@ -12,7 +10,6 @@ import { identify, identifyPush } from '@libp2p/identify';
 import { kadDHT, removePrivateAddressesMapper, removePublicAddressesMapper } from '@libp2p/kad-dht';
 import { keychain } from '@libp2p/keychain';
 import { mdns } from '@libp2p/mdns';
-import { peerIdFromString } from '@libp2p/peer-id';
 import { ping } from '@libp2p/ping';
 import { preSharedKey } from '@libp2p/pnet';
 import { pubsubPeerDiscovery } from '@libp2p/pubsub-peer-discovery';
@@ -25,11 +22,10 @@ import { LevelDatastore } from 'datastore-level';
 import { contextBridge, ipcRenderer } from 'electron';
 import fs from 'fs';
 import { createHelia } from 'helia';
-import { IConfigurationService, IFileInfo, IInternalProfile, IIpfsService, INodeService, IProfile } from 'ipmc-interfaces';
+import { createHeliaIpfs, Defaults } from 'ipmc-core';
+import { IConfigurationService, IInternalProfile, IIpfsService, INodeService, IProfile } from 'ipmc-interfaces';
 import * as libp2pInfo from 'libp2p/version';
-import { CID } from 'multiformats';
 import path from 'path';
-import { concat } from 'uint8arrays';
 
 async function getProfileFolder(id?: string): Promise<string> {
 	const appPath = path.join(await ipcRenderer.invoke('getAppPath'), 'profiles');
@@ -87,14 +83,7 @@ const nodeService: INodeService = {
 				],
 				peerDiscovery: [
 					bootstrap({
-						list: profile.bootstrap ?? (profile.swarmKey != undefined ? [] : [
-							//TODO: replace with Defaults from core module
-							'/dnsaddr/bootstrap.libp2p.io/p2p/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN',
-							'/dnsaddr/bootstrap.libp2p.io/p2p/QmbLHAnMoJPWSCR5Zhtx6BHJX9KiKNN6tpvbUcqanj75Nb',
-							'/dnsaddr/bootstrap.libp2p.io/p2p/QmcZf59bWwK5XFi76CZX8cbJ4BhTzzA3gU1ZjYZcYW3dwt',
-							'/dnsaddr/va1.bootstrap.libp2p.io/p2p/12D3KooWKnDdG3iXw9eTFijk3EWSunZcFi54Zka4wmtqtt6rPxc8',
-							'/ip4/104.131.131.82/tcp/4001/p2p/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ',
-						]),
+						list: profile.bootstrap ?? (profile.swarmKey != undefined ? [] : Defaults.Bootstrap),
 					}),
 					pubsubPeerDiscovery(),
 					mdns(),
@@ -146,64 +135,10 @@ const nodeService: INodeService = {
 		helia.libp2p.addEventListener('peer:discovery', console.log);
 		helia.libp2p.addEventListener('peer:connect', console.log);
 
-		const fs = unixfs(helia);
-
-		const service = ({
-			async ls(cid: string, signal) {
-				const files: IFileInfo[] = [];
-				for await (const file of fs.ls(CID.parse(cid), {
-					signal
-				})) {
-					files.push({
-						type: file.type == 'directory' ? 'dir' : 'file',
-						name: file.name,
-						cid: file.cid.toString(),
-					});
-				}
-				return files;
-			},
-			async stop() {
-				await helia.stop();
-				await blockstore.close();
-				await datastore.close();
-				nodes.delete(profile.id);
-			},
-			peers() {
-				return Promise.resolve([...new Set(helia.libp2p.getConnections().map(p => p.remoteAddr.toString()))]);
-			},
-			id() {
-				return helia.libp2p.peerId.toString();
-			},
-			async resolve(name) {
-				try {
-					return (await ipns(helia).resolve(peerIdFromString(name).publicKey!)).cid.toString();
-				} catch (ex) {
-					console.error(ex);
-					return (await ipns(helia).resolveDNSLink(name)).cid.toString();
-				}
-			},
-			isPinned(cid) {
-				return helia.pins.isPinned(CID.parse(cid));
-			},
-			async addPin(cid) {
-				for await (const block of helia.pins.add(CID.parse(cid))) {
-					console.debug(`Pin progress ${cid}: ${block.toString()}`);
-				}
-			},
-			async rmPin(cid) {
-				for await (const block of helia.pins.rm(CID.parse(cid))) {
-					console.debug(`Pin progress ${cid}: ${block.toString()}`);
-				}
-			},
-			async fetch(cid: string, path?: string) {
-				const data: Uint8Array[] = [];
-				for await (const buf of fs.cat(CID.parse(cid), {
-					path
-				})) {
-					data.push(buf);
-				}
-				return concat(data);
-			},
+		const service = createHeliaIpfs(helia, async () => {
+			await blockstore.close();
+			await datastore.close();
+			nodes.delete(profile.id);
 		});
 
 		nodes.set(profile.id, service);
@@ -250,8 +185,8 @@ if (process.contextIsolated) {
 		console.error(error);
 	}
 } else {
-	// @ts-ignore (define in dts)
+	// @ts-ignore
 	window.configService = configService;
-	// @ts-ignore (define in dts)
+	// @ts-ignore
 	window.nodeService = nodeService;
 }

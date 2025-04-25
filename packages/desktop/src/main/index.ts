@@ -2,7 +2,6 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron';
 import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
-//import { fileURLToPath } from 'url'
 
 process.on('uncaughtException', function (error) {
 	process.stdout.write(error.name + ': ' + error.message + '\n' + (error.stack != undefined ? error.stack + '\n' : ''));
@@ -17,7 +16,7 @@ function createWindow(): void {
 	const mainWindow = new BrowserWindow({
 		width: 900,
 		height: 670,
-		show: true,
+		show: false,
 		autoHideMenuBar: true,
 		...(process.platform === 'linux' ? { icon } : {}),
 		webPreferences: {

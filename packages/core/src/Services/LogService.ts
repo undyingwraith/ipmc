@@ -1,4 +1,4 @@
-import { inject, injectable, multiInject, optional } from 'inversify';
+import { injectable, multiInject, optional } from 'inversify';
 import { ILogMessage, ILogService, ILogSink, ILogSinkSymbol } from 'ipmc-interfaces';
 
 @injectable()

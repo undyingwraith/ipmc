@@ -1,4 +1,4 @@
-import { inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { IEpisodeMetaData, IFileInfo, IIpfsService, IIpfsServiceSymbol, ILibrary, ILogService, ILogServiceSymbol, IOnProgress, ISeasonMetaData, ISeriesMetaData } from 'ipmc-interfaces';
 import { Regexes } from '../../Regexes';
 import { IFetchOptions } from './IFetchOptions';
@@ -8,6 +8,7 @@ import { VideoIndexFetcher } from './VideoIndexFetcher';
 /**
  * Fetches a index for an {@link ILibrary} of type series.
  */
+@injectable()
 export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 	constructor(
 		@inject(IIpfsServiceSymbol) private readonly node: IIpfsService,

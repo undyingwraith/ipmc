@@ -1,6 +1,6 @@
 name: Build
 run-name: Build triggered by @${{ github.actor }}
-on: [push]
+on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,4 +16,7 @@ jobs:
     - name: Run build
       run: yarn build
     - name: Run tests
-      run: yarn test
+      run: yarn test --coverage
+    - name: Report coverage
+      if: github.event_name == 'pull_request'
+      uses:  davelosert/vitest-coverage-report-action@v2

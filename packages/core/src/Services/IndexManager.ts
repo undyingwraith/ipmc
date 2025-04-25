@@ -1,7 +1,7 @@
 import { Signal } from '@preact/signals-core';
 import { inject, injectable, multiInject, postConstruct, preDestroy } from 'inversify';
 import { IIndexManager, IIpfsService, IIpfsServiceSymbol, ILibrary, ILibraryIndex, ILogService, ILogServiceSymbol, IObjectStore, IObjectStoreSymbol, IOnProgress, IProfile, IProfileSymbol, ITaskManager, ITaskManagerSymbol, ITranslationService, ITranslationServiceSymbol } from 'ipmc-interfaces';
-import { IIndexFetcher, IIndexFetcherSymbol, MovieIndexFetcher, SeriesIndexFetcher } from './Indexer';
+import { IIndexFetcher, IIndexFetcherSymbol } from './Indexer';
 
 @injectable()
 export class IndexManager implements IIndexManager {

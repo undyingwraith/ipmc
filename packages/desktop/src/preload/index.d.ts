@@ -1,4 +1,4 @@
-import { IConfigurationService, INodeService } from 'ipm-core';
+import { IConfigurationService, INodeService } from 'ipmc-core';
 
 declare global {
 	interface Window {

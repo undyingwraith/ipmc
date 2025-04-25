@@ -1,4 +1,4 @@
-import { inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { IFileInfo, IIpfsService, IIpfsServiceSymbol, ILibrary, ILogService, ILogServiceSymbol, IMovieMetaData } from 'ipmc-interfaces';
 import { Regexes } from '../../Regexes';
 import { IFetchOptions } from './IFetchOptions';
@@ -8,6 +8,7 @@ import { VideoIndexFetcher } from './VideoIndexFetcher';
 /**
  * Fetches a index for an {@link ILibrary} of type movie.
  */
+@injectable()
 export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 	constructor(
 		@inject(IIpfsServiceSymbol) private readonly node: IIpfsService,
