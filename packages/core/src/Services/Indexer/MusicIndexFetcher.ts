@@ -1,10 +1,16 @@
+import { inject, injectable } from 'inversify';
+import { IFileInfo, IIpfsService, IIpfsServiceSymbol, ILibrary, ILogService, ILogServiceSymbol, IMusicMetaData } from 'ipmc-interfaces';
+import NodeID3 from 'node-id3';
+import { Regexes } from '../../Regexes';
 import { IFetchOptions } from './IFetchOptions';
 import { IIndexFetcher } from './IIndexFetcher';
-import { HasPinAbility, IFileInfo, IIpfsService, ILibrary, ILogService, IMusicMetaData, IMusicFile } from 'ipmc-interfaces';
-import { Regexes } from '../../Regexes';
-import NodeID3 from 'node-id3';
+
+@injectable()
 export class MusicIndexFetcher implements IIndexFetcher<IMusicMetaData[]> {
-	constructor(private readonly node: IIpfsService, private readonly log: ILogService) { }
+	constructor(
+		@inject(IIpfsServiceSymbol) private readonly node: IIpfsService,
+		@inject(ILogServiceSymbol) private readonly log: ILogService,
+	) { }
 
 	/**
 	 * @inheritdoc

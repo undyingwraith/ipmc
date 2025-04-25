@@ -41,8 +41,14 @@
 .spacer {
 	flex-grow: 1;
 	display: flex;
+	flex-direction: row;
 	align-items: center;
 	justify-content: center;
+	height: 100%;
+}
+
+.spacer.center {
+	flex-grow: 3;
 }
 
 .toolbar {

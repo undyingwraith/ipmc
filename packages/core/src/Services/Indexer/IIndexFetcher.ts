@@ -1,6 +1,8 @@
 import { ILibrary } from 'ipmc-interfaces';
 import { IFetchOptions } from './IFetchOptions';
 
+export const IIndexFetcherSymbol = Symbol.for('IIndexFetcher');
+
 /**
  * A class that fetches a index of type {@link TIndex}.
  */

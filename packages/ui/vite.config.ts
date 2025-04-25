@@ -71,5 +71,9 @@ export default defineConfig(({ mode }) => ({
 	test: {
 		globals: true,
 		environment: 'jsdom',
+		coverage: {
+			reporter: ['text', 'json-summary', 'json'],
+			reportOnFailure: true,
+		},
 	},
 }));

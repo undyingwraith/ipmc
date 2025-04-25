@@ -1,8 +1,7 @@
 import { Signal } from '@preact/signals-core';
-import { inject, injectable, postConstruct, preDestroy } from 'inversify';
+import { inject, injectable, multiInject, postConstruct, preDestroy } from 'inversify';
 import { IIndexManager, IIpfsService, IIpfsServiceSymbol, ILibrary, ILibraryIndex, ILogService, ILogServiceSymbol, IObjectStore, IObjectStoreSymbol, IOnProgress, IProfile, IProfileSymbol, ITaskManager, ITaskManagerSymbol, ITranslationService, ITranslationServiceSymbol } from 'ipmc-interfaces';
-import { IIndexFetcher, MovieIndexFetcher, SeriesIndexFetcher } from './Indexer';
-import { MusicIndexFetcher } from './Indexer/MusicIndexFetcher';
+import { IIndexFetcher, IIndexFetcherSymbol } from './Indexer';
 
 @injectable()
 export class IndexManager implements IIndexManager {
@@ -13,11 +12,8 @@ export class IndexManager implements IIndexManager {
 		@inject(ITaskManagerSymbol) private readonly taskManager: ITaskManager,
 		@inject(ITranslationServiceSymbol) private readonly translationService: ITranslationService,
 		@inject(ILogServiceSymbol) private readonly log: ILogService,
+		@multiInject(IIndexFetcherSymbol) private readonly indexers: IIndexFetcher<any>[],
 	) {
-		this.indexers.push(new MovieIndexFetcher(this.ipfs, this.log));
-		this.indexers.push(new SeriesIndexFetcher(this.ipfs));
-		this.indexers.push(new MusicIndexFetcher(this.ipfs, this.log));
-
 		for (const lib of this.profile.libraries) {
 			const indexSignal = new Signal<ILibraryIndex<any> | undefined>(this.objectStore.get(this.getIndexStorageKey(lib.id)));
 			this.indexes.set(lib.id, indexSignal);
@@ -99,8 +95,6 @@ export class IndexManager implements IIndexManager {
 			}
 		}
 	}
-
-	private indexers: IIndexFetcher<any>[] = [];
 
 	private updates = new Map<string, AbortController>();
 

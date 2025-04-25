@@ -1,7 +1,10 @@
 dist
 node_modules
-.pnp.cjs
-.pnp.loader.mjs
 .yarn/*
+!.yarn/plugins
 !.yarn/releases
 !.yarn/sdks
+!.yarn/versions
+
+coverage
+__screenshots__

@@ -34,6 +34,24 @@ describe('Regexes', () => {
 		expect(res5![2]).toBe('2015');
 	});
 
+	test('Episode file gets matches', () => {
+		const res1 = Regexes.EpisodeFile('mpd').exec('Sample Series - S01E02 - Title.mpd');
+		expect(res1).not.toBeNull();
+		expect(res1![0]).toEqual('Sample Series - S01E02 - Title.mpd');
+		expect(res1![1]).toEqual('Sample Series');
+		expect(res1![2]).toBe('01');
+		expect(res1![3]).toBe('02');
+		expect(res1![4]).toBe('Title');
+
+		const res2 = Regexes.EpisodeFile('mpd').exec('Sample Series - S01E02.mpd');
+		expect(res2).not.toBeNull();
+		expect(res2![0]).toEqual('Sample Series - S01E02.mpd');
+		expect(res2![1]).toEqual('Sample Series');
+		expect(res2![2]).toBe('01');
+		expect(res2![3]).toBe('02');
+		expect(res2![4]).toBeUndefined();
+	});
+
 	test('Thumbnail file gets matched', () => {
 		expect(Regexes.Thumbnail.exec('thumb0.png')).not.toBeNull();
 		expect(Regexes.Thumbnail.exec('Sample Movie (2015)-thumb0.png')).not.toBeNull();

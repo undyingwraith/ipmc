@@ -5,7 +5,7 @@
 	"license": "MIT",
 	"private": true,
 	"type": "module",
-	"packageManager": "yarn@4.6.0",
+	"packageManager": "yarn@4.9.1",
 	"scripts": {
 		"dev": "yarn workspaces foreach -Api run dev",
 		"watch": "yarn workspaces foreach -Api --no-private --exclude ipmc-desktop run dev",

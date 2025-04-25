@@ -25,9 +25,6 @@ export default defineConfig({
 					format: 'es',
 				},
 			},
-			commonjsOptions: {
-				requireReturnsDefault: true,
-			},
 		},
 		plugins: [
 			externalizeDepsPlugin(),
