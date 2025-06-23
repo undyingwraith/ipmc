@@ -1,5 +1,6 @@
 import { resolve } from 'path';
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
@@ -52,6 +53,15 @@ export default defineConfig({
 					plugins: [["module:@preact/signals-react-transform"]]
 				},
 			}),
+			nodePolyfills({
+				include: ['crypto', 'buffer', 'stream', 'util'],
+				globals: {
+					Buffer: true,
+					global: true,
+					process: true,
+				},
+				protocolImports: true,
+			})
 		],
 	}
 });
