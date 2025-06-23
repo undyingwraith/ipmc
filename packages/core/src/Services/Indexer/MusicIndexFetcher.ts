@@ -4,7 +4,6 @@ import NodeID3 from 'node-id3';
 import { Regexes } from '../../Regexes';
 import { IFetchOptions } from './IFetchOptions';
 import { IIndexFetcher } from './IIndexFetcher';
-import { ScriptElementKindModifier } from 'typescript';
 
 @injectable()
 export class MusicIndexFetcher implements IIndexFetcher<IMusicMetaData[]> {
@@ -17,7 +16,7 @@ export class MusicIndexFetcher implements IIndexFetcher<IMusicMetaData[]> {
 	 * @inheritdoc
 	 */
 	get version(): string {
-		return '0';
+		return '0.1';
 	}
 
 	/**
@@ -37,7 +36,7 @@ export class MusicIndexFetcher implements IIndexFetcher<IMusicMetaData[]> {
 		const index = [];
 		for (const [i, file] of files.entries()) {
 			try {
-				index.push(...(await this.extractMusicMetaData(file, libraryId, abortSignal)));
+				index.push(...(await this.extractMusicMetaData(file, libraryId, old, abortSignal)));
 			} catch (ex: any) {
 				this.log.error(ex);
 			}
@@ -47,37 +46,46 @@ export class MusicIndexFetcher implements IIndexFetcher<IMusicMetaData[]> {
 		return index;
 	}
 
-	public async extractMusicMetaData(entry: IFileInfo, parentId: string, signal: AbortSignal): Promise<IMusicMetaData[]> {
+	public async extractMusicMetaData(entry: IFileInfo, parentId: string, old: IMusicMetaData[] | undefined, signal: AbortSignal): Promise<IMusicMetaData[]> {
 		const entries = await this.node.ls(entry.cid, signal);
 		const files = entries.filter(f => f.type == 'file');
-		const musicFile = files.find(f => f.name.endsWith('.mp3'));
+		const musicFiles = files.filter(f => f.name.endsWith('.mp3'));
 
-		if (!musicFile) {
-			const directoryFile = entries.filter(f => f.type == 'dir');
-			if (directoryFile) {
-				return (await Promise.all(directoryFile.map(file => this.extractMusicMetaData(file, `${parentId}/${file.name}`, signal)))).flat(1);
+		// Check for directories if no music files were found
+		if (musicFiles.length <= 0) {
+			const directories = entries.filter(f => f.type == 'dir');
+			if (directories.length >= 0) {
+				return (await Promise.all(directories.map(file => this.extractMusicMetaData(file, `${parentId}/${file.name}`, old, signal)))).flat(1);
 			} else {
-				throw new Error('Failed to find music or directory file in ' + entry.name + '|' + entry.cid);
+				throw new Error('Failed to find music files or directories in ' + entry.name + '|' + entry.cid);
 			}
-
 		}
 
 
-		const track = Buffer.from(await this.node.fetch(musicFile?.cid));
-		const tags = NodeID3.read(track);
+		// Fetch data for music files
+		const songs: IMusicMetaData[] = [];
+		for (const song of musicFiles) {
+			// Only recheck new files
+			const existing = old?.find(o => o.cid === song.cid);
+			if (existing) {
+				songs.push(existing);
+			} else {
+				const track = Buffer.from(await this.node.fetch(song?.cid));
+				const tags = NodeID3.read(track);
 
+				songs.push({
+					...entry,
+					title: tags.title ?? "No Title",
+					pinId: `${parentId}/${entry.name}`,
+					music: song,
+					thumbnails: files.filter(f => Regexes.Thumbnail.exec(f.name) != null),
+					lyrics: tags.unsynchronisedLyrics?.text,
+					year: tags.originalYear != undefined ? parseInt(tags.originalYear) : 0,
+				});
+			}
+		}
 
-		const result: IMusicMetaData = {
-			...entry,
-			title: tags.title ?? "No Title",
-			pinId: `${parentId}/${entry.name}`,
-			music: musicFile,
-			thumbnails: files.filter(f => Regexes.Thumbnail.exec(f.name) != null),
-			lyrics: tags.unsynchronisedLyrics?.text,
-			year: tags.originalYear != undefined ? parseInt(tags.originalYear) : 0,
-		};
-
-		return [result];
+		return songs;
 	}
 
 
