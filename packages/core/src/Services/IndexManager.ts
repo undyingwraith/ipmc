@@ -64,7 +64,7 @@ export class IndexManager implements IIndexManager {
 		}
 	}
 
-	private async updateLibrary(library: ILibrary, signal: AbortSignal, onProgress: IOnProgress): Promise<void> {
+	public async updateLibrary(library: ILibrary, signal: AbortSignal, onProgress: IOnProgress): Promise<void> {
 		const index = this.indexes.get(library.id);
 		if (library.upstream != undefined && index != undefined) {
 			try {
@@ -92,6 +92,7 @@ export class IndexManager implements IIndexManager {
 				}
 			} catch (ex: any) {
 				this.log.error(ex);
+				throw ex;
 			}
 		}
 	}

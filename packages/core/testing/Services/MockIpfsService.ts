@@ -16,7 +16,11 @@ export class MockIpfsService implements IIpfsService {
 	}
 
 	ls(cid: string): Promise<IFileInfo[]> {
-		throw new Error('Method not implemented.');
+		if (this.cids[cid] && Array.isArray(this.cids[cid])) {
+			return Promise.resolve(this.cids[cid]);
+		}
+
+		throw new Error(`NotFound: '${cid}'`);
 	}
 
 	peers(): Promise<string[]> {
@@ -28,7 +32,11 @@ export class MockIpfsService implements IIpfsService {
 	}
 
 	resolve(ipns: string): Promise<string> {
-		throw new Error('Method not implemented.');
+		if (this.ipns[ipns]) {
+			return Promise.resolve(this.ipns[ipns]);
+		}
+
+		throw new Error(`NotFound: '${ipns}'`);
 	}
 
 	id(): string {
@@ -36,8 +44,15 @@ export class MockIpfsService implements IIpfsService {
 	}
 
 	fetch(cid: string, path?: string): Promise<Uint8Array> {
-		throw new Error('Method not implemented.');
+		if (this.cids[cid] && !Array.isArray(this.cids[cid])) {
+			return Promise.resolve(this.cids[cid]);
+		}
+
+		throw new Error(`NotFound: '${cid}'`);
 	}
+
+	cids: { [key: string]: IFileInfo[] | Uint8Array; } = {};
+	ipns: { [key: string]: string; } = {};
 
 	private pins: string[] = [];
 }

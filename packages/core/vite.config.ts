@@ -2,6 +2,7 @@
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
+import { coverageConfigDefaults } from 'vitest/config';
 
 export default defineConfig(({ mode }) => ({
 	plugins: [
@@ -54,8 +55,9 @@ export default defineConfig(({ mode }) => ({
 		},
 	},
 	test: {
+		environment: 'jsdom',
 		coverage: {
-			reporter: ['text', 'json-summary', 'json'],
+			reporter: ['text', 'json-summary', 'json', 'html'],
 			reportOnFailure: true,
 			thresholds: {
 				lines: 60,
@@ -63,6 +65,10 @@ export default defineConfig(({ mode }) => ({
 				functions: 60,
 				statements: 60,
 			},
+			exclude: [
+				'testing/**',
+				...coverageConfigDefaults.exclude
+			],
 		},
 	},
 }));

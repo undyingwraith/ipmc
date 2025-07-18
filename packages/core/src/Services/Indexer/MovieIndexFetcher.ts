@@ -40,6 +40,7 @@ export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 		const files = (await this.node.ls(cid, abortSignal)).filter(f => f.type == 'dir');
 		abortSignal.throwIfAborted();
 		const index = [];
+		onProgress(0, files.length);
 		for (const [i, file] of files.entries()) {
 			try {
 				index.push(old?.find(f => f.cid === file.cid) ?? await this.extractMovieMetaData(libraryId, file, abortSignal));
