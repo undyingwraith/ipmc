@@ -35,7 +35,7 @@ export function FileGridItem(props: { file: IFileInfo; onOpen: () => void; displ
 				<CardHeader title={isTitleFeature(file) ? file.title : file.name} subheader={isYearFeature(file) ? file.year : undefined} className={styles.title} />
 				{(isIVideoFile(file) || isIFolderFile(file)) && (
 					<CardContent>
-						<LanguageDisplay video={file} />
+						<LanguageDisplay file={file} />
 					</CardContent>
 				)}
 			</CardActionArea>

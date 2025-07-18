@@ -33,6 +33,7 @@
 		"@libp2p/webrtc": "^5.2.12",
 		"@libp2p/websockets": "^9.2.10",
 		"blockstore-fs": "^2.0.2",
+		"country-flag-emoji-polyfill": "^0.1.8",
 		"datastore-level": "^11.0.1",
 		"electron": "35.2.1",
 		"electron-updater": "6.3.9",

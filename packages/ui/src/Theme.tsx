@@ -2,7 +2,7 @@ import { createTheme } from "@mui/material";
 
 const baseTheme = createTheme({
 	typography: {
-		//fontFamily: '\'Roboto Condensed\', sans-serif',
+		fontFamily: '"Twemoji Country Flags", \'Roboto Condensed\', sans-serif',
 		fontSize: 14,
 	},
 	palette: {

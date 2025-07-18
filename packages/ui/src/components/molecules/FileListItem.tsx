@@ -11,8 +11,9 @@ export function FileListItem(props: { file: IFileInfo; onOpen: () => void; }) {
 		<ListItem
 			secondaryAction={
 				<>
-					{isIVideoFile(props.file) && (<LanguageDisplay video={props.file} />)}
-					{isPinFeature(props.file) && <PinButton item={props.file} />}
+					{isIVideoFile(props.file) && (<LanguageDisplay file={file} />
+)}
+					{isPinFeature(file) && <PinButton item={file} />}
 					<Button onClick={props.onOpen}>{_t('Open')}</Button>
 				</>
 
