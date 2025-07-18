@@ -1,9 +1,10 @@
-import { Card, CardActionArea, CardActions, CardContent, CardHeader, CardMedia } from '@mui/material';
+import { Card, CardActionArea, CardActions, CardContent, CardHeader, CardMedia, Stack } from '@mui/material';
 import { ReadonlySignal, useComputed } from '@preact/signals-react';
 import { IFileInfo, isIFolderFile, isIVideoFile, isPosterFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
 import React, { useRef } from 'react';
 import { useFileUrl, useIsVisible } from '../../../hooks';
 import { LanguageDisplay } from '../../atoms';
+import { EpisodeDisplay } from '../../atoms/EpisodeDisplay';
 import { Display } from '../DisplayButtons';
 import { MediaItemActions } from '../MediaItemActions';
 import styles from './FileGridItem.module.css';
@@ -35,7 +36,12 @@ export function FileGridItem(props: { file: IFileInfo; onOpen: () => void; displ
 				<CardHeader title={isTitleFeature(file) ? file.title : file.name} subheader={isYearFeature(file) ? file.year : undefined} className={styles.title} />
 				{(isIVideoFile(file) || isIFolderFile(file)) && (
 					<CardContent>
-						<LanguageDisplay file={file} />
+						<Stack direction={'column'} spacing={1}>
+							{isIFolderFile(file) && (
+								<EpisodeDisplay file={file} />
+							)}
+							<LanguageDisplay file={file} />
+						</Stack>
 					</CardContent>
 				)}
 			</CardActionArea>
