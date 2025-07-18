@@ -1,6 +1,6 @@
 import { Card, CardActionArea, CardActions, CardContent, CardHeader, CardMedia } from '@mui/material';
 import { ReadonlySignal, useComputed } from '@preact/signals-react';
-import { IFileInfo, isIVideoFile, isPosterFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
+import { IFileInfo, isIFolderFile, isIVideoFile, isPosterFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
 import React, { useRef } from 'react';
 import { useFileUrl, useIsVisible } from '../../../hooks';
 import { LanguageDisplay } from '../../atoms';
@@ -33,7 +33,7 @@ export function FileGridItem(props: { file: IFileInfo; onOpen: () => void; displ
 			<CardActionArea onClick={onOpen} className={styles.actionArea}>
 				<CardMedia image={url.value} className={`${styles.media} ${display.value === Display.Thumbnail && styles.thumbnail}`} />
 				<CardHeader title={isTitleFeature(file) ? file.title : file.name} subheader={isYearFeature(file) ? file.year : undefined} className={styles.title} />
-				{isIVideoFile(file) && (
+				{(isIVideoFile(file) || isIFolderFile(file)) && (
 					<CardContent>
 						<LanguageDisplay video={file} />
 					</CardContent>
