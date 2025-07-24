@@ -4,12 +4,7 @@ import { ISubtitleMetadata } from './ISubtitleMetadata';
 /**
  * A Folder that contains a piece of Music.
  */
-export interface IMusicFile extends IFileInfo {
-	/**
-	 *  The index of the piece of Music.
-	 */
-	music: IFileInfo;
-
+export interface IAudioFile extends IFileInfo {
 	/**
 	 * The thumbnails of the piece of Music.
 	 */
@@ -22,10 +17,10 @@ export interface IMusicFile extends IFileInfo {
 }
 
 /**
- * Checks whether the specified item is a {@link IMusicFile}.
+ * Checks whether the specified item is a {@link IAudioFile}.
  * @param item item to check
- * @returns whether the specified item is a {@link IMusicFile}.
+ * @returns whether the specified item is a {@link IAudioFile}.
  */
-export function isIMusicFile(item: any): item is IMusicFile {
+export function isIAudioFile(item: any): item is IAudioFile {
 	return typeof item.music !== 'undefined' && typeof item.thumbnails?.length === 'number' && isIFileInfo(item);
 }

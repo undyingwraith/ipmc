@@ -1,5 +1,5 @@
 import { Signal } from '@preact/signals-react';
-import { ISubtitleMetadata, IVideoFile } from 'ipmc-interfaces';
+import { IAudioFile, ISubtitleMetadata, IVideoFile } from 'ipmc-interfaces';
 
 export const IMediaPlayerServiceSymbol = Symbol.for('MediaPlayerSymbol');
 
@@ -13,6 +13,13 @@ export interface IMediaPlayerService {
 	 * @param file File to play.
 	 */
 	initializeVideo(el: HTMLVideoElement, file: IVideoFile): () => void;
+
+	/**
+	 * Initialize an audio player
+	 * @param el Audio element to use.
+	 * @param file File to play.
+	 */
+	initializeAudio(el: HTMLAudioElement, file: IAudioFile): void;
 
 	/**
 	 * Toggles play state.

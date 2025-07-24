@@ -1,7 +1,9 @@
 import { Signal } from '@preact/signals-react';
 import { inject, injectable } from 'inversify';
-import { type IIpfsService, IIpfsServiceSymbol, type ILogService, ILogServiceSymbol, ISubtitleMetadata, type ITranslationService, ITranslationServiceSymbol, IVideoFile } from 'ipmc-interfaces';
+import { type IIpfsService, IIpfsServiceSymbol, type ILogService, ILogServiceSymbol, IAudioFile, isIAudioFile, ISubtitleMetadata, type ITranslationService, ITranslationServiceSymbol, IVideoFile } from 'ipmc-interfaces';
 import { IMediaPlayerService } from './IMediaPlayerService';
+import { ObjectUrlController } from '../ObjectUrlController';
+
 //@ts-ignore
 import shaka from 'shaka-player';
 
@@ -48,6 +50,25 @@ export class MediaPlayerService implements IMediaPlayerService {
 			player.unload();
 			player.destroy();
 			this.playing.value = false;
+		};
+	}
+
+	public async initializeAudio(el: HTMLAudioElement, file: IAudioFile): Promise<() => void> {
+		this.audioEl = el;
+		const ObjUrlCont = new ObjectUrlController(this.ipfs);
+		const [audioUrl, abort] = ObjUrlCont.getObjectUrl(file.cid);
+		const player = new Audio(await audioUrl);
+		console.log(file);
+		console.log("audio file " + file + " audio path " + file.path + " is audio file: " + isIAudioFile(file));
+		this.player = player;
+		player.addEventListener('error', (error: any) => this.log.error(`Error code ${error.code} object ${error}`));
+		player.play();
+
+		return () => {
+			this.audioEl = undefined;
+			this.player = undefined;
+			this.playing.value = false;
+			abort();
 		};
 	}
 
@@ -112,5 +133,7 @@ export class MediaPlayerService implements IMediaPlayerService {
 	};
 
 	private videoEl: HTMLVideoElement | undefined;
+	private audioEl: HTMLAudioElement | undefined;
 	private player: shaka.Player | undefined;
+
 }

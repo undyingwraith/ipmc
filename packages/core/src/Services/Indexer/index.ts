@@ -1,5 +1,5 @@
 export { IIndexFetcherSymbol, type IIndexFetcher } from './IIndexFetcher';
 export { MovieIndexFetcher } from './MovieIndexFetcher';
-export { MusicIndexFetcher } from './MusicIndexFetcher';
+export { AudioIndexFetcher } from './AudioIndexFetcher';
 export { SeriesIndexFetcher } from './SeriesIndexFetcher';
 

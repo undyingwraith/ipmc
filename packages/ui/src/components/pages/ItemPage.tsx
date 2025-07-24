@@ -1,13 +1,14 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 import { useComputed } from '@preact/signals-react';
-import { IFileInfo, isIFolderFile, isIVideoFile, isPinFeature } from 'ipmc-interfaces';
+import { IFileInfo, isIAudioFile, isIFolderFile, isIVideoFile, isPinFeature } from 'ipmc-interfaces';
 import React from 'react';
 import { useAppbarButtons, usePersistentSignal, useTitle, useTranslation } from '../../hooks';
 import { IAppbarButtonOptions } from '../../services/AppbarButtonService';
 import { FileInfoDisplay, PinButton } from '../atoms';
 import { Display, DisplayButtons } from '../molecules';
-import { FileGrid, FileList, VideoPlayer } from '../organisms';
+import { FileGrid, FileList, VideoPlayer, AudioPlayer } from '../organisms';
+
 
 
 export function ItemPage(props: {
@@ -63,6 +64,7 @@ export function ItemPage(props: {
 	) : (
 		<Box>
 			{isIVideoFile(file) && <VideoPlayer file={file} />}
+			{isIAudioFile(file) && <AudioPlayer file={file} />}
 			{isPinFeature(file) && <PinButton item={file} />}
 		</Box>
 	);
