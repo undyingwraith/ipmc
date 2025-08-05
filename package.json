@@ -11,7 +11,8 @@
 		"watch": "yarn workspaces foreach -Api --no-private --exclude ipmc-desktop run dev",
 		"build": "yarn workspaces foreach -Apt run build",
 		"test": "yarn workspaces foreach -Apt run test",
-		"cli": "yarn workspace ipmc-tools run cli"
+		"cli": "yarn workspace ipmc-tools run cli",
+		"server": "yarn workspace ipmc-server run start"
 	},
 	"workspaces": [
 		"packages/*"

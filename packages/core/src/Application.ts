@@ -48,7 +48,7 @@ export class Application implements IApplication, IApplicationRegistration {
 	/**
 	 * The IOC {@link Container} of the {@link IApplication}.
 	 */
-	private readonly container = new Container({
+	protected readonly container = new Container({
 		defaultScope: 'Singleton',
 	});
 }
