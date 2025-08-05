@@ -1,0 +1,67 @@
+import { Box, Card, CardContent, CardHeader, Stack, Typography } from '@mui/material';
+import { Signal, useComputed } from '@preact/signals-react';
+import { IPinItem, IPinManagerService, IPinManagerServiceSymbol, IProfile, IProfileSymbol, ISortAndFilterService, ISortAndFilterServiceSymbol, ITaskManager, ITaskManagerSymbol } from 'ipmc-interfaces';
+import React from 'react';
+import { useLocation } from 'wouter';
+import { useService } from '../../../context';
+import { useTranslation } from '../../../hooks/useTranslation';
+import { ProcessDisplay } from '../../atoms';
+import { Display } from '../../molecules';
+import { FileGridItem } from '../../molecules/FileGridItem';
+import styles from './LibraryHomePage.module.css';
+
+export function LibraryHomePage() {
+	const _t = useTranslation();
+	const [_, setLocation] = useLocation();
+	const taskManager = useService<ITaskManager>(ITaskManagerSymbol);
+	const pinManager = useService<IPinManagerService>(IPinManagerServiceSymbol);
+	const profile = useService<IProfile>(IProfileSymbol);
+	const sortAndFilterService = useService<ISortAndFilterService>(ISortAndFilterServiceSymbol);
+
+	const status = useComputed(() => {
+		const status = taskManager.status.value;
+		if (status.length > 0) {
+			return (
+				<Card>
+					<CardHeader title={_t('ActiveTasks')} />
+					<CardContent>
+						{status.map(t => (<ProcessDisplay task={t} />))}
+					</CardContent>
+				</Card>
+			);
+		} else {
+			return undefined;
+		}
+	});
+
+	const pins = useComputed(() => (
+		<Card>
+			<CardHeader title={_t('Favorites')} />
+			<CardContent>
+				{pinManager.pins.value.length > 0 ?
+					Object.entries(Object.groupBy(pinManager.pins.value, (i) => i.itemId.substring(0, i.itemId.indexOf('/')))).map(([cat, items]: [string, IPinItem[]]) => (
+						<Box>
+							<Typography variant={'h6'}>{profile.libraries.find(l => l.id === cat)?.name ?? cat}</Typography>
+							<div className={styles.carousel}>
+								{sortAndFilterService.createFilteredList(items.map(p => pinManager.resolvePin(p)).filter(p => p !== undefined)).map(p => (
+									<FileGridItem file={p} onOpen={() => setLocation(p.pinId)} display={new Signal(Display.Poster)} />
+								))}
+							</div>
+						</Box>
+					)) : (
+						<CardHeader title={_t('NoItems')} />
+					)}
+			</CardContent>
+		</Card>
+	));
+
+	return (
+		<Box sx={{ padding: 5, width: '100%' }}>
+			<Typography variant={'h3'}>{_t('Home')}</Typography>
+			<Stack spacing={1}>
+				{status}
+				{pins}
+			</Stack>
+		</Box>
+	);
+}

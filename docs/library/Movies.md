@@ -1,0 +1,36 @@
+# Movies
+
+## Example directory structure
+
+```
+├ Movie Name (year)
+| ├ Movie Name (year).mpd
+| ├ audio
+| | ├ eng
+| | | └...
+| | └ deu
+| |   └...
+| ├ video
+| | └...
+| └ Movie Name (year).poster.jpg
+├ Another Movie (year)
+| ├ Another Movie (year).mpd
+| ├ text
+| | ├ deu
+| | | └...
+| | ├ deu.forced
+| | | └...
+| | ├ eng
+| | | └...
+| | └ eng.forced
+| |   └...
+| ├ audio
+| | ├ eng
+| | | └...
+| | └ deu
+| |   └...
+| ├ video
+| | └...
+| └ poster.jpg
+└ ...
+```

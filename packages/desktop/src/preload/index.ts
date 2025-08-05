@@ -1,48 +1,51 @@
+import { gossipsub } from '@chainsafe/libp2p-gossipsub';
 import { noise, pureJsCrypto } from '@chainsafe/libp2p-noise';
 import { yamux } from '@chainsafe/libp2p-yamux';
-import { mplex } from '@libp2p/mplex';
 import { bitswap, trustlessGateway } from '@helia/block-brokers';
-import { ipns } from '@helia/ipns';
-import { unixfs } from '@helia/unixfs';
+import { autoNAT } from '@libp2p/autonat';
 import { bootstrap } from '@libp2p/bootstrap';
 import { circuitRelayServer, circuitRelayTransport } from '@libp2p/circuit-relay-v2';
-import { peerIdFromString } from '@libp2p/peer-id';
+import { dcutr } from '@libp2p/dcutr';
+import { identify, identifyPush } from '@libp2p/identify';
+import { kadDHT, removePrivateAddressesMapper, removePublicAddressesMapper } from '@libp2p/kad-dht';
+import { keychain } from '@libp2p/keychain';
+import { mdns } from '@libp2p/mdns';
+import { ping } from '@libp2p/ping';
 import { preSharedKey } from '@libp2p/pnet';
+import { pubsubPeerDiscovery } from '@libp2p/pubsub-peer-discovery';
 import { tcp } from '@libp2p/tcp';
+import { uPnPNAT } from '@libp2p/upnp-nat';
+import { webRTC, webRTCDirect } from '@libp2p/webrtc';
 import { webSockets } from '@libp2p/websockets';
-import { kadDHT, removePrivateAddressesMapper } from '@libp2p/kad-dht';
 import { FsBlockstore } from 'blockstore-fs';
 import { LevelDatastore } from 'datastore-level';
-import { contextBridge } from 'electron';
-import express from 'express';
+import { contextBridge, ipcRenderer } from 'electron';
 import fs from 'fs';
 import { createHelia } from 'helia';
-import { IncomingMessage, Server, ServerResponse } from 'http';
-import { IConfigurationService, IFileInfo, IInternalProfile, IIpfsService, INodeService, IProfile } from 'ipmc-core';
-import { CID } from 'multiformats';
-import { gossipsub } from '@chainsafe/libp2p-gossipsub';
-import { pubsubPeerDiscovery } from '@libp2p/pubsub-peer-discovery';
-import { mdns } from '@libp2p/mdns';
-import { identify, identifyPush } from '@libp2p/identify';
-import { keychain } from '@libp2p/keychain';
-import { ping } from '@libp2p/ping';
-import { dcutr } from '@libp2p/dcutr';
-import { autoNAT } from '@libp2p/autonat';
-import { ipnsSelector } from 'ipns/selector';
-import { ipnsValidator } from 'ipns/validator';
-import { uPnPNAT } from '@libp2p/upnp-nat';
+import { createHeliaIpfs, Defaults } from 'ipmc-core';
+import { IConfigurationService, IInternalProfile, IIpfsService, INodeService, IProfile } from 'ipmc-interfaces';
 import * as libp2pInfo from 'libp2p/version';
+import path from 'path';
 
-function getProfileFolder(name: string): string {
-	return `./profiles/${name}`;
+async function getProfileFolder(id?: string): Promise<string> {
+	const appPath = path.join(await ipcRenderer.invoke('getAppPath'), 'profiles');
+	return id ? path.join(appPath, id) : appPath;
 }
+
+const nodes = new Map<string, IIpfsService>();
 
 const nodeService: INodeService = {
 	async create(profile: IInternalProfile): Promise<IIpfsService> {
+		if (nodes.has(profile.id)) {
+			return nodes.get(profile.id)!;
+		}
+
+		const folder = await getProfileFolder(profile.id);
+
 		const agentVersion = `helia/2.0.0 ${libp2pInfo.name}/${libp2pInfo.version} UserAgent=${process.version}`;
-		const datastore = new LevelDatastore(`${getProfileFolder(profile.name)}/data`);
+		const datastore = new LevelDatastore(path.join(folder, 'data'));
 		await datastore.open();
-		const blockstore = new FsBlockstore(`${getProfileFolder(profile.name)}/blocks`);
+		const blockstore = new FsBlockstore(path.join(folder, 'blocks'));
 		await blockstore.open();
 
 		const helia = await createHelia({
@@ -50,13 +53,20 @@ const nodeService: INodeService = {
 			datastore,
 			blockstore,
 			libp2p: {
+				nodeInfo: {
+					userAgent: agentVersion
+				},
 				addresses: {
 					listen: [
-						'/ip4/0.0.0.0/tcp/0',
-						'/ip6/::/tcp/0',
-						'/ws',
-						'/wss',
-						'/webrtc',
+						`/ip4/0.0.0.0/tcp/${profile.port ?? 0}`,
+						`/ip6/::/tcp/${profile.port ?? 0}`,
+						`/ip4/0.0.0.0/udp/${profile.port ?? 0}/quic-v1`,
+						`/ip6/::/udp/${profile.port ?? 0}/quic-v1`,
+						`/ip4/0.0.0.0/udp/${profile.port ?? 0}/webrtc-direct`,
+						`/ip6/::/udp/${profile.port ?? 0}/webrtc-direct`,
+						'/ip4/0.0.0.0/tcp/0/ws',
+						'/ip6/::/tcp/0/ws',
+						'/p2p-circuit',
 					],
 				},
 				...(profile.swarmKey ? {
@@ -67,53 +77,50 @@ const nodeService: INodeService = {
 				transports: [
 					webSockets(),
 					tcp(),
-					circuitRelayTransport({
-						discoverRelays: 1,
-					}),
+					circuitRelayTransport(),
+					webRTC(),
+					webRTCDirect(),
 				],
 				peerDiscovery: [
 					bootstrap({
-						list: profile.bootstrap ?? (profile.swarmKey != undefined ? [] : [
-							// a list of bootstrap peer multiaddrs to connect to on node startup
-							'/ip4/104.131.131.82/tcp/4001/ipfs/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ',
-							'/dnsaddr/bootstrap.libp2p.io/ipfs/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN',
-							'/dnsaddr/bootstrap.libp2p.io/ipfs/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa',
-						]),
+						list: profile.bootstrap ?? (profile.swarmKey != undefined ? [] : Defaults.Bootstrap),
 					}),
 					pubsubPeerDiscovery(),
 					mdns(),
 				],
-				connectionEncryption: [
+				connectionEncrypters: [
 					noise({
 						crypto: pureJsCrypto
 					}),
 				],
 				streamMuxers: [
 					yamux(),
-					mplex(),
 				],
 				services: {
-					relay: circuitRelayServer({
-						advertise: true,
+					relay: circuitRelayServer(),
+					lanDHT: kadDHT({
+						protocol: '/ipfs/lan/kad/1.0.0',
+						peerInfoMapper: removePublicAddressesMapper,
+						clientMode: false,
+						logPrefix: 'libp2p:dht-lan',
+						datastorePrefix: '/dht-lan',
+						metricsPrefix: 'libp2p_dht_lan'
 					}),
-					dht: kadDHT({
+					aminoDHT: kadDHT({
+						protocol: '/ipfs/kad/1.0.0',
 						peerInfoMapper: removePrivateAddressesMapper,
-						validators: {
-							ipns: ipnsValidator
-						},
-						selectors: {
-							ipns: ipnsSelector
-						}
+						logPrefix: 'libp2p:dht-amino',
+						datastorePrefix: '/dht-amino',
+						metricsPrefix: 'libp2p_dht_amino'
 					}),
-					identify: identify({ agentVersion }),
-					identifyPush: identifyPush({ agentVersion }),
+					identify: identify(),
+					identifyPush: identifyPush(),
 					keychain: keychain(),
 					ping: ping(),
 					autoNAT: autoNAT(),
 					dcutr: dcutr(),
 					upnp: uPnPNAT(),
 					pubsub: gossipsub({
-					allowPublishToZeroTopicPeers: true,
 						canRelayMessage: true,
 					}),
 				},
@@ -125,87 +132,44 @@ const nodeService: INodeService = {
 		});
 
 		console.log(helia.libp2p.getMultiaddrs().map(a => a.toString()));
+		helia.libp2p.addEventListener('peer:discovery', console.log);
+		helia.libp2p.addEventListener('peer:connect', console.log);
 
-		const fs = unixfs(helia);
-
-		const app = express();
-		app.get('/:cid', async (request, response) => {
-			for await (const buf of fs.cat(CID.parse(request.params.cid))) {
-				response.write(buf);
-			}
-			response.end();
-		});
-		const gatewayPort = 8090;
-		const server = await new Promise<Server<typeof IncomingMessage, typeof ServerResponse>>((resolve) => {
-			const server = app.listen(gatewayPort, '127.0.0.1', () => resolve(server));
+		const service = createHeliaIpfs(helia, async () => {
+			await blockstore.close();
+			await datastore.close();
+			nodes.delete(profile.id);
 		});
 
-		return ({
-			async ls(cid: string) {
-				const files: IFileInfo[] = [];
-				for await (const file of fs.ls(CID.parse(cid))) {
-					files.push({
-						type: file.type == 'directory' ? 'dir' : 'file',
-						name: file.name,
-						cid: file.cid.toString(),
-					});
-				}
-				return files;
-			},
-			async stop() {
-				server.close();
-				await helia.stop();
-				await blockstore.close();
-				await datastore.close();
-			},
-			toUrl(cid: string) {
-				return `http://127.0.0.1:${gatewayPort}/${cid}`;
-			},
-			peers() {
-				return Promise.resolve(helia.libp2p.getConnections().map(p => p.remoteAddr.toString()));
-			},
-			id() {
-				return helia.libp2p.peerId.toString();
-			},
-			async resolve(name) {
-				try {
-					return (await ipns(helia).resolve(peerIdFromString(name))).cid.toString();
-				} catch (ex) {
-					console.error(ex);
-					return (await ipns(helia).resolveDNSLink(name)).cid.toString();
-				}
-			},
-			isPinned(cid) {
-				return helia.pins.isPinned(CID.parse(cid));
-			},
-			async addPin(cid) {
-				for await (const block of helia.pins.add(CID.parse(cid))) {
-					//
-				}
-			},
-			async rmPin(cid) {
-				for await (const block of helia.pins.rm(CID.parse(cid))) {
-					//
-				}
-			},
-		});
+		nodes.set(profile.id, service);
+
+		return service;
 	},
 };
 
 const configService: IConfigurationService = {
-	getProfiles(): string[] {
+	async getProfiles(): Promise<string[]> {
 		try {
-			const profiles = fs.readdirSync('./profiles');
+			const profiles = fs.readdirSync(await getProfileFolder());
 			return profiles;
 		} catch (_) {
 			return [];
 		}
 	},
-	getProfile(name: string): IProfile {
-		return JSON.parse(fs.readFileSync(getProfileFolder(name) + '/profile.json', 'utf-8'));
+	async getProfile(id: string): Promise<IProfile> {
+		return JSON.parse(fs.readFileSync(path.join(await getProfileFolder(id), '/profile.json'), 'utf-8'));
 	},
-	setProfile(name: string, profile: IProfile) {
-		fs.writeFileSync(getProfileFolder(name) + '/profile.json', JSON.stringify(profile));
+	async setProfile(id: string, profile: IProfile) {
+		const folder = await getProfileFolder(id);
+		if (!fs.existsSync(folder)) {
+			fs.mkdirSync(folder, {
+				recursive: true
+			});
+		}
+		fs.writeFileSync(path.join(folder, '/profile.json'), JSON.stringify(profile));
+	},
+	async removeProfile(id) {
+		fs.rmSync(await getProfileFolder(id), { recursive: true });
 	},
 };
 
@@ -221,8 +185,8 @@ if (process.contextIsolated) {
 		console.error(error);
 	}
 } else {
-	// @ts-ignore (define in dts)
+	// @ts-ignore
 	window.configService = configService;
-	// @ts-ignore (define in dts)
+	// @ts-ignore
 	window.nodeService = nodeService;
 }

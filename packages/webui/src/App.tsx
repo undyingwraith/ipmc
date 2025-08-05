@@ -1,120 +1,150 @@
-import React from 'react';
-import { IFileInfo, IpmcApp, createRemoteIpfsService } from 'ipmc-core';
-
-import { webSockets } from '@libp2p/websockets';
-import { webTransport } from '@libp2p/webtransport';
-import { preSharedKey } from "@libp2p/pnet";
+import 'reflect-metadata';
+import { gossipsub } from '@chainsafe/libp2p-gossipsub';
 import { noise } from "@chainsafe/libp2p-noise";
-import { bootstrap } from '@libp2p/bootstrap';
-import { peerIdFromString } from '@libp2p/peer-id';
+import { yamux } from '@chainsafe/libp2p-yamux';
 import { bitswap, trustlessGateway } from '@helia/block-brokers';
-
-import { CID } from 'multiformats';
+import { autoNAT } from '@libp2p/autonat';
+import { bootstrap } from '@libp2p/bootstrap';
+import { circuitRelayTransport } from '@libp2p/circuit-relay-v2';
+import { dcutr } from '@libp2p/dcutr';
+import { identify, identifyPush } from '@libp2p/identify';
+import { kadDHT, removePrivateAddressesMapper, removePublicAddressesMapper } from '@libp2p/kad-dht';
+import { keychain } from '@libp2p/keychain';
+import { ping } from '@libp2p/ping';
+import { preSharedKey } from "@libp2p/pnet";
+import { pubsubPeerDiscovery } from '@libp2p/pubsub-peer-discovery';
+import { webRTC, webRTCDirect } from '@libp2p/webrtc';
+import { webSockets } from '@libp2p/websockets';
+import { all } from '@libp2p/websockets/filters';
+import { webTransport } from '@libp2p/webtransport';
 import { IDBBlockstore } from 'blockstore-idb';
 import { IDBDatastore } from 'datastore-idb';
 import { createHelia } from 'helia';
-import { unixfs } from '@helia/unixfs';
-import { ipns } from '@helia/ipns';
+import { createHeliaIpfs, Defaults } from 'ipmc-core';
+import { IpmcApp } from 'ipmc-ui';
+import React from 'react';
 
 export function App() {
-	return <IpmcApp
-		configService={{
-			getProfile(name) {
-				const value = window.localStorage.getItem('profile_' + name);
-				return value ? JSON.parse(value) : undefined;
-			},
-			getProfiles() {
-				const value = window.localStorage.getItem('profiles');
-				return value ? JSON.parse(value) : [];
-			},
-			setProfile(name, profile) {
-				window.localStorage.setItem('profile_' + name, JSON.stringify(profile));
-				const value = window.localStorage.getItem('profiles');
-				const profiles: string[] = value ? JSON.parse(value) : [];
-				if (!profiles.some(p => p == name)) {
-					window.localStorage.setItem('profiles', JSON.stringify([...profiles, name]));
-				}
-			},
-		}}
-		nodeService={{
-			async create(profile) {
-				const datastore = new IDBDatastore(`${profile?.name ?? 'default'}/data`);
-				await datastore.open();
-				const blockstore = new IDBBlockstore(`${profile?.name ?? 'default'}/data`);
-				await blockstore.open();
-
-				const helia = await createHelia({
-					start: true,
-					datastore,
-					blockstore,
-					libp2p: {
-						...(profile?.swarmKey ? {
-							connectionProtector: preSharedKey({
-								psk: new TextEncoder().encode(profile.swarmKey),
-							}),
-						} : {}),
-						transports: [
-							webSockets(),
-							webTransport(),
-						],
-						peerDiscovery: [
-							bootstrap({
-								list: profile?.bootstrap ?? [
-									// a list of bootstrap peer multiaddrs to connect to on node startup
-									'/ip4/104.131.131.82/tcp/4001/ipfs/QmaCpDMGvV2BGHeYERUEnRQAwe3N8SzbUtfsmvsqQLuvuJ',
-									'/dnsaddr/bootstrap.libp2p.io/ipfs/QmNnooDu7bfjPFoTZYxMNLWUQJyrVwtbZg5gBMjTezGAJN',
-									'/dnsaddr/bootstrap.libp2p.io/ipfs/QmQCU2EcMqAqQPR2i9bChDtGNJchTbq5TbXJJ16u19uLTa'
-								]
-							})
-						],
-						connectionEncryption: [noise()],
-					},
-					blockBrokers: [
-						bitswap(),
-						...(profile?.swarmKey == undefined ? [trustlessGateway()] : [])
-					],
-				});
-
-				const fs = unixfs(helia);
-
-				return ({
-					async ls(cid: string) {
-						const files: IFileInfo[] = [];
-						for await (const file of fs.ls(CID.parse(cid))) {
-							files.push({
-								type: file.type == 'directory' ? 'dir' : 'file',
-								name: file.name,
-								cid: file.cid.toString(),
-							});
+	return (
+		<IpmcApp
+			configService={{
+				getProfile(id) {
+					const value = window.localStorage.getItem('profiles');
+					if (value) {
+						const profiles = JSON.parse(value);
+						if (Object.hasOwn(profiles, id)) {
+							return profiles[id];
 						}
-						return files;
-					},
-					async stop() {
-						await helia.stop();
+					}
+					return undefined;
+				},
+				getProfiles() {
+					const value = window.localStorage.getItem('profiles');
+					return Promise.resolve(value ? Object.keys(JSON.parse(value)) : []);
+				},
+				setProfile(id, profile) {
+					const profilesString = window.localStorage.getItem('profiles');
+					const profiles = profilesString ? JSON.parse(profilesString) : {};
+					profiles[id] = profile;
+
+					window.localStorage.setItem('profiles', JSON.stringify(profiles));
+
+					return Promise.resolve();
+				},
+				removeProfile(id: string) {
+					const profilesString = window.localStorage.getItem('profiles');
+					const profiles = profilesString ? JSON.parse(profilesString) : {};
+					delete profiles[id];
+
+					window.localStorage.setItem('profiles', JSON.stringify(profiles));
+
+					return Promise.resolve();
+				}
+			}}
+			nodeService={{
+				async create(profile) {
+					const datastore = new IDBDatastore(`${profile?.name ?? 'default'}/data`);
+					await datastore.open();
+					const blockstore = new IDBBlockstore(`${profile?.name ?? 'default'}/data`);
+					await blockstore.open();
+
+					const helia = await createHelia({
+						start: true,
+						datastore,
+						blockstore,
+						libp2p: {
+							addresses: {
+								listen: [
+									'/p2p-circuit',
+									'/webrtc',
+								],
+							},
+							...(profile?.swarmKey ? {
+								connectionProtector: preSharedKey({
+									psk: new TextEncoder().encode(profile.swarmKey),
+								}),
+							} : {}),
+							transports: [
+								circuitRelayTransport(),
+								webRTC(),
+								webRTCDirect(),
+								webTransport(),
+								webSockets({
+									filter: all
+								}),
+							],
+							peerDiscovery: [
+								bootstrap({
+									list: profile?.bootstrap ?? Defaults.Bootstrap
+								}),
+								pubsubPeerDiscovery(),
+							],
+							streamMuxers: [
+								yamux(),
+							],
+							connectionEncrypters: [noise()],
+							services: {
+								lanDHT: kadDHT({
+									protocol: '/ipfs/lan/kad/1.0.0',
+									peerInfoMapper: removePublicAddressesMapper,
+									clientMode: false,
+									logPrefix: 'libp2p:dht-lan',
+									datastorePrefix: '/dht-lan',
+									metricsPrefix: 'libp2p_dht_lan'
+								}),
+								aminoDHT: kadDHT({
+									protocol: '/ipfs/kad/1.0.0',
+									peerInfoMapper: removePrivateAddressesMapper,
+									logPrefix: 'libp2p:dht-amino',
+									datastorePrefix: '/dht-amino',
+									metricsPrefix: 'libp2p_dht_amino'
+								}),
+								identify: identify(),
+								identifyPush: identifyPush(),
+								keychain: keychain(),
+								ping: ping(),
+								autoNAT: autoNAT(),
+								dcutr: dcutr(),
+								pubsub: gossipsub({
+									allowPublishToZeroTopicPeers: true,
+									canRelayMessage: true,
+								}),
+							},
+						},
+						blockBrokers: [
+							bitswap(),
+							...(profile?.swarmKey == undefined ? [trustlessGateway()] : [])
+						],
+					});
+
+					console.log(helia.libp2p.getMultiaddrs().map(a => a.toString()));
+
+					return createHeliaIpfs(helia, async () => {
 						await blockstore.close();
 						await datastore.close();
-					},
-					toUrl(cid: string) {
-						return `TODO ${cid}`;
-					},
-					peers() {
-						return Promise.resolve(helia.libp2p.getConnections().map(p => p.remoteAddr.toString()));
-					},
-					id() {
-						return helia.libp2p.peerId.toString();
-					},
-					async resolve(name) {
-						try {
-							return (await ipns(helia).resolve(peerIdFromString(name))).cid.toString();
-						} catch (ex) {
-							return (await ipns(helia).resolveDNSLink(name)).cid.toString();
-						}
-					},
-				});
-			},
-			createRemote(url: string) {
-				return createRemoteIpfsService(url);
-			},
-		}}
-	/>;
+					});
+				},
+			}}
+		/>
+	);
 };

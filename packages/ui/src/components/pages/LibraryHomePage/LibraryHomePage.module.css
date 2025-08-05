@@ -1,0 +1,14 @@
+.carousel {
+	display: flex;
+	gap: 10px;
+	flex-direction: row;
+	overflow: auto;
+	align-items: stretch;
+	justify-content: flex-start;
+}
+
+.carousel>* {
+	flex-shrink: 0;
+	height: unset;
+	max-width: 240px;
+}

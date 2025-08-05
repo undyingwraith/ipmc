@@ -1,23 +1,27 @@
 {
 	"name": "ipmc-tools",
-	"version": "1.0.0",
+	"version": "0.2.2",
 	"main": "index.js",
 	"license": "MIT",
 	"scripts": {
-		"import": "vite-node ./import.ts",
+		"import": "vite-node ./src/import/index.ts",
 		"cli": "vite-node ./src/index.ts"
 	},
 	"dependencies": {
+		"@inquirer/prompts": "^7.5.0",
+		"chalk": "^5.4.1",
 		"cli-progress": "^3.12.0",
-		"fluent-ffmpeg": "^2.1.2",
+		"fluent-ffmpeg": "^2.1.3",
 		"ipmc-core": "workspace:^",
-		"kubo-rpc-client": "^4.1.1",
+		"kubo-rpc-client": "^5.1.0",
+		"srt2vtt": "^1.3.1",
 		"yargs": "^17.7.2"
 	},
 	"devDependencies": {
-		"@types/cli-progress": "^3.11.5",
-		"@types/fluent-ffmpeg": "^2.1.24",
-		"@types/yargs": "^17.0.32",
-		"vite-node": "^1.6.0"
+		"@types/cli-progress": "^3.11.6",
+		"@types/fluent-ffmpeg": "^2.1.27",
+		"@types/node": "^22.14.1",
+		"@types/yargs": "^17.0.33",
+		"vite-node": "^3.1.2"
 	}
 }

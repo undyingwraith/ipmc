@@ -1,26 +1,28 @@
-import { app, shell, BrowserWindow } from 'electron';
+import { app, shell, BrowserWindow, ipcMain } from 'electron';
 import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
-//import { fileURLToPath } from 'url'
 
 process.on('uncaughtException', function (error) {
 	process.stdout.write(error.name + ': ' + error.message + '\n' + (error.stack != undefined ? error.stack + '\n' : ''));
 });
+
+function getAppPath(): string {
+	return join(app.getPath('appData'), app.getName(), 'Data');
+}
 
 function createWindow(): void {
 	// Create the browser window.
 	const mainWindow = new BrowserWindow({
 		width: 900,
 		height: 670,
-		show: true,
+		show: false,
 		autoHideMenuBar: true,
 		...(process.platform === 'linux' ? { icon } : {}),
 		webPreferences: {
 			nodeIntegration: false,
 			contextIsolation: true,
 			preload: join(__dirname, '../preload/index.mjs'),
-			//preload: fileURLToPath(new URL('../preload/index.cjs', import.meta.url)),
 			sandbox: false, // https://www.electronjs.org/docs/latest/tutorial/esm#summary-esm-support-matrix
 		},
 	});
@@ -52,6 +54,8 @@ function createWindow(): void {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
+	ipcMain.handle('getAppPath', getAppPath);
+
 	// Set app user model id for windows
 	electronApp.setAppUserModelId('com.electron');
 

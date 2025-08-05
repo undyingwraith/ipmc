@@ -1,14 +1,5 @@
 {
-	"ActiveTasks": "Currently running",
-	"Edit": "Edit",
-	"Home": "Home",
-	"Loading": "Loading...",
-	"Logout": "Logout",
-	"Movies": "Movies",
-	"NoNodes": "No connected nodes",
-	"Search": "Search",
-	"Start": "Start",
-	"Starting": "Starting node...",
-	"Stopping": "Stopping node...",
-	"SwarmKey": "Swarm Key"
+	"UpdatingLibrary": "Updating library {{name}}",
+	"AddingPin": "Adding pin on item {{title}}",
+	"RemovingPin": "Removing pin on item {{title}}"
 }

@@ -1,14 +1,5 @@
 {
-	"ActiveTasks": "Aktive aufgaben",
-	"Edit": "Bearbeiten",
-	"Home": "Home",
-	"Loading": "Laden...",
-	"Logout": "Abmelden",
-	"Movies": "Filme",
-	"NoNodes": "Keine verbundene Geräte",
-	"Search": "Suche",
-	"Start": "Starten",
-	"Starting": "Starten...",
-	"Stopping": "Stoppen...",
-	"SwarmKey": "Schwarm Schlüssel"
+	"UpdatingLibrary": "Aktualisieren von {{name}}",
+	"AddingPin": "Hinzuzfügen von pin auf {{title}}",
+	"RemovingPin": "Entfernen von pin auf {{title}}"
 }

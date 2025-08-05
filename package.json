@@ -1,20 +1,22 @@
 {
 	"name": "ipmc",
-	"version": "1.0.0",
+	"version": "0.2.2",
 	"main": "index.js",
 	"license": "MIT",
 	"private": true,
 	"type": "module",
-	"packageManager": "yarn@4.2.1",
+	"packageManager": "yarn@4.9.1",
 	"scripts": {
-		"watch": "yarn workspaces foreach -Api run watch",
-		"build": "yarn workspaces foreach -At run build",
+		"dev": "yarn workspaces foreach -Api run dev",
+		"watch": "yarn workspaces foreach -Api --no-private --exclude ipmc-desktop run dev",
+		"build": "yarn workspaces foreach -Apt run build",
+		"test": "yarn workspaces foreach -Apt run test",
 		"cli": "yarn workspace ipmc-tools run cli"
 	},
 	"workspaces": [
 		"packages/*"
 	],
 	"devDependencies": {
-		"typescript": "^5.4.5"
+		"typescript": "^5.8.3"
 	}
 }
