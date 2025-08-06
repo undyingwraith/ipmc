@@ -1,12 +1,11 @@
 import * as bodyParser from 'body-parser';
 import { InversifyExpressServer } from 'inversify-express-utils';
 import { Application } from 'ipmc-core';
-import { IProfileSymbol } from 'ipmc-interfaces';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import { DefaultServerProfile } from './DefaultServerProfile';
 import type { IExpressApplication } from './IExpressApplication';
-import type { IServerProfile } from './IServerProfile';
+import { IProfileServiceSymbol, type IProfileService } from './services';
 
 export class ExpressApplication extends Application implements IExpressApplication {
 	public constructor() {
@@ -40,10 +39,10 @@ export class ExpressApplication extends Application implements IExpressApplicati
 	}
 
 	public async start() {
-		const profile = this.container.get<IServerProfile>(IProfileSymbol);
+		const profileService = this.container.get<IProfileService>(IProfileServiceSymbol);
 		this.server
 			.build()
-			.listen(profile.apiPort ?? DefaultServerProfile.apiPort!);
+			.listen(profileService.profile.apiPort ?? DefaultServerProfile.apiPort!);
 	}
 
 	private server: InversifyExpressServer;

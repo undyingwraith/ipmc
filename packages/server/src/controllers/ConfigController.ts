@@ -17,10 +17,16 @@ import { IProfileServiceSymbol, type IProfileService } from '../services';
  *     type:
  *      type: string
  *      example: internal
+ *     port:
+ *      type: number
+ *     swarmKey:
+ *      type: string
  *     bootstrap:
+ *      description: List of bootstrap addresses.
  *      type: array
  *      items:
  *       type: string
+ *       example: /ip4/127.0.0.1/tcp/4001/p2p/12D3KooWHmSSfatK5oPiUYxW9pT4P9TCQAVCReZhhsnYVRvjRK5f
  *     libraries:
  *      type: array
  *      items:
@@ -33,11 +39,27 @@ import { IProfileServiceSymbol, type IProfileService } from '../services';
  *        apiPort:
  *         type: number
  *         example: 3000
+ *        tempDir:
+ *         type: string
+ *         example: ./tmp
+ *        dataDir:
+ *         type: string
+ *         example: ./data
+ *        blocksDir:
+ *         type: string
+ *         example: ./blocks
  *   Library:
  *    type: object
  *    properties:
  *     name:
  *      type: string
+ *     id:
+ *      type: string
+ *     upstream:
+ *      type: string
+ *     type:
+ *      type: string
+ *      enum: [music, movie, series]
  */
 @controller('/config')
 export class ConfigController {

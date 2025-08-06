@@ -15,7 +15,7 @@ export async function createRemoteIpfs(url?: string): Promise<IIpfsService> {
 				files.push({
 					type: file.type,
 					name: file.name,
-					cid: file.cid.toString(),
+					cid: file.cid.toV1().toString(),
 				});
 			}
 			return files;
@@ -41,7 +41,7 @@ export async function createRemoteIpfs(url?: string): Promise<IIpfsService> {
 			for await (const res of node.pin.ls({
 				paths: cid,
 			})) {
-				if (res.cid.toString() == cid) {
+				if (res.cid.toV1().toString() == cid) {
 					return true;
 				}
 			}
@@ -59,6 +59,13 @@ export async function createRemoteIpfs(url?: string): Promise<IIpfsService> {
 				parts.push(buf);
 			}
 			return concat(parts);
+		},
+		async lsPins() {
+			const pins: string[] = [];
+			for await (const pin of node.pin.ls()) {
+				pins.push(pin.cid.toV1().toString());
+			}
+			return pins;
 		}
 	};
 }

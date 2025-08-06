@@ -10,6 +10,11 @@ export interface IIpfsService {
 	isPinned(cid: string): Promise<boolean>;
 
 	/**
+	 * Lists all pins.
+	 */
+	lsPins(): Promise<string[]>;
+
+	/**
 	 * Adds a new pin.
 	 * @param cid cid to pin.
 	 */

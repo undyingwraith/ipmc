@@ -20,7 +20,7 @@ export function createHeliaIpfs(helia: HeliaLibp2p<Libp2p<any>>, onClose: () => 
 				files.push({
 					type: file.type == 'directory' ? 'dir' : 'file',
 					name: file.name,
-					cid: file.cid.toString(),
+					cid: file.cid.toV1().toString(),
 				});
 			}
 			return files;
@@ -37,21 +37,21 @@ export function createHeliaIpfs(helia: HeliaLibp2p<Libp2p<any>>, onClose: () => 
 		},
 		async resolve(name) {
 			try {
-				return (await ns.resolve(peerIdFromString(name).publicKey!)).cid.toString();
+				return (await ns.resolve(peerIdFromString(name).publicKey!)).cid.toV1().toString();
 			} catch (ex) {
-				return (await ns.resolveDNSLink(name)).cid.toString();
+				return (await ns.resolveDNSLink(name)).cid.toV1().toString();
 			}
 		},
 		isPinned(cid) {
-			return helia.pins.isPinned(CID.parse(cid));
+			return helia.pins.isPinned(CID.parse(cid).toV1());
 		},
 		async addPin(cid) {
-			for await (const block of helia.pins.add(CID.parse(cid))) {
+			for await (const block of helia.pins.add(CID.parse(cid).toV1())) {
 				console.log(`Pin progress ${cid}: ${block.toString()}`);
 			}
 		},
 		async rmPin(cid) {
-			for await (const block of helia.pins.rm(CID.parse(cid))) {
+			for await (const block of helia.pins.rm(CID.parse(cid).toV1())) {
 				console.log(`Pin progress ${cid}: ${block.toString()}`);
 			}
 		},
@@ -64,5 +64,12 @@ export function createHeliaIpfs(helia: HeliaLibp2p<Libp2p<any>>, onClose: () => 
 			}
 			return concat(data);
 		},
+		async lsPins() {
+			const pins: string[] = [];
+			for await (const pin of helia.pins.ls()) {
+				pins.push(pin.cid.toV1().toString());
+			}
+			return pins;
+		}
 	});
 }
