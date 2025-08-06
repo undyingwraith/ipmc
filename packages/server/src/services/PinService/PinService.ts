@@ -1,8 +1,6 @@
 import { inject, injectable, postConstruct, preDestroy } from 'inversify';
 import { IIpfsServiceSymbol, ILogServiceSymbol, IProfileSymbol, type IIpfsService, type ILogService } from 'ipmc-interfaces';
-import type { IServerProfile } from '../IServerProfile';
-
-export const IPinServiceSymbol = Symbol.for('IPinService');
+import type { IServerProfile } from '../../IServerProfile';
 
 @injectable()
 export class PinService {

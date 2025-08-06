@@ -2,9 +2,11 @@ import * as bodyParser from 'body-parser';
 import { InversifyExpressServer } from 'inversify-express-utils';
 import { Application } from 'ipmc-core';
 import { IProfileSymbol } from 'ipmc-interfaces';
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+import { DefaultServerProfile } from './DefaultServerProfile';
 import type { IExpressApplication } from './IExpressApplication';
 import type { IServerProfile } from './IServerProfile';
-import { DefaultServerProfile } from './DefaultServerProfile';
 
 export class ExpressApplication extends Application implements IExpressApplication {
 	public constructor() {
@@ -16,6 +18,24 @@ export class ExpressApplication extends Application implements IExpressApplicati
 				extended: true
 			}));
 			app.use(bodyParser.json());
+
+			// Setup swagger api docs
+			const swaggerDefinition = {
+				openapi: '3.0.0',
+				info: {
+					title: 'API for IPMC server',
+					version: '0.0.0',
+				},
+			};
+
+			const options = {
+				swaggerDefinition,
+				// Paths to files containing OpenAPI definitions
+				apis: ['./src/controllers/*.ts'],
+			};
+
+			const swaggerSpec = swaggerJSDoc(options);
+			app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 		});
 	}
 
