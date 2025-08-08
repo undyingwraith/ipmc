@@ -9,7 +9,7 @@ export function FileInfoDisplay(props: { file: IFileInfo; }) {
 	const { file } = props;
 	const name = useTitle(file);
 	const title = (
-		<Typography variant={'h3'}>{name}</Typography>
+		<Typography variant={'h3'} sx={{ textShadow: '2px 2px 5px var(--mui-palette-common-background)' }}>{name}</Typography>
 	);
 	const posterUrl = useFileUrl(isPosterFeature(file) && file.posters.length > 0 ? file.posters[0]?.cid : undefined);
 

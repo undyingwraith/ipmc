@@ -61,9 +61,18 @@ describe('Regexes', () => {
 
 	test('Poster file gets matched', () => {
 		expect(Regexes.Poster.exec('poster.jpg')).not.toBeNull();
+		expect(Regexes.Poster.exec('poster1.jpg')).not.toBeNull();
 		expect(Regexes.Poster.exec('Sample Movie (2015)-poster.png')).not.toBeNull();
 		expect(Regexes.Poster.exec('Sample Movie (2015)-poster.jpg')).not.toBeNull();
 		expect(Regexes.Poster.exec('Sample Movie (2015)-poster.jpeg')).not.toBeNull();
+	});
+
+	test('Backdrop file gets matched', () => {
+		expect(Regexes.Backdrop.exec('backdrop.jpg')).not.toBeNull();
+		expect(Regexes.Backdrop.exec('backdrop1.jpg')).not.toBeNull();
+		expect(Regexes.Backdrop.exec('Sample Movie (2015)-backdrop.png')).not.toBeNull();
+		expect(Regexes.Backdrop.exec('Sample Movie (2015)-backdrop.jpg')).not.toBeNull();
+		expect(Regexes.Backdrop.exec('Sample Movie (2015)-backdrop.jpeg')).not.toBeNull();
 	});
 
 	test('Language check is valid', () => {

@@ -1,11 +1,11 @@
-import { HasPinAbility, HasPoster, HasTitle, isPinFeature, isPosterFeature, isTitleFeature } from '../Features';
+import { HasBackdrop, HasPinAbility, HasPoster, HasTitle, isPinFeature, isPosterFeature, isTitleFeature } from '../Features';
 import { IFolderFile, isIFolderFile } from '../IFolderFile';
 import { IVideoFile } from '../IVideoFile';
 
 /**
  * The metadata of a series.
  */
-export type ISeriesMetaData = IFolderFile & HasPinAbility & HasTitle & HasPoster & {
+export type ISeriesMetaData = IFolderFile & HasPinAbility & HasTitle & HasPoster & HasBackdrop & {
 	yearStart?: number;
 	yearEnd?: number;
 };
@@ -22,7 +22,7 @@ export function isISeriesMetadata(item: any): item is ISeriesMetaData {
 /**
  * The metadata of a season.
  */
-export type ISeasonMetaData = IFolderFile & HasPoster & HasPinAbility;
+export type ISeasonMetaData = IFolderFile & HasPoster & HasPinAbility & HasBackdrop;
 
 /**
  * The metadata of an episode.

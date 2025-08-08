@@ -1,9 +1,9 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 import { useComputed } from '@preact/signals-react';
-import { IFileInfo, isIFolderFile, isIVideoFile, isPinFeature } from 'ipmc-interfaces';
+import { IFileInfo, isBackdropFeature, isIFolderFile, isIVideoFile, isPinFeature } from 'ipmc-interfaces';
 import React from 'react';
-import { useAppbarButtons, usePersistentSignal, useTitle, useTranslation } from '../../hooks';
+import { useAppbarButtons, useFileUrl, usePersistentSignal, useTitle, useTranslation } from '../../hooks';
 import { IAppbarButtonOptions } from '../../services/AppbarButtonService';
 import { FileInfoDisplay, PinButton } from '../atoms';
 import { Display, DisplayButtons } from '../molecules';
@@ -18,6 +18,7 @@ export function ItemPage(props: {
 	const title = useTitle(file);
 
 	const display = usePersistentSignal<Display>(Display.Poster, 'display');
+	const backdropUrl = useFileUrl(isBackdropFeature(file) && file.backdrops.length > 0 ? file.backdrops[0]?.cid : undefined);
 
 	useAppbarButtons([
 		{
@@ -42,23 +43,30 @@ export function ItemPage(props: {
 
 	return isIFolderFile(file) ? (
 		<Stack sx={{ overflow: 'auto' }} spacing={1}>
-			<Paper>
-				<FileInfoDisplay file={file} />
-				{isPinFeature(file) && <PinButton item={file} />}
-			</Paper>
-			{file.items.length === 0 ? (
-				<Box>{_t('NoItems')}</Box>
-			) : useComputed(() =>
-				display.value == Display.List ? (
-					<FileList
-						files={file.items}
-					/>
+			{useComputed(() => (
+				<Paper sx={{ backgroundImage: backdropUrl.value ? `url('${backdropUrl.value}')` : 'none', backgroundSize: 'cover', backgroundPosition: 'center' }} square={true}>
+					<FileInfoDisplay file={file} />
+					{isPinFeature(file) && <PinButton item={file} />}
+				</Paper>
+			))}
+			{useComputed(() => {
+				const items = file.items.length === 1 && isIFolderFile(file.items[0]) ? file.items[0].items : file.items;
+
+				return file.items.length === 0 ? (
+					<Box>{_t('NoItems')}</Box>
 				) : (
-					<FileGrid
-						display={display}
-						files={file.items}
-					/>
-				))}
+					display.value == Display.List ? (
+						<FileList
+							files={items}
+						/>
+					) : (
+						<FileGrid
+							display={display}
+							files={items}
+						/>
+					)
+				);
+			})}
 		</Stack>
 	) : (
 		<Box>

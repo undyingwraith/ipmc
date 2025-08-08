@@ -64,6 +64,7 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 			pinId: `${libraryId}/${entry.name}`,
 			title: entry.name,
 			posters: files.filter(f => Regexes.Poster.exec(f.name) != null),
+			backdrops: files.filter(f => Regexes.Backdrop.exec(f.name) != null),
 		};
 
 		const items = [];
@@ -98,10 +99,14 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 			...entry,
 			pinId: `${parent.pinId}/${entry.name}`,
 			posters: files.filter(f => Regexes.Poster.exec(f.name) != null),
+			backdrops: files.filter(f => Regexes.Backdrop.exec(f.name) != null),
 		};
 
 		if (season.posters.length == 0) {
 			season.posters = parent.posters;
+		}
+		if (season.backdrops.length == 0) {
+			season.backdrops = parent.backdrops;
 		}
 
 		const items = [];
