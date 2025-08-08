@@ -48,18 +48,10 @@ import { IProfileServiceSymbol, type IProfileService } from '../services';
  *        blocksDir:
  *         type: string
  *         example: ./blocks
- *   Library:
- *    type: object
- *    properties:
- *     name:
- *      type: string
- *     id:
- *      type: string
- *     upstream:
- *      type: string
- *     type:
- *      type: string
- *      enum: [music, movie, series]
+ *        libraries:
+ *         type: array
+ *         items:
+ *          $ref: '#/components/schemas/ServerLibrary'
  */
 @controller('/config')
 export class ConfigController {
@@ -72,6 +64,7 @@ export class ConfigController {
 	 * /config:
 	 *  get:
 	 *   summary: Gets the config of the server.
+	 *   tags: [Config]
 	 *   responses:
 	 *    200:
 	 *     content:
@@ -89,6 +82,7 @@ export class ConfigController {
 	 * /config/client:
 	 *  get:
 	 *   summary: Gets the config of the server trimmed for a client.
+	 *   tags: [Config]
 	 *   responses:
 	 *    200:
 	 *     content:
@@ -106,6 +100,7 @@ export class ConfigController {
 	 * /config:
 	 *  post:
 	 *   summary: Sets the config of the server.
+	 *   tags: [Config]
 	 *   requestBody:
 	 *    required: true
 	 *    content:

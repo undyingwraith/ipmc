@@ -27,6 +27,7 @@ export class PinService {
 
 	public async updatePins(): Promise<void> {
 		const cids: string[] = [];
+		const pins = await this.ipfs.lsPins();
 
 		for (const lib of this.profileService.profile.libraries) {
 			if (!lib.keepPinned) {
@@ -36,8 +37,12 @@ export class PinService {
 			try {
 				const current = await this.ipfs.resolve(lib.upstream);
 				cids.push(current);
-				await this.ipfs.addPin(current);
-				this.log.info(`Library '${lib.name}' pinned!`);
+				if (pins.includes(current)) {
+					this.log.info(`Library '${lib.name}' already up to date.`);
+				} else {
+					await this.ipfs.addPin(current);
+					this.log.info(`Library '${lib.name}' pinned!`);
+				}
 			} catch (ex) {
 				this.log.error(ex);
 				this.log.error(`Failed to update library '${lib.name}'`);
@@ -46,8 +51,7 @@ export class PinService {
 
 		this.log.info('All libraries updated!');
 
-		const pins = await this.ipfs.lsPins();
-		if (pins.length != this.profileService.profile.libraries.filter(lib => !!lib.keepPinned).length) {
+		if (cids.length != this.profileService.profile.libraries.filter(lib => !!lib.keepPinned).length) {
 			this.log.info('Not all libraries successfuly updated skipping cleanup');
 			return;
 		}

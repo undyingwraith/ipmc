@@ -10,4 +10,9 @@ export interface IServerLibrary extends ILibrary {
 	 * Libraries that should be merged into this one, will only import new items.
 	 */
 	updateFrom?: ILibrary[];
+
+	/**
+	 * Key name to publish to.
+	 */
+	publishTo?: string;
 }

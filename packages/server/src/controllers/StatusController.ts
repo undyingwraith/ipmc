@@ -12,6 +12,7 @@ export class StatusController {
 	 * /status:
 	 *  get:
 	 *   summary: Gets the status of the server.
+	 *   tags: [Status]
 	 *   responses:
 	 *    200:
 	 *     description: OK
@@ -26,6 +27,7 @@ export class StatusController {
 	 * /status/id:
 	 *  get:
 	 *   summary: Gets the id of the server node.
+	 *   tags: [Status]
 	 *   responses:
 	 *    200:
 	 *     description: Id of the server node.
@@ -43,6 +45,7 @@ export class StatusController {
 	 * /status/peers:
 	 *  get:
 	 *   summary: Gets the peers connected to the server node.
+	 *   tags: [Status]
 	 *   responses:
 	 *    200:
 	 *     description: Peers connected to the server node.
