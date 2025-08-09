@@ -6,25 +6,29 @@ exports[`FileInfoDisplay > Renders data correctly 1`] = `
   "baseElement": <body>
     <div>
       <div
-        class="MuiBox-root css-0"
+        class="_container_627c32"
       >
-        <h3
-          class="MuiTypography-root MuiTypography-h3 css-nj1haw-MuiTypography-root"
+        <div
+          class="_textContainer_627c32"
         >
-          Test name
-        </h3>
+          <h3>
+            Test name
+          </h3>
+        </div>
       </div>
     </div>
   </body>,
   "container": <div>
     <div
-      class="MuiBox-root css-0"
+      class="_container_627c32"
     >
-      <h3
-        class="MuiTypography-root MuiTypography-h3 css-nj1haw-MuiTypography-root"
+      <div
+        class="_textContainer_627c32"
       >
-        Test name
-      </h3>
+        <h3>
+          Test name
+        </h3>
+      </div>
     </div>
   </div>,
   "debug": [Function],
