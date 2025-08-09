@@ -1,6 +1,6 @@
 import { Card, CardActionArea, CardActions, CardContent, CardHeader, CardMedia, Stack } from '@mui/material';
 import { ReadonlySignal, useComputed } from '@preact/signals-react';
-import { IFileInfo, isBackdropFeature, isIFolderFile, isIVideoFile, isPosterFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
+import { IFileInfo, isBackdropFeature, isIEpisodeMetadata, isIFolderFile, isIVideoFile, isPosterFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
 import React, { useRef } from 'react';
 import { useFileUrl, useIsVisible } from '../../../hooks';
 import { LanguageDisplay } from '../../atoms';
@@ -33,13 +33,17 @@ export function FileGridItem(props: { file: IFileInfo; onOpen: () => void; displ
 		}
 	});
 	const fileUrl = useFileUrl(urlSource.value, visible);
-	const url = useComputed(() => fileUrl.value ?? (display.value === Display.Poster ? posterFallback : thumbFallback));
+	const url = useComputed(() => fileUrl.value ?? (urlSource.value ? undefined : (display.value === Display.Poster ? posterFallback : thumbFallback)));
 
 	return useComputed(() => (
 		<Card ref={imgRef} className={styles.card}>
 			<CardActionArea onClick={onOpen} className={styles.actionArea}>
 				<CardMedia image={url.value} className={`${styles.media} ${display.value === Display.Thumbnail && styles.thumbnail}`} />
-				<CardHeader title={isTitleFeature(file) ? file.title : file.name} subheader={isYearFeature(file) ? file.year : undefined} className={styles.title} />
+				<CardHeader
+					className={styles.title}
+					title={isTitleFeature(file) ? file.title : file.name}
+					subheader={isYearFeature(file) ? file.year : isIEpisodeMetadata(file) ? `S${file.season} E${file.episode}` : undefined}
+				/>
 				{(isIVideoFile(file) || isIFolderFile(file)) && (
 					<CardContent>
 						<Stack direction={'column'} spacing={1}>
