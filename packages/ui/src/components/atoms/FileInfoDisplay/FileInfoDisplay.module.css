@@ -1,0 +1,14 @@
+.container,
+.textContainer {
+	display: flex;
+	gap: 5px;
+}
+
+.textContainer {
+	flex-direction: column;
+}
+
+.textContainer * {
+	text-shadow: 2px 2px var(--mui-palette-common-background);
+	text-align: left;
+}
