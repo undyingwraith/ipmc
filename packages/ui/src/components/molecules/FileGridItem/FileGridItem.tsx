@@ -33,7 +33,7 @@ export function FileGridItem(props: { file: IFileInfo; onOpen: () => void; displ
 		}
 	});
 	const fileUrl = useFileUrl(urlSource.value, visible);
-	const url = useComputed(() => fileUrl.value ?? (display.value === Display.Poster ? posterFallback : thumbFallback));
+	const url = useComputed(() => fileUrl.value ?? (urlSource.value ? undefined : (display.value === Display.Poster ? posterFallback : thumbFallback)));
 
 	return useComputed(() => (
 		<Card ref={imgRef} className={styles.card}>
