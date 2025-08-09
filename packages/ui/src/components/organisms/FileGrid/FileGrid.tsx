@@ -27,6 +27,7 @@ export function FileGrid(props: { files: IFileInfo[]; display: ReadonlySignal<Di
 			<div className={styles.item} />
 			<div className={styles.item} />
 			<div className={styles.item} />
+			<div className={styles.item} />
 		</div>
 	);
 }
