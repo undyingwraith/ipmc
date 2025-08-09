@@ -21,7 +21,7 @@ export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 	 * @inheritdoc
 	 */
 	public get version() {
-		return `0_${this.videoIndexer.version}`;
+		return `1_${this.videoIndexer.version}`;
 	}
 
 	/**
@@ -70,6 +70,7 @@ export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 				title: videoData[1],
 				year: videoData[2] != null ? parseInt(videoData[2]) : 0,
 				posters: files.filter(f => Regexes.Poster.exec(f.name) != null),
+				backdrops: files.filter(f => Regexes.Backdrop.exec(f.name) != null),
 			};
 		});
 	}

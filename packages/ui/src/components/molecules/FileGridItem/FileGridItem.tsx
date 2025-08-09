@@ -1,6 +1,6 @@
 import { Card, CardActionArea, CardActions, CardContent, CardHeader, CardMedia, Stack } from '@mui/material';
 import { ReadonlySignal, useComputed } from '@preact/signals-react';
-import { IFileInfo, isIFolderFile, isIVideoFile, isPosterFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
+import { IFileInfo, isBackdropFeature, isIFolderFile, isIVideoFile, isPosterFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
 import React, { useRef } from 'react';
 import { useFileUrl, useIsVisible } from '../../../hooks';
 import { LanguageDisplay } from '../../atoms';
@@ -16,18 +16,24 @@ export function FileGridItem(props: { file: IFileInfo; onOpen: () => void; displ
 	const imgRef = useRef<HTMLDivElement>(null);
 	const visible = useIsVisible(imgRef);
 
-	const posterUrl = useFileUrl(isPosterFeature(file) && file.posters.length > 0 ? file.posters[0]?.cid : undefined, visible, posterFallback);
-	const thumbUrl = useFileUrl(isIVideoFile(file) && file.thumbnails.length > 0 ? file.thumbnails[0]?.cid : undefined, visible, thumbFallback);
-	const url = useComputed(() => {
+	const urlSource = useComputed(() => {
 		switch (display.value) {
 			case Display.Poster:
-				return posterUrl.value;
+				return isPosterFeature(file) && file.posters.length > 0
+					? file.posters[0]?.cid
+					: undefined;
 			case Display.Thumbnail:
-				return thumbUrl.value;
+				return isIVideoFile(file) && file.thumbnails.length > 0
+					? file.thumbnails[0]?.cid
+					: isBackdropFeature(file) && file.backdrops.length > 0
+						? file.backdrops[0]?.cid
+						: undefined;
 			default:
 				return '';
 		}
 	});
+	const fileUrl = useFileUrl(urlSource.value, visible);
+	const url = useComputed(() => fileUrl.value ?? (display.value === Display.Poster ? posterFallback : thumbFallback));
 
 	return useComputed(() => (
 		<Card ref={imgRef} className={styles.card}>

@@ -21,7 +21,7 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 	 * @inheritdoc
 	 */
 	public get version() {
-		return `0_${this.videoIndexer.version}`;
+		return `1_${this.videoIndexer.version}`;
 	}
 
 	/**
@@ -135,13 +135,18 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 	public async extractEpisodeMetaData(entry: IFileInfo, parent: Omit<ISeasonMetaData, 'items'>, signal: AbortSignal): Promise<IEpisodeMetaData> {
 		return this.videoIndexer.fetch<IEpisodeMetaData>(parent.pinId, entry, signal, (files, video) => {
 			let posters = files.filter(f => Regexes.Poster.exec(f.name) != null);
+			let backdrops = files.filter(f => Regexes.Backdrop.exec(f.name) != null);
 
 			if (posters.length == 0) {
 				posters = parent.posters;
 			}
+			if (backdrops.length == 0) {
+				backdrops = parent.backdrops;
+			}
 			return {
 				...video,
 				posters,
+				backdrops,
 				title: video.name,
 			};
 		});

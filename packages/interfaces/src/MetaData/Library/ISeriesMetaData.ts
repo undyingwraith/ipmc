@@ -27,6 +27,6 @@ export type ISeasonMetaData = IFolderFile & HasPoster & HasPinAbility & HasBackd
 /**
  * The metadata of an episode.
  */
-export type IEpisodeMetaData = IVideoFile & HasPinAbility & HasTitle & {
+export type IEpisodeMetaData = IVideoFile & HasPinAbility & HasTitle & HasBackdrop & {
 	date?: string;
 };
