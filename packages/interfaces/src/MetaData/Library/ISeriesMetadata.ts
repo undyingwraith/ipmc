@@ -31,9 +31,9 @@ export type ISeasonMetadata = IFolderFile & HasPoster & HasPinAbility & HasBackd
  */
 export type IEpisodeMetadata = IVideoFile & HasPinAbility & HasTitle & HasPoster & HasBackdrop & {
 	date?: string;
-	series?: string;
-	episode?: string;
-	season?: string;
+	series: string;
+	episode: string;
+	season: string;
 };
 
 /**
@@ -42,5 +42,8 @@ export type IEpisodeMetadata = IVideoFile & HasPinAbility & HasTitle & HasPoster
  * @returns true if the item is a {@link IEpisodeMetadata}.
  */
 export function isIEpisodeMetadata(item: any): item is IEpisodeMetadata {
-	return isIVideoFile(item) && isPinFeature(item) && isTitleFeature(item) && isPosterFeature(item) && isBackdropFeature(item);
+	return isIVideoFile(item) && isPinFeature(item) && isTitleFeature(item) && isPosterFeature(item) && isBackdropFeature(item)
+		&& item.hasOwnProperty('series')
+		&& item.hasOwnProperty('episode')
+		&& item.hasOwnProperty('season');
 }
