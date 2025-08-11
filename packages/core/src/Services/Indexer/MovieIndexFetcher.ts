@@ -21,7 +21,7 @@ export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 	 * @inheritdoc
 	 */
 	public get version() {
-		return `1_${this.videoIndexer.version}`;
+		return `2_${this.videoIndexer.version}`;
 	}
 
 	/**
