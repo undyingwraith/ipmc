@@ -4,7 +4,7 @@ import { Redirect, Route } from 'wouter';
 import { AppContextProvider, useService } from '../../../context/AppContext';
 import { AppbarButtonService, AppbarButtonServiceSymbol } from '../../../services';
 import { ErrorBoundary } from '../../molecules';
-import { AppBar, LibraryDrawer } from '../../organisms';
+import { AppBar, LibraryDrawer, MediaPlayer } from '../../organisms';
 import { ItemRouter } from '../ItemRouter';
 import { LibraryHomePage } from '../LibraryHomePage';
 import { LibraryPage } from '../LibraryPage';
@@ -40,16 +40,19 @@ export function LibraryManager() {
 											<Route path={'/'}>
 												<LibraryPage key={params.library} library={params.library} />
 											</Route>
-											{items.value && <ItemRouter items={items.value.index} />}
+											<ErrorBoundary>
+												{items.value && <ItemRouter items={items.value.index} />}
+											</ErrorBoundary>
 										</ErrorBoundary>
 									);
 								}
 								return (
-									<Redirect to='/' />
+									<Redirect to='~/' />
 								);
 							}}
 						</Route>
 					</div>
+					<MediaPlayer />
 				</div>
 			</div>
 		</AppContextProvider>

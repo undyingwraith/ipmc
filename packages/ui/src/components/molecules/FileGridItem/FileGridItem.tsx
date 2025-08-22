@@ -56,7 +56,7 @@ export function FileGridItem(props: { file: IFileInfo; onOpen: () => void; displ
 				)}
 			</CardActionArea>
 			<CardActions>
-				<MediaItemActions file={file} onOpen={onOpen} />
+				<MediaItemActions file={file} fullwidth={true} />
 			</CardActions>
 		</Card>
 	));

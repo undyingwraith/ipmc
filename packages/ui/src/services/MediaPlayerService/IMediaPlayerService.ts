@@ -1,5 +1,6 @@
-import { Signal } from '@preact/signals-react';
-import { ISubtitleMetadata, IVideoFile } from 'ipmc-interfaces';
+import { ReadonlySignal, Signal } from '@preact/signals-react';
+import { IVideoFile } from 'ipmc-interfaces';
+import { IPlayerService } from './IPlayerService';
 
 export const IMediaPlayerServiceSymbol = Symbol.for('MediaPlayerSymbol');
 
@@ -26,19 +27,77 @@ export interface IMediaPlayerService {
 	jumpRelative(amount: number): void;
 
 	/**
-	 * Select a subtitle track.
-	 * @param subtitle Subtitle track to use (undefined if none).
+	 * Attempt to play the next {@link IFileInfo} in the queue.
 	 */
-	selectSubtitle(subtitle?: ISubtitleMetadata): void;
+	next(): void;
 
 	/**
-	 * Select a audio language.
-	 * @param language language to select.
+	 * Attempt to play the previous {@link IFileInfo} in the queue.
 	 */
-	selectLanguage(language: string): void;
+	previous(): void;
+
+	/**
+	 * Registers a new player service to the {@link IMediaPlayerService}.
+	 * @param player the {@link IPlayerService} to register.
+	 */
+	registerPlayer(player: IPlayerService): () => void;
+
+	/**
+	 * Attempts to play specified {@link IFileInfo}.
+	 * @param file the {@link IFileInfo} to play.
+	 */
+	play(file: IVideoFile): void;
+
+	enqueueNext(file: IVideoFile): void;
+	enqueue(file: IVideoFile): void;
+
+	/**
+	 * Stops playback and clears queue.
+	 */
+	stop(): void;
 
 	/**
 	 * Whether or not media is currently playing.
 	 */
 	playing: Signal<boolean>;
+
+	/**
+	 * The currently active queue.
+	 */
+	queue: ReadonlySignal<(IVideoFile)[]>;
+
+	/**
+	 * The current index in the queue.
+	 */
+	queueIndex: Signal<number>;
+
+	/**
+	 * The currently playing {@link IFileInfo}.
+	 */
+	nowPlaying: ReadonlySignal<IVideoFile | undefined>;
+
+	/**
+	 * Whether the player is open or minimized.
+	 */
+	open: Signal<boolean>;
+
+	/**
+	 * Whether the player is currently loading instead of playing.
+	 */
+	loading: ReadonlySignal<boolean>;
+
+	/**
+	 * Whether the player is currently muted.
+	 */
+	muted: Signal<boolean>;
+
+	/**
+	 * The players current volume (0-1).
+	 */
+	volume: Signal<number>;
+
+	/**
+	 * Whether the player is currently in fullscreen mode.
+	 */
+	fullscreen: Signal<boolean>;
 }

@@ -4,7 +4,7 @@ import { DialogService } from './DialogService';
 import { PopupService } from './PopupService';
 import { ThemeService, ThemeServiceSymbol } from './ThemeService';
 import { AppbarButtonService, AppbarButtonServiceSymbol } from './AppbarButtonService';
-import { IMediaPlayerServiceSymbol, MediaPlayerService } from './MediaPlayerService';
+import { IMediaPlayerServiceSymbol, IVideoPlayerServiceSymbol, MediaPlayerService, VideoPlayerService } from './MediaPlayerService';
 import { ConsoleLogSink } from './ConsoleLogSink';
 import { IObjectUrlControllerSymbol, ObjectUrlController } from './ObjectUrlController';
 
@@ -15,5 +15,6 @@ export const UiModule: IModule = (app) => {
 	app.register(AppbarButtonService, AppbarButtonServiceSymbol);
 	app.registerMultiple(ConsoleLogSink, ILogSinkSymbol);
 	app.register(MediaPlayerService, IMediaPlayerServiceSymbol);
+	app.register(VideoPlayerService, IVideoPlayerServiceSymbol);
 	app.register(ObjectUrlController, IObjectUrlControllerSymbol);
 };

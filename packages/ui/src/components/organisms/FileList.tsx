@@ -5,16 +5,18 @@ import React from 'react';
 import { useLocation } from 'wouter';
 import { ErrorBoundary, FileListItem } from '../molecules';
 
-export function FileList(props: { files: IFileInfo[]; }) {
+export function FileList(props: { files: IFileInfo[]; onOpen?: (item: IFileInfo, key: number) => void; }) {
+	const { files, onOpen } = props;
+
 	const [_, setLocation] = useLocation();
 
 	return (
 		<List>
-			{interleave(props.files.map(i => (
+			{interleave(files.map((i, k) => (
 				<ErrorBoundary key={i.cid}>
 					<FileListItem
 						file={i}
-						onOpen={() => setLocation(`/${i.name}`)}
+						onOpen={() => onOpen ? onOpen(i, k) : setLocation(`/${i.name}`)}
 					/>
 				</ErrorBoundary>
 			)), (

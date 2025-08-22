@@ -1,0 +1,166 @@
+$toolbarHeight: 2.5rem;
+$transitionTime: 0.3s;
+$minMediaHeight: 150px;
+$minMediaWidth: min(25vw, 250px);
+$minMediaSize: min(25vw, 350px);
+
+
+@mixin title {
+	display: flex;
+	flex-direction: row;
+
+	h5 {
+		flex-grow: 1;
+		margin: 0;
+		text-overflow: ellipsis;
+	}
+}
+
+.spacer {
+	flex-grow: 1;
+}
+
+.controls {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+}
+
+.container {
+	position: relative;
+	height: $minMediaHeight;
+	width: 100vw;
+	transition: all $transitionTime linear;
+	flex-shrink: 0;
+
+	.item {
+		position: absolute;
+		bottom: 0;
+		background-color: var(--mui-palette-background-paper);
+		background-image: var(--mui-overlays-2);
+		display: flex;
+		flex-direction: column;
+		align-items: start;
+		width: 100vw;
+		height: $minMediaHeight;
+		transition: all $transitionTime linear;
+
+
+		.toolbar {
+			@include title;
+			height: 0;
+			transition: all $transitionTime linear;
+			padding-left: 5px;
+			padding-right: 5px;
+			width: 100%;
+			overflow: hidden;
+
+			.queue {
+				overflow: auto;
+				height: 0;
+				position: absolute;
+				top: $toolbarHeight;
+				bottom: 0;
+				left: 0;
+				width: 100%;
+				background-color: var(--mui-palette-background-default);
+				z-index: 100;
+				transition: all $transitionTime linear;
+
+				&.open {
+					height: calc(100vh - 64px - $toolbarHeight);
+				}
+			}
+		}
+
+
+		.controlsContainer {
+			flex-direction: row;
+			display: flex;
+			width: 100%;
+
+			.videoContainer {
+				position: relative;
+				display: inline-block;
+				background-color: var(--mui-palette-common-background);
+				width: $minMediaWidth;
+				height: $minMediaHeight;
+				transition: all 0.3s linear;
+
+				.videoOverlay {
+					display: none;
+					flex-direction: column;
+					position: absolute;
+					left: 0;
+					top: 0;
+					z-index: 1;
+					width: 100%;
+					height: 100%;
+					opacity: 1;
+					background-color: #3232324d;
+					transition: all 0.3s;
+
+					&.hidden {
+						opacity: 0;
+					}
+				}
+
+				.video {
+					flex-grow: 0;
+					flex-shrink: 0;
+					height: $minMediaHeight;
+					width: $minMediaWidth;
+					transition: all $transitionTime linear;
+				}
+			}
+
+			>.controls {
+				flex-direction: column;
+				width: calc(100% - $minMediaWidth);
+				transition: all $transitionTime linear;
+
+				:nth-child(1) {
+					@include title;
+				}
+			}
+		}
+	}
+
+	&.open {
+		.item {
+			height: calc(100vh - 64px);
+
+			.toolbar {
+				height: $toolbarHeight;
+			}
+
+			.controlsContainer {
+				.videoContainer {
+					height: calc(100vh - 64px - $toolbarHeight);
+					width: 100%;
+
+					.videoOverlay {
+						display: flex;
+					}
+
+					.video {
+						height: calc(100vh - 64px - $toolbarHeight);
+						width: 100%;
+					}
+				}
+
+				>.controls {
+					width: 0;
+				}
+			}
+		}
+	}
+
+	&.hidden {
+		height: 0;
+
+		.item {
+			height: 0;
+		}
+	}
+}
