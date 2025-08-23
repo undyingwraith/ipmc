@@ -40,9 +40,9 @@ export function createHeliaIpfs(helia: HeliaLibp2p<Libp2p<any>>, onClose: () => 
 			const ipns = parseIpns(name);
 			let resolved;
 			if (ipns.dnsLink) {
-				resolved = (await ns.resolve(peerIdFromString(ipns.name).publicKey!)).cid;
+				resolved = (await ns.resolveDNSLink(ipns.name)).cid;
 			} else {
-				resolved = (await ns.resolveDNSLink(name)).cid;
+				resolved = (await ns.resolve(peerIdFromString(ipns.name).publicKey!)).cid;
 			}
 			if (ipns.path !== '/') {
 				resolved = await (await fs.stat(resolved, { path: ipns.path })).cid;
