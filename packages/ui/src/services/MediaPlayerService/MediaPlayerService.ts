@@ -136,7 +136,7 @@ export class MediaPlayerService implements IMediaPlayerService {
 	public playing = new Signal(false);
 	public nowPlaying = computed(() => this.queue.value[this.queueIndex.value]);
 	public open: Signal<boolean> = new Signal(false);
-	public loading = new Signal(true);
+	public loading = computed(() => this.currentPlayer.value?.loading.value ?? true);
 	public muted: Signal<boolean> = new Signal(false);
 	public volume: Signal<number> = new Signal(1);
 	public fullscreen: Signal<boolean> = new Signal(false);

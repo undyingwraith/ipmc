@@ -144,7 +144,7 @@ $minMediaSize: min(25vw, 350px);
 					}
 
 					.video {
-						height: calc(100vh - 64px - $toolbarHeight);
+						height: 100%;
 						width: 100%;
 					}
 				}

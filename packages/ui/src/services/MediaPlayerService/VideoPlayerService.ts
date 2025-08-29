@@ -1,3 +1,4 @@
+import { Signal } from '@preact/signals-react';
 import { inject } from 'inversify';
 import { IFileInfo, type IIpfsService, IIpfsServiceSymbol, type ILogService, ILogServiceSymbol, isIVideoFile, ISubtitleMetadata, type ITranslationService, ITranslationServiceSymbol } from 'ipmc-interfaces';
 import { type IMediaPlayerService, IMediaPlayerServiceSymbol } from './IMediaPlayerService';
@@ -50,15 +51,15 @@ export class VideoPlayerService implements IVideoPlayerService {
 
 
 		// Loading state
-		/*el.addEventListener('waiting', () => {
-			this.mediaPlayer.loading.value = true;
+		el.addEventListener('waiting', () => {
+			this.loading.value = true;
 		});
 		el.addEventListener('stalled', () => {
-			this.mediaPlayer.loading.value = true;
+			this.loading.value = true;
 		});
 		el.addEventListener('canplay', () => {
-			this.mediaPlayer.loading.value = false;
-		});*/
+			this.loading.value = false;
+		});
 
 		// Keep playing the queue once video has ended
 		el.addEventListener('ended', () => {
@@ -68,9 +69,6 @@ export class VideoPlayerService implements IVideoPlayerService {
 				this.mediaPlayer.playing.value = false;
 			}
 		});
-		/*el.addEventListener('play', () => {
-			this.playing.value = true;
-		});*/
 
 		return () => {
 			this.player.detach();
@@ -155,6 +153,9 @@ export class VideoPlayerService implements IVideoPlayerService {
 			status: 200,
 		};
 	};
+
+
+	public loading = new Signal<boolean>;
 
 	private get videoEl(): HTMLVideoElement | null {
 		return this.player.getMediaElement();

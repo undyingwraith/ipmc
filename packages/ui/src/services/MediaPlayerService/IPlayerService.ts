@@ -1,3 +1,4 @@
+import { ReadonlySignal } from '@preact/signals-react';
 import { IFileInfo } from 'ipmc-interfaces';
 
 export interface IPlayerService {
@@ -33,4 +34,9 @@ export interface IPlayerService {
 	 * Request fullscreen for this player.
 	 */
 	requestFullscreen(): void;
+
+	/**
+	 * Whether the media is loading.
+	 */
+	loading: ReadonlySignal<boolean>;
 }
