@@ -7765,6 +7765,7 @@ __metadata:
     libp2p: "npm:^2.8.5"
     multiformats: "npm:^13.3.2"
     reflect-metadata: "npm:^0.2.2"
+    tinyduration: "npm:^3.4.1"
     typescript: "npm:^5.8.3"
     uint8arrays: "npm:^5.1.0"
     vite: "npm:^6.3.3"
@@ -12289,6 +12290,13 @@ __metadata:
   version: 2.9.0
   resolution: "tinybench@npm:2.9.0"
   checksum: 10c0/c3500b0f60d2eb8db65250afe750b66d51623057ee88720b7f064894a6cb7eb93360ca824a60a31ab16dab30c7b1f06efe0795b352e37914a9d4bad86386a20c
+  languageName: node
+  linkType: hard
+
+"tinyduration@npm:^3.4.1":
+  version: 3.4.1
+  resolution: "tinyduration@npm:3.4.1"
+  checksum: 10c0/06f0fbf5658c92a07d900208bb0bafad30a4c61cc914fdd72edeb5f02ce9f728eebd986da43b115f2b00d6dde06242a107c018e834db2d3a5ddca37b293a61ba
   languageName: node
   linkType: hard
 

@@ -1,9 +1,10 @@
-import { Card, CardActionArea, CardActions, CardContent, CardHeader, CardMedia, Stack } from '@mui/material';
-import { ReadonlySignal, useComputed } from '@preact/signals-react';
+import { AspectRatio, HourglassFull } from '@mui/icons-material';
+import { Card, CardActionArea, CardActions, CardContent, CardHeader, CardMedia, Chip, Stack } from '@mui/material';
+import { ReadonlySignal, Signal, useComputed } from '@preact/signals-react';
 import { IFileInfo, isBackdropFeature, isIEpisodeMetadata, isIFolderFile, isIVideoFile, isPosterFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
 import React, { useRef } from 'react';
 import { useFileUrl, useIsVisible } from '../../../hooks';
-import { LanguageDisplay } from '../../atoms';
+import { LanguageDisplay, TimeDisplay } from '../../atoms';
 import { EpisodeDisplay } from '../../atoms/EpisodeDisplay';
 import { Display } from '../DisplayButtons';
 import { MediaItemActions } from '../MediaItemActions';
@@ -51,6 +52,10 @@ export function FileGridItem(props: { file: IFileInfo; onOpen: () => void; displ
 								<EpisodeDisplay file={file} />
 							)}
 							<LanguageDisplay file={file} />
+							{isIVideoFile(file) && (<>
+								<Chip size={'small'} label={file.resolution} icon={<AspectRatio />} />
+								<Chip size={'small'} label={<TimeDisplay time={new Signal(file.duration)} />} icon={<HourglassFull />} />
+							</>)}
 						</Stack>
 					</CardContent>
 				)}
