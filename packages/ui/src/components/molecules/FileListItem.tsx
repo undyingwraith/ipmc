@@ -4,8 +4,14 @@ import React from 'react';
 import { EpisodeDisplay, LanguageDisplay } from '../atoms';
 import { MediaItemActions } from './MediaItemActions';
 
-export function FileListItem(props: { file: IFileInfo; onOpen: () => void; }) {
-	const { file, onOpen } = props;
+export function FileListItem(props: {
+	file: IFileInfo;
+	onOpen: () => void;
+	actions?: JSX.Element;
+	selected?: boolean;
+}) {
+	const { file, onOpen, selected } = props;
+	const actions = props.actions ?? (<MediaItemActions file={file} />);
 
 	return (
 		<ListItem
@@ -17,10 +23,13 @@ export function FileListItem(props: { file: IFileInfo; onOpen: () => void; }) {
 					{(isIVideoFile(file) || isIFolderFile(file)) && (
 						<LanguageDisplay file={file} />
 					)}
-					<MediaItemActions file={file} />
+					{actions}
 				</Stack>
 			}>
-			<ListItemButton onClick={onOpen}>
+			<ListItemButton
+				onClick={onOpen}
+				selected={selected}
+			>
 				<ListItemText
 					primary={isTitleFeature(file) ? file.title : file.name}
 					secondary={isYearFeature(file) ? file.year : isIEpisodeMetadata(file) ? `${file.series} - S${file.season} E${file.episode}` : undefined}

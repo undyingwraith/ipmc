@@ -64,7 +64,7 @@ export interface IMediaPlayerService {
 	/**
 	 * The currently active queue.
 	 */
-	queue: ReadonlySignal<(IVideoFile)[]>;
+	queue: Signal<(IVideoFile)[]>;
 
 	/**
 	 * The current index in the queue.

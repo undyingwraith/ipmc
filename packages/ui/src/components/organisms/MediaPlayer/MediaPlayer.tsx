@@ -1,4 +1,4 @@
-import { ExpandLess, ExpandMore, List } from '@mui/icons-material';
+import { ArrowDownward, ArrowUpward, Delete, ExpandLess, ExpandMore, List } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import { useComputed, useSignal } from '@preact/signals-react';
 import { isTitleFeature } from 'ipmc-interfaces';
@@ -29,10 +29,41 @@ export function MediaPlayer() {
 				<ExpandMore />
 			</IconButton>
 			<div className={`${styles.queue} ${queueOpen.value && player.open.value ? styles.open : ''}`}>
-				<FileList files={player.queue.value} onOpen={(i, k) => {
-					player.queueIndex.value = k;
-					queueOpen.value = false;
-				}} />
+				<FileList
+					files={player.queue.value}
+					actions={(f, i) => (<div>
+						<IconButton
+							disabled={i === 0}
+							onClick={() => {
+								const queue = player.queue.value;
+								player.queue.value = queue.toSpliced(i - 1, 2, queue[i], queue[i - 1]);
+							}}
+						>
+							<ArrowUpward />
+						</IconButton>
+						<IconButton
+							disabled={i + 1 === player.queue.value.length}
+							onClick={() => {
+								const queue = player.queue.value;
+								player.queue.value = queue.toSpliced(i, 2, queue[i + 1], queue[i]);
+							}}
+						>
+							<ArrowDownward />
+						</IconButton>
+						<IconButton
+							onClick={() => {
+								player.queue.value = player.queue.value.toSpliced(i, 1);
+							}}
+						>
+							<Delete />
+						</IconButton>
+					</div>)}
+					selected={player.queueIndex.value}
+					onOpen={(_, k) => {
+						player.queueIndex.value = k;
+						queueOpen.value = false;
+					}}
+				/>
 			</div>
 		</div>
 	));
