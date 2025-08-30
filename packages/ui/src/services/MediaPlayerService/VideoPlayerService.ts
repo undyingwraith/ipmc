@@ -46,32 +46,40 @@ export class VideoPlayerService implements IVideoPlayerService {
 	}
 
 	public registerVideoElement(el: HTMLVideoElement, container: HTMLElement): () => void {
-		this.player.attach(el);
-		this.container = container;
+		this.log.debug('[VideoPlayerService] attaching...');
+		this.player.attach(el)
+			.then(() => {
+				this.log.debug('[VideoPlayerService] attached!');
+				this.container = container;
 
 
-		// Loading state
-		el.addEventListener('waiting', () => {
-			this.loading.value = true;
-		});
-		el.addEventListener('stalled', () => {
-			this.loading.value = true;
-		});
-		el.addEventListener('canplay', () => {
-			this.loading.value = false;
-		});
+				// Loading state
+				el.addEventListener('waiting', () => {
+					this.loading.value = true;
+				});
+				el.addEventListener('stalled', () => {
+					this.loading.value = true;
+				});
+				el.addEventListener('canplay', () => {
+					this.loading.value = false;
+				});
 
-		// Keep playing the queue once video has ended
-		el.addEventListener('ended', () => {
-			if (this.mediaPlayer.queue.value.length > this.mediaPlayer.queueIndex.value + 1) {
-				this.mediaPlayer.next();
-			} else {
-				this.mediaPlayer.playing.value = false;
-			}
-		});
+				// Keep playing the queue once video has ended
+				el.addEventListener('ended', () => {
+					if (this.mediaPlayer.queue.value.length > this.mediaPlayer.queueIndex.value + 1) {
+						this.mediaPlayer.next();
+					} else {
+						this.mediaPlayer.playing.value = false;
+					}
+				});
+			});
 
 		return () => {
-			this.player.detach();
+			if (this.videoEl) {
+				this.log.debug('[VideoPlayerService] detaching...');
+				this.player.detach()
+					.then(() => this.log.debug('[VideoPlayerService] detached!'));
+			}
 			this.container = null;
 		};
 	}
