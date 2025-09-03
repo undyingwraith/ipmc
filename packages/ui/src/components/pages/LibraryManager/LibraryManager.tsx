@@ -1,10 +1,14 @@
+import { Paper, Toolbar } from '@mui/material';
+import { IGlobalSearchService, IGlobalSearchServiceSymbol } from 'ipmc-core';
 import { IIndexManager, IIndexManagerSymbol, IProfile, IProfileSymbol } from "ipmc-interfaces";
 import React from "react";
+import { LibraryFilters } from 'src/components/molecules/LibraryFilters';
 import { Redirect, Route } from 'wouter';
 import { AppContextProvider, useService } from '../../../context/AppContext';
+import { usePersistentSignal } from '../../../hooks';
 import { AppbarButtonService, AppbarButtonServiceSymbol } from '../../../services';
-import { ErrorBoundary } from '../../molecules';
-import { AppBar, LibraryDrawer, MediaPlayer } from '../../organisms';
+import { Display, ErrorBoundary, GlobalSearchField } from '../../molecules';
+import { LibraryDrawer, MediaPlayer } from '../../organisms';
 import { ItemRouter } from '../ItemRouter';
 import { LibraryHomePage } from '../LibraryHomePage';
 import { LibraryPage } from '../LibraryPage';
@@ -13,7 +17,10 @@ import styles from './LibraryManager.module.css';
 export function LibraryManager() {
 	const profile = useService<IProfile>(IProfileSymbol);
 	const indexManager = useService<IIndexManager>(IIndexManagerSymbol);
+	const searchService = useService<IGlobalSearchService>(IGlobalSearchServiceSymbol);
 	const libraries = profile.libraries;
+
+	const display = usePersistentSignal<Display>(Display.Poster, 'display');
 
 	return (
 		<AppContextProvider
@@ -22,9 +29,14 @@ export function LibraryManager() {
 			}}
 		>
 			<div className={styles.container}>
-				<LibraryDrawer />
 				<div className={styles.contentContainer}>
-					<AppBar elevation={1} />
+					<Paper elevation={1} sx={{ borderRadius: 0 }}>
+						<Toolbar>
+							<LibraryDrawer />
+							<GlobalSearchField searchService={searchService} />
+							<LibraryFilters display={display} />
+						</Toolbar>
+					</Paper>
 					<div className={styles.content}>
 						<Route path={'/'}>
 							<ErrorBoundary>

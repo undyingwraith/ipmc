@@ -7,7 +7,7 @@ import React from "react";
 import { LibraryTypeDictionary } from 'src/dictionaries';
 import { useLocation } from 'wouter';
 import { useService } from '../../context';
-import { useAppbarButtons, useHotkey, useLinkedSignal, useTranslation } from '../../hooks';
+import { useHotkey, useLinkedSignal, useTranslation } from '../../hooks';
 
 export function LibraryDrawer() {
 	const profile = useService<IProfile>(IProfileSymbol);
@@ -27,50 +27,44 @@ export function LibraryDrawer() {
 		ctrl: true,
 	}, toggle);
 
-	useAppbarButtons([
-		{
-			component: (
-				<IconButton onClick={toggle}>
-					<MenuIcon />
-				</IconButton>
-			),
-			position: 'start'
-		}
-	]);
-
-	return useComputed(() => (
-		<Drawer open={drawerOpen.value} onClose={toggle}>
-			<List sx={{ minWidth: '25vw' }}>
-				<ListItem disablePadding>
-					<ListItemButton
-						selected={location.value === '/'}
-						onClick={() => {
-							setLocation('/');
-							drawerOpen.value = false;
-						}}>
-						<ListItemIcon>
-							<HomeIcon />
-						</ListItemIcon>
-						<ListItemText primary={_t('Home')} />
-					</ListItemButton>
-				</ListItem>
-				<Divider />
-				{libraries.map((lib) => (
-					<ListItem key={lib.id} disablePadding>
+	return (<>
+		<IconButton onClick={toggle}>
+			<MenuIcon />
+		</IconButton>
+		{useComputed(() => (
+			<Drawer open={drawerOpen.value} onClose={toggle}>
+				<List sx={{ minWidth: '25vw' }}>
+					<ListItem disablePadding>
 						<ListItemButton
-							selected={location.value.startsWith('/' + lib.id)}
+							selected={location.value === '/'}
 							onClick={() => {
-								setLocation('/' + lib.id);
+								setLocation('/');
 								drawerOpen.value = false;
 							}}>
 							<ListItemIcon>
-								{LibraryTypeDictionary[lib.type] ?? LibraryTypeDictionary.unknown}
+								<HomeIcon />
 							</ListItemIcon>
-							<ListItemText primary={lib.name} />
+							<ListItemText primary={_t('Home')} />
 						</ListItemButton>
 					</ListItem>
-				))}
-			</List>
-		</Drawer>
-	));
+					<Divider />
+					{libraries.map((lib) => (
+						<ListItem key={lib.id} disablePadding>
+							<ListItemButton
+								selected={location.value.startsWith('/' + lib.id)}
+								onClick={() => {
+									setLocation('/' + lib.id);
+									drawerOpen.value = false;
+								}}>
+								<ListItemIcon>
+									{LibraryTypeDictionary[lib.type] ?? LibraryTypeDictionary.unknown}
+								</ListItemIcon>
+								<ListItemText primary={lib.name} />
+							</ListItemButton>
+						</ListItem>
+					))}
+				</List>
+			</Drawer>
+		))}
+	</>);
 }

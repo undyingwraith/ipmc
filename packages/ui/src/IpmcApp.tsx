@@ -7,7 +7,7 @@ import { useHashLocation } from 'wouter/use-hash-location';
 import { AppBar } from './components/organisms/AppBar';
 import { AppContextProvider, ThemeProvider } from './context';
 import { IpmcLauncher } from './IpmcLauncher';
-import { UiModule } from './services/UiModule';
+import { UiCoreModule } from './services/UiCoreModule';
 import translations from './translations';
 
 export interface IIpmcAppProps {
@@ -27,7 +27,7 @@ export function IpmcApp(props: IIpmcAppProps) {
 			<AppContextProvider setup={(app) => {
 				app.use(CoreModule);
 				app.use(BrowserModule);
-				app.use(UiModule);
+				app.use(UiCoreModule);
 				app.registerConstant(props.configService, IConfigurationServiceSymbol);
 				app.register(FileExportService, IFileExportServiceSymbol);
 				app.registerConstantMultiple<ITranslation>(translations, ITranslationsSymbol);

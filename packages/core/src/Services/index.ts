@@ -1,3 +1,4 @@
+export * from './GlobalSearchService';
 export * from './Indexer';
 export { FileExportService } from './FileExportService';
 export { HotkeyService } from './HotkeyService';
