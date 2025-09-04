@@ -1,5 +1,5 @@
 import { Signal } from '@preact/signals-react';
-import { inject } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { IFileInfo, type IIpfsService, IIpfsServiceSymbol, type ILogService, ILogServiceSymbol, isIVideoFile, ISubtitleMetadata, type ITranslationService, ITranslationServiceSymbol } from 'ipmc-interfaces';
 import { type IMediaPlayerService, IMediaPlayerServiceSymbol } from './IMediaPlayerService';
 import { type IVideoPlayerService } from './IVideoPlayerService';
