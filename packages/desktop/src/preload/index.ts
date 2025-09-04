@@ -150,7 +150,9 @@ const nodeService: INodeService = {
 const configService: IConfigurationService = {
 	async getProfiles(): Promise<string[]> {
 		try {
-			const profiles = fs.readdirSync(await getProfileFolder());
+			const folder = await getProfileFolder();
+			const profiles = fs.readdirSync(folder)
+				.filter(p => fs.existsSync(path.join(folder, p, 'profile.json')));
 			return profiles;
 		} catch (_) {
 			return [];

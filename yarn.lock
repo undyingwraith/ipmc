@@ -5230,6 +5230,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"country-flag-emoji-polyfill@npm:^0.1.8":
+  version: 0.1.8
+  resolution: "country-flag-emoji-polyfill@npm:0.1.8"
+  checksum: 10c0/aac74de7df236bfc64d33438e29ab4c9eec314370b48f2e7aabb052a57fd3bc939e41afdcad0069987f18509aaf4b34d9e44327d0284fa2afabe97129f25cd89
+  languageName: node
+  linkType: hard
+
 "crc@npm:^3.8.0":
   version: 3.8.0
   resolution: "crc@npm:3.8.0"
@@ -7637,6 +7644,7 @@ __metadata:
     "@types/react-dom": "npm:^18.3.6"
     "@vitejs/plugin-react": "npm:^4.4.1"
     blockstore-fs: "npm:^2.0.2"
+    country-flag-emoji-polyfill: "npm:^0.1.8"
     datastore-level: "npm:^11.0.1"
     electron: "npm:35.2.1"
     electron-builder: "npm:^26.0.12"

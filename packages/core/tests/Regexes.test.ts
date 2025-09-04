@@ -34,22 +34,20 @@ describe('Regexes', () => {
 		expect(res5![2]).toBe('2015');
 	});
 
-	test('Episode file gets matches', () => {
-		const res1 = Regexes.EpisodeFile('mpd').exec('Sample Series - S01E02 - Title.mpd');
-		expect(res1).not.toBeNull();
-		expect(res1![0]).toEqual('Sample Series - S01E02 - Title.mpd');
-		expect(res1![1]).toEqual('Sample Series');
-		expect(res1![2]).toBe('01');
-		expect(res1![3]).toBe('02');
-		expect(res1![4]).toBe('Title');
-
-		const res2 = Regexes.EpisodeFile('mpd').exec('Sample Series - S01E02.mpd');
-		expect(res2).not.toBeNull();
-		expect(res2![0]).toEqual('Sample Series - S01E02.mpd');
-		expect(res2![1]).toEqual('Sample Series');
-		expect(res2![2]).toBe('01');
-		expect(res2![3]).toBe('02');
-		expect(res2![4]).toBeUndefined();
+	test.each([
+		['Sample Series - S01E02 - Title.mpd', 'Sample Series', '01', '02', 'Title'],
+		['Sample Series - S01E02.mpd', 'Sample Series', '01', '02', undefined],
+		['Sample Series - S01E02 - Three word Title.mpd', 'Sample Series', '01', '02', 'Three word Title'],
+		['Sample Series-s01e02-Title.mpd', 'Sample Series', '01', '02', 'Title'],
+		['Sample Series - S01E02 - Three-word Title.mpd', 'Sample Series', '01', '02', 'Three-word Title'],
+	])('Episode file \'%s\' gets matches', (fileName, series, season, episode, title) => {
+		const res = Regexes.EpisodeFile('mpd').exec(fileName);
+		expect(res).not.toBeNull();
+		expect(res![0]).toEqual(fileName);
+		expect(res![1]).toEqual(series);
+		expect(res![2]).toBe(season);
+		expect(res![3]).toBe(episode);
+		expect(res![4]).toBe(title);
 	});
 
 	test('Thumbnail file gets matched', () => {
@@ -61,9 +59,18 @@ describe('Regexes', () => {
 
 	test('Poster file gets matched', () => {
 		expect(Regexes.Poster.exec('poster.jpg')).not.toBeNull();
+		expect(Regexes.Poster.exec('poster1.jpg')).not.toBeNull();
 		expect(Regexes.Poster.exec('Sample Movie (2015)-poster.png')).not.toBeNull();
 		expect(Regexes.Poster.exec('Sample Movie (2015)-poster.jpg')).not.toBeNull();
 		expect(Regexes.Poster.exec('Sample Movie (2015)-poster.jpeg')).not.toBeNull();
+	});
+
+	test('Backdrop file gets matched', () => {
+		expect(Regexes.Backdrop.exec('backdrop.jpg')).not.toBeNull();
+		expect(Regexes.Backdrop.exec('backdrop1.jpg')).not.toBeNull();
+		expect(Regexes.Backdrop.exec('Sample Movie (2015)-backdrop.png')).not.toBeNull();
+		expect(Regexes.Backdrop.exec('Sample Movie (2015)-backdrop.jpg')).not.toBeNull();
+		expect(Regexes.Backdrop.exec('Sample Movie (2015)-backdrop.jpeg')).not.toBeNull();
 	});
 
 	test('Language check is valid', () => {

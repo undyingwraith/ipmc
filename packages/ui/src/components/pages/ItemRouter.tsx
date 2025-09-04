@@ -14,7 +14,7 @@ export function ItemRouter(props: {
 					<Route path={'/'}>
 						{item ? <ItemPage item={item} /> : <div>Item not found</div>}
 					</Route>
-					{isIFolderFile(item) && <ItemRouter items={item.items} />}
+					{isIFolderFile(item) && <ItemRouter items={item.items.length === 1 && isIFolderFile(item.items[0]) ? item.items[0].items : item.items} />}
 				</>);
 			}}
 		</Route>

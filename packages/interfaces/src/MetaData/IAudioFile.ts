@@ -22,5 +22,5 @@ export interface IAudioFile extends IFileInfo {
  * @returns whether the specified item is a {@link IAudioFile}.
  */
 export function isIAudioFile(item: any): item is IAudioFile {
-	return typeof item.music !== 'undefined' && typeof item.thumbnails?.length === 'number' && isIFileInfo(item);
+	return typeof item.audio !== 'undefined' && typeof item.thumbnails?.length === 'number' && isIFileInfo(item);
 }

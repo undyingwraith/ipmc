@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { IEpisodeMetaData, IFileInfo, IIpfsService, IIpfsServiceSymbol, ILibrary, ILogService, ILogServiceSymbol, IOnProgress, ISeasonMetaData, ISeriesMetaData } from 'ipmc-interfaces';
+import { IEpisodeMetadata, IFileInfo, IIpfsService, IIpfsServiceSymbol, ILibrary, ILogService, ILogServiceSymbol, IOnProgress, ISeasonMetadata, ISeriesMetadata } from 'ipmc-interfaces';
 import { Regexes } from '../../Regexes';
 import { IFetchOptions } from './IFetchOptions';
 import { IIndexFetcher } from './IIndexFetcher';
@@ -9,7 +9,7 @@ import { VideoIndexFetcher } from './VideoIndexFetcher';
  * Fetches a index for an {@link ILibrary} of type series.
  */
 @injectable()
-export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
+export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetadata[]> {
 	constructor(
 		@inject(IIpfsServiceSymbol) private readonly node: IIpfsService,
 		@inject(ILogServiceSymbol) private readonly log: ILogService,
@@ -21,7 +21,7 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 	 * @inheritdoc
 	 */
 	public get version() {
-		return `0_${this.videoIndexer.version}`;
+		return `3_${this.videoIndexer.version}`;
 	}
 
 	/**
@@ -34,7 +34,7 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 	/**
 	 * @inheritdoc
 	 */
-	public async fetchIndex(options: IFetchOptions<ISeriesMetaData[]>): Promise<ISeriesMetaData[]> {
+	public async fetchIndex(options: IFetchOptions<ISeriesMetadata[]>): Promise<ISeriesMetadata[]> {
 		const { libraryId, cid, abortSignal, onProgress } = options;
 		const folders = (await this.node.ls(cid)).filter(f => f.type == 'dir');
 		abortSignal.throwIfAborted();
@@ -50,22 +50,23 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 	}
 
 	/**
-	 * Extracts metadata for a single {@link ISeriesMetaData}.
+	 * Extracts metadata for a single {@link ISeriesMetadata}.
 	 * @param libraryId id of the {@link ILibrary}.
 	 * @param entry the entry to fetch data from.
 	 * @param signal {@link AbortSignal}.
-	 * @returns the extracted {@link ISeriesMetaData}.
+	 * @returns the extracted {@link ISeriesMetadata}.
 	 */
-	public async extractSeriesMetaData(libraryId: string, entry: IFileInfo, onProgress: IOnProgress, signal: AbortSignal): Promise<ISeriesMetaData> {
+	public async extractSeriesMetaData(libraryId: string, entry: IFileInfo, onProgress: IOnProgress, signal: AbortSignal): Promise<ISeriesMetadata> {
 		const entries = await this.node.ls(entry.cid);
 		const files = entries.filter(f => f.type == 'file');
 		const folders = entries.filter(f => f.type !== 'file');
 
-		const serie: Omit<ISeriesMetaData, 'items'> = {
+		const serie: Omit<ISeriesMetadata, 'items'> = {
 			...entry,
 			pinId: `${libraryId}/${entry.name}`,
 			title: entry.name,
 			posters: files.filter(f => Regexes.Poster.exec(f.name) != null),
+			backdrops: files.filter(f => Regexes.Backdrop.exec(f.name) != null),
 		};
 
 		const items = [];
@@ -85,25 +86,29 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 	}
 
 	/**
-	 * Extracts the metadata for a single {@link ISeasonMetaData}.
+	 * Extracts the metadata for a single {@link ISeasonMetadata}.
 	 * @param entry the entry to fetch data from.
-	 * @param parent the parent {@link ISeriesMetaData}.
+	 * @param parent the parent {@link ISeriesMetadata}.
 	 * @param signal {@link AbortSignal}.
-	 * @returns the extracted {@link ISeasonMetaData}.
+	 * @returns the extracted {@link ISeasonMetadata}.
 	 */
-	public async extractSeasonMetaData(entry: IFileInfo, parent: Omit<ISeriesMetaData, 'items'>, onProgress: IOnProgress, signal: AbortSignal): Promise<ISeasonMetaData> {
+	public async extractSeasonMetaData(entry: IFileInfo, parent: Omit<ISeriesMetadata, 'items'>, onProgress: IOnProgress, signal: AbortSignal): Promise<ISeasonMetadata> {
 		const entries = await this.node.ls(entry.cid);
 		const files = entries.filter(f => f.type == 'file');
 		const folders = entries.filter(f => f.type !== 'file');
 
-		const season: Omit<ISeasonMetaData, 'items'> = {
+		const season: Omit<ISeasonMetadata, 'items'> = {
 			...entry,
 			pinId: `${parent.pinId}/${entry.name}`,
 			posters: files.filter(f => Regexes.Poster.exec(f.name) != null),
+			backdrops: files.filter(f => Regexes.Backdrop.exec(f.name) != null),
 		};
 
 		if (season.posters.length == 0) {
 			season.posters = parent.posters;
+		}
+		if (season.backdrops.length == 0) {
+			season.backdrops = parent.backdrops;
 		}
 
 		const items = [];
@@ -123,23 +128,32 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetaData[]> {
 	}
 
 	/**
-	 * Extracts the metadata for a single {@link IEpisodeMetaData}.
+	 * Extracts the metadata for a single {@link IEpisodeMetadata}.
 	 * @param entry the entry to fetch data from.
-	 * @param parent the parent {@link ISeasonMetaData}.
+	 * @param parent the parent {@link ISeasonMetadata}.
 	 * @param signal {@link AbortSignal}.
-	 * @returns the extracted {@link IEpisodeMetaData}.
+	 * @returns the extracted {@link IEpisodeMetadata}.
 	 */
-	public async extractEpisodeMetaData(entry: IFileInfo, parent: Omit<ISeasonMetaData, 'items'>, signal: AbortSignal): Promise<IEpisodeMetaData> {
-		return this.videoIndexer.fetch<IEpisodeMetaData>(parent.pinId, entry, signal, (files, video) => {
+	public async extractEpisodeMetaData(entry: IFileInfo, parent: Omit<ISeasonMetadata, 'items'>, signal: AbortSignal): Promise<IEpisodeMetadata> {
+		return this.videoIndexer.fetch<IEpisodeMetadata>(parent.pinId, entry, signal, (files, video) => {
+			const episodeData = Regexes.EpisodeFile('mpd').exec(video.video.name);
 			let posters = files.filter(f => Regexes.Poster.exec(f.name) != null);
+			let backdrops = files.filter(f => Regexes.Backdrop.exec(f.name) != null);
 
 			if (posters.length == 0) {
 				posters = parent.posters;
 			}
+			if (backdrops.length == 0) {
+				backdrops = parent.backdrops;
+			}
 			return {
 				...video,
+				series: episodeData ? episodeData[1] : undefined,
+				season: episodeData ? episodeData[2] : undefined,
+				episode: episodeData ? episodeData[3] : undefined,
 				posters,
-				title: video.name,
+				backdrops,
+				title: episodeData && episodeData[4] ? episodeData[4] : video.name,
 			};
 		});
 	}
