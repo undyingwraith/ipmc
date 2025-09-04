@@ -8,6 +8,7 @@ import { IAppbarButtonOptions } from '../../services/AppbarButtonService';
 import { FileInfoDisplay, PinButton } from '../atoms';
 import { Display, DisplayButtons } from '../molecules';
 import { FileGrid, FileList, VideoPlayer, AudioPlayer } from '../organisms';
+import { ConsoleLogSink } from 'src/services/ConsoleLogSink';
 
 
 
