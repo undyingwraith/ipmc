@@ -1,80 +1,42 @@
-import HomeIcon from '@mui/icons-material/Home';
-import LiveTvIcon from '@mui/icons-material/LiveTv';
-import MovieIcon from '@mui/icons-material/Movie';
-import MusicNoteIcon from '@mui/icons-material/MusicNote';
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
-import { List, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper } from '@mui/material';
-import { useComputed } from "@preact/signals-react";
+import { Paper, Toolbar } from '@mui/material';
+import { IGlobalSearchService, IGlobalSearchServiceSymbol } from 'ipmc-core';
 import { IIndexManager, IIndexManagerSymbol, IProfile, IProfileSymbol } from "ipmc-interfaces";
 import React from "react";
-import { Redirect, Route, useLocation } from 'wouter';
+import { LibraryFilters } from 'src/components/molecules/LibraryFilters';
+import { Redirect, Route } from 'wouter';
 import { AppContextProvider, useService } from '../../../context/AppContext';
-import { useLinkedSignal, useTranslation } from '../../../hooks';
+import { usePersistentSignal } from '../../../hooks';
 import { AppbarButtonService, AppbarButtonServiceSymbol } from '../../../services';
-import { ErrorBoundary } from '../../molecules';
-import { AppBar } from '../../organisms';
+import { Display, ErrorBoundary, GlobalSearchField } from '../../molecules';
+import { LibraryDrawer, MediaPlayer } from '../../organisms';
 import { ItemRouter } from '../ItemRouter';
 import { LibraryHomePage } from '../LibraryHomePage';
 import { LibraryPage } from '../LibraryPage';
 import styles from './LibraryManager.module.css';
 
-const icons = {
-	movie: <MovieIcon />,
-	series: <LiveTvIcon />,
-	music: <MusicNoteIcon />,
-} as { [key: string]: any; };
-
 export function LibraryManager() {
 	const profile = useService<IProfile>(IProfileSymbol);
 	const indexManager = useService<IIndexManager>(IIndexManagerSymbol);
-	const _t = useTranslation();
+	const searchService = useService<IGlobalSearchService>(IGlobalSearchServiceSymbol);
 	const libraries = profile.libraries;
-	const [loc, setLocation] = useLocation();
-	const location = useLinkedSignal(loc);
 
-	const sidebar = useComputed(() => (
-		<List>
-			<ListItem disablePadding>
-				<ListItemButton
-					selected={location.value === '/'}
-					onClick={() => {
-						setLocation('/');
-					}}>
-					<ListItemIcon>
-						<HomeIcon />
-					</ListItemIcon>
-					<ListItemText primary={_t('Home')} />
-				</ListItemButton>
-			</ListItem>
-			{libraries.map((lib) => (
-				<ListItem key={lib.id} disablePadding>
-					<ListItemButton
-						selected={location.value.startsWith('/' + lib.id)}
-						onClick={() => {
-							setLocation('/' + lib.id);
-						}}>
-						<ListItemIcon>
-							{icons[lib.type] ?? <QuestionMarkIcon />}
-						</ListItemIcon>
-						<ListItemText primary={lib.name} />
-					</ListItemButton>
-				</ListItem>
-			))}
-		</List>
-	));
+	const display = usePersistentSignal<Display>(Display.Poster, 'display');
 
 	return (
-		<div className={styles.container}>
-			<Paper className={styles.sidebar} sx={{ borderRadius: 0 }}>
-				{sidebar}
-			</Paper>
-			<div className={styles.contentContainer}>
-				<AppContextProvider
-					setup={(app) => {
-						app.register(AppbarButtonService, AppbarButtonServiceSymbol);
-					}}
-				>
-					<AppBar elevation={1} />
+		<AppContextProvider
+			setup={(app) => {
+				app.register(AppbarButtonService, AppbarButtonServiceSymbol);
+			}}
+		>
+			<div className={styles.container}>
+				<div className={styles.contentContainer}>
+					<Paper elevation={1} sx={{ borderRadius: 0 }}>
+						<Toolbar>
+							<LibraryDrawer />
+							<GlobalSearchField searchService={searchService} />
+							<LibraryFilters display={display} />
+						</Toolbar>
+					</Paper>
 					<div className={styles.content}>
 						<Route path={'/'}>
 							<ErrorBoundary>
@@ -90,18 +52,21 @@ export function LibraryManager() {
 											<Route path={'/'}>
 												<LibraryPage key={params.library} library={params.library} />
 											</Route>
-											{items.value && <ItemRouter items={items.value.index} />}
+											<ErrorBoundary>
+												{items.value && <ItemRouter items={items.value.index} />}
+											</ErrorBoundary>
 										</ErrorBoundary>
 									);
 								}
 								return (
-									<Redirect to='/' />
+									<Redirect to='~/' />
 								);
 							}}
 						</Route>
 					</div>
-				</AppContextProvider>
+					<MediaPlayer />
+				</div>
 			</div>
-		</div>
+		</AppContextProvider>
 	);
 }

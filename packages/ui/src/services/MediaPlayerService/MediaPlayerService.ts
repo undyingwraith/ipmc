@@ -1,56 +1,73 @@
-import { Signal } from '@preact/signals-react';
+import { batch, computed, effect, Signal } from '@preact/signals-react';
 import { inject, injectable } from 'inversify';
-import { type IIpfsService, IIpfsServiceSymbol, type ILogService, ILogServiceSymbol, IAudioFile, isIAudioFile, ISubtitleMetadata, type ITranslationService, ITranslationServiceSymbol, IVideoFile } from 'ipmc-interfaces';
+import { IFileInfo, type IIpfsService, IIpfsServiceSymbol, type ILogService, ILogServiceSymbol, IAudioFile, isIAudioFile, ISubtitleMetadata, type ITranslationService, ITranslationServiceSymbol, IVideoFile } from 'ipmc-interfaces';
 import { IMediaPlayerService } from './IMediaPlayerService';
 import { ObjectUrlController } from '../ObjectUrlController';
-
-//@ts-ignore
-import shaka from 'shaka-player';
-
-type Request = shaka.extern.Request;
-type RequestType = shaka.net.NetworkingEngine.RequestType;
-type ProgressUpdated = shaka.extern.ProgressUpdated;
-type HeadersReceived = shaka.extern.HeadersReceived;
-type SchemePluginConfig = shaka.extern.SchemePluginConfig;
+import { IPlayerService } from './IPlayerService';
 
 @injectable()
 export class MediaPlayerService implements IMediaPlayerService {
 	public constructor(
-		@inject(IIpfsServiceSymbol) private readonly ipfs: IIpfsService,
 		@inject(ILogServiceSymbol) private readonly log: ILogService,
-		@inject(ITranslationServiceSymbol) private readonly translationService: ITranslationService,
 	) {
-		this.shakaPlugin = this.shakaPlugin.bind(this);
-		shaka.net.NetworkingEngine.registerScheme('ipfs', this.shakaPlugin, 1, false);
+		// Load current file
+		this.nowPlaying.subscribe((file) => {
+			if (file != undefined) {
+				const player = this.getPlayer(file);
+				if (player != undefined) {
+					player.load(file);
+				} else {
+					this.log.error(`No player found for file '${file.name}'`);
+				}
+			}
+		});
+
+		// Set playstate
+		this.playing.subscribe((v) => {
+			const nowPlaying = this.nowPlaying.peek();
+			if (nowPlaying != undefined) {
+				const player = this.getPlayer(nowPlaying);
+				if (player != undefined) {
+					if (v) {
+						player.play();
+					} else {
+						player.pause();
+					}
+				}
+			}
+		});
+
+		effect(() => {
+			this.currentPlayer.value?.setVolume(this.muted.value ? 0 : this.volume.value);
+		});
+
+		effect(() => {
+			if (this.fullscreen.value) {
+				this.currentPlayer.value?.requestFullscreen();
+			} else {
+				if (document.fullscreenElement) {
+					document.exitFullscreen();
+				}
+
+			}
+		});
 	}
 
-	public initializeVideo(el: HTMLVideoElement, file: IVideoFile): () => void {
-		this.videoEl = el;
-		const player = new shaka.Player();
-		this.player = player;
-		player.addEventListener('error', (error: any) => this.log.error(`Error code ${error.code} object ${error}`));
-		player.configure({
-			preferredTextLanguage: this.translationService.language.value,
-			preferredAudioLanguage: this.translationService.language.value,
-			streaming: {
-				alwaysStreamText: true,
-				rebufferingGoal: 10,
-				bufferingGoal: 60,
-			},
-		});
-		player.attach(el)
-			.then(() => player.load(`ipfs://${file.cid}/${file.video.name}`))
-			.catch((ex: any) => {
-				this.log.error(ex);
-			});
+	public registerPlayer(player: IPlayerService): () => void {
+		this.players.push(player);
 
 		return () => {
-			this.videoEl = undefined;
-			this.player = undefined;
-			player.unload();
-			player.destroy();
-			this.playing.value = false;
+			this.players.splice(this.players.indexOf(player), 1);
 		};
+	}
+
+	public enqueue(file: IVideoFile): void {
+		batch(() => {
+			this.queue.value = [...this.queue.value, file];
+			if (this.queueIndex.value === -1) {
+				this.queueIndex.value = 0;
+			}
+		});
 	}
 
 	public async initializeAudio(el: HTMLAudioElement, file: IAudioFile): Promise<() => void> {
@@ -72,18 +89,47 @@ export class MediaPlayerService implements IMediaPlayerService {
 		};
 	}
 
-	public togglePlay() {
-		if (this.videoEl) {
-			if (this.playing.value) {
-				this.videoEl.pause();
-				this.playing.value = false;
-			} else {
-				this.videoEl?.play()
-					.then(() => {
-						this.playing.value = true;
-					});
-			}
+	public enqueueNext(file: IVideoFile): void {
+		this.queue.value = this.queue.peek().toSpliced(this.queueIndex.value + 1, 0, file);
+	}
+
+	public play(file: IVideoFile): void {
+		this.enqueueNext(file);
+		batch(() => {
+			this.playing.value = true;
+			this.open.value = true;
+			this.next();
+		});
+	}
+
+	public previous(): void {
+		if (this.queueIndex.value > 0) {
+			this.queueIndex.value -= 1;
 		}
+	}
+
+	public next(): void {
+		if (this.queue.value.length > this.queueIndex.value + 1) {
+			this.queueIndex.value += 1;
+		}
+	}
+
+	public initializeVideo(el: HTMLVideoElement, file: IVideoFile): () => void {
+		this.play(file);
+		return () => { };
+	}
+
+	public togglePlay() {
+		this.playing.value = !this.playing.value;
+	}
+
+	public stop() {
+		batch(() => {
+			this.queueIndex.value = -1;
+			this.queue.value = [];
+			this.open.value = false;
+			this.playing.value = false;
+		});
 	}
 
 	public selectSubtitle(subtitle?: ISubtitleMetadata) {
@@ -105,35 +151,24 @@ export class MediaPlayerService implements IMediaPlayerService {
 		}
 	}
 
+	public queue = new Signal<(IVideoFile)[]>([]);
+	public queueIndex = new Signal<number>(-1);
 	public playing = new Signal(false);
+	public nowPlaying = computed(() => this.queue.value[this.queueIndex.value]);
+	public open: Signal<boolean> = new Signal(false);
+	public loading = computed(() => this.currentPlayer.value?.loading.value ?? true);
+	public muted: Signal<boolean> = new Signal(false);
+	public volume: Signal<number> = new Signal(1);
+	public fullscreen: Signal<boolean> = new Signal(false);
 
-	private async shakaPlugin(
-		uri: string,
-		request: Request,
-		requestType: RequestType,
-		progressUpdated: ProgressUpdated,
-		headersReceived: HeadersReceived,
-		config: SchemePluginConfig
-	) {
-		const fullPath = uri.substring(uri.indexOf('://') + 3);
-		const paths = fullPath.split('/');
-		const cid = paths.shift()!;
-		const path = paths.join('/');
+	private getPlayer(file: IFileInfo): IPlayerService | undefined {
+		return this.players.find(p => p.canPlay(file));
+	}
 
-		headersReceived({});
-
-		const data = await this.ipfs.fetch(cid, path);
-
-		return {
-			uri: uri,
-			originalUri: uri,
-			data: data,
-			status: 200,
-		};
-	};
-
-	private videoEl: HTMLVideoElement | undefined;
-	private audioEl: HTMLAudioElement | undefined;
-	private player: shaka.Player | undefined;
-
+	private get videoEl(): HTMLVideoElement | null {
+		return null;// this.player.getMediaElement();
+	}
+	private player: shaka.Player;
+	private currentPlayer = computed(() => this.nowPlaying.value ? this.players.find(p => p.canPlay(this.nowPlaying.value)) : undefined);
+	private players: IPlayerService[] = [];
 }

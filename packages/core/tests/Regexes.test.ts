@@ -35,6 +35,19 @@ describe('Regexes', () => {
 	});
 
 	test.each([
+		['Season 01', 'Season', '01'],
+		['Volume 02', 'Volume', '02'],
+		['season 15', 'season', '15'],
+		['volume 99', 'volume', '99'],
+	])('Season "%s" gets matches', (fileName, type, season) => {
+		const res = Regexes.SeasonFolder.exec(fileName);
+		expect(res).not.toBeNull();
+		expect(res![0]).toEqual(fileName);
+		expect(res![1]).toEqual(type);
+		expect(res![2]).toBe(season);
+	});
+
+	test.each([
 		['Sample Series - S01E02 - Title.mpd', 'Sample Series', '01', '02', 'Title'],
 		['Sample Series - S01E02.mpd', 'Sample Series', '01', '02', undefined],
 		['Sample Series - S01E02 - Three word Title.mpd', 'Sample Series', '01', '02', 'Three word Title'],

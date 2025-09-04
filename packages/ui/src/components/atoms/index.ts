@@ -1,3 +1,4 @@
+export * from './DropDown';
 export * from './FileInfoDisplay';
 export * from './LanguageDisplay';
 export { DetailOverlay } from './DetailOverlay';
