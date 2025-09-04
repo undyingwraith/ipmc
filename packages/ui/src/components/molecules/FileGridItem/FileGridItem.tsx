@@ -4,8 +4,7 @@ import { ReadonlySignal, Signal, useComputed } from '@preact/signals-react';
 import { IFileInfo, isBackdropFeature, isIEpisodeMetadata, isIFolderFile, isIVideoFile, isPosterFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
 import React, { useRef } from 'react';
 import { useFileUrl, useIsVisible } from '../../../hooks';
-import { LanguageDisplay, TimeDisplay } from '../../atoms';
-import { EpisodeDisplay } from '../../atoms/EpisodeDisplay';
+import { EpisodeDisplay, LanguageDisplay, TimeDisplay } from '../../atoms';
 import { Display } from '../DisplayButtons';
 import { MediaItemActions } from '../MediaItemActions';
 import styles from './FileGridItem.module.css';
@@ -48,14 +47,32 @@ export function FileGridItem(props: { file: IFileInfo; onOpen: () => void; displ
 				{(isIVideoFile(file) || isIFolderFile(file)) && (
 					<CardContent>
 						<Stack direction={'column'} spacing={1}>
+							{isIVideoFile(file) && (
+								<div style={{ display: 'flex', gap: 5 }}>
+									<Chip
+										size={'small'}
+										icon={<HourglassFull />}
+										label={<TimeDisplay time={new Signal(file.duration)} />}
+									/>
+									<Chip
+										size={'small'}
+										icon={<AspectRatio />}
+										label={
+											file.resolution < 720 ? 'SD'
+												: file.resolution < 1080 ? 'HD'
+													: file.resolution < 1440 ? 'FHD'
+														: file.resolution < 2160 ? 'QHD'
+															: file.resolution < 1440 ? '4k'
+																: '8k'
+										}
+									/>
+								</div>
+							)}
+
 							{isIFolderFile(file) && (
 								<EpisodeDisplay file={file} />
 							)}
 							<LanguageDisplay file={file} />
-							{isIVideoFile(file) && (<>
-								<Chip size={'small'} label={file.resolution} icon={<AspectRatio />} />
-								<Chip size={'small'} label={<TimeDisplay time={new Signal(file.duration)} />} icon={<HourglassFull />} />
-							</>)}
 						</Stack>
 					</CardContent>
 				)}
