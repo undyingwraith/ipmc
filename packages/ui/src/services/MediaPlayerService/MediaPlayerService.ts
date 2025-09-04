@@ -1,6 +1,6 @@
 import { batch, computed, effect, Signal } from '@preact/signals-react';
 import { inject, injectable } from 'inversify';
-import { IFileInfo, type IIpfsService, IIpfsServiceSymbol, type ILogService, ILogServiceSymbol, IAudioFile, isIAudioFile, ISubtitleMetadata, type ITranslationService, ITranslationServiceSymbol, IVideoFile } from 'ipmc-interfaces';
+import { IFileInfo, type ILogService, ILogServiceSymbol, IAudioFile, isIAudioFile, type ITranslationService, ITranslationServiceSymbol, IVideoFile } from 'ipmc-interfaces';
 import { IMediaPlayerService } from './IMediaPlayerService';
 import { ObjectUrlController } from '../ObjectUrlController';
 import { IPlayerService } from './IPlayerService';
@@ -114,11 +114,6 @@ export class MediaPlayerService implements IMediaPlayerService {
 		}
 	}
 
-	public initializeVideo(el: HTMLVideoElement, file: IVideoFile): () => void {
-		this.play(file);
-		return () => { };
-	}
-
 	public togglePlay() {
 		this.playing.value = !this.playing.value;
 	}
@@ -132,22 +127,17 @@ export class MediaPlayerService implements IMediaPlayerService {
 		});
 	}
 
-	public selectSubtitle(subtitle?: ISubtitleMetadata) {
-		if (subtitle) {
-			this.player.selectTextLanguage(subtitle.language, subtitle.role, subtitle.forced);
-			this.player.setTextTrackVisibility(true);
-		} else {
-			this.player.setTextTrackVisibility(false);
+	public jumpRelative(amount: number) {
+		const player = this.currentPlayer.value;
+		if (player) {
+			player.setCurrentTime(player.currentTime.value + amount);
 		}
 	}
 
-	public selectLanguage(language: string) {
-		this.player.selectAudioLanguage(language);
-	}
-
-	public jumpRelative(amount: number) {
-		if (this.videoEl) {
-			this.videoEl.currentTime = this.videoEl.currentTime + amount;
+	public setCurrentTime(amount: number) {
+		const player = this.currentPlayer.value;
+		if (player) {
+			player.setCurrentTime(amount);
 		}
 	}
 
@@ -157,6 +147,9 @@ export class MediaPlayerService implements IMediaPlayerService {
 	public nowPlaying = computed(() => this.queue.value[this.queueIndex.value]);
 	public open: Signal<boolean> = new Signal(false);
 	public loading = computed(() => this.currentPlayer.value?.loading.value ?? true);
+	public currentTime = computed<number>(() => this.currentPlayer.value?.currentTime.value ?? 0);
+	public bufferedTime = computed<number>(() => this.currentPlayer.value?.bufferedTime.value ?? 0);
+	public totalTime = computed<number>(() => this.currentPlayer.value?.totalTime.value ?? 0);
 	public muted: Signal<boolean> = new Signal(false);
 	public volume: Signal<number> = new Signal(1);
 	public fullscreen: Signal<boolean> = new Signal(false);
@@ -165,10 +158,6 @@ export class MediaPlayerService implements IMediaPlayerService {
 		return this.players.find(p => p.canPlay(file));
 	}
 
-	private get videoEl(): HTMLVideoElement | null {
-		return null;// this.player.getMediaElement();
-	}
-	private player: shaka.Player;
 	private currentPlayer = computed(() => this.nowPlaying.value ? this.players.find(p => p.canPlay(this.nowPlaying.value)) : undefined);
 	private players: IPlayerService[] = [];
 }

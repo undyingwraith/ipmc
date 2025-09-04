@@ -1,4 +1,4 @@
-import { IAudioFile, ISubtitleMetadata, IVideoFile } from 'ipmc-interfaces';
+import { IVideoFile } from 'ipmc-interfaces';
 import { ReadonlySignal, Signal } from '@preact/signals-react';
 import { IPlayerService } from './IPlayerService';
 
@@ -8,20 +8,6 @@ export const IMediaPlayerServiceSymbol = Symbol.for('MediaPlayerSymbol');
  * Service to controll media playback.
  */
 export interface IMediaPlayerService {
-	/**
-	 * Initializes a video player.
-	 * @param el Video element to use.
-	 * @param file File to play.
-	 */
-	initializeVideo(el: HTMLVideoElement, file: IVideoFile): () => void;
-
-	/**
-	 * Initialize an audio player
-	 * @param el Audio element to use.
-	 * @param file File to play.
-	 */
-	initializeAudio(el: HTMLAudioElement, file: IAudioFile): void;
-
 	/**
 	 * Toggles play state.
 	 */
@@ -55,8 +41,14 @@ export interface IMediaPlayerService {
 	 */
 	play(file: IVideoFile): void;
 
-	enqueueNext(file: IVideoFile): void;
+	/**
+	 * Set the current playback time.
+	 */
+	setCurrentTime(time: number): void;
+
 	enqueue(file: IVideoFile): void;
+
+	enqueueNext(file: IVideoFile): void;
 
 	/**
 	 * Stops playback and clears queue.
@@ -92,6 +84,12 @@ export interface IMediaPlayerService {
 	 * Whether the player is currently loading instead of playing.
 	 */
 	loading: ReadonlySignal<boolean>;
+
+	currentTime: ReadonlySignal<number>;
+
+	bufferedTime: ReadonlySignal<number>;
+
+	totalTime: ReadonlySignal<number>;
 
 	/**
 	 * Whether the player is currently muted.
