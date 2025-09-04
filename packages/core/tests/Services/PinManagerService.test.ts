@@ -1,11 +1,12 @@
 import { HasPinAbility, IFileInfo, IFolderFile, IIpfsServiceSymbol, IKeyValueStoreSymbol, IPinManagerService, IPinManagerServiceSymbol, IProfile, IProfileSymbol, PinStatus } from 'ipmc-interfaces';
 import { describe, expect, test } from 'vitest';
-import { Application, CoreModule, MemoryKeyValueStore, PinManagerService } from '../../src';
+import { Application, CoreModule, MemoryKeyValueStore, PinManagerService, ProfileModule } from '../../src';
 import { MockIpfsService, TestProfile } from '../../testing';
 
 describe('PinManagerService', () => {
 	const app = new Application();
 	app.use(CoreModule);
+	app.use(ProfileModule);
 	app.register(MockIpfsService, IIpfsServiceSymbol);
 	app.register(MemoryKeyValueStore, IKeyValueStoreSymbol);
 	app.registerConstant<IProfile>(TestProfile, IProfileSymbol);
