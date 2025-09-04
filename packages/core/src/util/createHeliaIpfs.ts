@@ -6,6 +6,7 @@ import { IFileInfo, IIpfsService } from 'ipmc-interfaces';
 import { Libp2p } from 'libp2p';
 import { CID } from 'multiformats';
 import { concat } from 'uint8arrays';
+import { parseIpns } from './parseIpns';
 
 export function createHeliaIpfs(helia: HeliaLibp2p<Libp2p<any>>, onClose: () => Promise<void>): IIpfsService {
 	const fs = unixfs(helia);
@@ -36,11 +37,18 @@ export function createHeliaIpfs(helia: HeliaLibp2p<Libp2p<any>>, onClose: () => 
 			return helia.libp2p.peerId.toString();
 		},
 		async resolve(name) {
-			try {
-				return (await ns.resolve(peerIdFromString(name).publicKey!)).cid.toString();
-			} catch (ex) {
-				return (await ns.resolveDNSLink(name)).cid.toString();
+			const ipns = parseIpns(name);
+			let resolved;
+			if (ipns.dnsLink) {
+				resolved = (await ns.resolveDNSLink(ipns.name)).cid;
+			} else {
+				resolved = (await ns.resolve(peerIdFromString(ipns.name).publicKey!)).cid;
 			}
+			if (ipns.path !== '/') {
+				resolved = await (await fs.stat(resolved, { path: ipns.path })).cid;
+			}
+			return resolved.toV1().toString();
+
 		},
 		isPinned(cid) {
 			return helia.pins.isPinned(CID.parse(cid));

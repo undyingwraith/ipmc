@@ -1,5 +1,6 @@
 export const Regexes = {
 	VideoFile: (ext = 'mpd') => new RegExp(`^([\\w\\s':\\.\\-&!\\?,]+)(?: \\((\\d{4})\\))?\\.${ext}$`),
+	SeasonFolder: /^(Season|Volume) (\d{2})$/i,
 	EpisodeFile: (ext = 'mpd') => new RegExp(`([\\w\\s':\\.\\-&!\\?,]+?) ?-? ?[Ss](\\d{2})[Ee](\\d{2})(?: ?-? ?([\\w\\s':\\.\\-&!\\?,+’]+?))?\\.${ext}$`),
 	Thumbnail: /thumb\d*\.(jpg|jpeg|png)$/,
 	Poster: /poster\d*\.(jpg|jpeg|png)$/,

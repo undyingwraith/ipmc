@@ -65,7 +65,7 @@ export function App() {
 				async create(profile) {
 					const datastore = new IDBDatastore(`${profile?.name ?? 'default'}/data`);
 					await datastore.open();
-					const blockstore = new IDBBlockstore(`${profile?.name ?? 'default'}/data`);
+					const blockstore = new IDBBlockstore(`${profile?.name ?? 'default'}/blocks`);
 					await blockstore.open();
 
 					const helia = await createHelia({

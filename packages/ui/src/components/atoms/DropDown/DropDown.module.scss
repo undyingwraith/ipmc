@@ -1,0 +1,16 @@
+$borderRadius: 4px;
+
+.container {
+	position: relative;
+}
+
+.dropDown {
+	padding: 5px;
+	position: absolute;
+	z-index: 100;
+	background-color: var(--mui-palette-common-background);
+	min-width: 100%;
+	border-bottom-left-radius: $borderRadius;
+	border-bottom-right-radius: $borderRadius;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}

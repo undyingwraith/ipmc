@@ -21,7 +21,7 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetadata[]> {
 	 * @inheritdoc
 	 */
 	public get version() {
-		return `3_${this.videoIndexer.version}`;
+		return `4_${this.videoIndexer.version}`;
 	}
 
 	/**
@@ -94,12 +94,15 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetadata[]> {
 		const entries = await this.node.ls(entry.cid);
 		const files = entries.filter(f => f.type == 'file');
 		const folders = entries.filter(f => f.type !== 'file');
+		const seasonData = Regexes.SeasonFolder.exec(entry.name);
 
 		const season: Omit<ISeasonMetadata, 'items'> = {
 			...entry,
 			pinId: `${parent.pinId}/${entry.name}`,
 			posters: files.filter(f => Regexes.Poster.exec(f.name) != null),
 			backdrops: files.filter(f => Regexes.Backdrop.exec(f.name) != null),
+			series: parent.title,
+			season: (seasonData ? seasonData[2] : null) ?? '?',
 		};
 
 		if (season.posters.length == 0) {
@@ -146,9 +149,9 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetadata[]> {
 			}
 			return {
 				...video,
-				series: episodeData ? episodeData[1] : undefined,
-				season: episodeData ? episodeData[2] : undefined,
-				episode: episodeData ? episodeData[3] : undefined,
+				series: (episodeData ? episodeData[1] : null) ?? '?',
+				season: (episodeData ? episodeData[2] : null) ?? '?',
+				episode: (episodeData ? episodeData[3] : null) ?? '?',
 				posters,
 				backdrops,
 				title: episodeData && episodeData[4] ? episodeData[4] : video.name,

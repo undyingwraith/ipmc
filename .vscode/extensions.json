@@ -4,6 +4,7 @@
 		"github.vscode-github-actions",
 		"dsznajder.es7-react-js-snippets",
 		"ecmel.vscode-html-css",
-		"redhat.vscode-yaml"
+		"redhat.vscode-yaml",
+		"syler.sass-indented"
 	]
 }

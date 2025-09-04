@@ -24,6 +24,16 @@ export interface IVideoFile extends IFileInfo {
 	 * The subtitles of the video.
 	 */
 	subtitles: ISubtitleMetadata[];
+
+	/**
+	 * Duration of the video as a formatted string.
+	 */
+	duration: number;
+
+	/**
+	 * Height in pixels of the video.
+	 */
+	resolution: number;
 }
 
 /**

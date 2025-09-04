@@ -33,6 +33,7 @@
 		"libp2p": "^2.8.5",
 		"multiformats": "^13.3.2",
 		"reflect-metadata": "^0.2.2",
+		"tinyduration": "^3.4.1",
 		"uint8arrays": "^5.1.0"
 	},
 	"devDependencies": {
