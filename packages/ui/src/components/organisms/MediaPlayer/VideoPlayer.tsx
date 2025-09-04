@@ -1,20 +1,19 @@
-import { computed, Signal, useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
+import { computed, useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
 import React from 'react';
+import { MediaProgressBar } from '../../molecules';
 import { useService } from '../../../context';
 import { IMediaPlayerService, IMediaPlayerServiceSymbol, IVideoPlayerService, IVideoPlayerServiceSymbol } from '../../../services';
 import { FileInfoDisplay, Loader } from '../../atoms';
-import { VideoProgressBar } from '../../molecules';
 import styles from './MediaPlayer.module.scss';
 import { MediaPlayerButtons } from './MediaPlayerButtons';
 import { VideoPlayerButtons } from './VideoPlayerButtons';
 
-export function VideoPlayer(props: { videoRef: Signal<HTMLVideoElement | null>; }) {
-	const { videoRef } = props;
-
+export function VideoPlayer() {
 	const player = useService<IMediaPlayerService>(IMediaPlayerServiceSymbol);
 	const videoPlayer = useService<IVideoPlayerService>(IVideoPlayerServiceSymbol);
 
 	const containerRef = useSignal<HTMLDivElement | null>(null);
+	const videoRef = useSignal<HTMLVideoElement | null>(null);
 	const overlayVisible = useSignal<boolean>(false);
 
 	const videoEl = useComputed(() => (
@@ -76,7 +75,7 @@ export function VideoPlayer(props: { videoRef: Signal<HTMLVideoElement | null>; 
 							showFullscreen={true}
 							additional={<VideoPlayerButtons />}
 						/>
-						<VideoProgressBar videoRef={videoRef} />
+						<MediaProgressBar />
 					</div>
 				</div>
 			))}

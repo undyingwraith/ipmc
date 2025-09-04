@@ -36,7 +36,27 @@ export interface IPlayerService {
 	requestFullscreen(): void;
 
 	/**
+	 * Set the current playback time.
+	 */
+	setCurrentTime(time: number): void;
+
+	/**
 	 * Whether the media is loading.
 	 */
 	loading: ReadonlySignal<boolean>;
+
+	/**
+	 * The current time in the media item in seconds.
+	 */
+	currentTime: ReadonlySignal<number>;
+
+	/**
+	 * The buffered time in the media item in seconds.
+	 */
+	bufferedTime: ReadonlySignal<number>;
+
+	/**
+	 * The total time in the media item in seconds.
+	 */
+	totalTime: ReadonlySignal<number>;
 }

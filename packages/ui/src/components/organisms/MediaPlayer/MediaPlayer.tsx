@@ -5,7 +5,7 @@ import { isTitleFeature } from 'ipmc-interfaces';
 import React from 'react';
 import { useService } from '../../../context';
 import { IMediaPlayerService, IMediaPlayerServiceSymbol } from '../../../services';
-import { VideoProgressBar } from '../../molecules';
+import { MediaProgressBar } from '../../molecules';
 import { FileList, MediaPlayerButtons } from '../../organisms';
 import styles from './MediaPlayer.module.scss';
 import { VideoPlayer } from './VideoPlayer';
@@ -13,7 +13,6 @@ import { VideoPlayer } from './VideoPlayer';
 export function MediaPlayer() {
 	const player = useService<IMediaPlayerService>(IMediaPlayerServiceSymbol);
 
-	const videoRef = useSignal<HTMLVideoElement | null>(null);
 	const queueOpen = useSignal(false);
 	const variant = useComputed(() => player.nowPlaying.value === undefined ? styles.hidden : player.open.value ? styles.open : '');
 	const title = useComputed(() => player.nowPlaying.value == undefined ? '' : isTitleFeature(player.nowPlaying.value) ? player.nowPlaying.value.title : player.nowPlaying.value.name);
@@ -70,7 +69,7 @@ export function MediaPlayer() {
 
 	const controlsEl = useComputed(() => (
 		<div className={styles.controlsContainer}>
-			<VideoPlayer videoRef={videoRef} />
+			<VideoPlayer />
 			<div className={styles.controls}>
 				<div>
 					<h5>{title}</h5>
@@ -80,7 +79,7 @@ export function MediaPlayer() {
 				</div>
 				<div className={styles.spacer} />
 				<MediaPlayerButtons />
-				<VideoProgressBar videoRef={videoRef} />
+				<MediaProgressBar />
 			</div>
 		</div>
 	));

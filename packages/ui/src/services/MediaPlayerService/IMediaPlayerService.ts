@@ -9,13 +9,6 @@ export const IMediaPlayerServiceSymbol = Symbol.for('MediaPlayerSymbol');
  */
 export interface IMediaPlayerService {
 	/**
-	 * Initializes a video player.
-	 * @param el Video element to use.
-	 * @param file File to play.
-	 */
-	initializeVideo(el: HTMLVideoElement, file: IVideoFile): () => void;
-
-	/**
 	 * Toggles play state.
 	 */
 	togglePlay(): void;
@@ -48,8 +41,14 @@ export interface IMediaPlayerService {
 	 */
 	play(file: IVideoFile): void;
 
-	enqueueNext(file: IVideoFile): void;
+	/**
+	 * Set the current playback time.
+	 */
+	setCurrentTime(time: number): void;
+
 	enqueue(file: IVideoFile): void;
+
+	enqueueNext(file: IVideoFile): void;
 
 	/**
 	 * Stops playback and clears queue.
@@ -85,6 +84,12 @@ export interface IMediaPlayerService {
 	 * Whether the player is currently loading instead of playing.
 	 */
 	loading: ReadonlySignal<boolean>;
+
+	currentTime: ReadonlySignal<number>;
+
+	bufferedTime: ReadonlySignal<number>;
+
+	totalTime: ReadonlySignal<number>;
 
 	/**
 	 * Whether the player is currently muted.

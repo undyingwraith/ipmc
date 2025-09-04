@@ -1,5 +1,5 @@
 export * from './FileGridItem';
-export * from './VideoProgressBar';
+export * from './MediaProgressBar';
 export { ActiveProcessesButton } from './ActiveProcessesButton';
 export { ConnectionStatus } from './ConnectionStatus';
 export { DisplayButtons, Display } from './DisplayButtons';

@@ -1,4 +1,4 @@
-import { Signal } from '@preact/signals-react';
+import { batch, Signal } from '@preact/signals-react';
 import { inject } from 'inversify';
 import { IFileInfo, type IIpfsService, IIpfsServiceSymbol, type ILogService, ILogServiceSymbol, isIVideoFile, ISubtitleMetadata, type ITranslationService, ITranslationServiceSymbol } from 'ipmc-interfaces';
 import { type IMediaPlayerService, IMediaPlayerServiceSymbol } from './IMediaPlayerService';
@@ -45,6 +45,12 @@ export class VideoPlayerService implements IVideoPlayerService {
 		this.mediaPlayer.registerPlayer(this);
 	}
 
+	setCurrentTime(time: number): void {
+		if (this.videoEl) {
+			this.videoEl.currentTime = time;
+		}
+	}
+
 	public registerVideoElement(el: HTMLVideoElement, container: HTMLElement): () => void {
 		this.log.debug('[VideoPlayerService] attaching...');
 		this.player.attach(el)
@@ -52,6 +58,16 @@ export class VideoPlayerService implements IVideoPlayerService {
 				this.log.debug('[VideoPlayerService] attached!');
 				this.container = container;
 
+				// Playback time
+				el.addEventListener('timeupdate', () => {
+					batch(() => {
+						this.currentTime.value = el.currentTime;
+						this.bufferedTime.value = (el.buffered.length === 0 ? 0 : el.buffered.end(0));
+					});
+				});
+				el.addEventListener('loadedmetadata', () => {
+					this.totalTime.value = el.duration;
+				});
 
 				// Loading state
 				el.addEventListener('waiting', () => {
@@ -162,12 +178,15 @@ export class VideoPlayerService implements IVideoPlayerService {
 		};
 	};
 
-
-	public loading = new Signal<boolean>;
+	public currentTime = new Signal(0);
+	public bufferedTime = new Signal(0);
+	public totalTime = new Signal(0);
+	public loading = new Signal(true);
 
 	private get videoEl(): HTMLVideoElement | null {
 		return this.player.getMediaElement();
 	}
+
 	private player: shaka.Player;
 	private container: HTMLElement | null;
 }
