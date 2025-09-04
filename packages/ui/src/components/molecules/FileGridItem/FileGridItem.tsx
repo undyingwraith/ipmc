@@ -8,8 +8,8 @@ import { EpisodeDisplay, LanguageDisplay, TimeDisplay } from '../../atoms';
 import { Display } from '../DisplayButtons';
 import { MediaItemActions } from '../MediaItemActions';
 import styles from './FileGridItem.module.css';
-import posterFallback from './no-poster.png';
-import thumbFallback from './no-thumbnail.png';
+import posterFallback from '../../svg/poster.svg';
+import thumbFallback from '../../svg/thumb.svg';
 
 export function FileGridItem(props: { file: IFileInfo; onOpen: () => void; display: ReadonlySignal<Display>; }) {
 	const { file, display, onOpen } = props;
