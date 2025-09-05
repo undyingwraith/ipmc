@@ -1,3 +1,4 @@
+import { Logout } from '@mui/icons-material';
 import HomeIcon from '@mui/icons-material/Home';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
@@ -33,7 +34,7 @@ export function LibraryDrawer() {
 		</IconButton>
 		{useComputed(() => (
 			<Drawer open={drawerOpen.value} onClose={toggle}>
-				<List sx={{ minWidth: '25vw' }}>
+				<List sx={{ minWidth: '25vw', height: '100vh' }}>
 					<ListItem disablePadding>
 						<ListItemButton
 							selected={location.value === '/'}
@@ -63,6 +64,19 @@ export function LibraryDrawer() {
 							</ListItemButton>
 						</ListItem>
 					))}
+					<div style={{ flexGrow: 1 }} />
+					<Divider />
+					<ListItem disablePadding>
+						<ListItemButton
+							onClick={() => {
+								//TODO
+							}}>
+							<ListItemIcon>
+								<Logout />
+							</ListItemIcon>
+							<ListItemText primary={_t('Logout')} />
+						</ListItemButton>
+					</ListItem>
 				</List>
 			</Drawer>
 		))}
