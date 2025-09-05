@@ -1,5 +1,5 @@
 export { IMediaPlayerServiceSymbol, type IMediaPlayerService } from './IMediaPlayerService';
-export { type IPlayerService } from './IPlayerService';
+export { IPlayerServiceSymbol, type IPlayerService } from './IPlayerService';
 export { IVideoPlayerServiceSymbol, type IVideoPlayerService } from './IVideoPlayerService';
 export { MediaPlayerService } from './MediaPlayerService';
 export { VideoPlayerService } from './VideoPlayerService';

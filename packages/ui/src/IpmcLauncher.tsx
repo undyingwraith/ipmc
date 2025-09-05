@@ -142,10 +142,10 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 			case LoadState.Ready:
 				return (
 					<AppContextProvider setup={(app) => {
-						app.use(ProfileModule);
-						app.use(UiModule);
 						app.registerConstant<IIpfsService>(ipfs!, IIpfsServiceSymbol);
 						app.registerConstant<IProfile>(currentProfile!, IProfileSymbol);
+						app.use(ProfileModule);
+						app.use(UiModule);
 					}} >
 						<LibraryManager />
 					</AppContextProvider>

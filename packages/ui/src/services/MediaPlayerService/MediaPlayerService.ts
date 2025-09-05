@@ -1,20 +1,26 @@
 import { batch, computed, effect, Signal } from '@preact/signals-react';
-import { inject, injectable } from 'inversify';
+import { inject, injectable, multiInject } from 'inversify';
 import { IFileInfo, type ILogService, ILogServiceSymbol, IVideoFile } from 'ipmc-interfaces';
 import { IMediaPlayerService } from './IMediaPlayerService';
-import { IPlayerService } from './IPlayerService';
+import { IPlayerService, IPlayerServiceSymbol } from './IPlayerService';
 
 @injectable()
 export class MediaPlayerService implements IMediaPlayerService {
 	public constructor(
 		@inject(ILogServiceSymbol) private readonly log: ILogService,
+		@multiInject(IPlayerServiceSymbol) private readonly players: IPlayerService[]
 	) {
 		// Load current file
 		this.nowPlaying.subscribe((file) => {
 			if (file != undefined) {
 				const player = this.getPlayer(file);
 				if (player != undefined) {
-					player.load(file);
+					player.load(file)
+						.then(() => {
+							if (this.playing.peek()) {
+								player.play();
+							}
+						});
 				} else {
 					this.log.error(`No player found for file '${file.name}'`);
 				}
@@ -47,17 +53,22 @@ export class MediaPlayerService implements IMediaPlayerService {
 				if (document.fullscreenElement) {
 					document.exitFullscreen();
 				}
-
 			}
 		});
-	}
 
-	public registerPlayer(player: IPlayerService): () => void {
-		this.players.push(player);
+		for (const player of this.players) {
+			player.addEventListener('ended', () => {
+				this.next();
+			});
 
-		return () => {
-			this.players.splice(this.players.indexOf(player), 1);
-		};
+			player.addEventListener('ready', () => {
+				this.loading.value = false;
+			});
+
+			player.addEventListener('waiting', () => {
+				this.loading.value = true;
+			});
+		}
 	}
 
 	public enqueue(file: IVideoFile): void {
@@ -126,7 +137,7 @@ export class MediaPlayerService implements IMediaPlayerService {
 	public playing = new Signal(false);
 	public nowPlaying = computed(() => this.queue.value[this.queueIndex.value]);
 	public open: Signal<boolean> = new Signal(false);
-	public loading = computed(() => this.currentPlayer.value?.loading.value ?? true);
+	public loading = new Signal(true);
 	public currentTime = computed<number>(() => this.currentPlayer.value?.currentTime.value ?? 0);
 	public bufferedTime = computed<number>(() => this.currentPlayer.value?.bufferedTime.value ?? 0);
 	public totalTime = computed<number>(() => this.currentPlayer.value?.totalTime.value ?? 0);
@@ -139,5 +150,4 @@ export class MediaPlayerService implements IMediaPlayerService {
 	}
 
 	private currentPlayer = computed(() => this.nowPlaying.value ? this.players.find(p => p.canPlay(this.nowPlaying.value)) : undefined);
-	private players: IPlayerService[] = [];
 }

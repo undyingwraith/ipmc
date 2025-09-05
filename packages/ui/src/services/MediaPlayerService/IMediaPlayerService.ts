@@ -1,6 +1,5 @@
 import { ReadonlySignal, Signal } from '@preact/signals-react';
 import { IVideoFile } from 'ipmc-interfaces';
-import { IPlayerService } from './IPlayerService';
 
 export const IMediaPlayerServiceSymbol = Symbol.for('MediaPlayerSymbol');
 
@@ -28,12 +27,6 @@ export interface IMediaPlayerService {
 	 * Attempt to play the previous {@link IFileInfo} in the queue.
 	 */
 	previous(): void;
-
-	/**
-	 * Registers a new player service to the {@link IMediaPlayerService}.
-	 * @param player the {@link IPlayerService} to register.
-	 */
-	registerPlayer(player: IPlayerService): () => void;
 
 	/**
 	 * Attempts to play specified {@link IFileInfo}.
