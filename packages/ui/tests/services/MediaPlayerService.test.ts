@@ -1,4 +1,4 @@
-import { Application, LogService } from 'ipmc-core';
+import { Application, CoreModule, LogService } from 'ipmc-core';
 import { IIpfsServiceSymbol, ILogServiceSymbol, IVideoFile } from 'ipmc-interfaces';
 import { IMediaPlayerService, IMediaPlayerServiceSymbol, IPlayerServiceSymbol, MediaPlayerService, VideoPlayerService } from 'src/services';
 import { beforeEach, describe, expect, test } from 'vitest';
@@ -27,6 +27,7 @@ describe('MediaPlayerService', () => {
 
 	beforeEach(() => {
 		app = new Application();
+		app.use(CoreModule);
 		app.register(MediaPlayerService, IMediaPlayerServiceSymbol);
 		app.register(VideoPlayerService, IPlayerServiceSymbol);
 		app.registerConstant({}, IIpfsServiceSymbol);
