@@ -27,7 +27,9 @@ export function GlobalSearchField(props: { searchService: IGlobalSearchService; 
 			resultsVisible.value = true;
 		});
 		searchFieldRef.value?.addEventListener('focusout', () => {
-			resultsVisible.value = false;
+			setTimeout(() => {
+				resultsVisible.value = false;
+			}, 100);
 		});
 	});
 
@@ -57,6 +59,7 @@ export function GlobalSearchField(props: { searchService: IGlobalSearchService; 
 							onOpen={(i) => {
 								if (isPinFeature(i)) {
 									setLocation(`~/${i.pinId}`);
+									query.value = '';
 								}
 							}}
 						/>
