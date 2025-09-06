@@ -5,7 +5,7 @@ import { IFileInfo, isBackdropFeature, isIFolderFile, isIVideoFile } from 'ipmc-
 import React from 'react';
 import { useAppbarButtons, useFileUrl, usePersistentSignal, useTitle, useTranslation } from '../../../hooks';
 import { IAppbarButtonOptions } from '../../../services/AppbarButtonService';
-import { FileInfoDisplay, LanguageDisplay } from '../../atoms';
+import { FileInfoDisplay, LanguageDisplay, VideoMetadataDisplay } from '../../atoms';
 import { Display, DisplayButtons } from '../../molecules';
 import { MediaItemActions } from '../../molecules/MediaItemActions';
 import { FileGrid, FileList } from '../../organisms';
@@ -48,6 +48,9 @@ export function ItemPage(props: {
 		<div style={{ backgroundImage: backdropUrl.value ? `url('${backdropUrl.value}')` : 'none' }} className={styles.container}>
 			<div className={styles.details}>
 				<FileInfoDisplay file={file} />
+				{isIVideoFile(file) && (
+					<VideoMetadataDisplay file={file} />
+				)}
 				{(isIVideoFile(file) || isIFolderFile(file)) && <LanguageDisplay file={file} />}
 				<MediaItemActions file={file} fullwidth={true} variant={'full'} />
 			</div>

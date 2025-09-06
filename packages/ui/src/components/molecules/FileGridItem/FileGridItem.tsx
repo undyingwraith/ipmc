@@ -1,15 +1,14 @@
-import { AspectRatio, HourglassFull } from '@mui/icons-material';
-import { Card, CardActionArea, CardActions, CardContent, CardHeader, CardMedia, Chip, Stack } from '@mui/material';
-import { ReadonlySignal, Signal, useComputed } from '@preact/signals-react';
+import { Card, CardActionArea, CardActions, CardContent, CardHeader, CardMedia, Stack } from '@mui/material';
+import { ReadonlySignal, useComputed } from '@preact/signals-react';
 import { IFileInfo, isBackdropFeature, isIEpisodeMetadata, isIFolderFile, isIVideoFile, isPosterFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
 import React, { useRef } from 'react';
 import { useFileUrl, useIsVisible } from '../../../hooks';
-import { EpisodeDisplay, LanguageDisplay, TimeDisplay } from '../../atoms';
+import { EpisodeDisplay, LanguageDisplay, VideoMetadataDisplay } from '../../atoms';
+import posterFallback from '../../svg/poster.svg';
+import thumbFallback from '../../svg/thumb.svg';
 import { Display } from '../DisplayButtons';
 import { MediaItemActions } from '../MediaItemActions';
 import styles from './FileGridItem.module.css';
-import posterFallback from '../../svg/poster.svg';
-import thumbFallback from '../../svg/thumb.svg';
 
 export function FileGridItem(props: { file: IFileInfo; onOpen: () => void; display: ReadonlySignal<Display>; }) {
 	const { file, display, onOpen } = props;
@@ -48,27 +47,8 @@ export function FileGridItem(props: { file: IFileInfo; onOpen: () => void; displ
 					<CardContent>
 						<Stack direction={'column'} spacing={1}>
 							{isIVideoFile(file) && (
-								<div style={{ display: 'flex', gap: 5 }}>
-									<Chip
-										size={'small'}
-										icon={<HourglassFull />}
-										label={<TimeDisplay time={new Signal(file.duration)} />}
-									/>
-									<Chip
-										size={'small'}
-										icon={<AspectRatio />}
-										label={
-											file.resolution < 720 ? 'SD'
-												: file.resolution < 1080 ? 'HD'
-													: file.resolution < 1440 ? 'FHD'
-														: file.resolution < 2160 ? 'QHD'
-															: file.resolution < 1440 ? '4k'
-																: '8k'
-										}
-									/>
-								</div>
+								<VideoMetadataDisplay file={file} />
 							)}
-
 							{isIFolderFile(file) && (
 								<EpisodeDisplay file={file} />
 							)}
