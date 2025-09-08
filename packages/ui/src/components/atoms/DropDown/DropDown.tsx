@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import { ReadonlySignal, Signal, useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
 import React, { PropsWithChildren } from 'react';
 import styles from './DropDown.module.scss';
@@ -32,9 +32,15 @@ export function DropDown(props: PropsWithChildren<IDropDownProps>) {
 			className={styles.container}
 			ref={r => containerRef.value = r}
 		>
-			<Button startIcon={props.icon} onClick={() => visible.value = !visible.value}>
-				{props.text}
-			</Button>
+			{props.text ? (
+				<Button startIcon={props.icon} onClick={() => visible.value = !visible.value}>
+					{props.text}
+				</Button>
+			) : (
+				<IconButton onClick={() => visible.value = !visible.value}>
+					{props.icon}
+				</IconButton>
+			)}
 			{useComputed(() => !visible.value ? undefined : (
 				<div
 					className={styles.dropDown}

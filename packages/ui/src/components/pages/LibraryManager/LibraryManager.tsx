@@ -1,11 +1,11 @@
-import { Paper, Toolbar } from '@mui/material';
+import { Button, Paper, Toolbar } from '@mui/material';
 import { IGlobalSearchService, IGlobalSearchServiceSymbol } from 'ipmc-core';
 import { IIndexManager, IIndexManagerSymbol, IProfile, IProfileSymbol } from "ipmc-interfaces";
 import React from "react";
 import { LibraryFilters } from 'src/components/molecules/LibraryFilters';
 import { Redirect, Route } from 'wouter';
 import { useService } from '../../../context/AppContext';
-import { usePersistentSignal } from '../../../hooks';
+import { usePersistentSignal, useTranslation } from '../../../hooks';
 import { Display, ErrorBoundary, GlobalSearchField } from '../../molecules';
 import { LibraryDrawer, MediaPlayer } from '../../organisms';
 import { ItemRouter } from '../ItemRouter';
@@ -14,6 +14,7 @@ import { LibraryPage } from '../LibraryPage';
 import styles from './LibraryManager.module.css';
 
 export function LibraryManager() {
+	const _t = useTranslation();
 	const profile = useService<IProfile>(IProfileSymbol);
 	const indexManager = useService<IIndexManager>(IIndexManagerSymbol);
 	const searchService = useService<IGlobalSearchService>(IGlobalSearchServiceSymbol);
@@ -27,6 +28,13 @@ export function LibraryManager() {
 				<Paper elevation={1} sx={{ borderRadius: 0 }}>
 					<Toolbar>
 						<LibraryDrawer />
+						<Route path={'/:library/:item'} nest>
+							<Button
+								onClick={() => history.back()}
+							>
+								{_t('Back')}
+							</Button>
+						</Route>
 						<GlobalSearchField searchService={searchService} />
 						<LibraryFilters display={display} />
 					</Toolbar>

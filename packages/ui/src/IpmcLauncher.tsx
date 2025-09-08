@@ -24,6 +24,8 @@ export interface IIpmcLauncherProps {
 	nodeService: INodeService;
 }
 
+export const StopFunctionSymbol = Symbol.for('StopFunction');
+
 export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 	const _t = useTranslation();
 	const appbarService = useService<AppbarButtonService>(AppbarButtonServiceSymbol);
@@ -142,6 +144,7 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 			case LoadState.Ready:
 				return (
 					<AppContextProvider setup={(app) => {
+						app.registerConstant(stop, StopFunctionSymbol);
 						app.registerConstant<IIpfsService>(ipfs!, IIpfsServiceSymbol);
 						app.registerConstant<IProfile>(currentProfile!, IProfileSymbol);
 						app.use(ProfileModule);

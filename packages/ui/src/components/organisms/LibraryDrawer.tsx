@@ -5,13 +5,15 @@ import { Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIc
 import { useComputed, useSignal } from "@preact/signals-react";
 import { IProfile, IProfileSymbol } from "ipmc-interfaces";
 import React from "react";
-import { LibraryTypeDictionary } from 'src/dictionaries';
 import { useLocation } from 'wouter';
 import { useService } from '../../context';
+import { LibraryTypeDictionary } from '../../dictionaries';
 import { useHotkey, useLinkedSignal, useTranslation } from '../../hooks';
+import { StopFunctionSymbol } from '../../IpmcLauncher';
 
 export function LibraryDrawer() {
 	const profile = useService<IProfile>(IProfileSymbol);
+	const stop = useService<() => void>(StopFunctionSymbol);
 	const _t = useTranslation();
 	const [loc, setLocation] = useLocation();
 	const location = useLinkedSignal(loc);
@@ -34,7 +36,7 @@ export function LibraryDrawer() {
 		</IconButton>
 		{useComputed(() => (
 			<Drawer open={drawerOpen.value} onClose={toggle}>
-				<List sx={{ minWidth: '25vw', height: '100vh' }}>
+				<List sx={{ minWidth: '25vw', height: '100vh', display: 'flex', flexDirection: 'column' }}>
 					<ListItem disablePadding>
 						<ListItemButton
 							selected={location.value === '/'}
@@ -68,9 +70,7 @@ export function LibraryDrawer() {
 					<Divider />
 					<ListItem disablePadding>
 						<ListItemButton
-							onClick={() => {
-								//TODO
-							}}>
+							onClick={stop}>
 							<ListItemIcon>
 								<Logout />
 							</ListItemIcon>
