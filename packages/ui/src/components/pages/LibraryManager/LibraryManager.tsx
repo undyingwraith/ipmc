@@ -3,7 +3,7 @@ import { IGlobalSearchService, IGlobalSearchServiceSymbol } from 'ipmc-core';
 import { IIndexManager, IIndexManagerSymbol, IProfile, IProfileSymbol } from "ipmc-interfaces";
 import React from "react";
 import { LibraryFilters } from 'src/components/molecules/LibraryFilters';
-import { Redirect, Route } from 'wouter';
+import { Redirect, Route, Switch } from 'wouter';
 import { useService } from '../../../context/AppContext';
 import { usePersistentSignal, useTranslation } from '../../../hooks';
 import { Display, ErrorBoundary, GlobalSearchField } from '../../molecules';
@@ -11,6 +11,7 @@ import { LibraryDrawer, MediaPlayer } from '../../organisms';
 import { ItemRouter } from '../ItemRouter';
 import { LibraryHomePage } from '../LibraryHomePage';
 import { LibraryPage } from '../LibraryPage';
+import { SettingsPage } from '../SettingsPage/SettingsPage';
 import styles from './LibraryManager.module.css';
 
 export function LibraryManager() {
@@ -40,31 +41,38 @@ export function LibraryManager() {
 					</Toolbar>
 				</Paper>
 				<div className={styles.content}>
-					<Route path={'/'}>
-						<ErrorBoundary>
-							<LibraryHomePage />
-						</ErrorBoundary>
-					</Route>
-					<Route path={'/:library'} nest>
-						{(params) => {
-							if (libraries.some(l => l.id === params.library)) {
-								const items = indexManager.indexes.get(params.library)!;
-								return (
-									<ErrorBoundary>
-										<Route path={'/'}>
-											<LibraryPage key={params.library} library={params.library} />
-										</Route>
+					<Switch>
+						<Route path={'/'}>
+							<ErrorBoundary>
+								<LibraryHomePage />
+							</ErrorBoundary>
+						</Route>
+						<Route path={'/settings'}>
+							<ErrorBoundary>
+								<SettingsPage />
+							</ErrorBoundary>
+						</Route>
+						<Route path={'/:library'} nest>
+							{(params) => {
+								if (libraries.some(l => l.id === params.library)) {
+									const items = indexManager.indexes.get(params.library)!;
+									return (
 										<ErrorBoundary>
-											{items.value && <ItemRouter items={items.value.index} />}
+											<Route path={'/'}>
+												<LibraryPage key={params.library} library={params.library} />
+											</Route>
+											<ErrorBoundary>
+												{items.value && <ItemRouter items={items.value.index} />}
+											</ErrorBoundary>
 										</ErrorBoundary>
-									</ErrorBoundary>
+									);
+								}
+								return (
+									<Redirect to='~/' />
 								);
-							}
-							return (
-								<Redirect to='~/' />
-							);
-						}}
-					</Route>
+							}}
+						</Route>
+					</Switch>
 				</div>
 				<MediaPlayer />
 			</div>

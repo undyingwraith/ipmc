@@ -1,11 +1,3 @@
-.container {
-	padding: 5px;
-	gap: 5px;
-	width: '100%';
-	display: flex;
-	flex-direction: column;
-}
-
 .carousel {
 	display: flex;
 	gap: 10px;

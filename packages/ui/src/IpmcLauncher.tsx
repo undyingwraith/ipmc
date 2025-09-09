@@ -1,8 +1,10 @@
+import { Settings } from '@mui/icons-material';
 import { Box, Button, ButtonGroup } from '@mui/material';
 import { batch, useComputed, useSignal } from '@preact/signals-react';
 import { createRemoteIpfs, ProfileModule } from 'ipmc-core';
 import { IConfigurationService, IIpfsService, IIpfsServiceSymbol, ILogService, ILogServiceSymbol, INodeService, IProfile, IProfileSymbol, isInternalProfile, isRemoteProfile } from 'ipmc-interfaces';
 import React, { PropsWithChildren } from 'react';
+import { Link } from 'wouter';
 import { ErrorDisplay, ThemeToggle } from './components/atoms';
 import { ActiveProcessesButton, ConnectionStatus, LanguageSelector, LoadScreen, ProfileSelector } from './components/molecules';
 import { LibraryManager } from './components/pages';
@@ -50,6 +52,10 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 		component: (<LanguageSelector />),
 		position: 'end',
 		sortIndex: 10,
+	}, {
+		component: (<Link to={'~/settings'}><Settings /></Link>),
+		position: 'end',
+		sortIndex: 20,
 	}]);
 
 	async function start(name: string) {

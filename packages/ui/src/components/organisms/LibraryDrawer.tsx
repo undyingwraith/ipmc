@@ -1,4 +1,4 @@
-import { Logout } from '@mui/icons-material';
+import { Logout, Settings } from '@mui/icons-material';
 import HomeIcon from '@mui/icons-material/Home';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
@@ -68,6 +68,21 @@ export function LibraryDrawer() {
 					))}
 					<div style={{ flexGrow: 1 }} />
 					<Divider />
+					<ListItem disablePadding>
+						<ListItemButton
+							onClick={() => {
+								setLocation('~/settings');
+								drawerOpen.value = false;
+							}}
+						>
+							<ListItemIcon>
+								<Settings />
+							</ListItemIcon>
+							<ListItemText>
+								{_t('Settings')}
+							</ListItemText>
+						</ListItemButton>
+					</ListItem>
 					<ListItem disablePadding>
 						<ListItemButton
 							onClick={stop}>

@@ -9,6 +9,7 @@ import { useTranslation } from '../../../hooks/useTranslation';
 import { ProcessDisplay } from '../../atoms';
 import { Display } from '../../molecules';
 import { FileGridItem } from '../../molecules/FileGridItem';
+import pageStyles from '../Page.module.css';
 import styles from './LibraryHomePage.module.css';
 
 export function LibraryHomePage() {
@@ -36,7 +37,7 @@ export function LibraryHomePage() {
 	});
 
 	return (
-		<div className={styles.container}>
+		<div className={pageStyles.container}>
 			<h1>{_t('Home')}</h1>
 			<div>
 				<h2>{_t('Libraries')}</h2>
