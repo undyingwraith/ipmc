@@ -7882,6 +7882,7 @@ __metadata:
     multiformats: "npm:^13.3.2"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
+    react-window: "npm:^2.0.2"
     reflect-metadata: "npm:^0.2.2"
     sass-embedded: "npm:^1.90.0"
     shaka-player: "npm:^4.12.5"
@@ -10824,6 +10825,16 @@ __metadata:
     react: ">=16.6.0"
     react-dom: ">=16.6.0"
   checksum: 10c0/2ba754ba748faefa15f87c96dfa700d5525054a0141de8c75763aae6734af0740e77e11261a1e8f4ffc08fd9ab78510122e05c21c2d79066c38bb6861a886c82
+  languageName: node
+  linkType: hard
+
+"react-window@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "react-window@npm:2.0.2"
+  peerDependencies:
+    react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
+  checksum: 10c0/017260e40c60cfa3d34c74358e48dfb8df61d1f5e0ae2413f875a5ebad4caf59de678756e5f45574fa4dcc741e26fb0a3873bc614d23fd4d2da54948c29ae078
   languageName: node
   linkType: hard
 

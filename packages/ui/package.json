@@ -51,6 +51,7 @@
 		"multiformats": "^13.3.2",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
+		"react-window": "^2.0.2",
 		"reflect-metadata": "^0.2.2",
 		"shaka-player": "^4.12.5",
 		"wouter": "^3.7.0"
