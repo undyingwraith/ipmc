@@ -1,0 +1,26 @@
+{
+	"name": "ipmc-serverui",
+	"type": "module",
+	"version": "0.2.2",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview"
+	},
+	"dependencies": {
+		"@preact/signals-react": "^3.3.0",
+		"ipmc-core": "workspace:^",
+		"ipmc-ui": "workspace:^",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1"
+	},
+	"devDependencies": {
+		"@types/react": "^18.3.24",
+		"@types/react-dom": "^18.3.7",
+		"typescript": "^5.9.2",
+		"vite": "^6.3.6",
+		"vite-plugin-checker": "^0.10.3",
+		"vite-tsconfig-paths": "^5.1.4",
+		"vitest": "^3.2.4"
+	}
+}

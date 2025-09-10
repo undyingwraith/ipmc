@@ -7,8 +7,8 @@
 	"devDependencies": {
 		"@types/body-parser": "^1.19.6",
 		"@types/express": "^5.0.3",
-		"@types/swagger-jsdoc": "^6",
-		"vite-node": "^1.6.0"
+		"@types/swagger-jsdoc": "^6.0.4",
+		"vite-node": "^3.2.4"
 	},
 	"dependencies": {
 		"@chainsafe/libp2p-gossipsub": "^14.1.1",
@@ -32,7 +32,7 @@
 		"@libp2p/websockets": "^9.2.10",
 		"blockstore-fs": "^2.0.2",
 		"datastore-level": "^11.0.1",
-		"express": "^4.21.1",
+		"express": "^4.21.2",
 		"helia": "^5.3.0",
 		"inversify": "^6.2.2",
 		"inversify-express-utils": "^6.5.0",

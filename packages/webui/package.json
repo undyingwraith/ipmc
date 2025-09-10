@@ -40,13 +40,13 @@
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"util": "^0.12.5",
-		"web-streams-polyfill": "^4.1.0"
+		"web-streams-polyfill": "^4.2.0"
 	},
 	"devDependencies": {
-		"@types/react": "^18.3.20",
-		"@types/react-dom": "^18.3.6",
-		"typescript": "^5.8.3",
-		"vite": "^6.3.3",
-		"vite-plugin-node-polyfills": "^0.23.0"
+		"@types/react": "^18.3.24",
+		"@types/react-dom": "^18.3.7",
+		"typescript": "^5.9.2",
+		"vite": "^6.3.6",
+		"vite-plugin-node-polyfills": "^0.24.0"
 	}
 }
