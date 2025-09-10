@@ -21,7 +21,7 @@ export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 	 * @inheritdoc
 	 */
 	public get version() {
-		return `0_${this.videoIndexer.version}`;
+		return `3_${this.videoIndexer.version}`;
 	}
 
 	/**
@@ -63,13 +63,14 @@ export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 	 */
 	public async extractMovieMetaData(libraryId: string, entry: IFileInfo, signal: AbortSignal): Promise<IMovieMetaData> {
 		return this.videoIndexer.fetch<IMovieMetaData>(libraryId, entry, signal, (files, video) => {
-			const videoData = Regexes.VideoFile('mpd').exec(video.video.name)!;
+			const videoData = Regexes.VideoFile('mpd').exec(video.video.name);
 
 			return {
 				...video,
-				title: videoData[1],
-				year: videoData[2] != null ? parseInt(videoData[2]) : 0,
+				title: videoData != null ? videoData[1] : video.name,
+				year: videoData != null && videoData[2] != null ? parseInt(videoData[2]) : 0,
 				posters: files.filter(f => Regexes.Poster.exec(f.name) != null),
+				backdrops: files.filter(f => Regexes.Backdrop.exec(f.name) != null),
 			};
 		});
 	}

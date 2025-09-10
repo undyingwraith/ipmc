@@ -1,8 +1,9 @@
+export * from './DropDown';
+export * from './FileInfoDisplay';
 export * from './LanguageDisplay';
 export { DetailOverlay } from './DetailOverlay';
 export { EpisodeDisplay } from './EpisodeDisplay';
 export { ErrorDisplay } from './ErrorDisplay';
-export { FileInfoDisplay } from './FileInfoDisplay';
 export { FileInput } from './FileInput';
 export { FormList } from './FormList';
 export { Identicon } from './Identicon';
@@ -15,3 +16,4 @@ export { Spacer } from './Spacer';
 export { TextInput } from './TextInput';
 export { ThemeToggle } from './ThemeToggle';
 export { TimeDisplay } from './TimeDisplay';
+export { VideoMetadataDisplay } from './VideoMetadataDisplay';

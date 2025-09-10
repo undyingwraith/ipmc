@@ -1,10 +1,11 @@
 export * from './FileGridItem';
-export * from './VideoProgressBar';
+export * from './MediaProgressBar';
 export { ActiveProcessesButton } from './ActiveProcessesButton';
 export { ConnectionStatus } from './ConnectionStatus';
 export { DisplayButtons, Display } from './DisplayButtons';
 export { ErrorBoundary } from './ErrorBoundary';
 export { FileListItem } from './FileListItem';
+export { GlobalSearchField } from './GlobalSearchField';
 export { LanguageSelector } from './LanguageSelector';
 export { LibraryEditor } from './LibraryEditor';
 export { LoadScreen } from './LoadScreen';

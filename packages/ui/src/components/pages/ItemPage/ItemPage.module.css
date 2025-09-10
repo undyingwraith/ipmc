@@ -1,0 +1,26 @@
+.container {
+	background-size: cover;
+	background-position: center;
+	height: 100%;
+	overflow: auto;
+	align-items: center;
+}
+
+.details {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	padding: 10px;
+	width: 80%;
+	margin: 0 auto;
+}
+
+.items {
+	margin: 5px auto;
+}
+
+@media screen and (max-width: 640px) {
+	.details {
+		width: 100%;
+	}
+}

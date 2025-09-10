@@ -35,9 +35,6 @@
 		"src",
 		"testing",
 		"tests",
-		"typings.d.ts",
-		"vite.config.ts",
-		".eslintrc.js",
-		".prettierrc.js"
+		"vite.config.ts"
 	]
 }

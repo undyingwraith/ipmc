@@ -1,7 +1,7 @@
 import { Box, Button, ButtonGroup } from '@mui/material';
 import { batch, useComputed, useSignal } from '@preact/signals-react';
-import { createRemoteIpfs, IndexManager } from 'ipmc-core';
-import { IConfigurationService, IIndexManagerSymbol, IIpfsService, IIpfsServiceSymbol, ILogService, ILogServiceSymbol, INodeService, IProfile, IProfileSymbol, isInternalProfile, isRemoteProfile } from 'ipmc-interfaces';
+import { createRemoteIpfs, ProfileModule } from 'ipmc-core';
+import { IConfigurationService, IIpfsService, IIpfsServiceSymbol, ILogService, ILogServiceSymbol, INodeService, IProfile, IProfileSymbol, isInternalProfile, isRemoteProfile } from 'ipmc-interfaces';
 import React, { PropsWithChildren } from 'react';
 import { ErrorDisplay, ThemeToggle } from './components/atoms';
 import { ActiveProcessesButton, ConnectionStatus, LanguageSelector, LoadScreen, ProfileSelector } from './components/molecules';
@@ -9,6 +9,7 @@ import { LibraryManager } from './components/pages';
 import { AppContextProvider, useService } from './context';
 import { useAppbarButtons, useTranslation } from './hooks';
 import { AppbarButtonService, AppbarButtonServiceSymbol } from './services';
+import { UiModule } from './services/UiModule';
 
 enum LoadState {
 	Idle,
@@ -22,6 +23,8 @@ export interface IIpmcLauncherProps {
 	configService: IConfigurationService;
 	nodeService: INodeService;
 }
+
+export const StopFunctionSymbol = Symbol.for('StopFunction');
 
 export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 	const _t = useTranslation();
@@ -141,9 +144,11 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 			case LoadState.Ready:
 				return (
 					<AppContextProvider setup={(app) => {
+						app.registerConstant(stop, StopFunctionSymbol);
 						app.registerConstant<IIpfsService>(ipfs!, IIpfsServiceSymbol);
 						app.registerConstant<IProfile>(currentProfile!, IProfileSymbol);
-						app.register(IndexManager, IIndexManagerSymbol);
+						app.use(ProfileModule);
+						app.use(UiModule);
 					}} >
 						<LibraryManager />
 					</AppContextProvider>

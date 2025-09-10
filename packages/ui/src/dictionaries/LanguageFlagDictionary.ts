@@ -3,5 +3,6 @@ export const LanguageFlagDictionary = new Map<string, string>([
 	['en', '🇬🇧'],
 	['es', '🇪🇸'],
 	['fr', '🇫🇷'],
-	['nl', '🇳🇱']
+	['nl', '🇳🇱'],
+	['ja', '🇯🇵'],
 ]);

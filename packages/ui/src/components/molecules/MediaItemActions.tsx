@@ -1,18 +1,90 @@
+import { AddToQueue, PlayArrow, QueuePlayNext } from '@mui/icons-material';
 import { Button, ButtonGroup } from '@mui/material';
-import { IFileInfo, isPinFeature } from 'ipmc-interfaces';
+import { batch } from '@preact/signals-react';
+import { IFileInfo, IFolderFile, isIFolderFile, isISeasonMetadata, isISeriesMetadata, isIVideoFile, isPinFeature } from 'ipmc-interfaces';
 import React from 'react';
+import { useService } from '../../context';
 import { useTranslation } from '../../hooks';
+import { IMediaPlayerService, IMediaPlayerServiceSymbol } from '../../services';
 import { PinButton } from '../atoms';
 
-export function MediaItemActions(props: { file: IFileInfo; onOpen: () => void; }) {
-	const { file, onOpen } = props;
+export function MediaItemActions(props: { file: IFileInfo; fullwidth?: boolean; variant?: 'icons' | 'full'; }) {
+	const { file, fullwidth } = props;
+	const text = props.variant === 'full';
 
 	const _t = useTranslation();
+	const player = useService<IMediaPlayerService>(IMediaPlayerServiceSymbol);
+
+	function enqueueAll(file: IFolderFile) {
+		for (const item of file.items) {
+			if (isIFolderFile(item)) {
+				enqueueAll(item);
+			} else if (isIVideoFile(item)) {
+				player.enqueue(item);
+			}
+		}
+	}
+
+	const enqueueButton = isIVideoFile(file) ? (
+		<Button
+			title={_t('AddToQueue').value}
+			onClick={() => player.enqueue(file)}
+		>
+			{text && _t('AddToQueue')}
+			<AddToQueue />
+		</Button>
+	) : isISeriesMetadata(file) || isISeasonMetadata(file) ? (
+		<Button
+			title={_t('AddToQueue').value}
+			onClick={() => {
+				enqueueAll(file);
+			}}
+			endIcon={text && _t('AddToQueue')}
+		>
+			<AddToQueue />
+		</Button>
+	) : undefined;
+
+	const enqueueNextButton = isIVideoFile(file) ? (
+		<Button
+			title={_t('EnqueueNext').value}
+			onClick={() => player.enqueueNext(file)}
+		>
+			{text && _t('EnqueueNext')}
+			<QueuePlayNext />
+		</Button>
+	) : undefined;
+
+	const playButton = isIVideoFile(file) ? (
+		<Button
+			title={_t('Play').value}
+			onClick={() => player.play(file)}
+		>
+			{text && _t('Play')}
+			<PlayArrow />
+		</Button>
+	) : isISeriesMetadata(file) || isISeasonMetadata(file) ? (
+		<Button
+			title={_t('Play').value}
+			onClick={() => {
+				enqueueAll(file);
+				batch(() => {
+					player.playing.value = true;
+					player.open.value = true;
+				});
+			}}
+			endIcon={text && _t('Play')}
+		>
+			<PlayArrow />
+		</Button>
+	) : undefined;
 
 	return (
-		<ButtonGroup variant={'text'}>
+		<ButtonGroup variant={text ? 'contained' : 'text'} fullWidth={fullwidth}>
 			{isPinFeature(file) && <PinButton item={file} />}
-			{<Button onClick={onOpen}>{_t('Open')}</Button>}
+			{enqueueButton}
+			{enqueueNextButton}
+			{playButton}
 		</ButtonGroup>
 	);
 }

@@ -1,12 +1,17 @@
-import { Button, ListItem, ListItemText, Stack } from '@mui/material';
-import { IFileInfo, isIFolderFile, isIVideoFile, isPinFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
+import { ListItem, ListItemButton, ListItemText, Stack } from '@mui/material';
+import { IFileInfo, isIEpisodeMetadata, isIFolderFile, isIVideoFile, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
 import React from 'react';
-import { useTranslation } from '../../hooks';
-import { EpisodeDisplay, LanguageDisplay, PinButton } from '../atoms';
+import { EpisodeDisplay, LanguageDisplay } from '../atoms';
+import { MediaItemActions } from './MediaItemActions';
 
-export function FileListItem(props: { file: IFileInfo; onOpen: () => void; }) {
-	const { file } = props;
-	const _t = useTranslation();
+export function FileListItem(props: {
+	file: IFileInfo;
+	onOpen: () => void;
+	actions?: JSX.Element;
+	selected?: boolean;
+}) {
+	const { file, onOpen, selected } = props;
+	const actions = props.actions ?? (<MediaItemActions file={file} />);
 
 	return (
 		<ListItem
@@ -18,14 +23,18 @@ export function FileListItem(props: { file: IFileInfo; onOpen: () => void; }) {
 					{(isIVideoFile(file) || isIFolderFile(file)) && (
 						<LanguageDisplay file={file} />
 					)}
-					{isPinFeature(file) && <PinButton item={file} />}
-					<Button onClick={props.onOpen}>{_t('Open')}</Button>
+					{actions}
 				</Stack>
 			}>
-			<ListItemText
-				primary={isTitleFeature(file) ? file.title : file.name}
-				secondary={isYearFeature(file) ? file.year : undefined}
-			/>
+			<ListItemButton
+				onClick={onOpen}
+				selected={selected}
+			>
+				<ListItemText
+					primary={isTitleFeature(file) ? file.title : file.name}
+					secondary={isYearFeature(file) ? file.year : isIEpisodeMetadata(file) ? `${file.series} - S${file.season} E${file.episode}` : undefined}
+				/>
+			</ListItemButton>
 		</ListItem>
 	);
 }

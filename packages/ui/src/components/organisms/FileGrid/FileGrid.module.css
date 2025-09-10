@@ -9,8 +9,15 @@
 }
 
 .item {
-	width: 240px;
-	min-width: 240px;
-	max-width: 480px;
-	flex: 1 0 240px;
+	--min: 240px;
+	width: var(--min);
+	min-width: var(--min);
+	max-width: calc(var(--min) * 2);
+	flex: 1 0 var(--min);
+}
+
+@media screen and (max-width: 640px) {
+	.item {
+		--min: 150px;
+	}
 }

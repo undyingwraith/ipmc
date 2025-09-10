@@ -1,6 +1,7 @@
 import { IFileInfo, IIpfsService } from 'ipmc-interfaces';
 import { create } from 'kubo-rpc-client';
 import { concat } from 'uint8arrays';
+import { parseIpns } from './parseIpns';
 
 export async function createRemoteIpfs(url?: string): Promise<IIpfsService> {
 	const node = create({ url });
@@ -30,8 +31,9 @@ export async function createRemoteIpfs(url?: string): Promise<IIpfsService> {
 			return (await node.swarm.peers()).map(p => p.addr.toString() + '/' + p.peer.toString());
 		},
 		async resolve(name) {
+			const ipns = parseIpns(name);
 			let result = '';
-			for await (const res of node.name.resolve(name.at(0) == '/' ? name : '/ipns/' + name)) {
+			for await (const res of node.name.resolve('/ipns/' + ipns.name + ipns.path)) {
 				result = res;
 			}
 
