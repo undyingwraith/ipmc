@@ -1,6 +1,6 @@
 declare const styles: {
 	container: string;
-	spacer: string;
+	preview: string;
 };
 
 export default styles;

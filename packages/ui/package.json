@@ -43,6 +43,7 @@
 		"@mui/icons-material": "^7.0.2",
 		"@mui/material": "^7.0.2",
 		"@preact/signals-react": "^3.0.1",
+		"color": "^5.0.2",
 		"file-type": "^20.4.1",
 		"inversify": "^6.2.2",
 		"ipmc-core": "workspace:^",

@@ -1,6 +1,5 @@
 declare const styles: {
-	container: string;
-	spacer: string;
+	row: string;
 };
 
 export default styles;

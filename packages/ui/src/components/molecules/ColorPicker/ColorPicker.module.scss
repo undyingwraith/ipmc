@@ -1,0 +1,66 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	--hue: 0;
+
+	.preview {
+		height: 50px;
+		border-radius: 5px;
+		flex-shrink: 0;
+		flex-grow: 0;
+	}
+
+	>div {
+		display: flex;
+		flex-direction: row;
+		gap: 5px;
+
+		input {
+			border-radius: 5px;
+		}
+
+		input[type="number"] {
+			width: 50px;
+			border: none;
+			text-align: center;
+		}
+
+		input[type="range"] {
+			flex-grow: 1;
+			-webkit-appearance: none;
+
+			::-webkit-slider-runnable-track,
+			::-moz-range-track,
+			::-ms-track {
+				-webkit-appearance: none;
+				height: 50px;
+				border: none;
+			}
+		}
+	}
+
+	>:nth-child(2) input[type=range] {
+		background-image: linear-gradient(to right,
+				hsl(0, 100%, 50%) 0%,
+				hsl(35, 100%, 50%) 10%,
+				hsl(71, 100%, 50%) 20%,
+				hsl(107, 100%, 50%) 30%,
+				hsl(143, 100%, 50%) 40%,
+				hsl(179, 100%, 50%) 50%,
+				hsl(215, 100%, 50%) 60%,
+				hsl(251, 100%, 50%) 70%,
+				hsl(287, 100%, 50%) 80%,
+				hsl(323, 100%, 50%) 90%,
+				hsl(359, 100%, 50%) 100%,
+			);
+	}
+
+	>:nth-child(3) input[type=range] {
+		background-image: linear-gradient(to right, hsl(var(--hue), 0%, 50%), hsl(var(--hue), 100%, 50%));
+	}
+
+	>:nth-child(4) input[type=range] {
+		background-image: linear-gradient(to right, hsl(var(--hue), 100%, 0%), hsl(var(--hue), 100%, 50%), hsl(var(--hue), 100%, 100%));
+	}
+}

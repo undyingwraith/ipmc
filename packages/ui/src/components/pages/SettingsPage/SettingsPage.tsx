@@ -1,12 +1,14 @@
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Select, Switch } from '@mui/material';
 import { useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
 import { ITranslationService, ITranslationServiceSymbol } from 'ipmc-interfaces';
 import React from 'react';
 import { useService } from '../../../context';
 import { useTranslation } from '../../../hooks';
 import { ThemeService, ThemeServiceSymbol } from '../../../services';
-import { TextInput, ThemeToggle } from '../../atoms';
-import styles from '../Page.module.css';
+import { TextInput } from '../../atoms';
+import { ColorPicker } from '../../molecules';
+import pageStyles from '../Page.module.css';
+import styles from './SettingsPage.module.css';
 
 export function SettingsPage() {
 	const _t = useTranslation();
@@ -30,14 +32,14 @@ export function SettingsPage() {
 	});
 
 	return (
-		<div className={styles.container}>
-			<h1>Settings</h1>
+		<div className={pageStyles.container}>
+			<h1>{_t('Settings')}</h1>
 			<div>
 				<FormControl fullWidth>
-					<InputLabel id="demo-simple-select-label">{_t('Language')}</InputLabel>
+					<InputLabel id={'settings-language'}>{_t('Language')}</InputLabel>
 					{useComputed(() => (
 						<Select
-							labelId={'demo-simple-select-label'}
+							labelId={'settings-language'}
 							label={_t('Language')}
 							value={translationService.language.value}
 							onChange={(ev) => {
@@ -51,13 +53,24 @@ export function SettingsPage() {
 				</FormControl>
 			</div>
 			<h2>{_t('Style')}</h2>
-			<div>
+			<div className={styles.row}>
 				{_t('DarkMode')}
-				<ThemeToggle />
+				<div className={pageStyles.spacer} />
+				{useComputed(() => (
+					<Switch
+						checked={themeService.darkMode.value}
+						onChange={(ev) => {
+							themeService.darkMode.value = ev.target.checked;
+						}} />
+				))}
 			</div>
 			<div>
 				{/* TODO: color picker instead of this */}
 				<TextInput value={accentColor} label={_t('AccentColor')} />
+				<ColorPicker
+					value={accentColor}
+					label={_t('AccentColor')}
+				/>
 			</div>
 		</div>
 	);

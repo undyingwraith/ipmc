@@ -1,3 +1,4 @@
+export * from './ColorPicker';
 export * from './FileGridItem';
 export * from './MediaProgressBar';
 export { ActiveProcessesButton } from './ActiveProcessesButton';
