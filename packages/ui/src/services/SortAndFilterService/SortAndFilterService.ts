@@ -1,14 +1,20 @@
-import { IFileInfo, ISortAndFilterService, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
+import { computed, ReadonlySignal, Signal } from '@preact/signals-react';
+import { IFileInfo, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
+import { IFilter, IFilterSymbol } from './IFilter';
+import { ISortAndFilterService } from './ISortAndFilterService';
+import { multiInject, optional } from 'inversify';
 
 type IMatcher = (v: any, w: string) => boolean;
 
 export class SortAndFilterService implements ISortAndFilterService {
-	constructor() {
+	constructor(
+		@multiInject(IFilterSymbol) @optional() public readonly filters: IFilter[] = []
+	) {
 		this.sort = this.sort.bind(this);
 		this.compare = this.compare.bind(this);
 	}
 
-	createFilteredList<T extends IFileInfo>(list: T[], query?: string): T[] {
+	createQueryList<T extends IFileInfo>(list: T[], query?: string): T[] {
 		if (query === undefined || query.trim() === '') {
 			return list.sort(this.sort);
 		}
@@ -46,6 +52,16 @@ export class SortAndFilterService implements ISortAndFilterService {
 			.map(i => i.item);
 	}
 
+	public filterList<T extends IFileInfo>(list: T[]): ReadonlySignal<T[]> {
+		return computed(() => {
+			let result = computed(() => list.sort(this.sort));
+			for (const filter of this.activeFilters.value) {
+				result = filter.apply(result);
+			}
+			return result.value;
+		});
+	}
+
 	private sort(a: IFileInfo, b: IFileInfo): number {
 		const sort = isTitleFeature(a) && isTitleFeature(b) ? this.compare(a.title, b.title) : this.compare(a.name, b.name);
 		return sort === 0 && isYearFeature(a) && isYearFeature(b) ? a.year - b.year : sort;
@@ -55,4 +71,6 @@ export class SortAndFilterService implements ISortAndFilterService {
 		const matcher = /^the /i;
 		return a.replace(matcher, '').localeCompare(b.replace(matcher, ''));
 	}
+
+	public activeFilters = new Signal<IFilter[]>([]);
 }

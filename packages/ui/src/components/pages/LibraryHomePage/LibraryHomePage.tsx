@@ -1,11 +1,12 @@
 import { Card, CardActionArea, CardContent, CardHeader, Typography } from '@mui/material';
 import { Signal, useComputed } from '@preact/signals-react';
-import { IPinItem, IPinManagerService, IPinManagerServiceSymbol, IProfile, IProfileSymbol, ISortAndFilterService, ISortAndFilterServiceSymbol, ITaskManager, ITaskManagerSymbol } from 'ipmc-interfaces';
+import { IPinItem, IPinManagerService, IPinManagerServiceSymbol, IProfile, IProfileSymbol, ITaskManager, ITaskManagerSymbol } from 'ipmc-interfaces';
 import React from 'react';
 import { useLocation } from 'wouter';
 import { useService } from '../../../context';
 import { LibraryTypeDictionary } from '../../../dictionaries';
 import { useTranslation } from '../../../hooks/useTranslation';
+import { ISortAndFilterService, ISortAndFilterServiceSymbol } from '../../../services';
 import { ProcessDisplay } from '../../atoms';
 import { Display } from '../../molecules';
 import { FileGridItem } from '../../molecules/FileGridItem';
@@ -63,7 +64,7 @@ export function LibraryHomePage() {
 								<div>
 									<Typography variant={'h6'}>{profile.libraries.find(l => l.id === cat)?.name ?? cat}</Typography>
 									<div className={styles.carousel}>
-										{sortAndFilterService.createFilteredList(items.map(p => pinManager.resolvePin(p)).filter(p => p !== undefined)).map(p => (
+										{sortAndFilterService.createQueryList(items.map(p => pinManager.resolvePin(p)).filter(p => p !== undefined)).map(p => (
 											<FileGridItem file={p} onOpen={() => setLocation(p.pinId)} display={new Signal(Display.Poster)} />
 										))}
 									</div>

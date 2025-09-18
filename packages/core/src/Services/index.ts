@@ -1,4 +1,3 @@
-export * from './GlobalSearchService';
 export * from './Indexer';
 export { FileExportService } from './FileExportService';
 export { HotkeyService } from './HotkeyService';
@@ -11,6 +10,5 @@ export { NotificationService } from './NotificationService';
 export { ObjectStore } from './ObjectStore';
 export { PersistentSignalService } from './PersistentSignalService';
 export { PinManagerService } from './PinManagerService';
-export { SortAndFilterService } from './SortAndFilterService';
 export { TaskManager } from './TaskManager';
 export { TranslationService } from './TranslationService';

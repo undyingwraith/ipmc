@@ -1,9 +1,10 @@
 import { Box } from '@mui/material';
-import { useComputed, useSignal } from '@preact/signals-react';
-import { IIndexManager, IIndexManagerSymbol, ISortAndFilterService, ISortAndFilterServiceSymbol } from 'ipmc-interfaces';
+import { useComputed } from '@preact/signals-react';
+import { IIndexManager, IIndexManagerSymbol } from 'ipmc-interfaces';
 import React from 'react';
 import { useService } from '../../context/AppContext';
 import { usePersistentSignal, useTranslation } from '../../hooks';
+import { ISortAndFilterService, ISortAndFilterServiceSymbol } from '../../services';
 import { LoadScreen } from '../molecules';
 import { Display } from '../molecules/DisplayButtons';
 import { FileGrid, FileList } from '../organisms';
@@ -17,11 +18,10 @@ export function LibraryPage(props: {
 	const indexManager = useService<IIndexManager>(IIndexManagerSymbol);
 	const sortAndFilterService = useService<ISortAndFilterService>(ISortAndFilterServiceSymbol);
 
-	const query = useSignal('');
 	const display = usePersistentSignal<Display>(Display.Poster, 'display');
 
 	const index = indexManager.indexes.get(library)!;
-	const sorted = useComputed(() => index.value == undefined ? undefined : sortAndFilterService.createFilteredList(index.value.index, query.value));
+	const sorted = useComputed(() => index.value == undefined ? undefined : sortAndFilterService.filterList(index.value.index).value);
 
 	return useComputed(() => {
 		return sorted.value == undefined ? (

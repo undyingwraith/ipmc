@@ -1,12 +1,12 @@
 import { ArrowBack } from '@mui/icons-material';
 import { Button, Paper, Toolbar } from '@mui/material';
-import { IGlobalSearchService, IGlobalSearchServiceSymbol } from 'ipmc-core';
 import { IIndexManager, IIndexManagerSymbol, IProfile, IProfileSymbol } from "ipmc-interfaces";
 import React from "react";
 import { LibraryFilters } from 'src/components/molecules/LibraryFilters';
 import { Redirect, Route } from 'wouter';
 import { useService } from '../../../context/AppContext';
 import { usePersistentSignal, useTranslation } from '../../../hooks';
+import { IGlobalSearchService, IGlobalSearchServiceSymbol } from '../../../services';
 import { Display, ErrorBoundary, GlobalSearchField } from '../../molecules';
 import { LibraryDrawer, MediaPlayer } from '../../organisms';
 import { ItemRouter } from '../ItemRouter';

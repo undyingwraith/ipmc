@@ -1,12 +1,12 @@
 import { InputBase } from '@mui/material';
 import { useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
-import { IGlobalSearchService } from 'ipmc-core';
 import { IFileInfo, isPinFeature } from 'ipmc-interfaces';
 import React from 'react';
 import { useHotkey, useTranslation } from '../../hooks';
 import styles from '../atoms/DropDown/DropDown.module.scss';
 import { FileList } from '../organisms';
 import { useLocation } from 'wouter';
+import { IGlobalSearchService } from '../../services';
 
 export function GlobalSearchField(props: { searchService: IGlobalSearchService; }) {
 	const { searchService } = props;

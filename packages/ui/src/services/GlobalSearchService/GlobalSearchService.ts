@@ -1,6 +1,7 @@
 import { inject } from 'inversify';
-import { IFileInfo, IIndexManager, IIndexManagerSymbol, ISortAndFilterService, ISortAndFilterServiceSymbol } from 'ipmc-interfaces';
-import { IGlobalSearchService } from './IGlobalSearchService';
+import { IFileInfo, type IIndexManager, IIndexManagerSymbol } from 'ipmc-interfaces';
+import { type IGlobalSearchService } from './IGlobalSearchService';
+import { type ISortAndFilterService, ISortAndFilterServiceSymbol } from '../SortAndFilterService';
 
 export class GlobalSearchService implements IGlobalSearchService {
 	constructor(
@@ -17,6 +18,6 @@ export class GlobalSearchService implements IGlobalSearchService {
 			}
 		}
 
-		return this.sortAndFilterService.createFilteredList(allItems, query);
+		return this.sortAndFilterService.createQueryList(allItems, query);
 	}
 }

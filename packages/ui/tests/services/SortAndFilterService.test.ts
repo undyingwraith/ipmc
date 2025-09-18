@@ -1,6 +1,7 @@
-import { HasTitle, HasYear, IFileInfo, ISortAndFilterService, ISortAndFilterServiceSymbol } from 'ipmc-interfaces';
+import { Application, uuid } from 'ipmc-core';
+import { HasTitle, HasYear, IFileInfo } from 'ipmc-interfaces';
+import { ISortAndFilterService, ISortAndFilterServiceSymbol, SortAndFilterService } from 'src/services';
 import { describe, expect, test } from 'vitest';
-import { Application, SortAndFilterService, uuid } from '../../src';
 
 type TMeta = (IFileInfo & HasTitle & HasYear);
 
@@ -26,7 +27,7 @@ describe('SortAndFilterService', () => {
 			createMovie('The Something Else', 2021),
 		];
 		const service = app.getService<ISortAndFilterService>(ISortAndFilterServiceSymbol)!;
-		const filtered = service.createFilteredList(list, 'test movie');
+		const filtered = service.createQueryList(list, 'test movie');
 
 		expect(filtered.length).toBe(2);
 	});
@@ -37,7 +38,7 @@ describe('SortAndFilterService', () => {
 			createMovie('The A', 2021),
 		];
 		const service = app.getService<ISortAndFilterService>(ISortAndFilterServiceSymbol)!;
-		const filtered = service.createFilteredList(list);
+		const filtered = service.createQueryList(list);
 
 		expect(filtered[0].title).toBe('The A');
 		expect(filtered[1].title).toBe('B');
@@ -50,7 +51,7 @@ describe('SortAndFilterService', () => {
 			createMovie('A', 2020),
 		];
 		const service = app.getService<ISortAndFilterService>(ISortAndFilterServiceSymbol)!;
-		const filtered = service.createFilteredList(list);
+		const filtered = service.createQueryList(list);
 
 		expect(filtered[0].title).toBe('A');
 		expect(filtered[0].year).toBe(2020);
