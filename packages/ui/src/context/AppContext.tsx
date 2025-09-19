@@ -15,13 +15,16 @@ export function AppContextProvider(props: PropsWithChildren<{ setup: IModule; }>
 		application.value = app;
 	});
 
-	return useComputed(() => (application.value !== undefined ? (
-		<AppContext.Provider value={application.value}>
-			{props.children}
-		</AppContext.Provider>
-	) : (
-		<LoadScreen />
-	)));
+	return (<>
+		{useComputed(() => (application.value !== undefined ? (
+			<AppContext.Provider value={application.value}>
+				{props.children}
+			</AppContext.Provider>
+		) : (
+			<LoadScreen />
+		)))
+		}
+	</>);
 }
 
 export function useApp(): IApplication {
