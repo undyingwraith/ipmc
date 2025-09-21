@@ -1,32 +1,31 @@
-import { TextField } from '@mui/material';
 import { computed, ReadonlySignal, Signal } from '@preact/signals-react';
-import { injectable } from 'inversify';
-import { IFileInfo, isYearFeature } from 'ipmc-interfaces';
+import { inject, injectable } from 'inversify';
+import { IFileInfo, isYearFeature, type ITranslationService, ITranslationServiceSymbol } from 'ipmc-interfaces';
 import React from 'react';
+import { NumberInput } from '../../components/atoms';
 import { IFilter } from './IFilter';
 
 @injectable()
 export class YearFilter implements IFilter {
-	render() {
+	constructor(
+		@inject(ITranslationServiceSymbol) private readonly translationService: ITranslationService,
+	) { }
+
+	private translate(key: string): ReadonlySignal<string> {
+		return computed(() => this.translationService.language.value !== undefined ? this.translationService.translate(key) : 'Error');
+	}
+
+	public render() {
 		return (
-			<div>
-				YearFilter
-				{computed(() => (
-					<TextField
-						label={'Start'}
-						type={'number'}
-						value={this.startYear.value}
-						onChange={ev => this.startYear.value = parseInt(ev.target.value)}
-					/>
-				))}
-				{computed(() => (
-					<TextField
-						label={'End'}
-						type={'number'}
-						value={this.endYear.value}
-						onChange={ev => this.endYear.value = parseInt(ev.target.value)}
-					/>
-				))}
+			<div style={{ display: 'flex', flexDirection: 'row' }}>
+				<NumberInput
+					value={this.startYear}
+					label={this.translate('Start')}
+				/>
+				<NumberInput
+					value={this.endYear}
+					label={this.translate('End')}
+				/>
 			</div>
 		);
 	}

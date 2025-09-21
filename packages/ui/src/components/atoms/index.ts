@@ -9,6 +9,7 @@ export { FormList } from './FormList';
 export { Identicon } from './Identicon';
 export { ImageView } from './ImageView';
 export { Loader } from './Loader';
+export { NumberInput } from './NumberInput';
 export { PinButton } from './PinButton';
 export { ProcessDisplay } from './ProcessDisplay';
 export { SelectInput } from './SelectInput';
