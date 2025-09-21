@@ -10,7 +10,12 @@ import { Display } from '../DisplayButtons';
 import { MediaItemActions } from '../MediaItemActions';
 import styles from './FileGridItem.module.css';
 
-export function FileGridItem(props: { file: IFileInfo; onOpen: () => void; display: ReadonlySignal<Display>; }) {
+export function FileGridItem(props: {
+	file: IFileInfo;
+	onOpen: () => void;
+	display: ReadonlySignal<Display>;
+	style?: any;
+}) {
 	const { file, display, onOpen } = props;
 	const imgRef = useRef<HTMLDivElement>(null);
 	const visible = useIsVisible(imgRef);
@@ -34,32 +39,36 @@ export function FileGridItem(props: { file: IFileInfo; onOpen: () => void; displ
 	const fileUrl = useFileUrl(urlSource.value, visible);
 	const url = useComputed(() => fileUrl.value ?? (urlSource.value ? undefined : (display.value === Display.Poster ? posterFallback : thumbFallback)));
 
-	return useComputed(() => (
-		<Card ref={imgRef} className={styles.card}>
-			<CardActionArea onClick={onOpen} className={styles.actionArea}>
-				<CardMedia image={url.value} className={`${styles.media} ${display.value === Display.Thumbnail && styles.thumbnail}`} />
-				<CardHeader
-					className={styles.title}
-					title={isTitleFeature(file) ? file.title : file.name}
-					subheader={isYearFeature(file) ? file.year : isIEpisodeMetadata(file) ? `S${file.season} E${file.episode}` : undefined}
-				/>
-				{(isIVideoFile(file) || isIFolderFile(file)) && (
-					<CardContent>
-						<Stack direction={'column'} spacing={1}>
-							{isIVideoFile(file) && (
-								<VideoMetadataDisplay file={file} />
-							)}
-							{isIFolderFile(file) && (
-								<EpisodeDisplay file={file} />
-							)}
-							<LanguageDisplay file={file} />
-						</Stack>
-					</CardContent>
-				)}
-			</CardActionArea>
-			<CardActions>
-				<MediaItemActions file={file} fullwidth={true} />
-			</CardActions>
-		</Card>
-	));
+	return (
+		<div style={props.style}>
+			{useComputed(() => (
+				<Card ref={imgRef} className={styles.card}>
+					<CardActionArea onClick={onOpen} className={styles.actionArea}>
+						<CardMedia image={url.value} className={`${styles.media} ${display.value === Display.Thumbnail && styles.thumbnail}`} />
+						<CardHeader
+							className={styles.title}
+							title={isTitleFeature(file) ? file.title : file.name}
+							subheader={isYearFeature(file) ? file.year : isIEpisodeMetadata(file) ? `S${file.season} E${file.episode}` : undefined}
+						/>
+						{(isIVideoFile(file) || isIFolderFile(file)) && (
+							<CardContent>
+								<Stack direction={'column'} spacing={1}>
+									{isIVideoFile(file) && (
+										<VideoMetadataDisplay file={file} />
+									)}
+									{isIFolderFile(file) && (
+										<EpisodeDisplay file={file} />
+									)}
+									<LanguageDisplay file={file} />
+								</Stack>
+							</CardContent>
+						)}
+					</CardActionArea>
+					<CardActions>
+						<MediaItemActions file={file} fullwidth={true} />
+					</CardActions>
+				</Card>
+			))}
+		</div>
+	);
 }
