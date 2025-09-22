@@ -1,11 +1,12 @@
 import { computed, ReadonlySignal, Signal } from '@preact/signals-react';
+import { injectable, multiInject, optional } from 'inversify';
 import { IFileInfo, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
 import { IFilter, IFilterSymbol } from './IFilter';
 import { ISortAndFilterService } from './ISortAndFilterService';
-import { multiInject, optional } from 'inversify';
 
 type IMatcher = (v: any, w: string) => boolean;
 
+@injectable()
 export class SortAndFilterService implements ISortAndFilterService {
 	constructor(
 		@multiInject(IFilterSymbol) @optional() public readonly filters: IFilter[] = []

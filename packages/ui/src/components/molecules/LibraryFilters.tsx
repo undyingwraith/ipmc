@@ -5,8 +5,9 @@ import React from 'react';
 import { useService } from '../../context';
 import { useHotkey } from '../../hooks';
 import { IFilter, ISortAndFilterService, ISortAndFilterServiceSymbol } from '../../services';
-import { DropDown } from '../atoms/DropDown';
+import { DropDown } from '../atoms';
 import { Display, DisplayButtons } from './DisplayButtons';
+import { ErrorBoundary } from './ErrorBoundary';
 
 export function LibraryFilters(props: { display: Signal<Display>; }) {
 	const sortAndFilterService = useService<ISortAndFilterService>(ISortAndFilterServiceSymbol);
@@ -47,15 +48,19 @@ export function LibraryFilters(props: { display: Signal<Display>; }) {
 				<div>
 					{computed(() => activeFilters.value.map((f) => (
 						<div>
-							{f.name}
 							<div>
-								{f.render()}
+								{f.name}
+								<IconButton
+									onClick={() => activeFilters.value = activeFilters.value.filter(ff => ff != f)}
+								>
+									<Remove />
+								</IconButton>
 							</div>
-							<IconButton
-								onClick={() => activeFilters.value = activeFilters.value.filter(ff => ff != f)}
-							>
-								<Remove />
-							</IconButton>
+							<div>
+								<ErrorBoundary>
+									{f.render()}
+								</ErrorBoundary>
+							</div>
 						</div>
 					)))}
 				</div>

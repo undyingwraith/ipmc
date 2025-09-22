@@ -7,12 +7,12 @@ export interface IFilter {
 	/**
 	 * Translation key to be used.
 	 */
-	name: string;
+	get name(): string;
 
 	/**
 	 * Render function for the component.
 	 */
-	render(): any;
+	render(): JSX.Element;
 
 	/**
 	 * Filter function the be used when filter is active.
