@@ -2,7 +2,7 @@ import { Card, CardActionArea, CardActions, CardContent, CardHeader, CardMedia, 
 import { ReadonlySignal, useComputed } from '@preact/signals-react';
 import { IFileInfo, isBackdropFeature, isIEpisodeMetadata, isIFolderFile, isIVideoFile, isPosterFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
 import React, { useRef } from 'react';
-import { useFileUrl, useIsVisible } from '../../../hooks';
+import { useFileUrl } from '../../../hooks';
 import { EpisodeDisplay, LanguageDisplay, VideoMetadataDisplay } from '../../atoms';
 import posterFallback from '../../svg/poster.svg';
 import thumbFallback from '../../svg/thumb.svg';
@@ -18,7 +18,6 @@ export function FileGridItem(props: {
 }) {
 	const { file, display, onOpen } = props;
 	const imgRef = useRef<HTMLDivElement>(null);
-	const visible = useIsVisible(imgRef);
 
 	const urlSource = useComputed(() => {
 		switch (display.value) {
@@ -36,39 +35,35 @@ export function FileGridItem(props: {
 				return '';
 		}
 	});
-	const fileUrl = useFileUrl(urlSource.value, visible);
+	const fileUrl = useFileUrl(urlSource.value);
 	const url = useComputed(() => fileUrl.value ?? (urlSource.value ? undefined : (display.value === Display.Poster ? posterFallback : thumbFallback)));
 
-	return (
-		<div style={props.style}>
-			{useComputed(() => (
-				<Card ref={imgRef} className={styles.card}>
-					<CardActionArea onClick={onOpen} className={styles.actionArea}>
-						<CardMedia image={url.value} className={`${styles.media} ${display.value === Display.Thumbnail && styles.thumbnail}`} />
-						<CardHeader
-							className={styles.title}
-							title={isTitleFeature(file) ? file.title : file.name}
-							subheader={isYearFeature(file) ? file.year : isIEpisodeMetadata(file) ? `S${file.season} E${file.episode}` : undefined}
-						/>
-						{(isIVideoFile(file) || isIFolderFile(file)) && (
-							<CardContent>
-								<Stack direction={'column'} spacing={1}>
-									{isIVideoFile(file) && (
-										<VideoMetadataDisplay file={file} />
-									)}
-									{isIFolderFile(file) && (
-										<EpisodeDisplay file={file} />
-									)}
-									<LanguageDisplay file={file} />
-								</Stack>
-							</CardContent>
-						)}
-					</CardActionArea>
-					<CardActions>
-						<MediaItemActions file={file} fullwidth={true} />
-					</CardActions>
-				</Card>
-			))}
-		</div>
-	);
+	return useComputed(() => (
+		<Card ref={imgRef} className={styles.card}>
+			<CardActionArea onClick={onOpen} className={styles.actionArea}>
+				<CardMedia image={url.value} className={`${styles.media} ${display.value === Display.Thumbnail && styles.thumbnail}`} />
+				<CardHeader
+					className={styles.title}
+					title={isTitleFeature(file) ? file.title : file.name}
+					subheader={isYearFeature(file) ? file.year : isIEpisodeMetadata(file) ? `S${file.season} E${file.episode}` : undefined}
+				/>
+				{(isIVideoFile(file) || isIFolderFile(file)) && (
+					<CardContent>
+						<Stack direction={'column'} spacing={1}>
+							{isIVideoFile(file) && (
+								<VideoMetadataDisplay file={file} />
+							)}
+							{isIFolderFile(file) && (
+								<EpisodeDisplay file={file} />
+							)}
+							<LanguageDisplay file={file} />
+						</Stack>
+					</CardContent>
+				)}
+			</CardActionArea>
+			<CardActions>
+				<MediaItemActions file={file} fullwidth={true} />
+			</CardActions>
+		</Card>
+	));
 }

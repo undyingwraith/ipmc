@@ -4,7 +4,7 @@ import React from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { Grid } from 'react-window';
 import { useLocation } from 'wouter';
-import { Display, ErrorBoundary, FileGridItem } from '../../molecules';
+import { Display, ErrorBoundary, FileGridItem } from '../molecules';
 
 export function FileGrid(props: { files: IFileInfo[]; display: ReadonlySignal<Display>; }) {
 	const { files, display } = props;
@@ -14,33 +14,44 @@ export function FileGrid(props: { files: IFileInfo[]; display: ReadonlySignal<Di
 	return (
 		<AutoSizer>
 			{({ width, height }) => {
-				const cardWidth = 286;
-				const cardHeight = 395;
-				const columnCount = Math.floor(width / cardWidth);
+				const finalWidth = width - 10;
+				const isMobile = finalWidth < 640;
+				const cardWidth = isMobile ? 150 : 240;
+				const cardHeight = isMobile ? 550 : 650;
+
+				const columnCount = Math.floor(finalWidth / cardWidth);
 				const rowCount = Math.ceil(files.length / columnCount);
 
-				//TODO: spacing
+				const wastedSpace = finalWidth - (cardWidth * columnCount);
+				const finalCardWidth = cardWidth + Math.floor(wastedSpace / columnCount);
 
 				return (
-					<div style={{ height: height, width: width, margin: '0 auto' }}>
+					<div style={{ height: height, width: width }}>
 						<Grid
+							style={{ margin: '0 auto', padding: 5 }}
 							cellProps={{ files }}
 							cellComponent={({ files, rowIndex, columnIndex, style }) => {
 								const f = files[(rowIndex * columnCount) + columnIndex];
 								return (
 									<ErrorBoundary key={f?.cid}>
-										<FileGridItem
-											style={style}
-											file={f}
-											onOpen={() => setLocation(`/${f.name}`)}
-											display={display}
-										/>
+										<div
+											style={{
+												...style,
+												padding: 5,
+											}}
+										>
+											<FileGridItem
+												file={f}
+												onOpen={() => setLocation(`/${f.name}`)}
+												display={display}
+											/>
+										</div>
 									</ErrorBoundary>
 								);
 							}}
 							columnCount={columnCount}
 							rowCount={rowCount}
-							columnWidth={cardWidth}
+							columnWidth={finalCardWidth}
 							rowHeight={cardHeight}
 						/>
 					</div>
