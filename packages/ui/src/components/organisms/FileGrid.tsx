@@ -6,6 +6,26 @@ import { Grid } from 'react-window';
 import { useLocation } from 'wouter';
 import { Display, ErrorBoundary, FileGridItem } from '../molecules';
 
+function getScrollbarWidth() {
+	// Creating invisible container
+	const outer = document.createElement('div');
+	outer.style.visibility = 'hidden';
+	outer.style.overflow = 'scroll'; // forcing scrollbar to appear
+	document.body.appendChild(outer);
+
+	// Creating inner element and placing it in the container
+	const inner = document.createElement('div');
+	outer.appendChild(inner);
+
+	// Calculating difference between container's full width and the child width
+	const scrollbarWidth = (outer.offsetWidth - inner.offsetWidth);
+
+	// Removing temporary elements from the DOM
+	outer.parentNode?.removeChild(outer);
+
+	return scrollbarWidth;
+}
+
 export function FileGrid(props: { files: IFileInfo[]; display: ReadonlySignal<Display>; }) {
 	const { files, display } = props;
 
@@ -17,7 +37,7 @@ export function FileGrid(props: { files: IFileInfo[]; display: ReadonlySignal<Di
 		return (
 			<AutoSizer>
 				{({ width, height }) => {
-					const finalWidth = width - 10;
+					const finalWidth = width - 10 - getScrollbarWidth();
 					const isMobile = finalWidth < 640;
 					const cardWidth = isMobile ? 150 : 240;
 
