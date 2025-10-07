@@ -16,7 +16,7 @@ export class AudioIndexFetcher implements IIndexFetcher<IAudioMetaData[]> {
 	 * @inheritdoc
 	 */
 	get version(): string {
-		return '0.1';
+		return '0.111';
 	}
 
 	/**
@@ -79,7 +79,10 @@ export class AudioIndexFetcher implements IIndexFetcher<IAudioMetaData[]> {
 					pinId: `${parentId}/${entry.name}`,
 					thumbnails: files.filter(f => Regexes.Thumbnail.exec(f.name) != null),
 					lyrics: tags.unsynchronisedLyrics?.text,
-					year: tags.originalYear != undefined ? parseInt(tags.originalYear) : 0,
+					year: tags.year != undefined ? parseInt(tags.year) : 0,
+					artist: tags.artist ?? "Unknown Artist",
+					album: tags.album ?? "No Album",
+					genre: tags.genre ?? "Unknown"
 				});
 			}
 		}

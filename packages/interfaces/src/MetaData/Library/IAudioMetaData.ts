@@ -1,11 +1,14 @@
 import { HasPinAbility, HasPoster, HasTitle, HasYear } from '../Features';
+import { HasAlbum } from '../Features/HasAlbum';
+import { HasArtist } from '../Features/HasArtist';
+import { HasGenre } from '../Features/HasGenre';
 import { IAudioFile } from '../IAudioFile';
 import { IFolderFile } from '../IFolderFile';
 
 /**
  * The metadata of a piece of Audio.
  */
-export type IAudioMetaData = IAudioFile & HasPinAbility & HasYear & HasTitle;
+export type IAudioMetaData = IAudioFile & HasPinAbility & HasYear & HasTitle & HasArtist & HasAlbum & HasGenre;
 
 /**
  * The metadata of an Album.

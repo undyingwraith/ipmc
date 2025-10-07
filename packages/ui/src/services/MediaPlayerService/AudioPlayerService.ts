@@ -33,7 +33,6 @@ export class AudioPlayerService implements IPlayerService {
 			this.bufferedTime.value = this.player?.duration;
 			this.totalTime.value = this.player?.duration;
 		}
-
 	}
 
 
