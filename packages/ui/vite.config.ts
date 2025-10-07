@@ -42,6 +42,7 @@ export default defineConfig(({ mode }) => ({
 				'react-dom',
 				'shaka-player',
 				'wouter',
+				'react-window',
 			],
 			output: {
 				// Provide global variables to use in the UMD build
