@@ -17,9 +17,6 @@ export class AudioPlayerService implements IPlayerService {
 		this.log.debug("AudioPlayerService called");
 	}
 
-	setCurrentTime(time: number): void {
-		throw new Error('Method not implemented.');
-	}
 	addEventListener(ev: TEvent, emit: () => void): void {
 		//throw new Error('Method not implemented.');
 	}
@@ -58,6 +55,12 @@ export class AudioPlayerService implements IPlayerService {
 		console.log(file);
 		console.log("audio file " + file + " audio path " + file.path + " is audio file: " + isIAudioFile(file));
 		this.player.addEventListener('error', (error: any) => this.log.error(`Error code ${error.code} object ${error}`));
+	}
+
+	public setCurrentTime(time: number): void {
+		if (this.player) {
+			this.player.currentTime = time;
+		}
 	}
 
 	public canPlay(file: IFileInfo): boolean {
