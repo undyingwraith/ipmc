@@ -1,4 +1,4 @@
-import { ReadonlySignal, Signal } from '@preact/signals-react';
+import { batch, ReadonlySignal, Signal } from '@preact/signals-react';
 import { inject, injectable } from 'inversify';
 import { IFileInfo, type ILogService, ILogServiceSymbol, isIAudioFile } from 'ipmc-interfaces';
 import { type IObjectUrlController, IObjectUrlControllerSymbol, ObjectUrlController } from '../ObjectUrlController';
@@ -24,10 +24,20 @@ export class AudioPlayerService implements IPlayerService {
 		//throw new Error('Method not implemented.');
 	}
 
-	public currentTime: ReadonlySignal<number> = new Signal(0);
-	public bufferedTime: ReadonlySignal<number> = new Signal(0);
-	public totalTime: ReadonlySignal<number> = new Signal(0);
+	public currentTime = new Signal(0);
+	public bufferedTime = new Signal(0);
+	public totalTime = new Signal(0);
 
+	public updateTimes() {
+		if (this.player?.currentTime) {
+			this.currentTime.value = this.player?.currentTime;
+		}
+		if (this.player?.duration) {
+			this.bufferedTime.value = this.player?.duration;
+			this.totalTime.value = this.player?.duration;
+		}
+
+	}
 
 
 	public async load(file: IFileInfo): Promise<void> {
@@ -37,6 +47,11 @@ export class AudioPlayerService implements IPlayerService {
 			this.player.pause();
 		}
 		this.player = new Audio(url);
+		this.player.addEventListener('timeupdate', () => {
+			batch(() => {
+				this.updateTimes();
+			});
+		});
 
 		this.currentTime;
 
