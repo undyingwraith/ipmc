@@ -19,6 +19,18 @@ div.title,
 .title {
 	flex-grow: 1;
 	align-items: start;
+	width: 100%;
+}
+
+.title>div {
+	width: 100%;
+}
+
+.title>div>span {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	width: 100%;
 }
 
 .media {

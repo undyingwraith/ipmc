@@ -2,7 +2,7 @@ import { Card, CardActionArea, CardActions, CardContent, CardHeader, CardMedia, 
 import { ReadonlySignal, useComputed } from '@preact/signals-react';
 import { IFileInfo, isBackdropFeature, isIEpisodeMetadata, isIFolderFile, isIVideoFile, isPosterFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
 import React, { useRef } from 'react';
-import { useFileUrl, useIsVisible } from '../../../hooks';
+import { useFileUrl } from '../../../hooks';
 import { EpisodeDisplay, LanguageDisplay, VideoMetadataDisplay } from '../../atoms';
 import posterFallback from '../../svg/poster.svg';
 import thumbFallback from '../../svg/thumb.svg';
@@ -10,10 +10,14 @@ import { Display } from '../DisplayButtons';
 import { MediaItemActions } from '../MediaItemActions';
 import styles from './FileGridItem.module.css';
 
-export function FileGridItem(props: { file: IFileInfo; onOpen: () => void; display: ReadonlySignal<Display>; }) {
+export function FileGridItem(props: {
+	file: IFileInfo;
+	onOpen: () => void;
+	display: ReadonlySignal<Display>;
+	style?: any;
+}) {
 	const { file, display, onOpen } = props;
 	const imgRef = useRef<HTMLDivElement>(null);
-	const visible = useIsVisible(imgRef);
 
 	const urlSource = useComputed(() => {
 		switch (display.value) {
@@ -31,7 +35,7 @@ export function FileGridItem(props: { file: IFileInfo; onOpen: () => void; displ
 				return '';
 		}
 	});
-	const fileUrl = useFileUrl(urlSource.value, visible);
+	const fileUrl = useFileUrl(urlSource.value);
 	const url = useComputed(() => fileUrl.value ?? (urlSource.value ? undefined : (display.value === Display.Poster ? posterFallback : thumbFallback)));
 
 	return useComputed(() => (

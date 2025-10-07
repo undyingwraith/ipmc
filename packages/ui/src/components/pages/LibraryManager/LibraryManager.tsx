@@ -1,3 +1,4 @@
+import { ArrowBack } from '@mui/icons-material';
 import { Button, Paper, Toolbar } from '@mui/material';
 import { IGlobalSearchService, IGlobalSearchServiceSymbol } from 'ipmc-core';
 import { IIndexManager, IIndexManagerSymbol, IProfile, IProfileSymbol } from "ipmc-interfaces";
@@ -32,6 +33,7 @@ export function LibraryManager() {
 						<Route path={'/:library/:item'} nest>
 							<Button
 								onClick={() => history.back()}
+								startIcon={<ArrowBack />}
 							>
 								{_t('Back')}
 							</Button>
