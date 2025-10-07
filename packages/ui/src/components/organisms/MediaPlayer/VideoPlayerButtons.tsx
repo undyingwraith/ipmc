@@ -14,7 +14,7 @@ export function VideoPlayerButtons() {
 				<select onChange={(ev) => {
 					videoPlayer.selectLanguage(ev.currentTarget.value);
 				}}>
-					{useComputed(() => mediaPlayer.nowPlaying.value?.languages.map(l => (
+					{useComputed(() => mediaPlayer.nowPlaying.value?.languages?.map(l => (
 						<option>{l}</option>
 					)))}
 				</select>
@@ -25,7 +25,7 @@ export function VideoPlayerButtons() {
 					videoPlayer.selectSubtitle(ev.currentTarget.value !== 'null' ? JSON.parse(ev.currentTarget.value) : undefined);
 				}}>
 					<option value="null">None</option>
-					{useComputed(() => mediaPlayer.nowPlaying.value?.subtitles.map(s => (
+					{useComputed(() => mediaPlayer.nowPlaying.value?.subtitles?.map(s => (
 						<option value={JSON.stringify(s)}>{s.language}{s.forced && ' - forced'}</option>
 					)))}
 				</select>

@@ -55,7 +55,7 @@ export function MediaItemActions(props: { file: IFileInfo; fullwidth?: boolean; 
 		</Button>
 	) : undefined;
 
-	const playButton = isIVideoFile(file) ? (
+	const playButton = player.canPlay(file) ? (
 		<Button
 			title={_t('Play').value}
 			onClick={() => player.play(file)}

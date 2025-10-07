@@ -11,4 +11,5 @@ export const UiModule: IModule = (app: Application) => {
 	app.register(VideoPlayerService, IVideoPlayerServiceSymbol);
 	app.register(AudioPlayerService, IAudioPlayerServiceSymbol);
 	app.registerConstantMultiple(app.getService(IVideoPlayerServiceSymbol), IPlayerServiceSymbol);
+	app.registerConstantMultiple(app.getService(IAudioPlayerServiceSymbol), IPlayerServiceSymbol);
 };

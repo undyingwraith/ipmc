@@ -85,12 +85,17 @@ export class MediaPlayerService implements IMediaPlayerService {
 	}
 
 	public play(file: IVideoFile): void {
-		this.enqueueNext(file);
-		batch(() => {
-			this.playing.value = true;
-			this.open.value = true;
-			this.next();
-		});
+		try {
+			this.enqueueNext(file);
+			batch(() => {
+				this.playing.value = true;
+				this.open.value = true;
+				this.next();
+			});
+		} catch (error) {
+			console.log("Error: " + error);
+		}
+
 	}
 
 	public previous(): void {
@@ -130,6 +135,14 @@ export class MediaPlayerService implements IMediaPlayerService {
 		if (player) {
 			player.setCurrentTime(amount);
 		}
+	}
+
+	public canPlay(file: IFileInfo) {
+		const result = this.players.some(p => p.canPlay(file));
+		this.log.debug(result.toString());
+		this.log.debug(JSON.stringify(file));
+
+		return result;
 	}
 
 	public queue = new Signal<(IVideoFile)[]>([]);

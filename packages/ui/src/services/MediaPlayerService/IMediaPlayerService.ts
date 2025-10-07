@@ -1,4 +1,4 @@
-import { IVideoFile } from 'ipmc-interfaces';
+import { IFileInfo, IVideoFile } from 'ipmc-interfaces';
 import { ReadonlySignal, Signal } from '@preact/signals-react';
 
 export const IMediaPlayerServiceSymbol = Symbol.for('MediaPlayerSymbol');
@@ -32,7 +32,7 @@ export interface IMediaPlayerService {
 	 * Attempts to play specified {@link IFileInfo}.
 	 * @param file the {@link IFileInfo} to play.
 	 */
-	play(file: IVideoFile): void;
+	play(file: IFileInfo): void;
 
 	/**
 	 * Set the current playback time.
@@ -98,4 +98,10 @@ export interface IMediaPlayerService {
 	 * Whether the player is currently in fullscreen mode.
 	 */
 	fullscreen: Signal<boolean>;
+
+	/**
+	 * Checks whether this service can play a {@link IFileInfo}.
+	 * @param file {@link IFileInfo} to check for playability.
+	 */
+	canPlay(file: IFileInfo): boolean;
 }

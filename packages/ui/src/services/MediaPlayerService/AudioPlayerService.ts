@@ -1,33 +1,42 @@
-import { Signal } from '@preact/signals-react';
+import { ReadonlySignal, Signal } from '@preact/signals-react';
 import { inject, injectable } from 'inversify';
 import { IFileInfo, type ILogService, ILogServiceSymbol, isIAudioFile } from 'ipmc-interfaces';
 import { type IObjectUrlController, IObjectUrlControllerSymbol, ObjectUrlController } from '../ObjectUrlController';
-import { IPlayerService } from './IPlayerService';
+import { IPlayerService, TEvent } from './IPlayerService';
 
 export const IAudioPlayerServiceSymbol = Symbol.for('AudioPlayerService');
 
 @injectable()
 export class AudioPlayerService implements IPlayerService {
-	private player: Audio | undefined;
+	private player: HTMLAudioElement | undefined;
 
 	public constructor(
 		@inject(ILogServiceSymbol) private readonly log: ILogService,
 		@inject(IObjectUrlControllerSymbol) private readonly urlController: IObjectUrlController,
 	) {
-		// Register to {@link IMediaPlayerService}
-		this.mediaPlayer.registerPlayer(this);
-
-
+		this.log.debug("AudioPlayerService called");
 	}
 
+	setCurrentTime(time: number): void {
+		throw new Error('Method not implemented.');
+	}
+	addEventListener(ev: TEvent, emit: () => void): void {
+		//throw new Error('Method not implemented.');
+	}
+
+	public currentTime: ReadonlySignal<number> = new Signal(0);
+	public bufferedTime: ReadonlySignal<number> = new Signal(0);
+	public totalTime: ReadonlySignal<number> = new Signal(0);
 
 
-	public load(file: IFileInfo): void {
-		const ObjUrlCont = new ObjectUrlController(this.ipfs);
-		const [audioUrl, abort] = ObjUrlCont.getObjectUrl(file.cid);
-		audioUrl.then((url) => {
-			this.player = new Audio(url);
-		});
+
+	public async load(file: IFileInfo): Promise<void> {
+		const [audioUrl, abort] = this.urlController.getObjectUrl(file.cid);
+		const url = await audioUrl;
+		this.player = new Audio(url);
+
+		this.currentTime;
+
 		console.log(file);
 		console.log("audio file " + file + " audio path " + file.path + " is audio file: " + isIAudioFile(file));
 		this.player.addEventListener('error', (error: any) => this.log.error(`Error code ${error.code} object ${error}`));
@@ -38,15 +47,17 @@ export class AudioPlayerService implements IPlayerService {
 	};
 
 	public play(): void {
-		this.player.play();
+		this.player?.play();
 	}
 
 	public pause(): void {
-		this.player.pause();
+		this.player?.pause();
 	}
 
 	public setVolume(volume: number): void {
-		this.player.volume = volume;
+		if (this.player) {
+			this.player.volume = volume;
+		}
 	}
 
 	public requestFullscreen(): void {
