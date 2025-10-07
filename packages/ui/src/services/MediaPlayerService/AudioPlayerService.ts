@@ -8,14 +8,16 @@ export const IAudioPlayerServiceSymbol = Symbol.for('AudioPlayerService');
 
 @injectable()
 export class AudioPlayerService implements IPlayerService {
+	private player: Audio | undefined;
 
-	private player: ((HTMLAudioElement) | undefined) = undefined;
 	public constructor(
 		@inject(ILogServiceSymbol) private readonly log: ILogService,
 		@inject(IObjectUrlControllerSymbol) private readonly urlController: IObjectUrlController,
 	) {
 		// Register to {@link IMediaPlayerService}
-		this.player.registerPlayer(this);
+		this.mediaPlayer.registerPlayer(this);
+
+
 	}
 
 
@@ -23,14 +25,11 @@ export class AudioPlayerService implements IPlayerService {
 	public load(file: IFileInfo): void {
 		const ObjUrlCont = new ObjectUrlController(this.ipfs);
 		const [audioUrl, abort] = ObjUrlCont.getObjectUrl(file.cid);
-
-		audioUrl.then((u) => {
-			this.player = new Audio(u);
+		audioUrl.then((url) => {
+			this.player = new Audio(url);
 		});
-
 		console.log(file);
 		console.log("audio file " + file + " audio path " + file.path + " is audio file: " + isIAudioFile(file));
-
 		this.player.addEventListener('error', (error: any) => this.log.error(`Error code ${error.code} object ${error}`));
 	}
 
@@ -55,8 +54,5 @@ export class AudioPlayerService implements IPlayerService {
 	}
 
 	public loading = new Signal(true);
-
-
-
 
 }
