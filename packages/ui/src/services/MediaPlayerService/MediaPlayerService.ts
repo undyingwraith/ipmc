@@ -110,6 +110,7 @@ export class MediaPlayerService implements IMediaPlayerService {
 	}
 
 	public stop() {
+		this.currentPlayer.value?.pause();
 		batch(() => {
 			this.queueIndex.value = -1;
 			this.queue.value = [];

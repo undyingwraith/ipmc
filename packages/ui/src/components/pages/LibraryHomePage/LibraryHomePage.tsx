@@ -4,7 +4,7 @@ import { IPinItem, IPinManagerService, IPinManagerServiceSymbol, IProfile, IProf
 import React from 'react';
 import { useLocation } from 'wouter';
 import { useService } from '../../../context';
-import { LibraryTypeDictionary } from '../../../dictionaries';
+import { LibraryTypeDictionary } from '../../../utils';
 import { useTranslation } from '../../../hooks/useTranslation';
 import { ProcessDisplay } from '../../atoms';
 import { Display } from '../../molecules';

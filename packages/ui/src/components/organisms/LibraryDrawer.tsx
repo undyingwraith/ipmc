@@ -7,7 +7,7 @@ import { IProfile, IProfileSymbol } from "ipmc-interfaces";
 import React from "react";
 import { useLocation } from 'wouter';
 import { useService } from '../../context';
-import { LibraryTypeDictionary } from '../../dictionaries';
+import { LibraryTypeDictionary } from '../../utils';
 import { useHotkey, useLinkedSignal, useTranslation } from '../../hooks';
 import { StopFunctionSymbol } from '../../IpmcLauncher';
 

@@ -7,7 +7,6 @@ export const ProfileModule: IModule = (app) => {
 	app.register(GlobalSearchService, IGlobalSearchServiceSymbol);
 	app.register(PinManagerService, IPinManagerServiceSymbol);
 	app.register(SortAndFilterService, ISortAndFilterServiceSymbol);
-	app.register(IndexManager, IIndexManagerSymbol);
 	app.registerMultiple(MovieIndexFetcher, IIndexFetcherSymbol);
 	app.registerMultiple(SeriesIndexFetcher, IIndexFetcherSymbol);
 };
