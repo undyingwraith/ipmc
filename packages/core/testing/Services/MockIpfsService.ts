@@ -43,7 +43,7 @@ export class MockIpfsService implements IIpfsService {
 		return 'TestId';
 	}
 
-	fetch(cid: string, path?: string): Promise<Uint8Array> {
+	fetch(cid: string): Promise<Uint8Array> {
 		if (this.cids[cid] && !Array.isArray(this.cids[cid])) {
 			return Promise.resolve(this.cids[cid]);
 		}
