@@ -33,6 +33,9 @@ export class AudioPlayerService implements IPlayerService {
 	public async load(file: IFileInfo): Promise<void> {
 		const [audioUrl, abort] = this.urlController.getObjectUrl(file.cid);
 		const url = await audioUrl;
+		if (this.player) {
+			this.player.pause();
+		}
 		this.player = new Audio(url);
 
 		this.currentTime;
