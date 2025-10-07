@@ -5,18 +5,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-    - name: Install dependencies
-      run: yarn --immutable --check-cache
-    - name: Check dependency duplication
-      run: yarn dedupe --check
-    - name: Run build
-      run: yarn build
-    - name: Run tests
-      run: yarn test --coverage
-    - name: Report coverage
-      if: github.event_name == 'pull_request'
-      uses:  davelosert/vitest-coverage-report-action@v2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+      - name: Install dependencies
+        run: yarn --immutable --check-cache
+      - name: Check dependency duplication
+        run: yarn dedupe --check
+      - name: Run build
+        run: yarn build
+      - name: Run tests
+        run: yarn test --coverage
+      - name: Report coverage
+        if: github.event_name == 'pull_request'
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          name: 'core'
+          working-directory: './packages/core'
+      - name: Report coverage
+        if: github.event_name == 'pull_request'
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          name: 'ui'
+          working-directory: './packages/ui'

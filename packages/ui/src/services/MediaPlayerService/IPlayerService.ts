@@ -1,12 +1,14 @@
 import { ReadonlySignal } from '@preact/signals-react';
 import { IFileInfo } from 'ipmc-interfaces';
 
+export const IPlayerServiceSymbol = Symbol.for('IPlayerService');
+
 export interface IPlayerService {
 	/**
 	 * Loads specified {@link IFileInfo} for playing.
 	 * @param file The {@link IFileInfo} to load.
 	 */
-	load(file: IFileInfo): void;
+	load(file: IFileInfo): Promise<void>;
 
 	/**
 	 * Checks whether this service can play a {@link IFileInfo}.
@@ -41,9 +43,11 @@ export interface IPlayerService {
 	setCurrentTime(time: number): void;
 
 	/**
-	 * Whether the media is loading.
+	 * Adds a new event listener for specified event.
+	 * @param ev event to listen for, {@see TEvent}.
+	 * @param emit 
 	 */
-	loading: ReadonlySignal<boolean>;
+	addEventListener(ev: TEvent, emit: () => void): void;
 
 	/**
 	 * The current time in the media item in seconds.
@@ -60,3 +64,10 @@ export interface IPlayerService {
 	 */
 	totalTime: ReadonlySignal<number>;
 }
+
+/**
+ * ended - Media has finished playing.
+ * waiting - Media can currently not play as its loading etc.
+ * ready - Media is ready to be played.
+ */
+export type TEvent = 'ended' | 'waiting' | 'ready';

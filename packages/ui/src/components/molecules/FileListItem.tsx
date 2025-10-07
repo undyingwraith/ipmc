@@ -9,32 +9,38 @@ export function FileListItem(props: {
 	onOpen: () => void;
 	actions?: JSX.Element;
 	selected?: boolean;
+	style?: any;
 }) {
-	const { file, onOpen, selected } = props;
+	const { file, onOpen, selected, style } = props;
 	const actions = props.actions ?? (<MediaItemActions file={file} />);
 
 	return (
-		<ListItem
-			secondaryAction={
-				<Stack direction={'row'}>
-					{isIFolderFile(file) && (
-						<EpisodeDisplay file={file} />
-					)}
-					{(isIVideoFile(file) || isIFolderFile(file)) && (
-						<LanguageDisplay file={file} />
-					)}
-					{actions}
-				</Stack>
-			}>
-			<ListItemButton
-				onClick={onOpen}
-				selected={selected}
-			>
-				<ListItemText
-					primary={isTitleFeature(file) ? file.title : file.name}
-					secondary={isYearFeature(file) ? file.year : isIEpisodeMetadata(file) ? `${file.series} - S${file.season} E${file.episode}` : undefined}
-				/>
-			</ListItemButton>
-		</ListItem>
+		<div style={{
+			...style,
+			borderBottom: '1px solid gray'
+		}}>
+			<ListItem
+				secondaryAction={
+					<Stack direction={'row'}>
+						{isIFolderFile(file) && (
+							<EpisodeDisplay file={file} />
+						)}
+						{(isIVideoFile(file) || isIFolderFile(file)) && (
+							<LanguageDisplay file={file} />
+						)}
+						{actions}
+					</Stack>
+				}>
+				<ListItemButton
+					onClick={onOpen}
+					selected={selected}
+				>
+					<ListItemText
+						primary={isTitleFeature(file) ? file.title : file.name}
+						secondary={isYearFeature(file) ? file.year : isIEpisodeMetadata(file) ? `${file.series} - S${file.season} E${file.episode}` : undefined}
+					/>
+				</ListItemButton>
+			</ListItem>
+		</div>
 	);
 }

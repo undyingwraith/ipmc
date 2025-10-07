@@ -29,8 +29,8 @@ export function MediaItemActions(props: { file: IFileInfo; fullwidth?: boolean; 
 		<Button
 			title={_t('AddToQueue').value}
 			onClick={() => player.enqueue(file)}
+			endIcon={text && _t('AddToQueue')}
 		>
-			{text && _t('AddToQueue')}
 			<AddToQueue />
 		</Button>
 	) : isISeriesMetadata(file) || isISeasonMetadata(file) ? (
@@ -49,8 +49,8 @@ export function MediaItemActions(props: { file: IFileInfo; fullwidth?: boolean; 
 		<Button
 			title={_t('EnqueueNext').value}
 			onClick={() => player.enqueueNext(file)}
+			endIcon={text && _t('EnqueueNext')}
 		>
-			{text && _t('EnqueueNext')}
 			<QueuePlayNext />
 		</Button>
 	) : undefined;
@@ -59,8 +59,8 @@ export function MediaItemActions(props: { file: IFileInfo; fullwidth?: boolean; 
 		<Button
 			title={_t('Play').value}
 			onClick={() => player.play(file)}
+			endIcon={text && _t('Play')}
 		>
-			{text && _t('Play')}
 			<PlayArrow />
 		</Button>
 	) : isISeriesMetadata(file) || isISeasonMetadata(file) ? (

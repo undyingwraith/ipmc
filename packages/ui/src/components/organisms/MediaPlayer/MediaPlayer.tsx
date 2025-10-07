@@ -1,6 +1,6 @@
 import { ArrowDownward, ArrowUpward, Delete, ExpandLess, ExpandMore, List } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
-import { useComputed, useSignal } from '@preact/signals-react';
+import { batch, useComputed, useSignal } from '@preact/signals-react';
 import { isTitleFeature } from 'ipmc-interfaces';
 import React from 'react';
 import { useService } from '../../../context';
@@ -51,7 +51,15 @@ export function MediaPlayer() {
 						</IconButton>
 						<IconButton
 							onClick={() => {
-								player.queue.value = player.queue.value.toSpliced(i, 1);
+								batch(() => {
+									player.queue.value = player.queue.value.toSpliced(i, 1);
+									if (i < player.queueIndex.value) {
+										player.queueIndex.value -= 1;
+									} else if (i === player.queueIndex.value && i === player.queue.value.length) {
+										player.queueIndex.value -= 1;
+										player.playing.value = false;
+									}
+								});
 							}}
 						>
 							<Delete />

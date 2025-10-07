@@ -1,7 +1,7 @@
 import { batch, Signal } from '@preact/signals-react';
 import { inject, injectable } from 'inversify';
 import { IFileInfo, type IIpfsService, IIpfsServiceSymbol, type ILogService, ILogServiceSymbol, isIVideoFile, ISubtitleMetadata, type ITranslationService, ITranslationServiceSymbol } from 'ipmc-interfaces';
-import { type IMediaPlayerService, IMediaPlayerServiceSymbol } from './IMediaPlayerService';
+import { BasePlayerService } from './BasePlayerService';
 import { type IVideoPlayerService } from './IVideoPlayerService';
 //@ts-ignore
 import shaka from 'shaka-player';
@@ -13,13 +13,13 @@ type HeadersReceived = shaka.extern.HeadersReceived;
 type SchemePluginConfig = shaka.extern.SchemePluginConfig;
 
 @injectable()
-export class VideoPlayerService implements IVideoPlayerService {
+export class VideoPlayerService extends BasePlayerService implements IVideoPlayerService {
 	public constructor(
 		@inject(IIpfsServiceSymbol) private readonly ipfs: IIpfsService,
 		@inject(ILogServiceSymbol) private readonly log: ILogService,
-		@inject(IMediaPlayerServiceSymbol) private readonly mediaPlayer: IMediaPlayerService,
 		@inject(ITranslationServiceSymbol) private readonly translationService: ITranslationService,
 	) {
+		super();
 		this.shakaPlugin = this.shakaPlugin.bind(this);
 
 		shaka.net.NetworkingEngine.registerScheme('ipfs', this.shakaPlugin, 1, false);
@@ -41,9 +41,6 @@ export class VideoPlayerService implements IVideoPlayerService {
 				preferredAudioLanguage: this.translationService.language.value,
 			});
 		});
-
-		// Register to {@link IMediaPlayerService}
-		this.mediaPlayer.registerPlayer(this);
 	}
 
 	setCurrentTime(time: number): void {
@@ -71,24 +68,12 @@ export class VideoPlayerService implements IVideoPlayerService {
 				});
 
 				// Loading state
-				el.addEventListener('waiting', () => {
-					this.loading.value = true;
-				});
-				el.addEventListener('stalled', () => {
-					this.loading.value = true;
-				});
-				el.addEventListener('canplay', () => {
-					this.loading.value = false;
-				});
+				el.addEventListener('waiting', () => this.emitEvent('waiting'));
+				el.addEventListener('stalled', () => this.emitEvent('waiting'));
+				el.addEventListener('canplay', () => this.emitEvent('ready'));
 
 				// Keep playing the queue once video has ended
-				el.addEventListener('ended', () => {
-					if (this.mediaPlayer.queue.value.length > this.mediaPlayer.queueIndex.value + 1) {
-						this.mediaPlayer.next();
-					} else {
-						this.mediaPlayer.playing.value = false;
-					}
-				});
+				el.addEventListener('ended', () => this.emitEvent('ended'));
 			});
 
 		return () => {
@@ -103,15 +88,12 @@ export class VideoPlayerService implements IVideoPlayerService {
 
 	public load(file: IFileInfo) {
 		if (file != undefined && isIVideoFile(file)) {
-			this.player.load(`ipfs://${file.cid}/${file.video.name}`)
-				.then(() => {
-					if (this.mediaPlayer.playing.peek()) {
-						this.videoEl?.play();
-					}
-				})
+			return this.player.load(`ipfs://${file.cid}/${file.video.name}`)
 				.catch((ex: any) => {
 					this.log.error(ex);
 				});
+		} else {
+			return Promise.reject();
 		}
 	}
 
@@ -182,7 +164,6 @@ export class VideoPlayerService implements IVideoPlayerService {
 	public currentTime = new Signal(0);
 	public bufferedTime = new Signal(0);
 	public totalTime = new Signal(0);
-	public loading = new Signal(true);
 
 	private get videoEl(): HTMLVideoElement | null {
 		return this.player.getMediaElement();

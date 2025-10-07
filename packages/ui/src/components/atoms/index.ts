@@ -16,3 +16,4 @@ export { Spacer } from './Spacer';
 export { TextInput } from './TextInput';
 export { ThemeToggle } from './ThemeToggle';
 export { TimeDisplay } from './TimeDisplay';
+export { VideoMetadataDisplay } from './VideoMetadataDisplay';
