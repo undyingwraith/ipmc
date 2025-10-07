@@ -41,7 +41,7 @@ export interface IMediaPlayerService {
 
 	enqueue(file: IVideoFile): void;
 
-	enqueueNext(file: IVideoFile): void;
+	enqueueNext(file: IFileInfo): void;
 
 	/**
 	 * Stops playback and clears queue.

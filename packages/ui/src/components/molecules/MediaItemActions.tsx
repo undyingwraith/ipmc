@@ -45,7 +45,7 @@ export function MediaItemActions(props: { file: IFileInfo; fullwidth?: boolean; 
 		</Button>
 	) : undefined;
 
-	const enqueueNextButton = isIVideoFile(file) ? (
+	const enqueueNextButton = player.canPlay(file) ? (
 		<Button
 			title={_t('EnqueueNext').value}
 			onClick={() => player.enqueueNext(file)}
