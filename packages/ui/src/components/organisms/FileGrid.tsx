@@ -56,7 +56,11 @@ export function FileGrid(props: { files: IFileInfo[]; display: ReadonlySignal<Di
 								style={{ margin: '0 auto', padding: 5 }}
 								cellProps={{ files }}
 								cellComponent={({ files, rowIndex, columnIndex, style }) => {
-									const f = files[(rowIndex * columnCount) + columnIndex];
+									const index = (rowIndex * columnCount) + columnIndex;
+									if (index >= files.length) {
+										return undefined;
+									}
+									const f = files[index];
 									return (
 										<ErrorBoundary key={f?.cid}>
 											<div
