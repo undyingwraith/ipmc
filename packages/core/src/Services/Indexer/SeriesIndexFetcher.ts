@@ -5,6 +5,47 @@ import { IFetchOptions } from './IFetchOptions';
 import { IIndexFetcher } from './IIndexFetcher';
 import { VideoIndexFetcher } from './VideoIndexFetcher';
 
+interface IBaseOptions {
+	/**
+	 * Entry the entry to fetch data from.
+	 */
+	entry: IFileInfo;
+
+	/**
+	 * Function to report progress.
+	 */
+	onProgress: IOnProgress;
+
+	/**
+	 * {@link AbortSignal} to cancel the process.
+	 */
+	signal: AbortSignal;
+}
+
+interface ISeriesOptions extends IBaseOptions {
+	/**
+	 * libraryId id of the {@link ILibrary}.
+	 */
+	libraryId: string,
+
+	/**
+	 * {@link ISeriesMetadata} of the last run, used to skip unchanged data.
+	 */
+	old?: ISeriesMetadata,
+}
+
+interface ISeasonOptions extends IBaseOptions {
+	/**
+	 * The parent {@link ISeriesMetadata}.
+	 */
+	parent: Omit<ISeriesMetadata, 'items'>,
+
+	/**
+	 * {@link ISeasonMetadata} of the last run, used to skip unchanged data.
+	 */
+	old?: ISeasonMetadata,
+}
+
 /**
  * Fetches a index for an {@link ILibrary} of type series.
  */
@@ -35,12 +76,18 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetadata[]> {
 	 * @inheritdoc
 	 */
 	public async fetchIndex(options: IFetchOptions<ISeriesMetadata[]>): Promise<ISeriesMetadata[]> {
-		const { libraryId, cid, abortSignal, onProgress } = options;
+		const { libraryId, cid, abortSignal, onProgress, old } = options;
 		const folders = (await this.node.ls(cid)).filter(f => f.type == 'dir');
 
 		const index = [];
 		for (const [i, file] of folders.entries()) {
-			index.push(await this.extractSeriesMetaData(libraryId, file, this.createSubProgress(onProgress, i, folders.length), abortSignal));
+			index.push(old?.find(f => f.cid === file.cid) ?? await this.extractSeriesMetaData({
+				libraryId,
+				entry: file,
+				onProgress: this.createSubProgress(onProgress, i, folders.length),
+				signal: abortSignal,
+				old: old?.find(f => f.name === file.name)
+			}));
 			onProgress(i + 1, folders.length);
 		}
 
@@ -49,12 +96,11 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetadata[]> {
 
 	/**
 	 * Extracts metadata for a single {@link ISeriesMetadata}.
-	 * @param libraryId id of the {@link ILibrary}.
-	 * @param entry the entry to fetch data from.
-	 * @param signal {@link AbortSignal}.
+	 * @param options the options that configure how metadata is extracted.
 	 * @returns the extracted {@link ISeriesMetadata}.
 	 */
-	public async extractSeriesMetaData(libraryId: string, entry: IFileInfo, onProgress: IOnProgress, signal: AbortSignal): Promise<ISeriesMetadata> {
+	public async extractSeriesMetaData(options: ISeriesOptions): Promise<ISeriesMetadata> {
+		const { entry, libraryId, onProgress, signal, old } = options;
 		const entries = await this.node.ls(entry.cid);
 		const files = entries.filter(f => f.type == 'file');
 		const folders = entries.filter(f => f.type !== 'file');
@@ -70,7 +116,13 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetadata[]> {
 		const items = [];
 		for (const [i, file] of folders.entries()) {
 			try {
-				items.push(await this.extractSeasonMetaData(file, serie, this.createSubProgress(onProgress, i, folders.length), signal));
+				items.push(old?.items.find(f => f.cid === file.cid) ?? await this.extractSeasonMetaData({
+					entry: file,
+					parent: serie,
+					onProgress: this.createSubProgress(onProgress, i, folders.length),
+					old: old?.items.find(f => f.name === file.name),
+					signal
+				}));
 				onProgress(i + 1, folders.length);
 			} catch (ex: any) {
 				this.log.error(ex);
@@ -85,12 +137,11 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetadata[]> {
 
 	/**
 	 * Extracts the metadata for a single {@link ISeasonMetadata}.
-	 * @param entry the entry to fetch data from.
-	 * @param parent the parent {@link ISeriesMetadata}.
-	 * @param signal {@link AbortSignal}.
+	 * @param options the options that configure how metadata is extracted.
 	 * @returns the extracted {@link ISeasonMetadata}.
 	 */
-	public async extractSeasonMetaData(entry: IFileInfo, parent: Omit<ISeriesMetadata, 'items'>, onProgress: IOnProgress, signal: AbortSignal): Promise<ISeasonMetadata> {
+	public async extractSeasonMetaData(options: ISeasonOptions): Promise<ISeasonMetadata> {
+		const { entry, onProgress, parent, signal, old } = options;
 		const entries = await this.node.ls(entry.cid);
 		const files = entries.filter(f => f.type == 'file');
 		const folders = entries.filter(f => f.type !== 'file');
@@ -115,7 +166,7 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetadata[]> {
 		const items = [];
 		for (const [i, file] of folders.entries()) {
 			try {
-				items.push(await this.extractEpisodeMetaData(file, season, signal));
+				items.push(old?.items.find(f => f.cid === file.cid) ?? await this.extractEpisodeMetaData(file, season, signal));
 				onProgress(i + 1, folders.length);
 			} catch (ex: any) {
 				this.log.error(ex);

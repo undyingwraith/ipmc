@@ -3,11 +3,11 @@ import { IFileInfo, isIFileInfo } from './IFileInfo';
 /**
  * Info about a folder.
  */
-export interface IFolderFile extends IFileInfo {
+export interface IFolderFile<T extends IFileInfo = IFileInfo> extends IFileInfo {
 	/**
 	 * The items in the folder.
 	 */
-	items: IFileInfo[];
+	items: T[];
 }
 
 /**
