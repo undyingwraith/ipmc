@@ -5,12 +5,7 @@ import { isIVideoFile, IVideoFile } from '../IVideoFile';
 /**
  * The metadata of a series.
  */
-export type ISeriesMetadata = IFolderFile & HasPinAbility & HasTitle & HasPoster & HasBackdrop & {
-	/**
-	 * Seasons
-	 */
-	items: ISeasonMetadata[];
-
+export type ISeriesMetadata = IFolderFile<ISeasonMetadata> & HasPinAbility & HasTitle & HasPoster & HasBackdrop & {
 	yearStart?: number;
 	yearEnd?: number;
 };
@@ -28,12 +23,7 @@ export function isISeriesMetadata(item: any): item is ISeriesMetadata {
 /**
  * The metadata of a season.
  */
-export type ISeasonMetadata = IFolderFile & HasPoster & HasPinAbility & HasBackdrop & {
-	/**
-	 * Episodes.
-	 */
-	items: IEpisodeMetadata[];
-
+export type ISeasonMetadata = IFolderFile<IEpisodeMetadata> & HasPoster & HasPinAbility & HasBackdrop & {
 	/**
 	 * Name of the series.
 	 */

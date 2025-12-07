@@ -44,6 +44,7 @@ export function FileGridItem(props: {
 				<CardMedia image={url.value} className={`${styles.media} ${display.value === Display.Thumbnail && styles.thumbnail}`} />
 				<CardHeader
 					className={styles.title}
+					slotProps={{ title: { title: isTitleFeature(file) ? file.title : file.name } }}
 					title={isTitleFeature(file) ? file.title : file.name}
 					subheader={isYearFeature(file) ? file.year : isIEpisodeMetadata(file) ? `S${file.season} E${file.episode}` : undefined}
 				/>
