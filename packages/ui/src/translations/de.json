@@ -24,6 +24,8 @@
 	"Favorites": "Favoriten",
 	"Home": "Home",
 	"ImportProfile": "Profil importieren",
+	"Indexers": "Indexer",
+	"Info": "Informationen",
 	"Internal": "Internal",
 	"Libraries": "Bibliotheken",
 	"Language": "Sprache",
@@ -54,5 +56,6 @@
 	"SwarmKey": "Schwarm Schlüssel",
 	"Type": "Typ",
 	"UploadFile": "Datei hochladen",
-	"Upstream": "Upstream"
+	"Upstream": "Upstream",
+	"Version": "Version"
 }

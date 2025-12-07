@@ -22,4 +22,9 @@ export interface IIndexFetcher<TIndex> {
 	 * Version of the indexer.
 	 */
 	get version(): string;
+
+	/**
+	 * Name of the indexer.
+	 */
+	get name(): string;
 }

@@ -1,5 +1,6 @@
 export * from './GlobalSearchService';
 export * from './Indexer';
+export * from './VersionService';
 export { FileExportService } from './FileExportService';
 export { HotkeyService } from './HotkeyService';
 export { IndexManager } from './IndexManager';

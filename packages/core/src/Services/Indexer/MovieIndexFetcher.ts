@@ -27,6 +27,13 @@ export class MovieIndexFetcher implements IIndexFetcher<IMovieMetaData[]> {
 	/**
 	 * @inheritdoc
 	 */
+	public get name() {
+		return 'MovieIndexer';
+	}
+
+	/**
+	 * @inheritdoc
+	 */
 	public canIndex(library: ILibrary): boolean {
 		return library.type === 'movie';
 	}

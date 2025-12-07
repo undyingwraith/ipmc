@@ -23,6 +23,8 @@
 	"Export": "Export",
 	"Favorites": "Favorites",
 	"Home": "Home",
+	"Indexers": "Indexers",
+	"Info": "Info",
 	"Internal": "Internal",
 	"ImportProfile": "Import profile",
 	"Language": "Language",
@@ -54,5 +56,6 @@
 	"SwarmKey": "Swarm Key",
 	"Type": "Type",
 	"UploadFile": "Upload file",
-	"Upstream": "Upstream"
+	"Upstream": "Upstream",
+	"Version": "Version"
 }

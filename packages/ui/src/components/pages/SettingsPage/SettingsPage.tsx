@@ -1,6 +1,7 @@
 import { FormControl, InputLabel, MenuItem, Select, Switch } from '@mui/material';
 import { useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
-import { ITranslationService, ITranslationServiceSymbol } from 'ipmc-interfaces';
+import { IVersionService, IVersionServiceSymbol } from 'ipmc-core';
+import { IIndexManager, IIndexManagerSymbol, IProfile, IProfileSymbol, ITranslationService, ITranslationServiceSymbol } from 'ipmc-interfaces';
 import React from 'react';
 import { useService } from '../../../context';
 import { useTranslation } from '../../../hooks';
@@ -14,6 +15,9 @@ export function SettingsPage() {
 	const _t = useTranslation();
 	const themeService = useService<ThemeService>(ThemeServiceSymbol);
 	const translationService = useService<ITranslationService>(ITranslationServiceSymbol);
+	const versionService = useService<IVersionService>(IVersionServiceSymbol);
+	const indexManager = useService<IIndexManager>(IIndexManagerSymbol);
+	const profile = useService<IProfile>(IProfileSymbol);
 
 	const accentColor = useSignal(themeService.accentColor.peek());
 
@@ -32,7 +36,7 @@ export function SettingsPage() {
 	});
 
 	return (
-		<div className={pageStyles.container}>
+		<div className={pageStyles.container + ' ' + pageStyles.scroll}>
 			<h1>{_t('Settings')}</h1>
 			<div>
 				<FormControl fullWidth>
@@ -71,6 +75,24 @@ export function SettingsPage() {
 					value={accentColor}
 					label={_t('AccentColor')}
 				/>
+			</div>
+			<h2>{_t('Libraries')}</h2>
+			<div>
+				{profile.libraries.map((l) => (
+					<div key={l.id}>
+						<b>{l.name}</b>
+						<p>CID: {useComputed(() => indexManager.indexes.get(l.id)?.value?.cid)}</p>
+						<p>{_t('AmountItems')}: {useComputed(() => indexManager.indexes.get(l.id)?.value?.index.length)}</p>
+					</div>
+				))}
+			</div>
+			<h2>{_t('Info')}</h2>
+			<div>
+				<p>{_t('Version')}: {versionService.getVersion()}</p>
+				<p>{_t('Indexers')}</p>
+				{versionService.getIndexerVersions().map(v => (
+					<p>{v.name}: {v.version}</p>
+				))}
 			</div>
 		</div>
 	);

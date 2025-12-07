@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => ({
 	],
 	build: {
 		emptyOutDir: mode !== 'dev',
-		sourcemap: mode == 'dev',
+		sourcemap: mode === 'dev',
 		manifest: false,
 		minify: mode == 'dev' ? 'esbuild' : 'terser',
 		lib: {

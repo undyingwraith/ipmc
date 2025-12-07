@@ -7,6 +7,11 @@
 	margin: 0 auto;
 }
 
+.container.scroll {
+	overflow: auto;
+	height: 100%;
+}
+
 .spacer {
 	flex-grow: 1;
 }

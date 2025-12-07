@@ -27,6 +27,13 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetadata[]> {
 	/**
 	 * @inheritdoc
 	 */
+	public get name() {
+		return 'SeriesIndexer';
+	}
+
+	/**
+	 * @inheritdoc
+	 */
 	public canIndex(library: ILibrary): boolean {
 		return library.type === 'series';
 	}
