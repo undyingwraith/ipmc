@@ -20,11 +20,11 @@ export class YearFilter implements IFilter {
 			<div style={{ display: 'flex', flexDirection: 'row' }}>
 				<NumberInput
 					value={this.startYear}
-					label={this.translate('Start')}
+					label={this.translate('Since')}
 				/>
 				<NumberInput
 					value={this.endYear}
-					label={this.translate('End')}
+					label={this.translate('Until')}
 				/>
 			</div>
 		);

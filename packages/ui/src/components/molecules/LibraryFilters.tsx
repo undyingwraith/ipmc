@@ -3,7 +3,7 @@ import { Button, Drawer, IconButton } from '@mui/material';
 import { computed, Signal, useComputed, useSignal } from '@preact/signals-react';
 import React from 'react';
 import { useService } from '../../context';
-import { useHotkey } from '../../hooks';
+import { useHotkey, useTranslation } from '../../hooks';
 import { IFilter, ISortAndFilterService, ISortAndFilterServiceSymbol } from '../../services';
 import { DropDown } from '../atoms';
 import { Display, DisplayButtons } from './DisplayButtons';
@@ -11,6 +11,7 @@ import { ErrorBoundary } from './ErrorBoundary';
 
 export function LibraryFilters(props: { display: Signal<Display>; }) {
 	const sortAndFilterService = useService<ISortAndFilterService>(ISortAndFilterServiceSymbol);
+	const _t = useTranslation();
 	const filters: IFilter[] = sortAndFilterService.filters;
 	const activeFilters = sortAndFilterService.activeFilters;
 
@@ -33,23 +34,32 @@ export function LibraryFilters(props: { display: Signal<Display>; }) {
 		{useComputed(() => (
 			<Drawer open={drawerOpen.value} onClose={toggle} anchor='right'>
 				<DisplayButtons display={props.display} />
-				<DropDown icon={<Tune />} text={'Add filter'}>
+				<DropDown icon={<Tune />} text={_t('AddFilter')}>
 					{computed(() => {
 						const active = activeFilters.value;
-						return filters.filter(f => !active.includes(f)).map(f => (
-							<Button
-								onClick={() => {
-									activeFilters.value = [...activeFilters.value, f];
-								}}
-							>{f.name}</Button>
-						));
+						return (
+							<div style={{ display: 'flex', flexDirection: 'column' }}>
+								{filters.filter(f => !active.includes(f)).map(f => (
+									<Button
+										onClick={() => {
+											activeFilters.value = [...activeFilters.value, f];
+										}}
+									>{_t(f.name)}</Button>
+								))}
+							</div>
+						);
 					})}
 				</DropDown>
 				<div>
+					{computed(() => activeFilters.value.length > 0 ? (
+						<Button
+							onClick={() => activeFilters.value = []}
+						>{_t('ClearFilters')}</Button>
+					) : undefined)}
 					{computed(() => activeFilters.value.map((f) => (
 						<div>
 							<div>
-								{f.name}
+								{_t(f.name)}
 								<IconButton
 									onClick={() => activeFilters.value = activeFilters.value.filter(ff => ff != f)}
 								>
