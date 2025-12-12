@@ -3,7 +3,7 @@
 		"target": "ES2015",
 		"lib": [
 			"DOM",
-			"ES2023",
+			"ES2024",
 			"Decorators"
 		],
 		"experimentalDecorators": true,
