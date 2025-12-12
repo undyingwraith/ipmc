@@ -1,6 +1,11 @@
 import { resolve } from 'path';
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite';
 import react from '@vitejs/plugin-react';
+import pkg from './package.json';
+
+const define = {
+	__VERSION__: JSON.stringify(pkg.version),
+};
 
 export default defineConfig({
 	main: {
@@ -14,6 +19,7 @@ export default defineConfig({
 		plugins: [
 			externalizeDepsPlugin(),
 		],
+		define,
 	},
 	preload: {
 		build: {
@@ -29,6 +35,7 @@ export default defineConfig({
 		plugins: [
 			externalizeDepsPlugin(),
 		],
+		define,
 	},
 	renderer: {
 		server: {
@@ -53,5 +60,6 @@ export default defineConfig({
 				},
 			}),
 		],
+		define,
 	}
 });

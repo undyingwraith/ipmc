@@ -25,7 +25,6 @@ import fs from 'fs/promises';
 import { createHelia } from 'helia';
 import { createHeliaIpfs, Defaults } from 'ipmc-core';
 import { IConfigurationService, IInternalProfile, IIpfsService, INodeService, IProfile } from 'ipmc-interfaces';
-import * as libp2pInfo from 'libp2p/version';
 import path from 'path';
 
 async function getProfileFolder(id?: string): Promise<string> {
@@ -43,7 +42,7 @@ const nodeService: INodeService = {
 
 		const folder = await getProfileFolder(profile.id);
 
-		const agentVersion = `helia/2.0.0 ${libp2pInfo.name}/${libp2pInfo.version} UserAgent=${process.version}`;
+		const agentVersion = `ipmc-desktop/${__VERSION__}`;
 		const datastore = new LevelDatastore(path.join(folder, 'data'));
 		await datastore.open();
 		const blockstore = new FsBlockstore(path.join(folder, 'blocks'));
