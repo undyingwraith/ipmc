@@ -5,6 +5,7 @@ import dts from 'vite-plugin-dts';
 import { coverageConfigDefaults } from 'vitest/config';
 import checker from 'vite-plugin-checker';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import pkg from './package.json';
 
 export default defineConfig(({ mode }) => ({
 	plugins: [
@@ -76,5 +77,8 @@ export default defineConfig(({ mode }) => ({
 				...coverageConfigDefaults.exclude
 			],
 		},
+	},
+	define: {
+		__VERSION__: JSON.stringify(pkg.version),
 	},
 }));

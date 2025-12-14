@@ -62,7 +62,7 @@ export class SeriesIndexFetcher implements IIndexFetcher<ISeriesMetadata[]> {
 	 * @inheritdoc
 	 */
 	public get version() {
-		return `4_${this.videoIndexer.version}`;
+		return `4/${this.videoIndexer.version}`;
 	}
 
 	/**

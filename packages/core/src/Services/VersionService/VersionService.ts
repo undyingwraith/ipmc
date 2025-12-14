@@ -10,7 +10,7 @@ export class VersionService implements IVersionService {
 
 	getVersion(): string {
 		//TODO: fetch version from package.json or something
-		return 'TODO';
+		return __VERSION__;
 	}
 
 	getIndexerVersions(): { name: string; version: string; }[] {
