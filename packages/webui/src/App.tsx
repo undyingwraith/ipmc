@@ -63,6 +63,8 @@ export function App() {
 			}}
 			nodeService={{
 				async create(profile) {
+					const agentVersion = `ipmc-browser/${__VERSION__}`;
+
 					const datastore = new IDBDatastore(`${profile?.name ?? 'default'}/data`);
 					await datastore.open();
 					const blockstore = new IDBBlockstore(`${profile?.name ?? 'default'}/blocks`);
@@ -73,6 +75,9 @@ export function App() {
 						datastore,
 						blockstore,
 						libp2p: {
+							nodeInfo: {
+								userAgent: agentVersion
+							},
 							addresses: {
 								listen: [
 									'/p2p-circuit',

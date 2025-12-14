@@ -4,7 +4,7 @@ import { yamux } from '@chainsafe/libp2p-yamux';
 import { bitswap, trustlessGateway } from '@helia/block-brokers';
 import { autoNAT } from '@libp2p/autonat';
 import { bootstrap } from '@libp2p/bootstrap';
-import { circuitRelayServer, circuitRelayTransport } from '@libp2p/circuit-relay-v2';
+import { circuitRelayTransport } from '@libp2p/circuit-relay-v2';
 import { dcutr } from '@libp2p/dcutr';
 import { identify, identifyPush } from '@libp2p/identify';
 import { kadDHT, removePrivateAddressesMapper, removePublicAddressesMapper } from '@libp2p/kad-dht';
@@ -20,11 +20,11 @@ import { webSockets } from '@libp2p/websockets';
 import { FsBlockstore } from 'blockstore-fs';
 import { LevelDatastore } from 'datastore-level';
 import { contextBridge, ipcRenderer } from 'electron';
-import fs from 'fs';
+import fso from 'fs';
+import fs from 'fs/promises';
 import { createHelia } from 'helia';
 import { createHeliaIpfs, Defaults } from 'ipmc-core';
 import { IConfigurationService, IInternalProfile, IIpfsService, INodeService, IProfile } from 'ipmc-interfaces';
-import * as libp2pInfo from 'libp2p/version';
 import path from 'path';
 
 async function getProfileFolder(id?: string): Promise<string> {
@@ -42,7 +42,7 @@ const nodeService: INodeService = {
 
 		const folder = await getProfileFolder(profile.id);
 
-		const agentVersion = `helia/2.0.0 ${libp2pInfo.name}/${libp2pInfo.version} UserAgent=${process.version}`;
+		const agentVersion = `ipmc-desktop/${__VERSION__}`;
 		const datastore = new LevelDatastore(path.join(folder, 'data'));
 		await datastore.open();
 		const blockstore = new FsBlockstore(path.join(folder, 'blocks'));
@@ -97,7 +97,6 @@ const nodeService: INodeService = {
 					yamux(),
 				],
 				services: {
-					relay: circuitRelayServer(),
 					lanDHT: kadDHT({
 						protocol: '/ipfs/lan/kad/1.0.0',
 						peerInfoMapper: removePublicAddressesMapper,
@@ -151,27 +150,27 @@ const configService: IConfigurationService = {
 	async getProfiles(): Promise<string[]> {
 		try {
 			const folder = await getProfileFolder();
-			const profiles = fs.readdirSync(folder)
-				.filter(p => fs.existsSync(path.join(folder, p, 'profile.json')));
+			const profiles = (await fs.readdir(folder))
+				.filter(p => fso.existsSync(path.join(folder, p, 'profile.json')));
 			return profiles;
 		} catch (_) {
 			return [];
 		}
 	},
 	async getProfile(id: string): Promise<IProfile> {
-		return JSON.parse(fs.readFileSync(path.join(await getProfileFolder(id), '/profile.json'), 'utf-8'));
+		return JSON.parse(await fs.readFile(path.join(await getProfileFolder(id), '/profile.json'), 'utf-8'));
 	},
 	async setProfile(id: string, profile: IProfile) {
 		const folder = await getProfileFolder(id);
-		if (!fs.existsSync(folder)) {
-			fs.mkdirSync(folder, {
+		if (!fso.existsSync(folder)) {
+			await fs.mkdir(folder, {
 				recursive: true
 			});
 		}
-		fs.writeFileSync(path.join(folder, '/profile.json'), JSON.stringify(profile));
+		await fs.writeFile(path.join(folder, '/profile.json'), JSON.stringify(profile));
 	},
 	async removeProfile(id) {
-		fs.rmSync(await getProfileFolder(id), { recursive: true });
+		return fs.rm(await getProfileFolder(id), { recursive: true });
 	},
 };
 

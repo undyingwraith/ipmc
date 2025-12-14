@@ -20,34 +20,46 @@ export function ItemPage(props: {
 
 	const items = isIFolderFile(file) ? (file.items.length === 1 && isIFolderFile(file.items[0]) ? file.items[0].items : file.items) : [];
 
+	const details = (
+		<div className={styles.details}>
+			<FileInfoDisplay file={file} />
+			{isIVideoFile(file) && (
+				<VideoMetadataDisplay file={file} />
+			)}
+			{(isIVideoFile(file) || isIFolderFile(file)) && <LanguageDisplay file={file} />}
+			<MediaItemActions file={file} fullwidth={true} variant={'full'} />
+		</div>
+	);
+
 	return useComputed(() => (
 		<div style={{ backgroundImage: backdropUrl.value ? `url('${backdropUrl.value}')` : 'none' }} className={styles.container}>
-			<div className={styles.details}>
-				<FileInfoDisplay file={file} />
-				{isIVideoFile(file) && (
-					<VideoMetadataDisplay file={file} />
-				)}
-				{(isIVideoFile(file) || isIFolderFile(file)) && <LanguageDisplay file={file} />}
-				<MediaItemActions file={file} fullwidth={true} variant={'full'} />
-			</div>
-			{isIFolderFile(file) && (
-				<div className={styles.items}>
-					{items.length === 0 ? (
+			{isIFolderFile(file) ? (
+				items.length === 0 ? (
+					<>
+						{details}
 						<span>{_t('NoItems')}</span>
-					) : computed(() => (
+					</>
+				) : computed(() => {
+					const header = {
+						height: 350,
+						content: details,
+					};
+					return (
 						display.value == Display.List ? (
 							<FileList
 								files={items}
+								header={header}
 							/>
 						) : (
 							<FileGrid
+								header={header}
 								display={display}
 								files={items}
 							/>
-						))
-					)}
-				</div>
-			)}
+						)
+					);
+				})
+			) : details}
 		</div>
 	));
 }

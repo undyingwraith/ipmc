@@ -23,7 +23,7 @@ export class MockIpfsService implements IIpfsService {
 		throw new Error(`NotFound: '${cid}'`);
 	}
 
-	peers(): Promise<string[]> {
+	peers(): Promise<{ peer: string, addrs: string[]; }[]> {
 		throw new Error('Method not implemented.');
 	}
 

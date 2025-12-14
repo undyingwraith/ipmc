@@ -35,8 +35,9 @@ export function ProfileEditor(props: { profile: IProfile, onCancel: () => void, 
 				url: apiUrl.value === '' ? undefined : apiUrl.value,
 			}),
 			libraries: libraries.value.map(l => l.value),
+		}).then(() => {
+			onSave();
 		});
-		onSave();
 	}
 
 	return (

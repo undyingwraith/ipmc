@@ -1,6 +1,6 @@
 import { ReadonlySignal, useComputed } from '@preact/signals-react';
 import { IFileInfo } from 'ipmc-interfaces';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { Grid } from 'react-window';
 import { useLocation } from 'wouter';
@@ -26,8 +26,8 @@ function getScrollbarWidth() {
 	return scrollbarWidth;
 }
 
-export function FileGrid(props: { files: IFileInfo[]; display: ReadonlySignal<Display>; }) {
-	const { files, display } = props;
+export function FileGrid(props: { files: IFileInfo[]; display: ReadonlySignal<Display>; header?: { height: number, content: ReactNode; }; }) {
+	const { files, display, header } = props;
 
 	const [_, setLocation] = useLocation();
 
@@ -56,11 +56,11 @@ export function FileGrid(props: { files: IFileInfo[]; display: ReadonlySignal<Di
 								style={{ margin: '0 auto', padding: 5 }}
 								cellProps={{ files }}
 								cellComponent={({ files, rowIndex, columnIndex, style }) => {
-									const index = (rowIndex * columnCount) + columnIndex;
-									if (index >= files.length) {
-										return undefined;
-									}
+									const index = ((header ? rowIndex - 1 : rowIndex) * columnCount) + columnIndex;
 									const f = files[index];
+									if (f == undefined) {
+										return <></>;
+									}
 									return (
 										<ErrorBoundary key={f?.cid}>
 											<div
@@ -79,10 +79,16 @@ export function FileGrid(props: { files: IFileInfo[]; display: ReadonlySignal<Di
 									);
 								}}
 								columnCount={columnCount}
-								rowCount={rowCount}
+								rowCount={header ? rowCount + 1 : rowCount}
 								columnWidth={finalCardWidth}
-								rowHeight={cardHeight}
-							/>
+								rowHeight={(i) => header && i == 0 ? header.height : cardHeight}
+							>
+								{header && (
+									<div style={{ height: 0 }}>
+										{header.content}
+									</div>
+								)}
+							</Grid>
 						</div>
 					);
 				}}

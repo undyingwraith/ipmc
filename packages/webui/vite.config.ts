@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import pkg from './package.json';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
@@ -45,5 +46,8 @@ export default defineConfig(({ command, mode }) => {
 				protocolImports: true,
 			})
 		],
+		define: {
+			__VERSION__: JSON.stringify(pkg.version),
+		}
 	};
 });
