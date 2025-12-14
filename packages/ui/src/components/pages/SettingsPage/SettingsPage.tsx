@@ -81,8 +81,8 @@ export function SettingsPage() {
 				{profile.libraries.map((l) => (
 					<div key={l.id}>
 						<b>{l.name}</b>
-						<p>CID: {useComputed(() => indexManager.indexes.get(l.id)?.value?.cid)}</p>
-						<p>{_t('AmountItems')}: {useComputed(() => indexManager.indexes.get(l.id)?.value?.index.length)}</p>
+						<p>CID: {useComputed(() => indexManager.indexes.get(l.id)?.value?.cid ?? '?')}</p>
+						<p>{_t('AmountItems')}: {useComputed(() => indexManager.indexes.get(l.id)?.value?.index.length ?? '?')}</p>
 					</div>
 				))}
 			</div>
