@@ -28,9 +28,7 @@
 	},
 	"include": [
 		"src",
-		"typings.d.ts",
-		"vite.config.ts",
-		".eslintrc.js",
-		".prettierrc.js"
+		"env.d.ts",
+		"vite.config.ts"
 	]
 }

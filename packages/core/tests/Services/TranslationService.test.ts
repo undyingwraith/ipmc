@@ -1,5 +1,5 @@
 import { IKeyValueStoreSymbol, ILogServiceSymbol, ILogSinkSymbol, IObjectStoreSymbol, IPersistentSignalServiceSymbol, ITranslation, ITranslationService, ITranslationServiceSymbol, ITranslationsSymbol } from 'ipmc-interfaces';
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { Application, LogService, MemoryKeyValueStore, MemoryLogSink, ObjectStore, PersistentSignalService, TranslationService } from '../../src';
 
 const translations: ITranslation = {

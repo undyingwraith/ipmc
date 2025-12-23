@@ -3,6 +3,8 @@ import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
 import { coverageConfigDefaults } from 'vitest/config';
+import checker from 'vite-plugin-checker';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig(({ mode }) => ({
 	plugins: [
@@ -10,6 +12,10 @@ export default defineConfig(({ mode }) => ({
 			insertTypesEntry: true,
 			tsconfigPath: resolve(__dirname, './tsconfig.build.json'),
 		}),
+		checker({
+			typescript: true,
+		}),
+		tsconfigPaths(),
 	],
 	build: {
 		emptyOutDir: mode !== 'dev',

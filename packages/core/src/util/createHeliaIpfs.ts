@@ -31,7 +31,10 @@ export function createHeliaIpfs(helia: HeliaLibp2p<Libp2p<any>>, onClose: () => 
 			await onClose();
 		},
 		peers() {
-			return Promise.resolve(helia.libp2p.getConnections().map(p => p.remoteAddr.toString()));
+			return Promise.resolve(helia.libp2p.getPeers().map(p => ({
+				peer: p.toString(),
+				addrs: helia.libp2p.getConnections(p).map(c => c.remoteAddr.toString()),
+			})));
 		},
 		id() {
 			return helia.libp2p.peerId.toString();

@@ -31,7 +31,7 @@ export interface IIpfsService {
 	/**
 	 * Lists all connected peers.
 	 */
-	peers(): Promise<string[]>;
+	peers(): Promise<{ peer: string, addrs: string[]; }[]>;
 
 	/**
 	 * Stops the node.

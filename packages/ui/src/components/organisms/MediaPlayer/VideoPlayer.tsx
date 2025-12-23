@@ -1,9 +1,9 @@
 import { computed, useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
 import React from 'react';
-import { MediaProgressBar } from '../../molecules';
 import { useService } from '../../../context';
 import { IMediaPlayerService, IMediaPlayerServiceSymbol, IVideoPlayerService, IVideoPlayerServiceSymbol } from '../../../services';
-import { FileInfoDisplay, Loader } from '../../atoms';
+import { FileInfoDisplay } from '../../atoms';
+import { MediaProgressBar } from '../../molecules';
 import styles from './MediaPlayer.module.scss';
 import { MediaPlayerButtons } from './MediaPlayerButtons';
 import { VideoPlayerButtons } from './VideoPlayerButtons';
@@ -57,15 +57,13 @@ export function VideoPlayer() {
 	});
 
 	return (
-		<div className={styles.videoContainer} ref={(ref) => containerRef.value = ref}>
+		<div
+			className={styles.videoContainer}
+			ref={(ref) => containerRef.value = ref}
+		>
 			{videoEl}
-			{useComputed(() => player.loading.value && (
-				<div className={styles.videoOverlay}>
-					<Loader />
-				</div>
-			))}
 			{useComputed(() => (
-				<div className={`${styles.videoOverlay} ${overlayVisible.value && player.open.value ? '' : styles.hidden}`}>
+				<div className={`${styles.overlay} ${overlayVisible.value && player.open.value ? '' : styles.hidden}`}>
 					<div>
 						{computed(() => player.nowPlaying.value && (<FileInfoDisplay file={player.nowPlaying.value} />))}
 					</div>

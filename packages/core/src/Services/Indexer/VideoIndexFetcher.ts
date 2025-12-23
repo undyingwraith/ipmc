@@ -41,10 +41,11 @@ export class VideoIndexFetcher {
 					result.languages.push(track.getAttribute('lang') ?? 'none');
 					break;
 				case 'text':
+					const role = track.getElementsByTagName('Role')[0]?.getAttribute('value') ?? 'subtitle';
 					result.subtitles.push({
 						language: track.getAttribute('lang') ?? 'none',
-						forced: track.getElementsByTagName('Role')[0].getAttribute('value') === 'forced-subtitle',
-						role: track.getElementsByTagName('Role')[0].getAttribute('value')!,
+						forced: role === 'forced-subtitle',
+						role,
 					});
 					break;
 				case 'video':

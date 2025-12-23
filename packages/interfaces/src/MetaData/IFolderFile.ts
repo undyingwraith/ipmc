@@ -3,11 +3,11 @@ import { IFileInfo, isIFileInfo } from './IFileInfo';
 /**
  * Info about a folder.
  */
-export interface IFolderFile extends IFileInfo {
+export interface IFolderFile<T extends IFileInfo = IFileInfo> extends IFileInfo {
 	/**
 	 * The items in the folder.
 	 */
-	items: IFileInfo[];
+	items: T[];
 }
 
 /**
@@ -16,5 +16,5 @@ export interface IFolderFile extends IFileInfo {
  * @returns whether the specified item is a {@link IFolderFile}.
  */
 export function isIFolderFile(item: any): item is IFolderFile {
-	return Object.hasOwn(item, 'items') && typeof item.items === 'object' && isIFileInfo(item);
+	return item != undefined && Object.hasOwn(item, 'items') && typeof item.items === 'object' && isIFileInfo(item);
 }

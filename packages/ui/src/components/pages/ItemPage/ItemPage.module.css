@@ -15,10 +15,6 @@
 	margin: 0 auto;
 }
 
-.items {
-	margin: 5px auto;
-}
-
 @media screen and (max-width: 640px) {
 	.details {
 		width: 100%;

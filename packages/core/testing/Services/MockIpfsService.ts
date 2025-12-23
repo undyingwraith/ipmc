@@ -23,7 +23,7 @@ export class MockIpfsService implements IIpfsService {
 		throw new Error(`NotFound: '${cid}'`);
 	}
 
-	peers(): Promise<string[]> {
+	peers(): Promise<{ peer: string, addrs: string[]; }[]> {
 		throw new Error('Method not implemented.');
 	}
 
@@ -43,7 +43,7 @@ export class MockIpfsService implements IIpfsService {
 		return 'TestId';
 	}
 
-	fetch(cid: string, path?: string): Promise<Uint8Array> {
+	fetch(cid: string): Promise<Uint8Array> {
 		if (this.cids[cid] && !Array.isArray(this.cids[cid])) {
 			return Promise.resolve(this.cids[cid]);
 		}

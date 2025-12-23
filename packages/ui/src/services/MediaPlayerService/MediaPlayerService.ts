@@ -107,6 +107,8 @@ export class MediaPlayerService implements IMediaPlayerService {
 	public next(): void {
 		if (this.queue.value.length > this.queueIndex.value + 1) {
 			this.queueIndex.value += 1;
+		} else {
+			this.playing.value = false;
 		}
 	}
 
@@ -115,6 +117,7 @@ export class MediaPlayerService implements IMediaPlayerService {
 	}
 
 	public stop() {
+		this.currentPlayer.value?.pause();
 		batch(() => {
 			this.queueIndex.value = -1;
 			this.queue.value = [];
