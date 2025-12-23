@@ -46,7 +46,10 @@ export function ConnectionStatus(props: { ipfs: IIpfsService; }) {
 						<ListItemIcon>
 							<Identicon value={p.peer} />
 						</ListItemIcon>
-						<ListItemText primary={p.peer} secondary={p.addrs.map(a => <div key={a}>{a}</div>)} />
+						<ListItemText
+							primary={p.peer}
+							secondary={p.addrs.map(a => <span key={a}>{a}</span>)}
+						/>
 					</ListItem>
 				)) : (
 					<ListItem>
