@@ -14,7 +14,7 @@ export function LanguageDisplay(props: { file: IVideoFile | IFolderFile; }) {
 			const childLanguages = file.items.filter(f => isIFolderFile(f) || isIVideoFile(f)).map(f => getLanguages(f)).flat(1);
 			return Array.from(new Set(childLanguages));
 		}
-		return file.languages;
+		return Array.from(new Set(file.languages));
 	}
 
 	function getSubtitles(file: IVideoFile | IFolderFile): string[] {
@@ -22,7 +22,7 @@ export function LanguageDisplay(props: { file: IVideoFile | IFolderFile; }) {
 			const childSubtitles = file.items.filter(f => isIFolderFile(f) || isIVideoFile(f)).map(f => getSubtitles(f)).flat(1);
 			return Array.from(new Set(childSubtitles));
 		}
-		return file.subtitles.filter(s => !s.forced).map(s => s.language);
+		return Array.from(new Set(file.subtitles.filter(s => !s.forced).map(s => s.language)));
 	}
 
 	return (
