@@ -22,10 +22,10 @@ export function isIAudioMetadata(item: unknown): item is IAudioMetadata {
 /**
  * The metadata of an Album.
  */
-export type IAlbumMetadata = IFolderFile<IAudioMetadata> & HasPoster & HasPinAbility;
+export type IAlbumMetadata = IFolderFile<IAudioMetadata> & HasPoster & HasPinAbility & HasArtist;
 
 export function isIAlbumMetadata(item: unknown): item is IAlbumMetadata {
-	return isIFolderFile(item) && isPosterFeature(item) && isPinFeature(item);
+	return isIFolderFile(item) && isPosterFeature(item) && isPinFeature(item) && isArtistFeature(item);
 }
 
 /**

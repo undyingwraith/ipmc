@@ -6,9 +6,9 @@ import { ISubtitleMetadata } from './ISubtitleMetadata';
  */
 export interface IAudioFile extends IFileInfo {
 	/**
-	 * The thumbnails of the piece of Music.
+	 * The cover of the piece of Music.
 	 */
-	thumbnails: IFileInfo[];
+	cover: IFileInfo[];
 
 	/**
 	 * The Lyrics of the piece of Music.
