@@ -42,5 +42,5 @@ export interface IVideoFile extends IFileInfo {
  * @returns whether the specified item is a {@link IVideoFile}.
  */
 export function isIVideoFile(item: any): item is IVideoFile {
-	return typeof item.video !== 'undefined' && typeof item.thumbnails?.length === 'number' && isIFileInfo(item);
+	return typeof item !== 'undefined' && typeof item.video !== 'undefined' && typeof item.thumbnails?.length === 'number' && isIFileInfo(item);
 }

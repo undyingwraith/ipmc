@@ -77,6 +77,7 @@ export class AudioIndexFetcher implements IIndexFetcher<IAudioMetaData[]> {
 					...song,
 					title: tags.title ?? "No Title",
 					pinId: `${parentId}/${entry.name}`,
+
 					thumbnails: files.filter(f => Regexes.Thumbnail.exec(f.name) != null),
 					lyrics: tags.unsynchronisedLyrics?.text,
 					year: tags.year != undefined ? parseInt(tags.year) : 0,

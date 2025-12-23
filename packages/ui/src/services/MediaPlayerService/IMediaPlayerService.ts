@@ -39,7 +39,7 @@ export interface IMediaPlayerService {
 	 */
 	setCurrentTime(time: number): void;
 
-	enqueue(file: IVideoFile): void;
+	enqueue(file: IFileInfo): void;
 
 	enqueueNext(file: IFileInfo): void;
 
@@ -56,7 +56,7 @@ export interface IMediaPlayerService {
 	/**
 	 * The currently active queue.
 	 */
-	queue: Signal<(IVideoFile)[]>;
+	queue: Signal<IFileInfo[]>;
 
 	/**
 	 * The current index in the queue.
@@ -66,7 +66,7 @@ export interface IMediaPlayerService {
 	/**
 	 * The currently playing {@link IFileInfo}.
 	 */
-	nowPlaying: ReadonlySignal<IVideoFile | undefined>;
+	nowPlaying: ReadonlySignal<IFileInfo | undefined>;
 
 	/**
 	 * Whether the player is open or minimized.

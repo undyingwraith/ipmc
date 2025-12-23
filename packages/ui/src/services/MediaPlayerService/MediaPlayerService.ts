@@ -71,7 +71,7 @@ export class MediaPlayerService implements IMediaPlayerService {
 		}
 	}
 
-	public enqueue(file: IVideoFile): void {
+	public enqueue(file: IFileInfo): void {
 		batch(() => {
 			this.queue.value = [...this.queue.value, file];
 			if (this.queueIndex.value === -1) {
@@ -80,11 +80,11 @@ export class MediaPlayerService implements IMediaPlayerService {
 		});
 	}
 
-	public enqueueNext(file: IVideoFile): void {
+	public enqueueNext(file: IFileInfo): void {
 		this.queue.value = this.queue.peek().toSpliced(this.queueIndex.value + 1, 0, file);
 	}
 
-	public play(file: IVideoFile): void {
+	public play(file: IFileInfo): void {
 		try {
 			this.enqueueNext(file);
 			batch(() => {
@@ -148,7 +148,7 @@ export class MediaPlayerService implements IMediaPlayerService {
 		return result;
 	}
 
-	public queue = new Signal<(IVideoFile)[]>([]);
+	public queue = new Signal<IFileInfo[]>([]);
 	public queueIndex = new Signal<number>(-1);
 	public playing = new Signal(false);
 	public nowPlaying = computed(() => this.queue.value[this.queueIndex.value]);
