@@ -43,7 +43,7 @@ export class MockIpfsService implements IIpfsService {
 		return 'TestId';
 	}
 
-	fetch(cid: string): Promise<Uint8Array> {
+	fetch(cid: string): Promise<Uint8Array<ArrayBuffer>> {
 		if (this.cids[cid] && !Array.isArray(this.cids[cid])) {
 			return Promise.resolve(this.cids[cid]);
 		}
@@ -51,7 +51,7 @@ export class MockIpfsService implements IIpfsService {
 		throw new Error(`NotFound: '${cid}'`);
 	}
 
-	cids: { [key: string]: IFileInfo[] | Uint8Array; } = {};
+	cids: { [key: string]: IFileInfo[] | Uint8Array<ArrayBuffer>; } = {};
 	ipns: { [key: string]: string; } = {};
 
 	private pins: string[] = [];

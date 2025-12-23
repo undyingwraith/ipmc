@@ -91,7 +91,7 @@ describe('MovieIndexFetcher', () => {
     </AdaptationSet>
   </Period>
 </MPD>
-`),
+`) as Uint8Array<ArrayBuffer>,
 			// Movie 2
 			movieCid2: [
 				{
@@ -119,7 +119,7 @@ describe('MovieIndexFetcher', () => {
     </AdaptationSet>
   </Period>
 </MPD>
-`),
+`) as Uint8Array<ArrayBuffer>,
 		};
 		ipfs.ipns = { 'movies.sample': 'sampleCid1' };
 	});
