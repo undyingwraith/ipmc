@@ -1,4 +1,4 @@
-import { FormControl, InputLabel, MenuItem, Select, Switch } from '@mui/material';
+import { ButtonGroup, FormControl, InputLabel, MenuItem, Select, Switch } from '@mui/material';
 import { useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
 import { IVersionService, IVersionServiceSymbol } from 'ipmc-core';
 import { IIndexManager, IIndexManagerSymbol, IProfile, IProfileSymbol, ITranslationService, ITranslationServiceSymbol } from 'ipmc-interfaces';
@@ -7,7 +7,7 @@ import { useService } from '../../../context';
 import { useTranslation } from '../../../hooks';
 import { ThemeService, ThemeServiceSymbol } from '../../../services';
 import { TextInput } from '../../atoms';
-import { ColorPicker } from '../../molecules';
+import { ActionButton, ColorPicker } from '../../molecules';
 import pageStyles from '../Page.module.css';
 import styles from './SettingsPage.module.css';
 
@@ -83,6 +83,10 @@ export function SettingsPage() {
 						<b>{l.name}</b>
 						<p>CID: {useComputed(() => indexManager.indexes.get(l.id)?.value?.cid ?? '?')}</p>
 						<p>{_t('AmountItems')}: {useComputed(() => indexManager.indexes.get(l.id)?.value?.index.length ?? '?')}</p>
+						<ButtonGroup>
+							<ActionButton action={({ onProgress, signal }) => indexManager.update(l, { onProgress, signal })}>{_t('Refresh')}</ActionButton>
+							<ActionButton action={({ onProgress, signal }) => indexManager.update(l, { force: true, onProgress, signal })}>{_t('ForceRefresh')}</ActionButton>
+						</ButtonGroup>
 					</div>
 				))}
 			</div>

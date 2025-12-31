@@ -37,7 +37,7 @@ export function LibraryHomePage() {
 	});
 
 	return (
-		<div className={pageStyles.container}>
+		<div className={`${pageStyles.container} ${pageStyles.scroll}`}>
 			<h1>{_t('Home')}</h1>
 			<div>
 				<h2>{_t('Libraries')}</h2>

@@ -1,6 +1,7 @@
 export * from './ColorPicker';
 export * from './FileGridItem';
 export * from './MediaProgressBar';
+export { ActionButton, type IActionOptions } from './ActionButton';
 export { ActiveProcessesButton } from './ActiveProcessesButton';
 export { ConnectionStatus } from './ConnectionStatus';
 export { DisplayButtons, Display } from './DisplayButtons';

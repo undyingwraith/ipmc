@@ -130,7 +130,7 @@ describe('MovieIndexFetcher', () => {
 
 	test('Indexes Movies', async () => {
 		const indexer = app.getService<IndexManager>(IIndexManagerSymbol)!;
-		await indexer.updateLibrary(library, new AbortController().signal, () => { });
+		await indexer.update(library);
 
 		expect(indexer.indexes.get(library.id)).toBeDefined();
 		expect(indexer.indexes.get(library.id)?.value).toBeDefined();
@@ -145,7 +145,7 @@ describe('MovieIndexFetcher', () => {
 		const spy1 = vi.spyOn(ipfs, 'ls');
 
 		// Run initial indexing
-		await indexer.updateLibrary(library, new AbortController().signal, () => { });
+		await indexer.update(library);
 		expect(spy1).toHaveBeenCalledWith('sampleCid1', expect.anything());
 		expect(spy1).toHaveBeenCalledWith('movieCid1', expect.anything());
 
@@ -154,7 +154,7 @@ describe('MovieIndexFetcher', () => {
 		const spy2 = vi.spyOn(ipfs, 'ls');
 
 		// Run update
-		await indexer.updateLibrary(library, new AbortController().signal, () => { });
+		await indexer.update(library);
 
 		//expect(spy2).toHaveBeenCalledTimes(2);
 		expect(spy2).toHaveBeenCalledWith('sampleCid2', expect.anything());
@@ -168,7 +168,7 @@ describe('MovieIndexFetcher', () => {
 
 		const onProgress = vi.fn().mockImplementation(() => { });
 
-		await indexer.updateLibrary(library, new AbortController().signal, onProgress);
+		await indexer.update(library, { onProgress });
 
 		expect(onProgress).toBeCalledTimes(2);
 		expect(onProgress).toHaveBeenCalledWith(0, 1);

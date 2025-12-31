@@ -8,7 +8,7 @@ export * from './ITranslationService';
 export { type IConfigurationService, IConfigurationServiceSymbol } from './IConfigurationService';
 export { type IFileExportService, IFileExportServiceSymbol } from './IFileExportService';
 export { IHotkeyServiceSymbol, type IHotkeyService, type IHotkey } from './IHotkeyService';
-export { type IIndexManager, IIndexManagerSymbol } from './IIndexManager';
+export { type IIndexManager, IIndexManagerSymbol, type IUpdateOptions } from './IIndexManager';
 export { type IIpfsService, IIpfsServiceSymbol } from './IIpfsService';
 export { type IKeyValueStore, IKeyValueStoreSymbol } from './IKeyValueStore';
 export { type INodeService } from './INodeService';
