@@ -1,9 +1,10 @@
 import { ReadonlySignal } from '@preact/signals-react';
 import { ILibrary } from 'ipmc-interfaces';
+import { ILibraryCapabilities } from './ILibraryCapabilities';
 
-export const ILibraryNavigationServiceSymbol = Symbol.for('ILibraryNavigationService');
+export const ILibraryServiceSymbol = Symbol.for('ILibraryService');
 
-export interface ILibraryNavigationService {
+export interface ILibraryService {
 	/**
 	 * Checks if a specified {@link ILibrary} has subnavigation.
 	 * @param library The {@link ILibrary} to check for.
@@ -26,8 +27,13 @@ export interface ILibraryNavigationService {
 	navigateTo(library: ILibrary, view?: string): void;
 
 	/**
-	 * Gets all available views for a {@link ILibrary}.
-	 * @param library {@link ILibary} to get the views for.
+	 * Gets all {@link ILibraryCapabilities} of the specified {@link ILibrary}.
+	 * @param library the {@link ILibrary} to check for.
 	 */
-	getViews(library: ILibrary): string[] | undefined;
+	getCapabilities(library: ILibrary): ILibraryCapabilities;
+
+	/**
+	 * The currently active {@link ILibrary}.
+	 */
+	active: ReadonlySignal<{ library: ILibrary, view?: string; } | undefined>;
 }

@@ -1,6 +1,8 @@
 import { ListItem, ListItemButton, ListItemText, Stack } from '@mui/material';
-import { IFileInfo, isIEpisodeMetadata, isIFolderFile, isIVideoFile, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
+import { IFileInfo, isIFolderFile, isIVideoFile } from 'ipmc-interfaces';
 import React from 'react';
+import { useService } from '../../context';
+import { IMediaPreferenceService, IMediaPreferenceServiceSymbol } from '../../services';
 import { EpisodeDisplay, LanguageDisplay } from '../atoms';
 import { MediaItemActions } from './MediaItemActions';
 
@@ -12,6 +14,7 @@ export function FileListItem(props: {
 	style?: any;
 }) {
 	const { file, onOpen, selected, style } = props;
+	const mediaService = useService<IMediaPreferenceService>(IMediaPreferenceServiceSymbol);
 	const actions = props.actions ?? (<MediaItemActions file={file} />);
 
 	return (
@@ -36,8 +39,8 @@ export function FileListItem(props: {
 					selected={selected}
 				>
 					<ListItemText
-						primary={isTitleFeature(file) ? file.title : file.name}
-						secondary={isYearFeature(file) ? file.year : isIEpisodeMetadata(file) ? `${file.series} - S${file.season} E${file.episode}` : undefined}
+						primary={mediaService.getHeader(file)}
+						secondary={mediaService.getSubheader(file)}
 					/>
 				</ListItemButton>
 			</ListItem>

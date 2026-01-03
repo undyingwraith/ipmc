@@ -5,5 +5,4 @@ export { useIsVisible } from './useIsVisible';
 export { useLinkedSignal } from './useLinkedSignal';
 export { usePersistentSignal } from './usePersistentSignal';
 export { usePinManager } from './usePinManager';
-export { useTitle } from './useTitle';
 export { useTranslation } from './useTranslation';
