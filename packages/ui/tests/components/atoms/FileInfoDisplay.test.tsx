@@ -4,7 +4,7 @@ import { IFileInfo, IIpfsServiceSymbol } from 'ipmc-interfaces';
 import React from 'react';
 import { FileInfoDisplay } from 'src/components/atoms';
 import { AppContextProvider } from 'src/context';
-import { IObjectUrlControllerSymbol, ObjectUrlController, UiCoreModule, UiModule } from 'src/services';
+import { IMediaPreferenceServiceSymbol, IObjectUrlControllerSymbol, MediaPreferenceService, ObjectUrlController } from 'src/services';
 import { describe, expect, test } from 'vitest';
 
 describe('FileInfoDisplay', () => {
@@ -19,9 +19,8 @@ describe('FileInfoDisplay', () => {
 			<AppContextProvider setup={(app) => {
 				app.use(CoreModule);
 				app.use(BrowserModule);
-				app.use(UiCoreModule);
-				app.use(UiModule);
 				app.registerConstant({}, IIpfsServiceSymbol);
+				app.register(MediaPreferenceService, IMediaPreferenceServiceSymbol);
 				app.register(ObjectUrlController, IObjectUrlControllerSymbol);
 			}}>
 				<FileInfoDisplay file={fileInfo} />
