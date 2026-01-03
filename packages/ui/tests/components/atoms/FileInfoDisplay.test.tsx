@@ -2,10 +2,10 @@ import { render } from '@testing-library/react';
 import { BrowserModule, CoreModule } from 'ipmc-core';
 import { IFileInfo, IIpfsServiceSymbol } from 'ipmc-interfaces';
 import React from 'react';
-import { FileInfoDisplay } from 'src/components/atoms/FileInfoDisplay';
+import { FileInfoDisplay } from 'src/components/atoms';
 import { AppContextProvider } from 'src/context';
+import { IObjectUrlControllerSymbol, ObjectUrlController, UiCoreModule, UiModule } from 'src/services';
 import { describe, expect, test } from 'vitest';
-import { IObjectUrlControllerSymbol, ObjectUrlController } from '../../../src/services';
 
 describe('FileInfoDisplay', () => {
 	test('Renders data correctly', () => {
@@ -19,6 +19,8 @@ describe('FileInfoDisplay', () => {
 			<AppContextProvider setup={(app) => {
 				app.use(CoreModule);
 				app.use(BrowserModule);
+				app.use(UiCoreModule);
+				app.use(UiModule);
 				app.registerConstant({}, IIpfsServiceSymbol);
 				app.register(ObjectUrlController, IObjectUrlControllerSymbol);
 			}}>
