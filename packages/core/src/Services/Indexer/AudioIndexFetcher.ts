@@ -4,7 +4,7 @@ import NodeID3 from 'node-id3';
 import { Regexes } from '../../Regexes';
 import { IFetchOptions } from './IFetchOptions';
 import { IIndexFetcher } from './IIndexFetcher';
-import { IAlbumMetadata, isIAlbumMetadata } from 'ipmc-interfaces/dist/MetaData/Library/IAudioMetaData';
+import { IAlbumMetadata } from 'ipmc-interfaces/dist/MetaData/Library/IAudioMetaData';
 
 @injectable()
 export class AudioIndexFetcher implements IIndexFetcher<IAlbumMetadata[]> {

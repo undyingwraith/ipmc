@@ -32,7 +32,6 @@ export function VideoPlayerButtons() {
 					videoPlayer.selectSubtitle(ev.currentTarget.value !== 'null' ? JSON.parse(ev.currentTarget.value) : undefined);
 				}}>
 					<option value="null">None</option>
-
 					{useComputed(() => {
 						const file = mediaPlayer.nowPlaying.value;
 						if (isIVideoFile(file)) {
@@ -40,6 +39,7 @@ export function VideoPlayerButtons() {
 								<option value={JSON.stringify(s)}>{s.language} - {s.role}</option>
 							));
 						}
+						return undefined;
 					})}
 				</select>
 			</div>

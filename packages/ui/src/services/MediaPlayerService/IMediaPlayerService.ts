@@ -1,4 +1,4 @@
-import { IFileInfo, IVideoFile } from 'ipmc-interfaces';
+import { IFileInfo } from 'ipmc-interfaces';
 import { ReadonlySignal, Signal } from '@preact/signals-react';
 
 export const IMediaPlayerServiceSymbol = Symbol.for('MediaPlayerSymbol');

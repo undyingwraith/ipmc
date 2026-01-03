@@ -1,4 +1,3 @@
-export * from './AudioPlayer';
 export * from './MediaPlayer';
 export { AppBar } from './AppBar';
 export { FileGrid } from './FileGrid';

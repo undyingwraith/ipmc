@@ -1,6 +1,6 @@
 import { batch, computed, effect, Signal } from '@preact/signals-react';
 import { inject, injectable, multiInject } from 'inversify';
-import { IFileInfo, type ILogService, ILogServiceSymbol, IVideoFile } from 'ipmc-interfaces';
+import { IFileInfo, type ILogService, ILogServiceSymbol } from 'ipmc-interfaces';
 import { IMediaPlayerService } from './IMediaPlayerService';
 import { IPlayerService, IPlayerServiceSymbol } from './IPlayerService';
 

@@ -1,7 +1,7 @@
-import { batch, ReadonlySignal, Signal } from '@preact/signals-react';
+import { batch, Signal } from '@preact/signals-react';
 import { inject, injectable } from 'inversify';
 import { IFileInfo, type ILogService, ILogServiceSymbol, isIAudioFile } from 'ipmc-interfaces';
-import { type IObjectUrlController, IObjectUrlControllerSymbol, ObjectUrlController } from '../ObjectUrlController';
+import { type IObjectUrlController, IObjectUrlControllerSymbol } from '../ObjectUrlController';
 import { IPlayerService, TEvent } from './IPlayerService';
 
 export const IAudioPlayerServiceSymbol = Symbol.for('AudioPlayerService');
@@ -37,7 +37,7 @@ export class AudioPlayerService implements IPlayerService {
 
 
 	public async load(file: IFileInfo): Promise<void> {
-		const [audioUrl, abort] = this.urlController.getObjectUrl(file.cid);
+		const [audioUrl, _] = this.urlController.getObjectUrl(file.cid);
 		const url = await audioUrl;
 		if (this.player) {
 			this.player.pause();
