@@ -1,8 +1,10 @@
 import { Card, CardActionArea, CardActions, CardContent, CardHeader, CardMedia, Stack } from '@mui/material';
 import { ReadonlySignal, useComputed } from '@preact/signals-react';
-import { IFileInfo, isBackdropFeature, isIEpisodeMetadata, isIFolderFile, isIVideoFile, isPosterFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
+import { IFileInfo, isIFolderFile, isIVideoFile } from 'ipmc-interfaces';
 import React, { useRef } from 'react';
+import { useService } from '../../../context';
 import { useFileUrl } from '../../../hooks';
+import { IMediaPreferenceService, IMediaPreferenceServiceSymbol } from '../../../services';
 import { EpisodeDisplay, LanguageDisplay, VideoMetadataDisplay } from '../../atoms';
 import posterFallback from '../../svg/poster.svg';
 import thumbFallback from '../../svg/thumb.svg';
@@ -17,20 +19,15 @@ export function FileGridItem(props: {
 	style?: any;
 }) {
 	const { file, display, onOpen } = props;
+	const mediaService = useService<IMediaPreferenceService>(IMediaPreferenceServiceSymbol);
 	const imgRef = useRef<HTMLDivElement>(null);
 
 	const urlSource = useComputed(() => {
 		switch (display.value) {
 			case Display.Poster:
-				return isPosterFeature(file) && file.posters.length > 0
-					? file.posters[0]?.cid
-					: undefined;
+				return mediaService.getPoster(file)?.cid;
 			case Display.Thumbnail:
-				return isIVideoFile(file) && file.thumbnails.length > 0
-					? file.thumbnails[0]?.cid
-					: isBackdropFeature(file) && file.backdrops.length > 0
-						? file.backdrops[0]?.cid
-						: undefined;
+				return mediaService.getThumbnail(file)?.cid;
 			default:
 				return '';
 		}
@@ -44,9 +41,9 @@ export function FileGridItem(props: {
 				<CardMedia image={url.value} className={`${styles.media} ${display.value === Display.Thumbnail && styles.thumbnail}`} />
 				<CardHeader
 					className={styles.title}
-					slotProps={{ title: { title: isTitleFeature(file) ? file.title : file.name } }}
-					title={isTitleFeature(file) ? file.title : file.name}
-					subheader={isYearFeature(file) ? file.year : isIEpisodeMetadata(file) ? `S${file.season} E${file.episode}` : undefined}
+					slotProps={{ title: { title: mediaService.getHeader(file) } }}
+					title={mediaService.getHeader(file)}
+					subheader={mediaService.getSubheader(file)}
 				/>
 				{(isIVideoFile(file) || isIFolderFile(file)) && (
 					<CardContent>

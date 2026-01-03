@@ -8,7 +8,7 @@ import React from "react";
 import { useService } from '../../context';
 import { useHotkey, useTranslation } from '../../hooks';
 import { StopFunctionSymbol } from '../../IpmcLauncher';
-import { ILibraryNavigationService, ILibraryNavigationServiceSymbol, INavigationService, INavigationServiceSymbol } from '../../services';
+import { ILibraryService, ILibraryServiceSymbol, INavigationService, INavigationServiceSymbol } from '../../services';
 import { LibraryTypeDictionary } from '../../utils';
 
 export function LibraryDrawer() {
@@ -79,18 +79,18 @@ function DrawerItem(props: { library: ILibrary; drawerOpen: Signal<boolean>; }) 
 	const { library, drawerOpen } = props;
 
 	const _t = useTranslation();
-	const libraryNavigation = useService<ILibraryNavigationService>(ILibraryNavigationServiceSymbol);
+	const libraryService = useService<ILibraryService>(ILibraryServiceSymbol);
 	const open = useSignal<boolean>(false);
 
-	const hasSubTypes = libraryNavigation.hasSubNavigation(library);
+	const hasSubTypes = libraryService.hasSubNavigation(library);
 
 	return (<>
 		<ListItem disablePadding>
 			{useComputed(() => (
 				<ListItemButton
-					selected={libraryNavigation.isActive(library).value}
+					selected={libraryService.isActive(library).value}
 					onClick={() => {
-						libraryNavigation.navigateTo(library);
+						libraryService.navigateTo(library);
 						drawerOpen.value = false;
 					}}
 				>
@@ -114,12 +114,12 @@ function DrawerItem(props: { library: ILibrary; drawerOpen: Signal<boolean>; }) 
 		{useComputed(() => hasSubTypes && (
 			<Collapse in={open.value} timeout="auto" unmountOnExit>
 				<List component="div" disablePadding>
-					{libraryNavigation.getViews(library)?.map((v) => (
+					{libraryService.getCapabilities(library).views?.map((v) => (
 						<ListItemButton
 							sx={{ pl: 4 }}
 							key={v}
-							selected={libraryNavigation.isActive(library, v).value}
-							onClick={() => libraryNavigation.navigateTo(library, v)}
+							selected={libraryService.isActive(library, v).value}
+							onClick={() => libraryService.navigateTo(library, v)}
 						>
 							<ListItemIcon>
 								{/*TODO*/}
