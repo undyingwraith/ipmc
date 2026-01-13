@@ -2,3 +2,13 @@
 	display: flex;
 	flex-direction: row;
 }
+
+.page {
+	display: flex;
+	gap: 15px;
+}
+
+.page>* {
+	flex-shrink: 0;
+	width: 100%;
+}

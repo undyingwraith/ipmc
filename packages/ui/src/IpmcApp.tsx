@@ -4,7 +4,6 @@ import { IConfigurationService, IConfigurationServiceSymbol, IFileExportServiceS
 import React from 'react';
 import { Router } from 'wouter';
 import { useHashLocation } from 'wouter/use-hash-location';
-import { AppBar } from './components/organisms/AppBar';
 import { AppContextProvider, ThemeProvider } from './context';
 import { IpmcLauncher } from './IpmcLauncher';
 import { UiCoreModule } from './services/UiCoreModule';
@@ -36,10 +35,7 @@ export function IpmcApp(props: IIpmcAppProps) {
 				<ThemeProvider>
 					<CssBaseline />
 					<Box sx={{ height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column' }}>
-						<AppBar />
-						<Box sx={{ overflow: 'auto', flexGrow: 1 }}>
-							<IpmcLauncher configService={props.configService} nodeService={props.nodeService} />
-						</Box>
+						<IpmcLauncher configService={props.configService} nodeService={props.nodeService} />
 					</Box>
 				</ThemeProvider>
 			</AppContextProvider>

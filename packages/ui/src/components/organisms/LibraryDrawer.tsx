@@ -7,13 +7,13 @@ import { IProfile, IProfileSymbol } from "ipmc-interfaces";
 import React from "react";
 import { useLocation } from 'wouter';
 import { useService } from '../../context';
-import { LibraryTypeDictionary } from '../../utils';
 import { useHotkey, useLinkedSignal, useTranslation } from '../../hooks';
-import { StopFunctionSymbol } from '../../IpmcLauncher';
+import { StopFunctionSymbol, TStopFunction } from '../../IpmcLauncher';
+import { LibraryTypeDictionary } from '../../utils';
 
 export function LibraryDrawer() {
 	const profile = useService<IProfile>(IProfileSymbol);
-	const stop = useService<() => void>(StopFunctionSymbol);
+	const stop = useService<TStopFunction>(StopFunctionSymbol);
 	const _t = useTranslation();
 	const [loc, setLocation] = useLocation();
 	const location = useLinkedSignal(loc);
@@ -85,7 +85,7 @@ export function LibraryDrawer() {
 					</ListItem>
 					<ListItem disablePadding>
 						<ListItemButton
-							onClick={stop}>
+							onClick={() => stop()}>
 							<ListItemIcon>
 								<Logout />
 							</ListItemIcon>

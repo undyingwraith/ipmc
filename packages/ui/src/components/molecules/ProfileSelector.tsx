@@ -1,10 +1,11 @@
-import { Box, Button, ButtonGroup, Card, CardActions, CardHeader, Container, Stack } from "@mui/material";
+import { Box, Button, ButtonGroup, Card, CardActions, CardHeader, Stack } from "@mui/material";
 import { useComputed, useSignal, useSignalEffect } from "@preact/signals-react";
-import { useService } from '../../context';
 import { uuid } from 'ipmc-core';
 import { IConfigurationService, IConfigurationServiceSymbol, IDialogService, IDialogServiceSymbol, IFileExportService, IFileExportServiceSymbol, IPopupService, IPopupServiceSymbol, IProfile } from 'ipmc-interfaces';
 import React from "react";
+import { useService } from '../../context';
 import { useTranslation } from '../../hooks/useTranslation';
+import pageStyles from '../pages/Page.module.scss';
 import { ProfileEditor } from "./ProfileEditor";
 
 export function ProfileSelector(props: { profile?: IProfile, switchProfile: (name: string) => void; }) {
@@ -90,7 +91,7 @@ export function ProfileSelector(props: { profile?: IProfile, switchProfile: (nam
 	)));
 
 	return (
-		<Container>
+		<div className={pageStyles.container + ' ' + pageStyles.scroll}>
 			<Stack spacing={1}>
 				{content}
 				<Box>
@@ -133,6 +134,6 @@ export function ProfileSelector(props: { profile?: IProfile, switchProfile: (nam
 					}}>{_t('ImportProfile')}</Button>
 				</Box>
 			</Stack>
-		</Container>
+		</div>
 	);
 }

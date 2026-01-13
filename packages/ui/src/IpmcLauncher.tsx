@@ -1,14 +1,17 @@
-import { Box, Button, ButtonGroup } from '@mui/material';
+import { Home, Settings } from '@mui/icons-material';
+import { Box, Button, ButtonGroup, IconButton } from '@mui/material';
 import { batch, useComputed, useSignal } from '@preact/signals-react';
 import { createRemoteIpfs, ProfileModule } from 'ipmc-core';
 import { IConfigurationService, IIpfsService, IIpfsServiceSymbol, ILogService, ILogServiceSymbol, INodeService, IProfile, IProfileSymbol, isInternalProfile, isRemoteProfile } from 'ipmc-interfaces';
 import React, { PropsWithChildren } from 'react';
-import { ErrorDisplay, ThemeToggle } from './components/atoms';
-import { ActiveProcessesButton, ConnectionStatus, LanguageSelector, LoadScreen, ProfileSelector } from './components/molecules';
+import { Redirect, Route, Switch, useLocation } from 'wouter';
+import { ErrorDisplay, Spacer } from './components/atoms';
+import { LanguageSelector, LoadScreen, ProfileSelector } from './components/molecules';
+import { AppBar } from './components/organisms';
 import { LibraryManager } from './components/pages';
+import { SettingsPage } from './components/pages/SettingsPage/SettingsPage';
 import { AppContextProvider, useService } from './context';
-import { useAppbarButtons, useTranslation } from './hooks';
-import { AppbarButtonService, AppbarButtonServiceSymbol } from './services';
+import { useTranslation } from './hooks';
 import { UiModule } from './services/UiModule';
 
 enum LoadState {
@@ -25,32 +28,17 @@ export interface IIpmcLauncherProps {
 }
 
 export const StopFunctionSymbol = Symbol.for('StopFunction');
+export type TStopFunction = (restart?: boolean) => Promise<void>;
 
 export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 	const _t = useTranslation();
-	const appbarService = useService<AppbarButtonService>(AppbarButtonServiceSymbol);
+	const [_, setLocation] = useLocation();
 	const log = useService<ILogService>(ILogServiceSymbol);
 
 	const state = useSignal<LoadState>(LoadState.Idle);
 	const node = useSignal<IIpfsService | undefined>(undefined);
 	const profile = useSignal<IProfile | undefined>(undefined);
-	const nodeButton = useSignal<Symbol | undefined>(undefined);
-	const profileButton = useSignal<Symbol | undefined>(undefined);
 	const error = useSignal<Error | undefined>(undefined);
-
-	useAppbarButtons([{
-		component: (<ActiveProcessesButton />),
-		position: 'end',
-		sortIndex: -1,
-	}, {
-		component: (<ThemeToggle />),
-		position: 'end',
-		sortIndex: 9,
-	}, {
-		component: (<LanguageSelector />),
-		position: 'end',
-		sortIndex: 10,
-	}]);
 
 	async function start(name: string) {
 		if (name == undefined) return;
@@ -72,17 +60,6 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 
 				batch(() => {
 					node.value = ipfs;
-					nodeButton.value = appbarService.registerAppbarButton({
-						position: 'end',
-						component: (<ConnectionStatus ipfs={ipfs} />)
-					});
-					profileButton.value = appbarService.registerAppbarButton({
-						position: 'start',
-						component: (<>
-							<Button onClick={stop}>{_t('Logout')}</Button>
-							{currentProfile.name}
-						</>)
-					});
 					state.value = LoadState.Ready;
 				});
 			} catch (ex) {
@@ -95,21 +72,22 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 		}
 	}
 
-	async function stop() {
+	async function stop(restart = false) {
 		if (node.value != undefined) {
 			state.value = LoadState.Stopping;
 			try {
 				await node.value!.stop();
+				const profileId = profile.value?.id;
 				batch(() => {
 					node.value = undefined;
 					profile.value = undefined;
 				});
+				if (restart && profileId) {
+					start(profileId);
+				}
 			} catch (ex) {
 				log.error(ex);
 				state.value = LoadState.Error;
-			} finally {
-				nodeButton.value && appbarService.unRegisterAppbarButton(nodeButton.value);
-				profileButton.value && appbarService.unRegisterAppbarButton(profileButton.value);
 			}
 		}
 		state.value = LoadState.Idle;
@@ -131,11 +109,35 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 					</Box>
 				);
 			case LoadState.Idle:
-				return (
-					<Box>
-						<ProfileSelector switchProfile={start} />
-					</Box>
-				);
+				return (<>
+					<AppBar>
+						<Route path={'/settings'}>
+							<IconButton
+								onClick={() => setLocation('~/')}
+								title={_t('Home').value}
+							>
+								<Home />
+							</IconButton>
+						</Route>
+						<Spacer />
+						<LanguageSelector />
+						<IconButton
+							onClick={() => {
+								setLocation('~/settings');
+							}}
+							title={_t('Settings').value}
+						>
+							<Settings />
+						</IconButton>
+					</AppBar>
+					<Switch>
+						<Route path={'/settings'} component={SettingsPage} />
+						<Route path={'/'}>
+							<ProfileSelector switchProfile={start} />
+						</Route>
+						<Redirect to={'/'} />
+					</Switch>
+				</>);
 			case LoadState.Starting:
 			case LoadState.Stopping:
 				return (
@@ -144,7 +146,7 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 			case LoadState.Ready:
 				return (
 					<AppContextProvider setup={(app) => {
-						app.registerConstant(stop, StopFunctionSymbol);
+						app.registerConstant<TStopFunction>(stop, StopFunctionSymbol);
 						app.registerConstant<IIpfsService>(ipfs!, IIpfsServiceSymbol);
 						app.registerConstant<IProfile>(currentProfile!, IProfileSymbol);
 						app.use(ProfileModule);

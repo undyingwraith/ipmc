@@ -1,15 +1,14 @@
-import { injectable, multiInject } from 'inversify';
+import { injectable, multiInject, optional } from 'inversify';
 import { type IIndexFetcher, IIndexFetcherSymbol } from '../Indexer';
 import { IVersionService } from './IVersionService';
 
 @injectable()
 export class VersionService implements IVersionService {
 	constructor(
-		@multiInject(IIndexFetcherSymbol) private readonly indexers: IIndexFetcher<any>[]
+		@multiInject(IIndexFetcherSymbol) @optional() private readonly indexers: IIndexFetcher<any>[] = []
 	) { }
 
 	getVersion(): string {
-		//TODO: fetch version from package.json or something
 		return __VERSION__;
 	}
 

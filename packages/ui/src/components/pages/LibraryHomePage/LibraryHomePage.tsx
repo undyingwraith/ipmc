@@ -9,7 +9,7 @@ import { useTranslation } from '../../../hooks/useTranslation';
 import { ProcessDisplay } from '../../atoms';
 import { Display } from '../../molecules';
 import { FileGridItem } from '../../molecules/FileGridItem';
-import pageStyles from '../Page.module.css';
+import pageStyles from '../Page.module.scss';
 import styles from './LibraryHomePage.module.css';
 
 export function LibraryHomePage() {
