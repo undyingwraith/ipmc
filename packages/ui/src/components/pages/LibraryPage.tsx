@@ -26,38 +26,40 @@ export function LibraryPage(props: {
 	var index = indexManager.indexes.get(library)!;
 	let notSorted = useComputed(() => {
 		const data = index.value!.index as IAlbumMetadata[];
-		switch (libraryNavigationService.active.value?.view) {
-			case "Songs":
-				let newSongList = new Array<IAudioMetaData>;
-				for (const album of data) {
-					for (const song of album.items) {
-						newSongList.push(song);
-					}
-				}
-				return newSongList;
-			case "Albums":
-				return data;
-			case "Artists":
-				const properArtistMap: (IFolderFile<IAlbumMetadata>)[] = [];
-				for (const album of data) {
-					const artists = Array.from(new Set(album.items.map(i => i.artist.split('\\')).flat()));
-					for (const artist of artists) {
-						const existing = properArtistMap.find(a => a.name === artist);
-						if (existing) {
-							existing.items.push(album);
-						} else {
-							properArtistMap.push({
-								name: artist,
-								cid: artist, //TODO: maybe use a better value here
-								items: [album],
-								type: 'dir',
-							});
+		if (libraryNavigationService.active.value?.library.type == "music") {
+			switch (libraryNavigationService.active.value?.view) {
+				case "Songs":
+					let newSongList = new Array<IAudioMetaData>;
+					for (const album of data) {
+						for (const song of album.items) {
+							newSongList.push(song);
 						}
 					}
-				}
-				return properArtistMap;
-			default:
-				return null;
+					return newSongList;
+				case "Albums":
+					return data;
+				case "Artists":
+					const properArtistMap: (IFolderFile<IAlbumMetadata>)[] = [];
+					for (const album of data) {
+						const artists = Array.from(new Set(album.items.map(i => i.artist.split('\\')).flat()));
+						for (const artist of artists) {
+							const existing = properArtistMap.find(a => a.name === artist);
+							if (existing) {
+								existing.items.push(album);
+							} else {
+								properArtistMap.push({
+									name: artist,
+									cid: artist, //TODO: maybe use a better value here
+									items: [album],
+									type: 'dir',
+								});
+							}
+						}
+					}
+					return properArtistMap;
+			}
+		} else {
+			return data;
 		}
 	});
 	console.log("not sorted" + notSorted);
