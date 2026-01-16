@@ -4,6 +4,7 @@ import React, { ReactNode } from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { Grid } from 'react-window';
 import { useLocation } from 'wouter';
+import { useLinkedSignal } from '../../hooks';
 import { Display, ErrorBoundary, FileGridItem } from '../molecules';
 
 function getScrollbarWidth() {
@@ -27,12 +28,14 @@ function getScrollbarWidth() {
 }
 
 export function FileGrid(props: { files: IFileInfo[]; display: ReadonlySignal<Display>; header?: { height: number, content: ReactNode; }; }) {
-	const { files, display, header } = props;
+	const { display, header } = props;
 
 	const [_, setLocation] = useLocation();
+	const filesSig = useLinkedSignal(props.files);
 
 	return useComputed(() => {
 		const isPoster = display.value === Display.Poster;
+		const files = filesSig.value;
 
 		return (
 			<AutoSizer>
