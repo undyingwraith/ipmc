@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import { useComputed, useSignal } from '@preact/signals-react';
-import { IAudioMetaData, IFileInfo, IFolderFile, IIndexManager, IIndexManagerSymbol, ISortAndFilterService, ISortAndFilterServiceSymbol } from 'ipmc-interfaces';
+import { IAlbumMetadata, IAudioMetaData, IFileInfo, IFolderFile, IIndexManager, IIndexManagerSymbol, ISortAndFilterService, ISortAndFilterServiceSymbol } from 'ipmc-interfaces';
 import React from 'react';
 import { useService } from '../../context/AppContext';
 import { usePersistentSignal, useTranslation } from '../../hooks';
@@ -8,7 +8,6 @@ import { LoadScreen } from '../molecules';
 import { Display } from '../molecules/DisplayButtons';
 import { FileGrid, FileList } from '../organisms';
 import { ILibraryServiceSymbol, LibraryService } from 'src/services';
-import { IAlbumMetadata } from 'ipmc-interfaces/dist/MetaData/Library/IAudioMetaData';
 
 export function LibraryPage(props: {
 	library: string;
@@ -57,6 +56,8 @@ export function LibraryPage(props: {
 						}
 					}
 					return properArtistMap;
+				default:
+					return index;
 			}
 		} else {
 			return data;

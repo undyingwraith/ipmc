@@ -1,4 +1,4 @@
-import { IFileInfo, isBackdropFeature, isIEpisodeMetadata, isIVideoFile, isPosterFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
+import { isIAlbumMetadata, IFileInfo, isIAudioMetadata, isBackdropFeature, isIEpisodeMetadata, isIVideoFile, isPosterFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
 import { IMediaPreferenceService } from './IMediaPreferenceService';
 import { injectable } from 'inversify';
 
@@ -17,6 +17,13 @@ export class MediaPreferenceService implements IMediaPreferenceService {
 	getSubheader(item: IFileInfo): string | undefined {
 		if (isIEpisodeMetadata(item)) {
 			return `S${item.season} E${item.episode}`;
+		}
+		if (isIAudioMetadata(item)) {
+			return `${item.artist} ${item.year} ${item.genre}`;
+		}
+
+		if (isIAlbumMetadata(item)) {
+			return `${item.artist}`;
 		}
 		return isYearFeature(item) ? item.year.toString() : undefined;
 	}
