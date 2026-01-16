@@ -16,9 +16,10 @@ export class NavigationService implements INavigationService {
 	 */
 	public navigate(to: string, params?: URLSearchParams) {
 		const oldURL = location.href;
+		const absoluteUrl = to[0] === '.' ? this.getPath() + to.slice(1) : to.slice(1);
 
 		const url = new URL(location.href);
-		const [hash, search] = encodeURIComponent(to).replaceAll('%2F', '/').replace(/^#?\/?/, "").split("?");
+		const [hash, search] = encodeURIComponent(absoluteUrl).replaceAll('%2F', '/').replace(/^#?\/?/, "").split("?");
 		url.hash = `/${hash}`;
 		if (search || params) url.search = search ?? params?.toString();
 		const newURL = url.href;
@@ -43,7 +44,7 @@ export class NavigationService implements INavigationService {
 	 * @returns the active path.
 	 */
 	private getPath(): string {
-		return window.location.hash.substring(1);
+		return decodeURIComponent(window.location.hash.substring(1));
 	}
 
 	/**

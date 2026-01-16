@@ -3,8 +3,9 @@ import { IFileInfo } from 'ipmc-interfaces';
 import React, { ReactNode } from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { Grid } from 'react-window';
-import { useLocation } from 'wouter';
+import { useService } from '../../context';
 import { useLinkedSignal } from '../../hooks';
+import { INavigationService, INavigationServiceSymbol } from '../../services';
 import { Display, ErrorBoundary, FileGridItem } from '../molecules';
 
 function getScrollbarWidth() {
@@ -30,7 +31,7 @@ function getScrollbarWidth() {
 export function FileGrid(props: { files: IFileInfo[]; display: ReadonlySignal<Display>; header?: { height: number, content: ReactNode; }; }) {
 	const { display, header } = props;
 
-	const [_, setLocation] = useLocation();
+	const navigationService = useService<INavigationService>(INavigationServiceSymbol);
 	const filesSig = useLinkedSignal(props.files);
 
 	return useComputed(() => {
@@ -74,7 +75,7 @@ export function FileGrid(props: { files: IFileInfo[]; display: ReadonlySignal<Di
 											>
 												<FileGridItem
 													file={f}
-													onOpen={() => setLocation(`/${f.name}`)}
+													onOpen={() => navigationService.navigate(`./${f.name}`)}
 													display={display}
 												/>
 											</div>

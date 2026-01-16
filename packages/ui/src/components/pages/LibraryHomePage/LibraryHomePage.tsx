@@ -2,10 +2,10 @@ import { Card, CardActionArea, CardContent, CardHeader, Typography } from '@mui/
 import { Signal, useComputed } from '@preact/signals-react';
 import { IPinItem, IPinManagerService, IPinManagerServiceSymbol, IProfile, IProfileSymbol, ISortAndFilterService, ISortAndFilterServiceSymbol, ITaskManager, ITaskManagerSymbol } from 'ipmc-interfaces';
 import React from 'react';
-import { useLocation } from 'wouter';
 import { useService } from '../../../context';
-import { LibraryTypeDictionary } from '../../../utils';
 import { useTranslation } from '../../../hooks/useTranslation';
+import { ILibraryService, ILibraryServiceSymbol, INavigationService, INavigationServiceSymbol } from '../../../services';
+import { LibraryTypeDictionary } from '../../../utils';
 import { ProcessDisplay } from '../../atoms';
 import { Display } from '../../molecules';
 import { FileGridItem } from '../../molecules/FileGridItem';
@@ -13,11 +13,12 @@ import styles from './LibraryHomePage.module.css';
 
 export function LibraryHomePage() {
 	const _t = useTranslation();
-	const [_, setLocation] = useLocation();
 	const taskManager = useService<ITaskManager>(ITaskManagerSymbol);
 	const pinManager = useService<IPinManagerService>(IPinManagerServiceSymbol);
 	const profile = useService<IProfile>(IProfileSymbol);
 	const sortAndFilterService = useService<ISortAndFilterService>(ISortAndFilterServiceSymbol);
+	const libraryService = useService<ILibraryService>(ILibraryServiceSymbol);
+	const navigationService = useService<INavigationService>(INavigationServiceSymbol);
 
 	const status = useComputed(() => {
 		const status = taskManager.status.value;
@@ -43,7 +44,7 @@ export function LibraryHomePage() {
 				<div className={styles.carousel}>
 					{profile.libraries.map(l => (
 						<Card key={l.id} className={styles.library}>
-							<CardActionArea onClick={() => setLocation(`/${l.id}`)}>
+							<CardActionArea onClick={() => libraryService.navigateTo(l)}>
 								<CardContent className={styles.iconContainer}>
 									{LibraryTypeDictionary[l.type] ?? LibraryTypeDictionary.unknown}
 								</CardContent>
@@ -64,7 +65,7 @@ export function LibraryHomePage() {
 									<Typography variant={'h6'}>{profile.libraries.find(l => l.id === cat)?.name ?? cat}</Typography>
 									<div className={styles.carousel}>
 										{sortAndFilterService.createFilteredList(items.map(p => pinManager.resolvePin(p)).filter(p => p !== undefined)).map(p => (
-											<FileGridItem file={p} onOpen={() => setLocation(p.pinId)} display={new Signal(Display.Poster)} />
+											<FileGridItem file={p} onOpen={() => navigationService.navigate(p.pinId)} display={new Signal(Display.Poster)} />
 										))}
 									</div>
 								</div>

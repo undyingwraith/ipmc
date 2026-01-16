@@ -1,7 +1,8 @@
 import { IFileInfo } from 'ipmc-interfaces';
 import React, { ReactNode } from 'react';
 import { List } from 'react-window';
-import { useLocation } from 'wouter';
+import { useService } from '../../context';
+import { INavigationService, INavigationServiceSymbol } from '../../services';
 import { ErrorBoundary, FileListItem } from '../molecules';
 
 export function FileList(props: {
@@ -13,7 +14,7 @@ export function FileList(props: {
 }) {
 	const { files, onOpen, actions, selected, header } = props;
 
-	const [_, setLocation] = useLocation();
+	const navigationService = useService<INavigationService>(INavigationServiceSymbol);
 
 	return (
 		<List
@@ -27,7 +28,7 @@ export function FileList(props: {
 						<FileListItem
 							style={style}
 							file={f}
-							onOpen={() => onOpen ? onOpen(f, index) : setLocation(`/${f.name}`)}
+							onOpen={() => onOpen ? onOpen(f, index) : navigationService.navigate(`./${f.name}`)}
 							actions={actions ? actions(f, index) : undefined}
 							selected={selected === index}
 						/>

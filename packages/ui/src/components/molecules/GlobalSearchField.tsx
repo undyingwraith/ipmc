@@ -3,15 +3,16 @@ import { useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
 import { IGlobalSearchService } from 'ipmc-core';
 import { IFileInfo, isPinFeature } from 'ipmc-interfaces';
 import React from 'react';
+import { useService } from '../../context';
 import { useHotkey, useTranslation } from '../../hooks';
+import { INavigationService, INavigationServiceSymbol } from '../../services';
 import styles from '../atoms/DropDown/DropDown.module.scss';
 import { FileList } from '../organisms';
-import { useLocation } from 'wouter';
 
 export function GlobalSearchField(props: { searchService: IGlobalSearchService; }) {
 	const { searchService } = props;
-	const [_, setLocation] = useLocation();
 	const _t = useTranslation();
+	const navigationService = useService<INavigationService>(INavigationServiceSymbol);
 
 	const searchFieldRef = useSignal<HTMLInputElement | null>(null);
 	const results = useSignal<IFileInfo[]>([]);
@@ -58,7 +59,7 @@ export function GlobalSearchField(props: { searchService: IGlobalSearchService; 
 							files={results.value.slice(0, 9)}
 							onOpen={(i) => {
 								if (isPinFeature(i)) {
-									setLocation(`~/${i.pinId}`);
+									navigationService.navigate(`~/${i.pinId}`);
 									query.value = '';
 								}
 							}}
