@@ -1,12 +1,15 @@
 import { Box } from '@mui/material';
 import { useComputed, useSignal } from '@preact/signals-react';
-import { IIndexManager, IIndexManagerSymbol, ISortAndFilterService, ISortAndFilterServiceSymbol } from 'ipmc-interfaces';
+import { HasTitle, IAudioFile, IAudioMetaData, IFileInfo, IFolderFile, IIndexManager, IIndexManagerSymbol, ISortAndFilterService, ISortAndFilterServiceSymbol } from 'ipmc-interfaces';
 import React from 'react';
 import { useService } from '../../context/AppContext';
 import { usePersistentSignal, useTranslation } from '../../hooks';
 import { LoadScreen } from '../molecules';
 import { Display } from '../molecules/DisplayButtons';
 import { FileGrid, FileList } from '../organisms';
+import { ILibraryServiceSymbol, LibraryService } from 'src/services';
+import { CollectionsBookmarkOutlined } from '@mui/icons-material';
+import { IAlbumMetadata } from 'ipmc-interfaces/dist/MetaData/Library/IAudioMetaData';
 
 export function LibraryPage(props: {
 	library: string;
@@ -16,12 +19,51 @@ export function LibraryPage(props: {
 
 	const indexManager = useService<IIndexManager>(IIndexManagerSymbol);
 	const sortAndFilterService = useService<ISortAndFilterService>(ISortAndFilterServiceSymbol);
+	const libraryNavigationService = useService<LibraryService>(ILibraryServiceSymbol);
 
 	const query = useSignal('');
 	const display = usePersistentSignal<Display>(Display.Poster, 'display');
 
-	const index = indexManager.indexes.get(library)!;
-	const sorted = useComputed(() => index.value == undefined ? undefined : sortAndFilterService.createFilteredList(index.value.index, query.value));
+	var index = indexManager.indexes.get(library)!;
+	let notSorted = useComputed(() => {
+		const data = index.value!.index as IAlbumMetadata[];
+		switch (libraryNavigationService.active.value?.view) {
+			case "Songs":
+				let newSongList = new Array<IAudioMetaData>;
+				for (const album of data) {
+					for (const song of album.items) {
+						newSongList.push(song);
+					}
+				}
+				return newSongList;
+			case "Albums":
+				return data;
+			case "Artists":
+				const properArtistMap: (IFolderFile<IAlbumMetadata>)[] = [];
+				for (const album of data) {
+					const artists = Array.from(new Set(album.items.map(i => i.artist.split('\\')).flat()));
+					for (const artist of artists) {
+						const existing = properArtistMap.find(a => a.name === artist);
+						if (existing) {
+							existing.items.push(album);
+						} else {
+							properArtistMap.push({
+								name: artist,
+								cid: artist, //TODO: maybe use a better value here
+								items: [album],
+								type: 'dir',
+							});
+						}
+					}
+				}
+				return properArtistMap;
+		}
+	});
+	console.log("not sorted" + notSorted);
+	let sorted = useComputed(() =>
+		notSorted.value == undefined ? undefined : sortAndFilterService.createFilteredList<IFileInfo>(notSorted.value, query.value)
+	);
+
 
 	return useComputed(() => {
 		return sorted.value == undefined ? (
