@@ -28,10 +28,10 @@ export function LanguageDisplay(props: { file: IVideoFile | IFolderFile; }) {
 	return (
 		<div className={styles.container}>
 			{getLanguages(file).map(l => (
-				<Chip size="small" label={getLanguageFlag(l)} key={l} icon={<LanguageIcon />} />
+				<Chip size="small" label={getLanguageFlag(l)} key={`lang_${l}`} icon={<LanguageIcon />} />
 			))}
 			{getSubtitles(file).map(s => (
-				<Chip size="small" label={getLanguageFlag(s)} key={s} icon={<SubtitlesIcon />} />
+				<Chip size="small" label={getLanguageFlag(s)} key={`sub_${s}`} icon={<SubtitlesIcon />} />
 			))}
 		</div>
 	);
