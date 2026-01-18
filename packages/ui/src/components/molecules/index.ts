@@ -8,6 +8,7 @@ export { FileListItem } from './FileListItem';
 export { GlobalSearchField } from './GlobalSearchField';
 export { LanguageSelector } from './LanguageSelector';
 export { LibraryEditor } from './LibraryEditor';
+export { LibraryFilters } from './LibraryFilters';
 export { LoadScreen } from './LoadScreen';
 export { ProfileEditor } from './ProfileEditor';
 export { ProfileSelector } from './ProfileSelector';
