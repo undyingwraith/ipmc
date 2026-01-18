@@ -1,22 +1,24 @@
+import { dnsLink } from '@helia/dnslink';
 import { ipns } from '@helia/ipns';
 import { unixfs } from '@helia/unixfs';
 import { peerIdFromString } from '@libp2p/peer-id';
-import { HeliaLibp2p } from 'helia';
+import { Helia } from 'helia';
 import { IFileInfo, IIpfsService } from 'ipmc-interfaces';
 import { Libp2p } from 'libp2p';
 import { CID } from 'multiformats';
 import { concat } from 'uint8arrays';
 import { parseIpns } from './parseIpns';
 
-export function createHeliaIpfs(helia: HeliaLibp2p<Libp2p<any>>, onClose: () => Promise<void>): IIpfsService {
+export function createHeliaIpfs(helia: Helia<Libp2p<any>>, onClose: () => Promise<void>): IIpfsService {
 	const fs = unixfs(helia);
 	const ns = ipns(helia);
+	const nsl = dnsLink(helia);
 
 	return ({
-		async ls(cid: string, signal) {
+		async ls(cid: string) {
 			const files: IFileInfo[] = [];
 			for await (const file of fs.ls(CID.parse(cid), {
-				signal,
+				//TODO: signal,
 			})) {
 				files.push({
 					type: file.type == 'directory' ? 'dir' : 'file',
@@ -43,9 +45,17 @@ export function createHeliaIpfs(helia: HeliaLibp2p<Libp2p<any>>, onClose: () => 
 			const ipns = parseIpns(name);
 			let resolved;
 			if (ipns.dnsLink) {
-				resolved = (await ns.resolveDNSLink(ipns.name)).cid;
+				const answers = await nsl.resolve(ipns.name);
+				if (answers[0] == undefined) {
+					throw new Error('No records found');
+				}
+				if (answers[0].namespace == 'ipfs') {
+					resolved = answers[0].cid;
+				} else {
+					resolved = (await ns.resolve(answers[0].peerId)).cid;
+				}
 			} else {
-				resolved = (await ns.resolve(peerIdFromString(ipns.name).publicKey!)).cid;
+				resolved = (await ns.resolve(peerIdFromString(ipns.name))).cid;
 			}
 			if (ipns.path !== '/') {
 				resolved = await (await fs.stat(resolved, { path: ipns.path })).cid;

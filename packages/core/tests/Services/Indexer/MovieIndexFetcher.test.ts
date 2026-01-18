@@ -1,16 +1,11 @@
-import { IIndexManagerSymbol, IIpfsServiceSymbol, IKeyValueStoreSymbol, ILogServiceSymbol, IObjectStoreSymbol, IPersistentSignalServiceSymbol, IProfile, IProfileSymbol, ITaskManagerSymbol, ITranslationServiceSymbol, type ILibrary } from 'ipmc-interfaces';
+import { IIndexManagerSymbol, IIpfsServiceSymbol, IKeyValueStoreSymbol, ILogServiceSymbol, IObjectStoreSymbol, IPersistentSignalServiceSymbol, IProfile, IProfileSymbol, ITaskManagerSymbol, ITranslationServiceSymbol } from 'ipmc-interfaces';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { Application, IIndexFetcherSymbol, IndexManager, LogService, MemoryKeyValueStore, MovieIndexFetcher, ObjectStore, PersistentSignalService, TaskManager, TranslationService } from '../../../src';
 import { MockIpfsService } from '../../../testing';
+import { createProfile, movieLibrary } from './data';
 
 describe('MovieIndexFetcher', () => {
 	let app: Application;
-	const library: ILibrary = {
-		id: 'b',
-		name: 'movies',
-		type: 'movie',
-		upstream: 'movies.sample'
-	};
 
 	beforeEach(() => {
 		app = new Application();
@@ -23,14 +18,7 @@ describe('MovieIndexFetcher', () => {
 		app.register(TranslationService, ITranslationServiceSymbol);
 		app.register(PersistentSignalService, IPersistentSignalServiceSymbol);
 		app.registerMultiple(MovieIndexFetcher, IIndexFetcherSymbol);
-		app.registerConstant<IProfile>({
-			id: 'a',
-			libraries: [
-				library,
-			],
-			name: 'test',
-			type: 'internal',
-		}, IProfileSymbol);
+		app.registerConstant<IProfile>(createProfile([movieLibrary]), IProfileSymbol);
 
 		// Configure MockIpfsService
 		const ipfs = app.getService<MockIpfsService>(IIpfsServiceSymbol)!;
@@ -91,7 +79,7 @@ describe('MovieIndexFetcher', () => {
     </AdaptationSet>
   </Period>
 </MPD>
-`),
+`) as Uint8Array<ArrayBuffer>,
 			// Movie 2
 			movieCid2: [
 				{
@@ -119,9 +107,9 @@ describe('MovieIndexFetcher', () => {
     </AdaptationSet>
   </Period>
 </MPD>
-`),
+`) as Uint8Array<ArrayBuffer>,
 		};
-		ipfs.ipns = { 'movies.sample': 'sampleCid1' };
+		ipfs.ipns = { [movieLibrary.upstream]: 'sampleCid1' };
 	});
 
 	afterEach(() => {
@@ -130,11 +118,11 @@ describe('MovieIndexFetcher', () => {
 
 	test('Indexes Movies', async () => {
 		const indexer = app.getService<IndexManager>(IIndexManagerSymbol)!;
-		await indexer.update(library);
+		await indexer.update(movieLibrary);
 
-		expect(indexer.indexes.get(library.id)).toBeDefined();
-		expect(indexer.indexes.get(library.id)?.value).toBeDefined();
-		expect(indexer.indexes.get(library.id)?.value?.index.length).toBe(1);
+		expect(indexer.indexes.get(movieLibrary.id)).toBeDefined();
+		expect(indexer.indexes.get(movieLibrary.id)?.value).toBeDefined();
+		expect(indexer.indexes.get(movieLibrary.id)?.value?.index.length).toBe(1);
 	});
 
 	test('Does not refresh unchanged metadata', async () => {
@@ -145,7 +133,7 @@ describe('MovieIndexFetcher', () => {
 		const spy1 = vi.spyOn(ipfs, 'ls');
 
 		// Run initial indexing
-		await indexer.update(library);
+		await indexer.update(movieLibrary);
 		expect(spy1).toHaveBeenCalledWith('sampleCid1', expect.anything());
 		expect(spy1).toHaveBeenCalledWith('movieCid1', expect.anything());
 
@@ -154,7 +142,7 @@ describe('MovieIndexFetcher', () => {
 		const spy2 = vi.spyOn(ipfs, 'ls');
 
 		// Run update
-		await indexer.update(library);
+		await indexer.update(movieLibrary);
 
 		//expect(spy2).toHaveBeenCalledTimes(2);
 		expect(spy2).toHaveBeenCalledWith('sampleCid2', expect.anything());
@@ -168,7 +156,7 @@ describe('MovieIndexFetcher', () => {
 
 		const onProgress = vi.fn().mockImplementation(() => { });
 
-		await indexer.update(library, { onProgress });
+		await indexer.update(movieLibrary, { onProgress });
 
 		expect(onProgress).toBeCalledTimes(2);
 		expect(onProgress).toHaveBeenCalledWith(0, 1);
