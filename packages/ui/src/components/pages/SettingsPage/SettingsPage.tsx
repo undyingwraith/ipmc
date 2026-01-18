@@ -6,6 +6,7 @@ import React from 'react';
 import { useOptionalService, useService } from '../../../context';
 import { useTranslation } from '../../../hooks';
 import { ThemeService, ThemeServiceSymbol } from '../../../services';
+import { UiDefaults } from '../../../UiDefaults';
 import { TextInput } from '../../atoms';
 import { ActionButton, ColorPicker } from '../../molecules';
 import pageStyles from '../Page.module.scss';
@@ -73,6 +74,7 @@ export function SettingsPage() {
 					<ColorPicker
 						value={accentColor}
 						label={_t('AccentColor')}
+						default={UiDefaults.accentColor}
 					/>
 				</div>
 			</SettingsSection>

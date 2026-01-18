@@ -2,6 +2,7 @@ import { computed, Signal } from '@preact/signals-react';
 import { inject, injectable } from 'inversify';
 import { type IPersistentSignalService, IPersistentSignalServiceSymbol } from 'ipmc-interfaces';
 import { createDarkTheme, createLightTheme } from '../Theme';
+import { UiDefaults } from '../UiDefaults';
 
 export const ThemeServiceSymbol = Symbol.for('ThemeService');
 
@@ -10,8 +11,8 @@ export class ThemeService {
 	constructor(
 		@inject(IPersistentSignalServiceSymbol) signalService: IPersistentSignalService,
 	) {
-		this.accentColor = signalService.get('accentColor', '#6200EE');
-		this.darkMode = signalService.get('darkMode', true);
+		this.accentColor = signalService.get('accentColor', UiDefaults.accentColor);
+		this.darkMode = signalService.get('darkMode', UiDefaults.darkMode);
 	}
 
 	public accentColor: Signal<string>;

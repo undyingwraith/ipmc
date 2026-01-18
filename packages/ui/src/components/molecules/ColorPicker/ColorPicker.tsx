@@ -9,6 +9,7 @@ export function ColorPicker(props: {
 	label?: string | ReadonlySignal<string>;
 	value: Signal<string>;
 	instant?: boolean;
+	default?: string;
 }) {
 	const { value, label, instant } = props;
 	const color = Color(value.value).hsl().object();
@@ -122,6 +123,15 @@ export function ColorPicker(props: {
 							<Button
 								onClick={setComponents}
 							>{_t('Reset')}</Button>
+							{props.default && (
+								<Button
+									color='info'
+									onClick={() => {
+										value.value = props.default!;
+										setComponents();
+									}}
+								>{_t('Default')}</Button>
+							)}
 							<Button
 								onClick={() => {
 									value.value = hslString.value;
