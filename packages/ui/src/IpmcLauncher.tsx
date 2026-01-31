@@ -4,7 +4,7 @@ import { batch, useComputed, useSignal } from '@preact/signals-react';
 import { createRemoteIpfs, ProfileModule } from 'ipmc-core';
 import { IConfigurationService, IIpfsService, IIpfsServiceSymbol, ILogService, ILogServiceSymbol, INodeService, IProfile, IProfileSymbol, isInternalProfile, isRemoteProfile } from 'ipmc-interfaces';
 import React, { PropsWithChildren } from 'react';
-import { Redirect, Route, Switch, useLocation } from 'wouter';
+import { Route, Switch, useLocation } from 'wouter';
 import { ErrorDisplay, Spacer } from './components/atoms';
 import { LanguageSelector, LoadScreen, ProfileSelector } from './components/molecules';
 import { AppBar } from './components/organisms';
@@ -132,10 +132,9 @@ export function IpmcLauncher(props: PropsWithChildren<IIpmcLauncherProps>) {
 					</AppBar>
 					<Switch>
 						<Route path={'/settings'} component={SettingsPage} />
-						<Route path={'/'}>
+						<Route>
 							<ProfileSelector switchProfile={start} />
 						</Route>
-						<Redirect to={'/'} />
 					</Switch>
 				</>);
 			case LoadState.Starting:
