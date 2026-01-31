@@ -52,7 +52,31 @@ export interface IIpfsService {
 	/**
 	 * Fetches a block.
 	 * @param cid cid of the block to fetch.
+	 */
+	fetch(cid: string, options?: IFetchOptions): Promise<Uint8Array>;
+
+	/**
+	 * Fetches a block.
+	 * @deprecated use {@link IFetchOptions} instead.
+	 * @param cid cid of the block to fetch.
 	 * @param path (optional) path inside the cid.
 	 */
 	fetch(cid: string, path?: string): Promise<Uint8Array>;
+}
+
+export interface IFetchOptions {
+	/**
+	 * An optional path to allow reading files inside directories.
+	 */
+	path?: string;
+
+	/**
+	 * Stop reading the file after this many bytes.
+	 */
+	length?: number;
+
+	/**
+	 * Start reading the file at this offset.
+	 */
+	offset?: number;
 }

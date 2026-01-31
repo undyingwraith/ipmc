@@ -1,10 +1,9 @@
 import { inject, injectable } from 'inversify';
-import { IFileInfo, IIpfsService, IIpfsServiceSymbol, ILibrary, ILogService, ILogServiceSymbol, IAudioMetaData as IAudioMetadata } from 'ipmc-interfaces';
+import { IAlbumMetadata, IAudioMetaData as IAudioMetadata, IFileInfo, IIpfsService, IIpfsServiceSymbol, ILibrary, ILogService, ILogServiceSymbol } from 'ipmc-interfaces';
 import NodeID3 from 'node-id3';
 import { Regexes } from '../../Regexes';
 import { IFetchOptions } from './IFetchOptions';
 import { IIndexFetcher } from './IIndexFetcher';
-import { IAlbumMetadata } from 'ipmc-interfaces/dist/MetaData/Library/IAudioMetaData';
 
 @injectable()
 export class AudioIndexFetcher implements IIndexFetcher<IAlbumMetadata[]> {
@@ -17,7 +16,7 @@ export class AudioIndexFetcher implements IIndexFetcher<IAlbumMetadata[]> {
 	 * @inheritdoc
 	 */
 	get version(): string {
-		return '0.1111';
+		return '3';
 	}
 
 	/**
@@ -53,7 +52,6 @@ export class AudioIndexFetcher implements IIndexFetcher<IAlbumMetadata[]> {
 	}
 
 	public async extractAlbumMetadata(entry: IFileInfo, parentId: string, old: IAlbumMetadata[] | undefined, signal: AbortSignal): Promise<IAlbumMetadata[]> {
-
 		const entries = await this.node.ls(entry.cid, signal);
 		const files = entries.filter(f => f.type == 'file');
 		const musicFiles = files.filter(f => f.name.endsWith('.mp3'));
@@ -61,7 +59,6 @@ export class AudioIndexFetcher implements IIndexFetcher<IAlbumMetadata[]> {
 		const album: Omit<IAlbumMetadata, 'artist' | 'items'> = {
 			...entry,
 			pinId: `${parentId}/${entry.name}`,
-			//TODO access first song and pull
 			posters: files.filter(f => Regexes.Poster.exec(f.name) != null),
 		};
 
@@ -78,7 +75,7 @@ export class AudioIndexFetcher implements IIndexFetcher<IAlbumMetadata[]> {
 
 		// Fetch data for music files
 		const songs: IAudioMetadata[] = [];
-		const tempList = [];
+		const artistList = [];
 		for (const song of musicFiles) {
 			// Only recheck new files
 			const existing = old?.find(o => o.cid === album.cid)?.items.find(o => o.cid === song.cid);
@@ -86,32 +83,26 @@ export class AudioIndexFetcher implements IIndexFetcher<IAlbumMetadata[]> {
 				songs.push(existing);
 			} else {
 				const { iaudiometadata, albumartist } = await this.extractAudioMetadata(song, album, albumCover);
-				tempList.push(albumartist);
+				artistList.push(albumartist);
 				songs.push(iaudiometadata);
-
-
 			}
 		}
 
 
-		// TODO: get artist from songs
-		return [this.assembleAlbumMetadata(album, tempList.find(el => el !== undefined) ?? "Various Artists", songs)];
-	}
-
-	public assembleAlbumMetadata(partialAlbum: Omit<IAlbumMetadata, 'artist' | 'items'>, albumArtist: string, songs: IAudioMetadata[]): IAlbumMetadata {
-		const assemblyAlbum: IAlbumMetadata = {
-			...partialAlbum,
-			artist: albumArtist,
+		return [{
+			...album,
+			artist: artistList.find(el => el !== undefined)
+				?? songs.find(s => s.artist !== undefined)?.artist
+				?? this.unknownArtist,
 			items: songs
-		};
-
-		return assemblyAlbum;
+		}];
 	}
-
-
 
 	public async extractAudioMetadata(song: IFileInfo, album: Omit<IAlbumMetadata, 'artist' | 'items'>, albumCover: IFileInfo[]): Promise<{ iaudiometadata: IAudioMetadata, albumartist: string | undefined; }> {
-		const track = Buffer.from(await this.node.fetch(song?.cid));
+		// Fetch length of ID3 tags in bytes
+		const tagLength = (await this.node.fetch(song.cid, { offset: 6, length: 4 })).reduce((prev, current) => prev * 128 + current);
+		// Only fetch header + tags
+		const track = Buffer.from(await this.node.fetch(song.cid, { length: tagLength + 10 }));
 		const tags = NodeID3.read(track);
 
 		return {
@@ -123,12 +114,16 @@ export class AudioIndexFetcher implements IIndexFetcher<IAlbumMetadata[]> {
 				cover: albumCover,
 				lyrics: tags.unsynchronisedLyrics?.text,
 				year: tags.year != undefined ? parseInt(tags.year) : 0,
-				artist: tags.artist ?? "Unknown Artist",
+				artist: tags.artist ?? this.unknownArtist,
 				album: tags.album ?? "No Album",
 				genre: tags.genre ?? "Unknown",
-			}, albumartist: tags.performerInfo
+			},
+			albumartist: tags.performerInfo,
 		};
 	}
 
-
+	/**
+	 * Text used for unknown artists.
+	 */
+	private readonly unknownArtist = 'Unknown Artist';
 }

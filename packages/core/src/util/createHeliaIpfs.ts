@@ -66,11 +66,10 @@ export function createHeliaIpfs(helia: HeliaLibp2p<Libp2p<any>>, onClose: () => 
 				console.log(`Pin progress ${cid}: ${block.toString()}`);
 			}
 		},
-		async fetch(cid: string, path?: string) {
+		async fetch(cid: string, opt) {
+			const options = typeof opt === 'string' ? { path: opt } : opt;
 			const data: Uint8Array[] = [];
-			for await (const buf of fs.cat(CID.parse(cid), {
-				path
-			})) {
+			for await (const buf of fs.cat(CID.parse(cid), options)) {
 				data.push(buf);
 			}
 			return concat(data);

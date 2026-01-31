@@ -9,7 +9,7 @@ export { type IConfigurationService, IConfigurationServiceSymbol } from './IConf
 export { type IFileExportService, IFileExportServiceSymbol } from './IFileExportService';
 export { IHotkeyServiceSymbol, type IHotkeyService, type IHotkey } from './IHotkeyService';
 export { type IIndexManager, IIndexManagerSymbol } from './IIndexManager';
-export { type IIpfsService, IIpfsServiceSymbol } from './IIpfsService';
+export { type IIpfsService, type IFetchOptions, IIpfsServiceSymbol } from './IIpfsService';
 export { type IKeyValueStore, IKeyValueStoreSymbol } from './IKeyValueStore';
 export { type INodeService } from './INodeService';
 export { type IObjectStore, IObjectStoreSymbol } from './IObjectStore';

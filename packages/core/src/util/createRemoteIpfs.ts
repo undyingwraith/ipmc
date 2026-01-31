@@ -1,4 +1,4 @@
-import { IFileInfo, IIpfsService } from 'ipmc-interfaces';
+import { IFetchOptions, IFileInfo, IIpfsService } from 'ipmc-interfaces';
 import { create } from 'kubo-rpc-client';
 import { concat } from 'uint8arrays';
 import { parseIpns } from './parseIpns';
@@ -59,9 +59,11 @@ export async function createRemoteIpfs(url?: string): Promise<IIpfsService> {
 		async rmPin(cid) {
 			await node.pin.rm(cid);
 		},
-		async fetch(cid: string, path?: string) {
+		async fetch(cid: string, opt?: string | IFetchOptions) {
+			const path = typeof opt === 'string' ? opt : opt?.path;
+			const options = typeof opt === 'string' ? {} : opt;
 			const parts = [];
-			for await (const buf of node.cat(path ? path.startsWith('/') ? cid + path : cid + '/' + path : cid)) {
+			for await (const buf of node.cat(path ? path.startsWith('/') ? cid + path : cid + '/' + path : cid, options)) {
 				parts.push(buf);
 			}
 			return concat(parts);
