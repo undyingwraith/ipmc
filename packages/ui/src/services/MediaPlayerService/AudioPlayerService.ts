@@ -74,6 +74,11 @@ export class AudioPlayerService implements IPlayerService {
 		this.player?.pause();
 	}
 
+	public unload(): void {
+		this.pause();
+		this.player = undefined;
+	}
+
 	public setVolume(volume: number): void {
 		if (this.player) {
 			this.player.volume = volume;
