@@ -16,7 +16,7 @@ export class AudioIndexFetcher implements IIndexFetcher<IAlbumMetadata[]> {
 	 * @inheritdoc
 	 */
 	get version(): string {
-		return '3';
+		return '3.000000001';
 	}
 
 	/**

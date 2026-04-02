@@ -3,23 +3,23 @@ import { inject, injectable } from 'inversify';
 import { IFileInfo, type ILogService, ILogServiceSymbol, isIAudioFile } from 'ipmc-interfaces';
 import { type IObjectUrlController, IObjectUrlControllerSymbol } from '../ObjectUrlController';
 import { IPlayerService, TEvent } from './IPlayerService';
+import { BasePlayerService } from './BasePlayerService';
 
 export const IAudioPlayerServiceSymbol = Symbol.for('AudioPlayerService');
 
 @injectable()
-export class AudioPlayerService implements IPlayerService {
+export class AudioPlayerService extends BasePlayerService implements IPlayerService {
 	private player: HTMLAudioElement | undefined;
 
 	public constructor(
 		@inject(ILogServiceSymbol) private readonly log: ILogService,
 		@inject(IObjectUrlControllerSymbol) private readonly urlController: IObjectUrlController,
 	) {
+		super();
 		this.log.debug("AudioPlayerService called");
 	}
 
-	addEventListener(ev: TEvent, emit: () => void): void {
-		//throw new Error('Method not implemented.');
-	}
+
 
 	public currentTime = new Signal(0);
 	public bufferedTime = new Signal(0);
@@ -54,6 +54,14 @@ export class AudioPlayerService implements IPlayerService {
 		console.log(file);
 		console.log("audio file " + file + " audio path " + file.path + " is audio file: " + isIAudioFile(file));
 		this.player.addEventListener('error', (error: any) => this.log.error(`Error code ${error.code} object ${error}`));
+
+		// Keep playing the queue once video has ended
+		this.player.addEventListener('ended', (ended: any) => this.emitEvent('ended'));
+
+		// Loading state
+		this.player.addEventListener('waiting', () => this.emitEvent('waiting'));
+		this.player.addEventListener('stalled', () => this.emitEvent('waiting'));
+		this.player.addEventListener('canplay', () => this.emitEvent('ready'));
 	}
 
 	public setCurrentTime(time: number): void {

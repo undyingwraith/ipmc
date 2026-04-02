@@ -21,7 +21,6 @@ export class VideoPlayerService extends BasePlayerService implements IVideoPlaye
 	) {
 		super();
 		this.shakaPlugin = this.shakaPlugin.bind(this);
-
 		shaka.net.NetworkingEngine.registerScheme('ipfs', this.shakaPlugin, 1, false);
 
 		this.player = new shaka.Player();
