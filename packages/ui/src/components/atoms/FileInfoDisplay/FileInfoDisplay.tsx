@@ -17,6 +17,7 @@ export function FileInfoDisplay(props: { file: IFileInfo; }) {
 			{useComputed(() => posterUrl.value ? (<img src={posterUrl.value} style={{ height: 250, flexGrow: 0 }} />) : undefined)}
 			<div className={styles.textContainer}>
 				<h3>{mediaService.getHeader(file)}</h3>
+				<h4>{mediaService.getSubheader(file)}</h4>
 				{isIFolderFile(file) && <EpisodeDisplay file={file} />}
 				{isIEpisodeMetadata(file) && <p>{file.series} - S{file.season}E{file.episode}</p>}
 			</div>

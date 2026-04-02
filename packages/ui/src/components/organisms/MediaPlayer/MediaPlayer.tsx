@@ -4,7 +4,7 @@ import { batch, useComputed, useSignal } from '@preact/signals-react';
 import { isTitleFeature } from 'ipmc-interfaces';
 import React from 'react';
 import { useService } from '../../../context';
-import { IMediaPlayerService, IMediaPlayerServiceSymbol } from '../../../services';
+import { IMediaPlayerService, IMediaPlayerServiceSymbol, IMediaPreferenceService, IMediaPreferenceServiceSymbol } from '../../../services';
 import { Loader } from '../../atoms';
 import { MediaProgressBar } from '../../molecules';
 import { FileList, MediaPlayerButtons } from '../../organisms';
@@ -13,10 +13,12 @@ import { VideoPlayer } from './VideoPlayer';
 
 export function MediaPlayer() {
 	const player = useService<IMediaPlayerService>(IMediaPlayerServiceSymbol);
+	const preference = useService<IMediaPreferenceService>(IMediaPreferenceServiceSymbol);
 
 	const queueOpen = useSignal(false);
 	const variant = useComputed(() => player.nowPlaying.value === undefined ? styles.hidden : player.open.value ? styles.open : '');
-	const title = useComputed(() => player.nowPlaying.value == undefined ? '' : isTitleFeature(player.nowPlaying.value) ? player.nowPlaying.value.title : player.nowPlaying.value.name);
+	const title = useComputed(() => player.nowPlaying.value == undefined ? '' : preference.getHeader(player.nowPlaying.value));
+	const info = useComputed(() => player.nowPlaying.value == undefined ? '' : preference.getSubheader(player.nowPlaying.value));
 
 
 	const toolbarEl = useComputed(() => (
@@ -104,6 +106,7 @@ export function MediaPlayer() {
 								<ExpandLess />
 							</IconButton>
 						</div>
+						<p>{info}</p>
 						<div className={styles.spacer} />
 						<MediaPlayerButtons />
 						<MediaProgressBar />

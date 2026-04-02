@@ -39,10 +39,13 @@ export class AudioPlayerService extends BasePlayerService implements IPlayerServ
 	public async load(file: IFileInfo): Promise<void> {
 		const [audioUrl, _] = this.urlController.getObjectUrl(file.cid);
 		const url = await audioUrl;
-		if (this.player) {
-			this.player.pause();
-		}
+		const oldPlayer = this.player;
 		this.player = new Audio(url);
+		if (oldPlayer) {
+			oldPlayer.pause();
+			this.player.volume = oldPlayer.volume;
+			// TODO: destroy old player
+		}
 		this.player.addEventListener('timeupdate', () => {
 			batch(() => {
 				this.updateTimes();

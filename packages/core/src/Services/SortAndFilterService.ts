@@ -1,4 +1,4 @@
-import { IFileInfo, ISortAndFilterService, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
+import { IFileInfo, ISortAndFilterService, isTitleFeature, isYearFeature, isArtistFeature, isAlbumFeature } from 'ipmc-interfaces';
 
 type IMatcher = (v: any, w: string) => boolean;
 
@@ -17,6 +17,8 @@ export class SortAndFilterService implements ISortAndFilterService {
 			(v, w) => v.name.toLowerCase().includes(w),
 			(v, w) => isTitleFeature(v) && v.title.toLowerCase().includes(w),
 			(v, w) => isYearFeature(v) && v.year.toString() === w,
+			(v, w) => isArtistFeature(v) && v.artist.toLowerCase().includes(w),
+			(v, w) => isAlbumFeature(v) && v.album.toLowerCase().includes(w),
 		];
 
 		const words = query.toLowerCase().split(' ');

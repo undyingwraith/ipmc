@@ -1,7 +1,7 @@
 import { AddToQueue, PlayArrow, QueuePlayNext } from '@mui/icons-material';
 import { Button, ButtonGroup } from '@mui/material';
 import { batch } from '@preact/signals-react';
-import { IFileInfo, IFolderFile, isIFolderFile, isISeasonMetadata, isISeriesMetadata, isIVideoFile, isPinFeature } from 'ipmc-interfaces';
+import { IFileInfo, IFolderFile, isIAlbumMetadata, isIArtistMetadata, isIAudioFile, isIFolderFile, isISeasonMetadata, isISeriesMetadata, isIVideoFile, isPinFeature } from 'ipmc-interfaces';
 import React from 'react';
 import { useService } from '../../context';
 import { useTranslation } from '../../hooks';
@@ -25,7 +25,7 @@ export function MediaItemActions(props: { file: IFileInfo; fullwidth?: boolean; 
 		}
 	}
 
-	const enqueueButton = isIVideoFile(file) ? (
+	const enqueueButton = player.canPlay(file) ? (
 		<Button
 			title={_t('AddToQueue').value}
 			onClick={() => player.enqueue(file)}
@@ -33,7 +33,7 @@ export function MediaItemActions(props: { file: IFileInfo; fullwidth?: boolean; 
 		>
 			<AddToQueue />
 		</Button>
-	) : isISeriesMetadata(file) || isISeasonMetadata(file) ? (
+	) : isISeriesMetadata(file) || isISeasonMetadata(file) || isIAlbumMetadata(file) || isIArtistMetadata(file) ? (
 		<Button
 			title={_t('AddToQueue').value}
 			onClick={() => {
