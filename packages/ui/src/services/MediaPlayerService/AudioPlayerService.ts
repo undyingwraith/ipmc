@@ -82,6 +82,11 @@ export class AudioPlayerService extends BasePlayerService implements IPlayerServ
 		this.player?.pause();
 	}
 
+	public unload(): void {
+		this.pause();
+		this.player = undefined;
+	}
+
 	public setVolume(volume: number): void {
 		if (this.player) {
 			this.player.volume = volume;

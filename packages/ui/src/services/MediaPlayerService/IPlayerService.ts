@@ -27,6 +27,11 @@ export interface IPlayerService {
 	pause(): void;
 
 	/**
+	 * Stops playback unloads media.
+	 */
+	unload(): void;
+
+	/**
 	 * Sets the volume for the player.
 	 * @param volume The volume to set (0-1).
 	 */

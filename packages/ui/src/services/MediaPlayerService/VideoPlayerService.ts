@@ -42,7 +42,7 @@ export class VideoPlayerService extends BasePlayerService implements IVideoPlaye
 		});
 	}
 
-	setCurrentTime(time: number): void {
+	public setCurrentTime(time: number): void {
 		if (this.videoEl) {
 			this.videoEl.currentTime = time;
 		}
@@ -121,6 +121,11 @@ export class VideoPlayerService extends BasePlayerService implements IVideoPlaye
 		this.videoEl?.pause();
 	}
 
+	public unload() {
+		this.pause();
+		this.player.unload();
+	}
+
 	public setVolume(volume: number): void {
 		if (this.videoEl) {
 			this.videoEl.volume = volume;
@@ -134,6 +139,10 @@ export class VideoPlayerService extends BasePlayerService implements IVideoPlaye
 			this.videoEl.requestFullscreen();
 		}
 	}
+
+	public currentTime = new Signal(0);
+	public bufferedTime = new Signal(0);
+	public totalTime = new Signal(0);
 
 	private async shakaPlugin(
 		uri: string,
@@ -160,14 +169,16 @@ export class VideoPlayerService extends BasePlayerService implements IVideoPlaye
 		};
 	};
 
-	public currentTime = new Signal(0);
-	public bufferedTime = new Signal(0);
-	public totalTime = new Signal(0);
-
 	private get videoEl(): HTMLVideoElement | null {
 		return this.player.getMediaElement();
 	}
 
+	/**
+	 * The {@link shaka.Player} used by this service.
+	 */
 	private player: shaka.Player;
+	/**
+	 * The {@link HTMLElement} that contains the {@link HTMLVideoElement}.
+	 */
 	private container: HTMLElement | null;
 }
