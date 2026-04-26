@@ -1,3 +1,4 @@
+import { hash } from 'node:crypto';
 import { IFileInfo, IIpfsService } from 'ipmc-interfaces';
 
 export class MockIpfsService implements IIpfsService {
@@ -23,7 +24,7 @@ export class MockIpfsService implements IIpfsService {
 		throw new Error(`NotFound: '${cid}'`);
 	}
 
-	peers(): Promise<string[]> {
+	peers(): Promise<{ peer: string, addrs: string[]; }[]> {
 		throw new Error('Method not implemented.');
 	}
 
@@ -43,7 +44,7 @@ export class MockIpfsService implements IIpfsService {
 		return 'TestId';
 	}
 
-	fetch(cid: string, path?: string): Promise<Uint8Array> {
+	fetch(cid: string): Promise<Uint8Array<ArrayBuffer>> {
 		if (this.cids[cid] && !Array.isArray(this.cids[cid])) {
 			return Promise.resolve(this.cids[cid]);
 		}
@@ -51,8 +52,25 @@ export class MockIpfsService implements IIpfsService {
 		throw new Error(`NotFound: '${cid}'`);
 	}
 
-	cids: { [key: string]: IFileInfo[] | Uint8Array; } = {};
+	public createData(entry: TEntry): string {
+		if (Array.isArray(entry.content)) {
+			const children = entry.content.map<IFileInfo>((e => ({ ...e, cid: this.createData(e), type: Array.isArray(e.content) ? 'dir' : 'file' })));
+			const cid = hash('md5', JSON.stringify(entry.content));
+
+			this.cids[cid] = children;
+
+			return cid;
+		} else {
+			const cid = hash('md5', entry.content);
+			this.cids[cid] = entry.content;
+			return cid;
+		}
+	}
+
+	cids: { [key: string]: IFileInfo[] | Uint8Array<ArrayBuffer>; } = {};
 	ipns: { [key: string]: string; } = {};
 
 	private pins: string[] = [];
 }
+
+type TEntry = Omit<IFileInfo, 'cid' | 'type'> & ({ content: TEntry[] | Uint8Array<ArrayBuffer>; });

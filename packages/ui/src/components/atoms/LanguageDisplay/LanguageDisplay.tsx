@@ -3,7 +3,7 @@ import SubtitlesIcon from '@mui/icons-material/Subtitles';
 import { Chip } from '@mui/material';
 import { isIFolderFile, isIVideoFile, IVideoFile, type IFolderFile } from 'ipmc-interfaces';
 import React from 'react';
-import { LanguageFlagDictionary } from '../../../dictionaries';
+import { getLanguageFlag } from '../../../utils';
 import styles from './LanguageDisplay.module.css';
 
 export function LanguageDisplay(props: { file: IVideoFile | IFolderFile; }) {
@@ -14,7 +14,7 @@ export function LanguageDisplay(props: { file: IVideoFile | IFolderFile; }) {
 			const childLanguages = file.items.filter(f => isIFolderFile(f) || isIVideoFile(f)).map(f => getLanguages(f)).flat(1);
 			return Array.from(new Set(childLanguages));
 		}
-		return file.languages;
+		return Array.from(new Set(file.languages));
 	}
 
 	function getSubtitles(file: IVideoFile | IFolderFile): string[] {
@@ -22,16 +22,16 @@ export function LanguageDisplay(props: { file: IVideoFile | IFolderFile; }) {
 			const childSubtitles = file.items.filter(f => isIFolderFile(f) || isIVideoFile(f)).map(f => getSubtitles(f)).flat(1);
 			return Array.from(new Set(childSubtitles));
 		}
-		return file.subtitles.filter(s => !s.forced).map(s => s.language);
+		return Array.from(new Set(file.subtitles.filter(s => !s.forced).map(s => s.language)));
 	}
 
 	return (
 		<div className={styles.container}>
 			{getLanguages(file).map(l => (
-				<Chip size="small" label={LanguageFlagDictionary.has(l) ? LanguageFlagDictionary.get(l) : l} key={l} icon={<LanguageIcon />} />
+				<Chip size="small" label={getLanguageFlag(l)} key={`lang_${l}`} icon={<LanguageIcon />} />
 			))}
 			{getSubtitles(file).map(s => (
-				<Chip size="small" label={LanguageFlagDictionary.has(s) ? LanguageFlagDictionary.get(s) : s} key={s} icon={<SubtitlesIcon />} />
+				<Chip size="small" label={getLanguageFlag(s)} key={`sub_${s}`} icon={<SubtitlesIcon />} />
 			))}
 		</div>
 	);

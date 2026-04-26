@@ -5,6 +5,7 @@ import { isTitleFeature } from 'ipmc-interfaces';
 import React from 'react';
 import { useService } from '../../../context';
 import { IMediaPlayerService, IMediaPlayerServiceSymbol } from '../../../services';
+import { Loader } from '../../atoms';
 import { MediaProgressBar } from '../../molecules';
 import { FileList, MediaPlayerButtons } from '../../organisms';
 import styles from './MediaPlayer.module.scss';
@@ -75,20 +76,18 @@ export function MediaPlayer() {
 		</div>
 	));
 
-	const controlsEl = useComputed(() => (
-		<div className={styles.controlsContainer}>
-			<VideoPlayer />
-			<div className={styles.controls}>
-				<div>
-					<h5>{title}</h5>
-					<IconButton onClick={() => player.open.value = !player.open.value}>
-						<ExpandLess />
-					</IconButton>
+	const videoPlayer = useComputed(() => (<VideoPlayer />));
+
+	const playerEl = useComputed(() => (
+		<div className={styles.media}>
+			{videoPlayer}
+			{player.loading.value && (
+				<div className={styles.overlay}>
+					<div className={styles.loaderContainer}>
+						<Loader />
+					</div>
 				</div>
-				<div className={styles.spacer} />
-				<MediaPlayerButtons />
-				<MediaProgressBar />
-			</div>
+			)}
 		</div>
 	));
 
@@ -96,7 +95,20 @@ export function MediaPlayer() {
 		<div className={`${styles.container} ${variant.value}`}>
 			<div className={styles.item}>
 				{toolbarEl}
-				{controlsEl}
+				<div className={styles.controlsContainer}>
+					{playerEl}
+					<div className={styles.controls}>
+						<div>
+							<h5>{title}</h5>
+							<IconButton onClick={() => player.open.value = !player.open.value}>
+								<ExpandLess />
+							</IconButton>
+						</div>
+						<div className={styles.spacer} />
+						<MediaPlayerButtons />
+						<MediaProgressBar />
+					</div>
+				</div>
 			</div>
 		</div>
 	));

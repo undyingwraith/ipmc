@@ -31,7 +31,7 @@ export interface IIpfsService {
 	/**
 	 * Lists all connected peers.
 	 */
-	peers(): Promise<string[]>;
+	peers(): Promise<{ peer: string, addrs: string[]; }[]>;
 
 	/**
 	 * Stops the node.
@@ -54,5 +54,5 @@ export interface IIpfsService {
 	 * @param cid cid of the block to fetch.
 	 * @param path (optional) path inside the cid.
 	 */
-	fetch(cid: string, path?: string): Promise<Uint8Array>;
+	fetch(cid: string, path?: string): Promise<Uint8Array<ArrayBuffer>>;
 }

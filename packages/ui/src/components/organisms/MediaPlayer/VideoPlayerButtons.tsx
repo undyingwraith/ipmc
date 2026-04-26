@@ -26,7 +26,7 @@ export function VideoPlayerButtons() {
 				}}>
 					<option value="null">None</option>
 					{useComputed(() => mediaPlayer.nowPlaying.value?.subtitles.map(s => (
-						<option value={JSON.stringify(s)}>{s.language}{s.forced && ' - forced'}</option>
+						<option value={JSON.stringify(s)}>{s.language} - {s.role}</option>
 					)))}
 				</select>
 			</div>

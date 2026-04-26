@@ -1,11 +1,11 @@
 {
 	"name": "ipmc",
-	"version": "0.2.2",
+	"version": "0.2.3",
 	"main": "index.js",
 	"license": "MIT",
 	"private": true,
 	"type": "module",
-	"packageManager": "yarn@4.9.1",
+	"packageManager": "yarn@4.10.3",
 	"scripts": {
 		"dev": "yarn workspaces foreach -Api run dev",
 		"watch": "yarn workspaces foreach -Api --no-private --exclude ipmc-desktop run dev",
@@ -18,5 +18,9 @@
 	],
 	"devDependencies": {
 		"typescript": "^5.8.3"
+	},
+	"resolutions": {
+		"blockstore-core@npm:^6.0.0": "patch:blockstore-core@npm%3A6.1.1#~/.yarn/patches/blockstore-core-npm-6.1.1-5c67813c75.patch",
+		"blockstore-core@npm:^6.1.1": "patch:blockstore-core@npm%3A6.1.1#~/.yarn/patches/blockstore-core-npm-6.1.1-5c67813c75.patch"
 	}
 }

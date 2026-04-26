@@ -8,7 +8,7 @@ import { Identicon } from '../atoms';
 
 export function ConnectionStatus(props: { ipfs: IIpfsService; }) {
 	const log = useService<ILogService>(ILogServiceSymbol);
-	const peers = useSignal<string[]>([]);
+	const peers = useSignal<{ peer: string, addrs: string[]; }[]>([]);
 	const anchor = useSignal<HTMLButtonElement | undefined>(undefined);
 	const count = useComputed(() => peers.value.length);
 	const _t = useTranslation();
@@ -42,11 +42,14 @@ export function ConnectionStatus(props: { ipfs: IIpfsService; }) {
 				}}
 			>
 				{peers.value.length > 0 ? peers.value.map(p => (
-					<ListItem key={p}>
+					<ListItem key={p.peer}>
 						<ListItemIcon>
-							<Identicon value={p.substring(p.lastIndexOf('/') + 1)} />
+							<Identicon value={p.peer} />
 						</ListItemIcon>
-						<ListItemText primary={p.substring(p.lastIndexOf('/') + 1)} secondary={p} />
+						<ListItemText
+							primary={p.peer}
+							secondary={p.addrs.map(a => <span key={a}>{a}</span>)}
+						/>
 					</ListItem>
 				)) : (
 					<ListItem>

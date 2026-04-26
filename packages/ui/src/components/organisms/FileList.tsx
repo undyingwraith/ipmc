@@ -1,7 +1,6 @@
-import { Divider, List } from '@mui/material';
-import { interleave } from 'ipmc-core';
 import { IFileInfo } from 'ipmc-interfaces';
-import React from 'react';
+import React, { ReactNode } from 'react';
+import { List } from 'react-window';
 import { useLocation } from 'wouter';
 import { ErrorBoundary, FileListItem } from '../molecules';
 
@@ -10,25 +9,40 @@ export function FileList(props: {
 	onOpen?: (item: IFileInfo, key: number) => void;
 	actions?: (f: IFileInfo, k: number) => any;
 	selected?: number;
+	header?: { height: number, content: ReactNode; };
 }) {
-	const { files, onOpen, actions, selected } = props;
+	const { files, onOpen, actions, selected, header } = props;
 
 	const [_, setLocation] = useLocation();
 
 	return (
-		<List>
-			{interleave(files.map((i, k) => (
-				<ErrorBoundary key={i.cid}>
-					<FileListItem
-						file={i}
-						onOpen={() => onOpen ? onOpen(i, k) : setLocation(`/${i.name}`)}
-						actions={actions ? actions(i, k) : undefined}
-						selected={selected === k}
-					/>
-				</ErrorBoundary>
-			)), (
-				<Divider />
-			))}
+		<List
+			rowComponent={({ files, index, style }) => {
+				const f = files[header ? index - 1 : index];
+				if (f == undefined) {
+					return <></>;
+				}
+				return (
+					<ErrorBoundary key={f.cid}>
+						<FileListItem
+							style={style}
+							file={f}
+							onOpen={() => onOpen ? onOpen(f, index) : setLocation(`/${f.name}`)}
+							actions={actions ? actions(f, index) : undefined}
+							selected={selected === index}
+						/>
+					</ErrorBoundary>
+				);
+			}}
+			rowProps={{ files }}
+			rowCount={header ? files.length + 1 : files.length}
+			rowHeight={(i) => header && i === 0 ? header.height : 90}
+		>
+			{header && (
+				<div style={{ height: 0 }}>
+					{header.content}
+				</div>
+			)}
 		</List>
 	);
 }

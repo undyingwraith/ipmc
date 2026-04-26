@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => ({
 		lib: {
 			// Could also be a dictionary or array of multiple entry points
 			entry: resolve(__dirname, 'src/index.ts'),
-			name: 'Core',
+			name: 'IpmcUi',
 			fileName: 'index',
 		},
 		rollupOptions: {
@@ -42,6 +42,7 @@ export default defineConfig(({ mode }) => ({
 				'react-dom',
 				'shaka-player',
 				'wouter',
+				'react-window',
 			],
 			output: {
 				// Provide global variables to use in the UMD build

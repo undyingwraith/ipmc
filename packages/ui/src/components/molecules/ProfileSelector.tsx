@@ -40,8 +40,21 @@ export function ProfileSelector(props: { profile?: IProfile, switchProfile: (nam
 							})
 								.then(r => {
 									if (r) {
-										configService.removeProfile(p.id);
-										loadProfiles();
+										let done = () => { };
+										popupService.show({
+											content: (close) => {
+												done = close;
+												return (<div>
+													Deleting profile...<br />this may take a while
+												</div>);
+											},
+											closeOnOutsideClick: false,
+										});
+										configService.removeProfile(p.id)
+											.then(() => {
+												done();
+												loadProfiles();
+											});
 									}
 								});
 						}}
@@ -110,8 +123,10 @@ export function ProfileSelector(props: { profile?: IProfile, switchProfile: (nam
 								const file = r[0];
 								const fileReader = new FileReader();
 								fileReader.onloadend = () => {
-									configService.setProfile(id, { ...JSON.parse(fileReader.result as string), id: id });
-									loadProfiles();
+									configService.setProfile(id, { ...JSON.parse(fileReader.result as string), id: id })
+										.then(() => {
+											loadProfiles();
+										});
 								};
 								fileReader.readAsText(file);
 							});
