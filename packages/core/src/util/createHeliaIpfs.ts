@@ -85,5 +85,11 @@ export function createHeliaIpfs(helia: Helia<Libp2p<any>>, onClose: () => Promis
 			}
 			return concat(data);
 		},
+		async handle(protocol, handler) {
+			await helia.libp2p.handle(protocol, handler);
+		},
+		async register(protocol, topology) {
+			await helia.libp2p.register(protocol, topology);
+		},
 	});
 }

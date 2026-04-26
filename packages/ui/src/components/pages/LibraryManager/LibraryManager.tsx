@@ -1,6 +1,6 @@
 import { ArrowBack } from '@mui/icons-material';
 import { Button, Paper, Toolbar } from '@mui/material';
-import { IGlobalSearchService, IGlobalSearchServiceSymbol } from 'ipmc-core';
+import { ICommunicationServiceSymbol, IGlobalSearchService, IGlobalSearchServiceSymbol } from 'ipmc-core';
 import { IIndexManager, IIndexManagerSymbol, IProfile, IProfileSymbol } from "ipmc-interfaces";
 import React from "react";
 import { LibraryFilters } from 'src/components/molecules/LibraryFilters';
@@ -16,6 +16,7 @@ import styles from './LibraryManager.module.css';
 
 export function LibraryManager() {
 	const _t = useTranslation();
+	useService(ICommunicationServiceSymbol); //TODO: remove once startup actions are in
 	const profile = useService<IProfile>(IProfileSymbol);
 	const indexManager = useService<IIndexManager>(IIndexManagerSymbol);
 	const searchService = useService<IGlobalSearchService>(IGlobalSearchServiceSymbol);

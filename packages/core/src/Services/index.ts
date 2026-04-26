@@ -1,3 +1,4 @@
+export * from './CommunicationService';
 export * from './GlobalSearchService';
 export * from './Indexer';
 export { FileExportService } from './FileExportService';

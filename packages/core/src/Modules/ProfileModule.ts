@@ -1,5 +1,5 @@
 import { IIndexManagerSymbol, IPinManagerServiceSymbol, ISortAndFilterServiceSymbol } from 'ipmc-interfaces';
-import { GlobalSearchService, IGlobalSearchServiceSymbol, IIndexFetcherSymbol, IndexManager, MovieIndexFetcher, PinManagerService, SeriesIndexFetcher, SortAndFilterService } from '../Services';
+import { CommunicationService, GlobalSearchService, ICommunicationServiceSymbol, IGlobalSearchServiceSymbol, IIndexFetcherSymbol, IndexManager, MovieIndexFetcher, PinManagerService, SeriesIndexFetcher, SortAndFilterService } from '../Services';
 import { IModule } from './IModule';
 
 export const ProfileModule: IModule = (app) => {
@@ -9,4 +9,5 @@ export const ProfileModule: IModule = (app) => {
 	app.register(SortAndFilterService, ISortAndFilterServiceSymbol);
 	app.registerMultiple(MovieIndexFetcher, IIndexFetcherSymbol);
 	app.registerMultiple(SeriesIndexFetcher, IIndexFetcherSymbol);
+	app.register(CommunicationService, ICommunicationServiceSymbol);
 };

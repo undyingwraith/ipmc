@@ -65,6 +65,14 @@ export async function createRemoteIpfs(url?: string): Promise<IIpfsService> {
 				parts.push(buf);
 			}
 			return concat(parts);
-		}
+		},
+		//@ts-ignore not implemented yet
+		handle(protocol, handler) {
+			return Promise.resolve(); //TODO: implement https://docs.ipfs.tech/reference/kubo/rpc/#api-v0-p2p-listen
+		},
+		//@ts-ignore not implemented yet
+		register(protocol, topology) {
+			return Promise.resolve(); //TODO: implement
+		},
 	};
 }

@@ -1,3 +1,4 @@
+import { Connection, Stream, Topology } from '@libp2p/interface';
 import { IFileInfo } from '../MetaData';
 
 export const IIpfsServiceSymbol = Symbol.for('IIpfsService');
@@ -55,4 +56,7 @@ export interface IIpfsService {
 	 * @param path (optional) path inside the cid.
 	 */
 	fetch(cid: string, path?: string): Promise<Uint8Array<ArrayBuffer>>;
+
+	handle(protocol: string, handler: (stream: Stream, connection: Connection) => void): Promise<void>;
+	register(protocol: string, topology: Topology): Promise<void>;
 }
