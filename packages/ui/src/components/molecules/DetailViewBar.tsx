@@ -12,7 +12,7 @@ export function DetailViewBar(props: { file: IFileInfo, onClose: () => void; }) 
 
 	return (
 		<Paper>
-			<Stack direction={'row'} sx={{ alignItems: 'center' }} gap={1}>
+			<Stack direction={'row'} sx={{ alignItems: 'center' }} spacing={1}>
 				<Button onClick={onClose} startIcon={<ArrowBackIcon />}>{_t('Back')}</Button>
 				<Typography>{title}</Typography>
 				<Spacer />
