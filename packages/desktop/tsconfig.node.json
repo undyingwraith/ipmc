@@ -3,7 +3,7 @@
 	"include": [
 		"env.d.ts",
 		"electron.vite.config.*",
-		"src/main/*",
+		"src/main",
 		"src/preload/*"
 	],
 	"compilerOptions": {

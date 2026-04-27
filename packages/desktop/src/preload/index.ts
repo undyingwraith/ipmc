@@ -22,8 +22,6 @@ import { webSockets } from '@libp2p/websockets';
 import { FsBlockstore } from 'blockstore-fs';
 import { LevelDatastore } from 'datastore-level';
 import { contextBridge, ipcRenderer } from 'electron';
-import fso from 'fs';
-import fs from 'fs/promises';
 import { createHelia } from 'helia';
 import { createHeliaIpfs, Defaults } from 'ipmc-core';
 import { IConfigurationService, IInternalProfile, IIpfsService, INodeService, IProfile } from 'ipmc-interfaces';
@@ -180,29 +178,16 @@ const nodeService: INodeService = {
 
 const configService: IConfigurationService = {
 	async getProfiles(): Promise<string[]> {
-		try {
-			const folder = await getProfileFolder();
-			const profiles = (await fs.readdir(folder))
-				.filter(p => fso.existsSync(path.join(folder, p, 'profile.json')));
-			return profiles;
-		} catch (_) {
-			return [];
-		}
+		return ipcRenderer.invoke('config:getProfiles');
 	},
 	async getProfile(id: string): Promise<IProfile> {
-		return JSON.parse(await fs.readFile(path.join(await getProfileFolder(id), '/profile.json'), 'utf-8'));
+		return ipcRenderer.invoke('config:getProfile', id);
 	},
 	async setProfile(id: string, profile: IProfile) {
-		const folder = await getProfileFolder(id);
-		if (!fso.existsSync(folder)) {
-			await fs.mkdir(folder, {
-				recursive: true
-			});
-		}
-		await fs.writeFile(path.join(folder, '/profile.json'), JSON.stringify(profile));
+		return ipcRenderer.invoke('config:setProfile', id, profile);
 	},
 	async removeProfile(id) {
-		return fs.rm(await getProfileFolder(id), { recursive: true });
+		return ipcRenderer.invoke('config:removeProfile', id);
 	},
 };
 

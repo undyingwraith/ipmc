@@ -2,14 +2,11 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron';
 import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
+import { setupIpc } from './IpcHandler';
 
 process.on('uncaughtException', function (error) {
 	process.stdout.write(error.name + ': ' + error.message + '\n' + (error.stack != undefined ? error.stack + '\n' : ''));
 });
-
-function getAppPath(): string {
-	return join(app.getPath('appData'), app.getName(), 'Data');
-}
 
 function createWindow(): void {
 	// Create the browser window.
@@ -54,7 +51,8 @@ function createWindow(): void {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-	ipcMain.handle('getAppPath', getAppPath);
+	// Setup Inter process communication
+	setupIpc(ipcMain);
 
 	// Set app user model id for windows
 	electronApp.setAppUserModelId('com.electron');
