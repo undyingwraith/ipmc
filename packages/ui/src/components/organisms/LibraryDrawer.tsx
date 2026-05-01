@@ -70,6 +70,7 @@ export function LibraryDrawer() {
 					<Divider />
 					<ListItem disablePadding>
 						<ListItemButton
+							selected={location.value === '/settings'}
 							onClick={() => {
 								setLocation('~/settings');
 								drawerOpen.value = false;
