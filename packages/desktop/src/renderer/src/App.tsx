@@ -1,13 +1,15 @@
-import { IpmcApp } from "ipmc-ui";
+import { IpmcApp, IThemeServiceConfig, IThemeServiceConfigSymbol } from "ipmc-ui";
 import { useEffect, useState } from 'react';
 
 function App() {
-	const [started, setStarted] = useState(false);
+	const [darkMode, setDarkMode] = useState<boolean>();
 
 	useEffect(() => {
 		const interval = setInterval(() => {
 			if (window.configService && window.nodeService) {
-				setStarted(true);
+				window.themeService.shouldUseDarkColors().then((darkMode) => {
+					setDarkMode(darkMode);
+				});
 				clearInterval(interval);
 			}
 		}, 100);
@@ -17,10 +19,15 @@ function App() {
 		};
 	});
 
-	return started ? (
+	return darkMode != null ? (
 		<IpmcApp
 			nodeService={window.nodeService}
 			configService={window.configService}
+			setup={(app) => {
+				app.registerConstant<Partial<IThemeServiceConfig>>({
+					darkMode: darkMode,
+				}, IThemeServiceConfigSymbol);
+			}}
 		/>
 	) : (
 		<div>

@@ -4,5 +4,8 @@ declare global {
 	interface Window {
 		nodeService: INodeService;
 		configService: IConfigurationService;
+		themeService: {
+			shouldUseDarkColors(): Promise<boolean>;
+		};
 	}
 }

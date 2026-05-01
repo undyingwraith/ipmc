@@ -1,5 +1,5 @@
 import { gossipsub } from '@chainsafe/libp2p-gossipsub';
-import { noise, pureJsCrypto } from '@chainsafe/libp2p-noise';
+import { noise } from '@chainsafe/libp2p-noise';
 import { yamux } from '@chainsafe/libp2p-yamux';
 import { bitswap, trustlessGateway } from '@helia/block-brokers';
 import { delegatedHTTPRouting, httpGatewayRouting, libp2pRouting } from '@helia/routers';
@@ -77,9 +77,7 @@ export async function createNode(profile: IInternalProfile, folder: string) {
 			mdns(),
 		],
 		connectionEncrypters: [
-			noise({
-				crypto: pureJsCrypto
-			}),
+			noise(),
 		],
 		streamMuxers: [
 			yamux(),

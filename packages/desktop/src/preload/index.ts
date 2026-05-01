@@ -34,6 +34,9 @@ const configService: IConfigurationService = {
 	},
 };
 
+const themeService = {
+	shouldUseDarkColors: () => ipcRenderer.invoke('shouldUseDarkColors')
+};
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise
@@ -42,6 +45,7 @@ if (process.contextIsolated) {
 	try {
 		contextBridge.exposeInMainWorld('nodeService', nodeService);
 		contextBridge.exposeInMainWorld('configService', configService);
+		contextBridge.exposeInMainWorld('themeService', themeService);
 	} catch (error) {
 		console.error(error);
 	}
@@ -50,4 +54,6 @@ if (process.contextIsolated) {
 	window.configService = configService;
 	// @ts-ignore
 	window.nodeService = nodeService;
+	// @ts-ignore
+	window.themeService = themeService;
 }
