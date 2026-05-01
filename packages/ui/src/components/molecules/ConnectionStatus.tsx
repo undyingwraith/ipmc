@@ -1,4 +1,4 @@
-import { Badge, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
+import { Badge, Divider, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText, Stack } from "@mui/material";
 import { useComputed, useSignal, useSignalEffect } from "@preact/signals-react";
 import { IIpfsService, ILogService, ILogServiceSymbol } from 'ipmc-interfaces';
 import React from "react";
@@ -41,6 +41,16 @@ export function ConnectionStatus(props: { ipfs: IIpfsService; }) {
 					maxWidth: '50vw',
 				}}
 			>
+				<ListItem>
+					<ListItemIcon>
+						<Identicon value={props.ipfs.id()} />
+					</ListItemIcon>
+					<ListItemText
+						primary={props.ipfs.id()}
+						secondary={<div>{_t('ConnectedPeers')}: {count}</div>}
+					/>
+				</ListItem>
+				<Divider />
 				{peers.value.length > 0 ? peers.value.map(p => (
 					<ListItem key={p.peer}>
 						<ListItemIcon>
@@ -48,7 +58,7 @@ export function ConnectionStatus(props: { ipfs: IIpfsService; }) {
 						</ListItemIcon>
 						<ListItemText
 							primary={p.peer}
-							secondary={p.addrs.map(a => <span key={a}>{a}</span>)}
+							secondary={<Stack>{p.addrs.map(a => <span key={a}>{a}</span>)}</Stack>}
 						/>
 					</ListItem>
 				)) : (

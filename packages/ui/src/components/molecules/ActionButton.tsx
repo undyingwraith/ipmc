@@ -3,7 +3,7 @@ import { useComputed, useSignal } from '@preact/signals-react';
 import { IOnProgress } from 'ipmc-interfaces';
 import React, { useEffect, useMemo } from 'react';
 import { Loader } from '../atoms';
-import { Check, ErrorOutline } from '@mui/icons-material';
+import { Check, ErrorOutlined } from '@mui/icons-material';
 
 export function ActionButton(props: { action: (options: IActionOptions) => Promise<void>; children: React.ReactElement; }) {
 	const { action, children } = props;
@@ -24,7 +24,7 @@ export function ActionButton(props: { action: (options: IActionOptions) => Promi
 				);
 			case 'error':
 				return (
-					<ErrorOutline />
+					<ErrorOutlined />
 				);
 		}
 	});

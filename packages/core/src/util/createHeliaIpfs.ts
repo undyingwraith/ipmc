@@ -20,8 +20,9 @@ export function createHeliaIpfs(helia: Helia<Libp2p<any>>, onClose: () => Promis
 			for await (const file of fs.ls(CID.parse(cid), {
 				//TODO: signal,
 			})) {
+				const stat = await fs.stat(file.cid);
 				files.push({
-					type: file.type == 'directory' ? 'dir' : 'file',
+					type: stat.type == 'directory' ? 'dir' : 'file',
 					name: file.name,
 					cid: file.cid.toString(),
 				});

@@ -1,6 +1,6 @@
 {
 	"name": "ipmc-tools",
-	"version": "0.2.2",
+	"version": "0.2.3",
 	"main": "index.js",
 	"license": "MIT",
 	"scripts": {
@@ -13,7 +13,7 @@
 		"cli-progress": "^3.12.0",
 		"fluent-ffmpeg": "^2.1.3",
 		"ipmc-core": "workspace:^",
-		"kubo-rpc-client": "^6.0.2",
+		"kubo-rpc-client": "^6.1.0",
 		"srt2vtt": "^1.3.1",
 		"yargs": "^17.7.2"
 	},
