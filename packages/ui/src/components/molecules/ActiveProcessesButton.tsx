@@ -43,7 +43,7 @@ export function ActiveProcessesButton() {
 						horizontal: 'left',
 					}}
 				>
-					<Stack gap={1} sx={{ padding: 3 }}>
+					<Stack spacing={1} sx={{ padding: 3 }}>
 						{status.map(t => (<ProcessDisplay task={t} />))}
 					</Stack>
 				</Popover>
