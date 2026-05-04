@@ -105,7 +105,7 @@ export function MediaPlayer() {
 								<ExpandLess />
 							</IconButton>
 						</div>
-						<p>{info}</p>
+						<span>{info}</span>
 						<div className={styles.spacer} />
 						<MediaPlayerButtons />
 						<MediaProgressBar />
