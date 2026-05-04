@@ -1,6 +1,12 @@
-import { isIAlbumMetadata, IFileInfo, isIAudioMetadata, isBackdropFeature, isIEpisodeMetadata, isIVideoFile, isPosterFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
-import { IMediaPreferenceService } from './IMediaPreferenceService';
+import LiveTvIcon from '@mui/icons-material/LiveTv';
+import MovieIcon from '@mui/icons-material/Movie';
+import MusicNoteIcon from '@mui/icons-material/MusicNote';
+import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 import { injectable } from 'inversify';
+import { IFileInfo, isBackdropFeature, isIAlbumMetadata, isIAudioMetadata, isIEpisodeMetadata, isIMovieMetadata, isISeasonMetadata, isISeriesMetadata, isIVideoFile, isPosterFeature, isTitleFeature, isYearFeature } from 'ipmc-interfaces';
+import React from 'react';
+import { IMediaPreferenceService } from './IMediaPreferenceService';
 
 @injectable()
 export class MediaPreferenceService implements IMediaPreferenceService {
@@ -46,5 +52,24 @@ export class MediaPreferenceService implements IMediaPreferenceService {
 			: isBackdropFeature(item) && item.backdrops.length > 0
 				? item.backdrops[0]
 				: undefined;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	getTypeIcon(item: IFileInfo): JSX.Element {
+		if (isIMovieMetadata(item)) {
+			return (<MovieIcon />);
+		}
+		if (isISeriesMetadata(item) || isISeasonMetadata(item) || isIEpisodeMetadata(item)) {
+			return (<LiveTvIcon />);
+		}
+		if (isIVideoFile(item)) {
+			return (<OndemandVideoIcon />);
+		}
+		if (isIAudioMetadata(item)) {
+			return (<MusicNoteIcon />);
+		}
+		return (<QuestionMarkIcon />);
 	}
 }

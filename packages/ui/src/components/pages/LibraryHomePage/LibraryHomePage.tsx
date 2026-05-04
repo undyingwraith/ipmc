@@ -3,7 +3,7 @@ import { useComputed } from '@preact/signals-react';
 import { IPinItem, IPinManagerService, IPinManagerServiceSymbol, IProfile, IProfileSymbol, ISortAndFilterService, ISortAndFilterServiceSymbol, ITaskManager, ITaskManagerSymbol } from 'ipmc-interfaces';
 import React from 'react';
 import { useService } from '../../../context';
-import { useTranslation } from '../../../hooks/useTranslation';
+import { useTranslation } from '../../../hooks';
 import { ILibraryService, ILibraryServiceSymbol, INavigationService, INavigationServiceSymbol } from '../../../services';
 import { LibraryTypeDictionary } from '../../../utils';
 import { ProcessDisplay } from '../../atoms';
@@ -26,7 +26,7 @@ export function LibraryHomePage() {
 				<Card>
 					<CardHeader title={_t('ActiveTasks')} />
 					<CardContent>
-						{status.map(t => (<ProcessDisplay task={t} />))}
+						{status.map(t => (<ProcessDisplay task={t} key={t.id} />))}
 					</CardContent>
 				</Card>
 			);

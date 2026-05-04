@@ -29,4 +29,9 @@ export interface IMediaPreferenceService {
 	 * @param item the {@link IFileInfo} to get the thumbnail for.
 	 */
 	getThumbnail(item: IFileInfo): IFileInfo | undefined;
+
+	/**
+	 * Gets the icon for the media type.
+	 */
+	getTypeIcon(item: IFileInfo): JSX.Element;
 }

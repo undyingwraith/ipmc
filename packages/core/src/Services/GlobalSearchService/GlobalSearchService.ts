@@ -1,5 +1,5 @@
 import { inject } from 'inversify';
-import { IFileInfo, IIndexManager, IIndexManagerSymbol, ISortAndFilterService, ISortAndFilterServiceSymbol } from 'ipmc-interfaces';
+import { IFileInfo, IIndexManager, IIndexManagerSymbol, isIFolderFile, ISortAndFilterService, ISortAndFilterServiceSymbol } from 'ipmc-interfaces';
 import { IGlobalSearchService } from './IGlobalSearchService';
 
 export class GlobalSearchService implements IGlobalSearchService {
@@ -13,10 +13,17 @@ export class GlobalSearchService implements IGlobalSearchService {
 
 		for (const [_, idx] of this.indexManager.indexes.entries()) {
 			if (idx.value) {
-				allItems.push(...idx.value.index);
+				allItems.push(...idx.value.index.map(i => this.getChildren(i)).flat());
 			}
 		}
 
 		return this.sortAndFilterService.createFilteredList(allItems, query);
+	}
+
+	private getChildren(item: IFileInfo): IFileInfo[] {
+		if (isIFolderFile(item)) {
+			return [item, ...item.items.map(i => this.getChildren(i)).flat()];
+		}
+		return [item];
 	}
 }

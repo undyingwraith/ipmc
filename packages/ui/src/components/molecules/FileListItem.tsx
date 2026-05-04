@@ -1,4 +1,4 @@
-import { ListItem, ListItemButton, ListItemText, Stack } from '@mui/material';
+import { ListItem, ListItemButton, ListItemIcon, ListItemText, Stack } from '@mui/material';
 import { IFileInfo, isIFolderFile, isIVideoFile } from 'ipmc-interfaces';
 import React from 'react';
 import { useService } from '../../context';
@@ -12,8 +12,9 @@ export function FileListItem(props: {
 	actions?: JSX.Element;
 	selected?: boolean;
 	style?: any;
+	typeIcon?: boolean;
 }) {
-	const { file, onOpen, selected, style } = props;
+	const { file, onOpen, selected, style, typeIcon } = props;
 	const mediaService = useService<IMediaPreferenceService>(IMediaPreferenceServiceSymbol);
 	const actions = props.actions ?? (<MediaItemActions file={file} />);
 
@@ -38,6 +39,11 @@ export function FileListItem(props: {
 					onClick={onOpen}
 					selected={selected}
 				>
+					{typeIcon && (
+						<ListItemIcon>
+							{mediaService.getTypeIcon(file)}
+						</ListItemIcon>
+					)}
 					<ListItemText
 						primary={mediaService.getHeader(file)}
 						secondary={mediaService.getSubheader(file)}

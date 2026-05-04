@@ -1,7 +1,7 @@
 import { Button, ButtonGroup } from '@mui/material';
 import { useComputed } from '@preact/signals-react';
 import React from 'react';
-import { TDisplay } from 'src/services/LibraryService/TDisplay';
+import { TDisplay } from '../../services';
 import { useService } from '../../context';
 import { useTranslation } from '../../hooks';
 import { ILibraryCapabilities, ILibraryService, ILibraryServiceSymbol } from '../../services';
@@ -20,8 +20,6 @@ export function DisplayButtons() {
 		const active = libraryService.active.value;
 		return active ? libraryService.getCapabilities(active.library) : {
 			displays: [],
-			hasPoster: false,
-			hasThumbnail: false,
 			views: undefined,
 		};
 	});

@@ -56,6 +56,7 @@ export function GlobalSearchField(props: { searchService: IGlobalSearchService; 
 						<div>{_t('NoItems')}</div>
 					) : (
 						<FileList
+							typeIcons={true}
 							files={results.value.slice(0, 9)}
 							onOpen={(i) => {
 								if (isPinFeature(i)) {

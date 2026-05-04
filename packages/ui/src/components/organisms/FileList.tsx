@@ -11,8 +11,9 @@ export function FileList(props: {
 	actions?: (f: IFileInfo, k: number) => any;
 	selected?: number;
 	header?: { height: number, content: ReactNode; };
+	typeIcons?: boolean;
 }) {
-	const { files, onOpen, actions, selected, header } = props;
+	const { files, onOpen, actions, selected, header, typeIcons } = props;
 
 	const navigationService = useService<INavigationService>(INavigationServiceSymbol);
 
@@ -27,6 +28,7 @@ export function FileList(props: {
 					<ErrorBoundary key={f.cid}>
 						<FileListItem
 							style={style}
+							typeIcon={typeIcons}
 							file={f}
 							onOpen={() => onOpen ? onOpen(f, index) : navigationService.navigate(`./${f.name}`)}
 							actions={actions ? actions(f, index) : undefined}
