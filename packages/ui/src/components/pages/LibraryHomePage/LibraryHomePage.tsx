@@ -4,11 +4,10 @@ import { IPinItem, IPinManagerService, IPinManagerServiceSymbol, IProfile, IProf
 import React from 'react';
 import { useLocation } from 'wouter';
 import { useService } from '../../../context';
+import { useTranslation } from '../../../hooks';
 import { LibraryTypeDictionary } from '../../../utils';
-import { useTranslation } from '../../../hooks/useTranslation';
 import { ProcessDisplay } from '../../atoms';
-import { Display } from '../../molecules';
-import { FileGridItem } from '../../molecules/FileGridItem';
+import { Display, FileGridItem } from '../../molecules';
 import styles from './LibraryHomePage.module.css';
 
 export function LibraryHomePage() {
@@ -26,7 +25,7 @@ export function LibraryHomePage() {
 				<Card>
 					<CardHeader title={_t('ActiveTasks')} />
 					<CardContent>
-						{status.map(t => (<ProcessDisplay task={t} />))}
+						{status.map(t => (<ProcessDisplay task={t} key={t.id} />))}
 					</CardContent>
 				</Card>
 			);
