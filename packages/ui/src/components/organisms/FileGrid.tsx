@@ -5,8 +5,8 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { Grid } from 'react-window';
 import { useService } from '../../context';
 import { useLinkedSignal } from '../../hooks';
-import { INavigationService, INavigationServiceSymbol } from '../../services';
-import { Display, ErrorBoundary, FileGridItem } from '../molecules';
+import { INavigationService, INavigationServiceSymbol, TDisplay } from '../../services';
+import { ErrorBoundary, FileGridItem } from '../molecules';
 
 function getScrollbarWidth() {
 	// Creating invisible container
@@ -28,14 +28,14 @@ function getScrollbarWidth() {
 	return scrollbarWidth;
 }
 
-export function FileGrid(props: { files: IFileInfo[]; display: ReadonlySignal<Display>; header?: { height: number, content: ReactNode; }; }) {
+export function FileGrid(props: { files: IFileInfo[]; display: ReadonlySignal<TDisplay>; header?: { height: number, content: ReactNode; }; }) {
 	const { display, header } = props;
 
 	const navigationService = useService<INavigationService>(INavigationServiceSymbol);
 	const filesSig = useLinkedSignal(props.files);
 
 	return useComputed(() => {
-		const isPoster = display.value === Display.Poster;
+		const isPoster = display.value === TDisplay.Poster;
 		const files = filesSig.value;
 
 		return (
@@ -76,7 +76,6 @@ export function FileGrid(props: { files: IFileInfo[]; display: ReadonlySignal<Di
 												<FileGridItem
 													file={f}
 													onOpen={() => navigationService.navigate(`./${f.name}`)}
-													display={display}
 												/>
 											</div>
 										</ErrorBoundary>

@@ -3,10 +3,9 @@ import { useComputed, useSignal } from '@preact/signals-react';
 import { ISortAndFilterService, ISortAndFilterServiceSymbol } from 'ipmc-interfaces';
 import React from 'react';
 import { useService } from '../../context/AppContext';
-import { usePersistentSignal, useTranslation } from '../../hooks';
-import { ILibraryServiceSymbol, LibraryService } from '../../services';
+import { useTranslation } from '../../hooks';
+import { ILibraryServiceSymbol, LibraryService, TDisplay } from '../../services';
 import { LoadScreen } from '../molecules';
-import { Display } from '../molecules/DisplayButtons';
 import { FileGrid, FileList } from '../organisms';
 
 export function LibraryPage() {
@@ -14,9 +13,9 @@ export function LibraryPage() {
 
 	const sortAndFilterService = useService<ISortAndFilterService>(ISortAndFilterServiceSymbol);
 	const libraryService = useService<LibraryService>(ILibraryServiceSymbol);
+	const display = libraryService.display;
 
 	const query = useSignal('');
-	const display = usePersistentSignal<Display>(Display.Poster, 'display');
 
 	const sorted = useComputed(() => libraryService.activeLibraryItems.value == undefined
 		? undefined
@@ -30,7 +29,7 @@ export function LibraryPage() {
 		) : (
 			sorted.value.length === 0 ? (
 				<Box>{_t('NoItems')}</Box>
-			) : display.value == Display.List ? (
+			) : display.value == TDisplay.List ? (
 				<FileList
 					files={sorted.value}
 				/>

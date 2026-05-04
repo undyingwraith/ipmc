@@ -1,13 +1,10 @@
+import { TDisplay } from './TDisplay';
+
 export interface ILibraryCapabilities {
 	/**
-	 * Whether the items have posters.
+	 * The supported {@link TDisplay} types.
 	 */
-	hasPoster: boolean;
-
-	/**
-	 * Whether the items have thumbnails.
-	 */
-	hasThumbnail: boolean;
+	displays: TDisplay[];
 
 	/**
 	 * Subviews of the {@link ILibrary} if there are any.

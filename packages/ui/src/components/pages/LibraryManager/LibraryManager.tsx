@@ -5,9 +5,9 @@ import { IProfile, IProfileSymbol } from "ipmc-interfaces";
 import React from "react";
 import { Redirect, Route } from 'wouter';
 import { useService } from '../../../context/AppContext';
-import { usePersistentSignal, useTranslation } from '../../../hooks';
+import { useTranslation } from '../../../hooks';
 import { ILibraryService, ILibraryServiceSymbol } from '../../../services';
-import { Display, ErrorBoundary, GlobalSearchField, LibraryFilters } from '../../molecules';
+import { ErrorBoundary, GlobalSearchField, LibraryFilters } from '../../molecules';
 import { LibraryDrawer, MediaPlayer } from '../../organisms';
 import { ItemRouter } from '../ItemRouter';
 import { LibraryHomePage } from '../LibraryHomePage';
@@ -20,8 +20,6 @@ export function LibraryManager() {
 	const libraryService = useService<ILibraryService>(ILibraryServiceSymbol);
 	const searchService = useService<IGlobalSearchService>(IGlobalSearchServiceSymbol);
 	const libraries = profile.libraries;
-
-	const display = usePersistentSignal<Display>(Display.Poster, 'display');
 
 	return (
 		<div className={styles.container}>
@@ -38,7 +36,7 @@ export function LibraryManager() {
 							</Button>
 						</Route>
 						<GlobalSearchField searchService={searchService} />
-						<LibraryFilters display={display} />
+						<LibraryFilters />
 					</Toolbar>
 				</Paper>
 				<div className={styles.content}>

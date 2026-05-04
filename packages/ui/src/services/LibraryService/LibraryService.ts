@@ -1,9 +1,10 @@
-import { computed, ReadonlySignal } from '@preact/signals-react';
+import { computed, effect, ReadonlySignal, Signal } from '@preact/signals-react';
 import { inject, injectable } from 'inversify';
-import { IAlbumMetadata, IAudioMetaData, IFileInfo, IFolderFile, type IIndexManager, IIndexManagerSymbol, ILibrary, type IProfile, IProfileSymbol } from 'ipmc-interfaces';
+import { IAlbumMetadata, IAudioMetaData, IFileInfo, IFolderFile, type IIndexManager, IIndexManagerSymbol, ILibrary, type IPersistentSignalService, IPersistentSignalServiceSymbol, type IProfile, IProfileSymbol } from 'ipmc-interfaces';
 import { type INavigationService, INavigationServiceSymbol } from '../NavigationService';
 import { ILibraryCapabilities } from './ILibraryCapabilities';
 import { ILibraryService } from './ILibraryService';
+import { TDisplay } from './TDisplay';
 
 @injectable()
 export class LibraryService implements ILibraryService {
@@ -11,7 +12,19 @@ export class LibraryService implements ILibraryService {
 		@inject(INavigationServiceSymbol) private readonly navigation: INavigationService,
 		@inject(IIndexManagerSymbol) private readonly indexManager: IIndexManager,
 		@inject(IProfileSymbol) private readonly profile: IProfile,
-	) { }
+		@inject(IPersistentSignalServiceSymbol) persistentSignalService: IPersistentSignalService,
+	) {
+		this.display = persistentSignalService.get<TDisplay>('display', TDisplay.Poster);
+		effect(() => {
+			const active = this.active.value;
+			if (active) {
+				const cap = this.getCapabilities(active.library);
+				if (!cap.displays.includes(this.display.peek())) {
+					this.display.value = cap.displays[0];
+				}
+			}
+		});
+	}
 
 	/**
 	 * @inheritdoc
@@ -70,20 +83,17 @@ export class LibraryService implements ILibraryService {
 			case 'movie':
 			case 'series':
 				return {
-					hasPoster: true,
-					hasThumbnail: true,
+					displays: [TDisplay.List, TDisplay.Poster, TDisplay.Thumbnail],
 					views: undefined,
 				};
 			case 'music':
 				return {
-					hasPoster: false,
-					hasThumbnail: false,
+					displays: [TDisplay.List],
 					views: ['Songs', 'Artists', 'Albums'],
 				};
 			default:
 				return {
-					hasPoster: false,
-					hasThumbnail: false,
+					displays: [TDisplay.List],
 					views: undefined,
 				};
 		}
@@ -160,6 +170,8 @@ export class LibraryService implements ILibraryService {
 
 		return undefined;
 	});
+
+	public display: Signal<TDisplay>;
 
 	private readonly viewKey = 'view';
 }

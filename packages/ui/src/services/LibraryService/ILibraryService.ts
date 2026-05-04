@@ -1,6 +1,7 @@
-import { ReadonlySignal } from '@preact/signals-react';
+import { ReadonlySignal, Signal } from '@preact/signals-react';
 import { IFileInfo, ILibrary } from 'ipmc-interfaces';
 import { ILibraryCapabilities } from './ILibraryCapabilities';
+import { TDisplay } from './TDisplay';
 
 export const ILibraryServiceSymbol = Symbol.for('ILibraryService');
 
@@ -41,4 +42,9 @@ export interface ILibraryService {
 	 * The the items of the currently active {@link ILibrary}.
 	 */
 	activeLibraryItems: ReadonlySignal<IFileInfo[] | undefined>;
+
+	/**
+	 * The currently active {@link TDisplay}.
+	 */
+	display: Signal<TDisplay>;
 }

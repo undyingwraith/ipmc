@@ -1,9 +1,10 @@
 import { computed, useComputed } from '@preact/signals-react';
 import { IFileInfo, isBackdropFeature, isIFolderFile, isIVideoFile } from 'ipmc-interfaces';
 import React from 'react';
-import { useFileUrl, usePersistentSignal, useTranslation } from '../../../hooks';
+import { useService } from '../../../context';
+import { useFileUrl, useTranslation } from '../../../hooks';
+import { ILibraryService, ILibraryServiceSymbol, TDisplay } from '../../../services';
 import { FileInfoDisplay, LanguageDisplay, VideoMetadataDisplay } from '../../atoms';
-import { Display } from '../../molecules';
 import { MediaItemActions } from '../../molecules/MediaItemActions';
 import { FileGrid, FileList } from '../../organisms';
 import styles from './ItemPage.module.css';
@@ -15,7 +16,9 @@ export function ItemPage(props: {
 	const file = props.item;
 	const _t = useTranslation();
 
-	const display = usePersistentSignal<Display>(Display.Poster, 'display');
+	const libraryService = useService<ILibraryService>(ILibraryServiceSymbol);
+	const display = libraryService.display;
+
 	const backdropUrl = useFileUrl(isBackdropFeature(file) && file.backdrops.length > 0 ? file.backdrops[0]?.cid : undefined);
 
 	const items = isIFolderFile(file) ? (file.items.length === 1 && isIFolderFile(file.items[0]) ? file.items[0].items : file.items) : [];
@@ -45,7 +48,7 @@ export function ItemPage(props: {
 						content: details,
 					};
 					return (
-						display.value == Display.List ? (
+						display.value == TDisplay.List ? (
 							<FileList
 								files={items}
 								header={header}
