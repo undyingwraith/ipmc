@@ -14,8 +14,8 @@ export class SortAndFilterService implements ISortAndFilterService {
 		}
 
 		const matchers: IMatcher[] = [
-			(v, w) => v.name.toLowerCase().includes(w),
-			(v, w) => isTitleFeature(v) && v.title.toLowerCase().includes(w),
+			(v, w) => this.matchText(v.name, w),
+			(v, w) => isTitleFeature(v) && this.matchText(v.title, w),
 			(v, w) => isYearFeature(v) && v.year.toString() === w,
 		];
 
@@ -44,6 +44,10 @@ export class SortAndFilterService implements ISortAndFilterService {
 			.filter(i => i.score > (maxScore / 100) * threshold)
 			.sort((a, b) => a.score === b.score ? this.sort(a.item, b.item) : b.score - a.score)
 			.map(i => i.item);
+	}
+
+	private matchText(v: string, w: string) {
+		return v.toLowerCase().includes(w) || v.toLowerCase().replaceAll(/[|()\[\]\-\:,\.]/g, '').includes(w);
 	}
 
 	private sort(a: IFileInfo, b: IFileInfo): number {
