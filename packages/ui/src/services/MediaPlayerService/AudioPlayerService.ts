@@ -2,7 +2,7 @@ import { batch, Signal } from '@preact/signals-react';
 import { inject, injectable } from 'inversify';
 import { IFileInfo, type ILogService, ILogServiceSymbol, isIAudioFile } from 'ipmc-interfaces';
 import { type IObjectUrlController, IObjectUrlControllerSymbol } from '../ObjectUrlController';
-import { IPlayerService, TEvent } from './IPlayerService';
+import { IPlayerService } from './IPlayerService';
 import { BasePlayerService } from './BasePlayerService';
 
 export const IAudioPlayerServiceSymbol = Symbol.for('AudioPlayerService');

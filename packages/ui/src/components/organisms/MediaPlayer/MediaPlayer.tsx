@@ -1,7 +1,6 @@
 import { ArrowDownward, ArrowUpward, Delete, ExpandLess, ExpandMore, List } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import { batch, useComputed, useSignal } from '@preact/signals-react';
-import { isTitleFeature } from 'ipmc-interfaces';
 import React from 'react';
 import { useService } from '../../../context';
 import { IMediaPlayerService, IMediaPlayerServiceSymbol, IMediaPreferenceService, IMediaPreferenceServiceSymbol } from '../../../services';

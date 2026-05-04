@@ -1,7 +1,7 @@
 import { AddToQueue, PlayArrow, QueuePlayNext } from '@mui/icons-material';
 import { Button, ButtonGroup } from '@mui/material';
 import { batch } from '@preact/signals-react';
-import { IFileInfo, IFolderFile, isIAlbumMetadata, isIArtistMetadata, isIAudioFile, isIFolderFile, isISeasonMetadata, isISeriesMetadata, isIVideoFile, isPinFeature } from 'ipmc-interfaces';
+import { IFileInfo, IFolderFile, isIAlbumMetadata, isIArtistMetadata, isIFolderFile, isISeasonMetadata, isISeriesMetadata, isIVideoFile, isPinFeature } from 'ipmc-interfaces';
 import React from 'react';
 import { useService } from '../../context';
 import { useTranslation } from '../../hooks';
