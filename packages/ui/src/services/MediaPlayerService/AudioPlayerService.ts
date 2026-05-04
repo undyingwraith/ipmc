@@ -10,6 +10,7 @@ export const IAudioPlayerServiceSymbol = Symbol.for('AudioPlayerService');
 @injectable()
 export class AudioPlayerService extends BasePlayerService implements IPlayerService {
 	private player: HTMLAudioElement | undefined;
+	private oldVolume: number = 1;
 
 	public constructor(
 		@inject(ILogServiceSymbol) private readonly log: ILogService,
@@ -39,13 +40,8 @@ export class AudioPlayerService extends BasePlayerService implements IPlayerServ
 	public async load(file: IFileInfo): Promise<void> {
 		const [audioUrl, _] = this.urlController.getObjectUrl(file.cid);
 		const url = await audioUrl;
-		const oldPlayer = this.player;
 		this.player = new Audio(url);
-		if (oldPlayer) {
-			oldPlayer.pause();
-			this.player.volume = oldPlayer.volume;
-			// TODO: destroy old player
-		}
+		this.player.volume = this.oldVolume;
 		this.player.addEventListener('timeupdate', () => {
 			batch(() => {
 				this.updateTimes();
@@ -91,6 +87,7 @@ export class AudioPlayerService extends BasePlayerService implements IPlayerServ
 	}
 
 	public setVolume(volume: number): void {
+		this.oldVolume = volume;
 		if (this.player) {
 			this.player.volume = volume;
 		}
