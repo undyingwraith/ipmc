@@ -1,4 +1,5 @@
 export { useAppbarButtons } from './useAppbarButtons';
+export { useEventListener } from './useEventListener';
 export { useFileUrl } from './useFileUrl';
 export { useHotkey } from './useHotkey';
 export { useIsVisible } from './useIsVisible';

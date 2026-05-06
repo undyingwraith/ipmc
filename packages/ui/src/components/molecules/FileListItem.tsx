@@ -36,7 +36,10 @@ export function FileListItem(props: {
 					</Stack>
 				}>
 				<ListItemButton
-					onClick={onOpen}
+					onClick={(ev) => {
+						ev.stopPropagation();
+						onOpen();
+					}}
 					selected={selected}
 				>
 					{typeIcon && (

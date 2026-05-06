@@ -1,12 +1,12 @@
 import { InputBase } from '@mui/material';
-import { useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
+import { batch, useComputed, useSignal, useSignalEffect } from '@preact/signals-react';
 import { IGlobalSearchService } from 'ipmc-core';
 import { IFileInfo, isPinFeature } from 'ipmc-interfaces';
 import React from 'react';
-import { useHotkey, useTranslation } from '../../hooks';
+import { useLocation } from 'wouter';
+import { useEventListener, useHotkey, useTranslation } from '../../hooks';
 import styles from '../atoms/DropDown/DropDown.module.scss';
 import { FileList } from '../organisms';
-import { useLocation } from 'wouter';
 
 export function GlobalSearchField(props: { searchService: IGlobalSearchService; }) {
 	const { searchService } = props;
@@ -22,15 +22,8 @@ export function GlobalSearchField(props: { searchService: IGlobalSearchService; 
 		results.value = query.value.trim() !== '' ? searchService.search(query.value) : [];
 	});
 
-	useSignalEffect(() => {
-		searchFieldRef.value?.addEventListener('focusin', () => {
-			resultsVisible.value = true;
-		});
-		searchFieldRef.value?.addEventListener('focusout', () => {
-			setTimeout(() => {
-				resultsVisible.value = false;
-			}, 100);
-		});
+	useEventListener(document, 'click', () => {
+		resultsVisible.value = false;
 	});
 
 	useHotkey({
@@ -39,7 +32,14 @@ export function GlobalSearchField(props: { searchService: IGlobalSearchService; 
 	}, () => searchFieldRef.value?.focus());
 
 	return (
-		<div className={styles.container} style={{ flexGrow: 1 }}>
+		<div
+			className={styles.container}
+			style={{ flexGrow: 1 }}
+			onClick={(ev) => {
+				ev.stopPropagation();
+				resultsVisible.value = true;
+			}}
+		>
 			{useComputed(() => (
 				<InputBase
 					sx={{ ml: 1, width: '100%' }}
@@ -60,7 +60,10 @@ export function GlobalSearchField(props: { searchService: IGlobalSearchService; 
 							onOpen={(i) => {
 								if (isPinFeature(i)) {
 									setLocation(`~/${i.pinId}`);
-									query.value = '';
+									batch(() => {
+										query.value = '';
+										resultsVisible.value = false;
+									});
 								}
 							}}
 						/>
