@@ -1,0 +1,30 @@
+{
+	"name": "tauri-app",
+	"private": true,
+	"version": "0.1.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc && vite build",
+		"preview": "vite preview",
+		"tauri": "tauri"
+	},
+	"dependencies": {
+		"@tauri-apps/api": "^2",
+		"@tauri-apps/plugin-opener": "^2",
+		"ipmc-core": "workspace:^",
+		"ipmc-interfaces": "workspace:^",
+		"ipmc-ui": "workspace:^",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"wouter": "^3.7.0"
+	},
+	"devDependencies": {
+		"@tauri-apps/cli": "^2",
+		"@types/react": "^19.1.8",
+		"@types/react-dom": "^19.1.6",
+		"@vitejs/plugin-react": "^4.4.1",
+		"typescript": "~6.0.3",
+		"vite": "^8.0.16"
+	}
+}
