@@ -1,5 +1,19 @@
 [workspace]
 resolver = "3"
 members = [
-	"packages/tauri-app/src-tauri"
+	"packages/tauri-app/src-tauri",
+	"packages/node",
 ]
+
+[workspace.dependencies]
+tokio = "^1.54.1"
+serde = { version = "^1.0.229", features = ["derive"] }
+rust-ipfs = { git = "https://github.com/dariusc93/rust-ipfs.git", branch = "libp2p-next", features = ["pnet"] }
+
+# Read the optimization guideline for more details: https://tauri.app/concept/size/#cargo-configuration
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = 3
+panic = "abort"
+strip = true

@@ -1,7 +1,7 @@
 import { invoke } from '@tauri-apps/api/core';
 import { BrowserModule, CoreModule } from 'ipmc-core';
-import { IConfigurationService, INodeService } from 'ipmc-interfaces';
-import { AppContextProvider, IpmcApp, IpmcLauncher } from "ipmc-ui";
+import { IConfigurationService, IIpfsService, INodeService } from 'ipmc-interfaces';
+import { IpmcApp, IpmcLauncher } from "ipmc-ui";
 import { useEffect, useState } from 'react';
 import { Route, Router, Switch } from 'wouter';
 import { useHashLocation } from 'wouter/use-hash-location';
@@ -14,7 +14,25 @@ const configService: IConfigurationService = {
 };
 
 const nodeService: INodeService = {
-	create: (profile) => invoke('create_node', { profile })
+	create: async (profile) => {
+		await invoke('create_node', { profile });
+
+		await new Promise(resolve => setTimeout(resolve, 5000));
+
+		const id = profile.id;
+		const api: IIpfsService = {
+			addPin: (cid) => invoke('ipfs_add_pin', { cid, id }),
+			fetch: (cid, path) => invoke('ipfs_fetch', { cid, path, id }),
+			id: () => 'test',//invoke('ipfs_id', { id }),
+			isPinned: (cid) => invoke('ipfs_is_pinned', { cid, id }),
+			ls: (cid, _) => invoke('ipfs_ls', { cid, id }),
+			peers: () => invoke('ipfs_peers', { id }),
+			resolve: (ipns) => invoke('ipfs_resolve', { ipns, id }),
+			rmPin: (cid) => invoke('ipfs_rm_pin', { cid, id }),
+			stop: () => invoke('ipfs_stop', { id }),
+		};
+		return api;
+	}
 };
 
 function App() {
