@@ -1,9 +1,9 @@
 use ipld_core::cid::Cid;
+use libp2p::pnet::PreSharedKey;
 use rust_ipfs::builder::DefaultIpfsBuilder;
-use rust_ipfs::prelude::transport::pnet::PreSharedKey;
 use rust_ipfs::unixfs::Entry;
 use rust_ipfs::{Ipfs, IpfsPath, Keypair};
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use std::fs;
 use std::path::PathBuf;
 use std::str::FromStr;
@@ -44,16 +44,43 @@ impl IpmcNode {
 			}
 		};
 
+		let port = profile.port.unwrap_or(0);
 		let mut builder = DefaultIpfsBuilder::with_keypair(&keypair)?
-			.with_default()
 			.enable_tcp()
 			.enable_quic()
 			.enable_dns()
-			.add_listening_addr("/ip4/0.0.0.0/tcp/0".parse().map_err(anyhow::Error::msg)?)
+			.enable_secure_websocket()
+			.enable_websocket()
+			.set_listening_addrs(vec![
+				format!("/ip4/0.0.0.0/tcp/{}", port)
+					.parse()
+					.map_err(anyhow::Error::msg)?,
+				format!("/ip6/::/tcp/{}", port).parse().map_err(anyhow::Error::msg)?,
+				format!("/ip4/0.0.0.0/udp/{}/quic-v1", port)
+					.parse()
+					.map_err(anyhow::Error::msg)?,
+				format!("/ip6/::/udp/{}/quic-v1", port)
+					.parse()
+					.map_err(anyhow::Error::msg)?,
+				//format!("/ip4/0.0.0.0/udp/{}/webrtc-direct", port).parse().map_err(anyhow::Error::msg)?,
+				//format!("/ip6/::/udp/{}/webrtc-direct", port).parse().map_err(anyhow::Error::msg)?,
+				format!("/ip4/0.0.0.0/tcp/{}/ws", port)
+					.parse()
+					.map_err(anyhow::Error::msg)?,
+				format!("/ip6/::/tcp/{}/ws", port).parse().map_err(anyhow::Error::msg)?,
+			])
+			.with_identify(Default::default())
+			.with_autonat()
+			.with_bitswap()
+			.with_kademlia()
+			.with_ping(Default::default())
+			.with_pubsub(Default::default())
 			.with_mdns()
 			.with_relay(true)
 			.with_relay_server(Default::default())
-			.with_upnp();
+			.with_upnp()
+			.with_autorelay()
+			.default_record_key_validator();
 		if let Some(ref key) = profile.swarm_key {
 			let psk = PreSharedKey::from_str(key)?;
 
@@ -70,6 +97,12 @@ impl IpmcNode {
 			ipfs.default_bootstrap().await?;
 		}
 		ipfs.bootstrap().await?;
+
+		println!("Listening Addresses:");
+		let addrs = ipfs.listening_addresses().await?;
+		for addr in addrs {
+			println!("{}", addr.to_string());
+		}
 
 		Ok(IpmcNode { ipfs })
 	}
@@ -139,7 +172,12 @@ impl IpmcNode {
 	}
 
 	pub async fn resolve(&self, name: &str) -> Result<String, IpmcError> {
-		let ipns_path = IpfsPath::from_str(name)?;
+		let name = if !name.starts_with("/") && name.contains(".") {
+			format!("/ipns/{name}")
+		} else {
+			name.to_owned()
+		};
+		let ipns_path = IpfsPath::from_str(&name)?;
 		Ok(self.ipfs.resolve_ipns(&ipns_path, true).await?.to_string())
 	}
 
@@ -154,13 +192,13 @@ impl IpmcNode {
 	}
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize)]
 pub struct PeerInfo {
-	peer: String,
-	addrs: Vec<String>,
+	pub peer: String,
+	pub addrs: Vec<String>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize)]
 pub struct FileInfo {
 	pub cid: String,
 	pub name: String,

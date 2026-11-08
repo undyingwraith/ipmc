@@ -12,10 +12,10 @@ pub enum IpmcError {
 	Anyhow(#[from] anyhow::Error),
 
 	#[error(transparent)]
-	Decoding(#[from] rust_ipfs::prelude::identity::DecodingError),
+	Decoding(#[from] libp2p::identity::DecodingError),
 
 	#[error(transparent)]
-	KeyParse(#[from] rust_ipfs::prelude::transport::pnet::KeyParseError),
+	KeyParse(#[from] libp2p::pnet::KeyParseError),
 
 	#[error(transparent)]
 	Json(#[from] serde_json::Error),

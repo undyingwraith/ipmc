@@ -8,7 +8,8 @@ members = [
 [workspace.dependencies]
 tokio = "^1.54.1"
 serde = { version = "^1.0.229", features = ["derive"] }
-rust-ipfs = { git = "https://github.com/dariusc93/rust-ipfs.git", branch = "libp2p-next", features = ["pnet"] }
+rust-ipfs = { version = "0.16.0", features = ["pnet", "routing"] }
+libp2p = { version = "0.56.0" }
 
 # Read the optimization guideline for more details: https://tauri.app/concept/size/#cargo-configuration
 [profile.release]

@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
 use tauri::{AppHandle, Manager};
-use tokio::sync::Mutex;
+use tokio::sync::RwLock;
 use tokio::sync::oneshot;
 
 mod error;
@@ -78,9 +78,9 @@ fn set_profile(id: &str, profile: Profile) -> Result<(), String> {
 
 #[tauri::command]
 async fn create_node(app: AppHandle, profile: Profile) -> Result<(), IpmcDesktopError> {
-	let state = app.state::<Mutex<AppState>>();
+	let state = app.state::<RwLock<AppState>>();
 	{
-		let state = state.lock().await;
+		let state = state.read().await;
 		if state.nodes.contains_key(&profile.id) {
 			return Ok(());
 		}
@@ -96,7 +96,7 @@ async fn create_node(app: AppHandle, profile: Profile) -> Result<(), IpmcDesktop
 	});
 
 	let node = rx.await.map_err(anyhow::Error::msg)??;
-	let mut state = state.lock().await;
+	let mut state = state.write().await;
 	state.nodes.insert(profile.id, node);
 
 	Ok(())
@@ -104,8 +104,8 @@ async fn create_node(app: AppHandle, profile: Profile) -> Result<(), IpmcDesktop
 
 #[tauri::command]
 async fn ipfs_add_pin(app: AppHandle, id: &str, cid: &str) -> Result<(), IpmcDesktopError> {
-	let state = app.state::<Mutex<AppState>>();
-	let state = state.lock().await;
+	let state = app.state::<RwLock<AppState>>();
+	let state = state.read().await;
 	if state.nodes.contains_key(id) {
 		let node = state.nodes.get(id).unwrap();
 		node.add_pin(cid).await?;
@@ -117,8 +117,8 @@ async fn ipfs_add_pin(app: AppHandle, id: &str, cid: &str) -> Result<(), IpmcDes
 
 #[tauri::command]
 async fn ipfs_fetch(app: AppHandle, id: &str, cid: &str, path: &str) -> Result<Vec<u8>, IpmcDesktopError> {
-	let state = app.state::<Mutex<AppState>>();
-	let state = state.lock().await;
+	let state = app.state::<RwLock<AppState>>();
+	let state = state.read().await;
 	if state.nodes.contains_key(id) {
 		let node = state.nodes.get(id).unwrap();
 		Ok(node.fetch(cid, path).await?)
@@ -129,8 +129,8 @@ async fn ipfs_fetch(app: AppHandle, id: &str, cid: &str, path: &str) -> Result<V
 
 #[tauri::command]
 async fn ipfs_id(app: AppHandle, id: &str) -> Result<String, IpmcDesktopError> {
-	let state = app.state::<Mutex<AppState>>();
-	let state = state.lock().await;
+	let state = app.state::<RwLock<AppState>>();
+	let state = state.read().await;
 	if state.nodes.contains_key(id) {
 		let node = state.nodes.get(id).unwrap();
 		let id = node.id().await?;
@@ -142,8 +142,8 @@ async fn ipfs_id(app: AppHandle, id: &str) -> Result<String, IpmcDesktopError> {
 
 #[tauri::command]
 async fn ipfs_is_pinned(app: AppHandle, id: &str, cid: &str) -> Result<bool, IpmcDesktopError> {
-	let state = app.state::<Mutex<AppState>>();
-	let state = state.lock().await;
+	let state = app.state::<RwLock<AppState>>();
+	let state = state.read().await;
 	if state.nodes.contains_key(id) {
 		let node = state.nodes.get(id).unwrap();
 		Ok(node.is_pinned(cid).await?)
@@ -154,8 +154,8 @@ async fn ipfs_is_pinned(app: AppHandle, id: &str, cid: &str) -> Result<bool, Ipm
 
 #[tauri::command]
 async fn ipfs_ls(app: AppHandle, id: &str, cid: &str) -> Result<Vec<FileInfo>, IpmcDesktopError> {
-	let state = app.state::<Mutex<AppState>>();
-	let state = state.lock().await;
+	let state = app.state::<RwLock<AppState>>();
+	let state = state.read().await;
 	if state.nodes.contains_key(id) {
 		let node = state.nodes.get(id).unwrap();
 		Ok(node.ls(cid).await?)
@@ -166,8 +166,8 @@ async fn ipfs_ls(app: AppHandle, id: &str, cid: &str) -> Result<Vec<FileInfo>, I
 
 #[tauri::command]
 async fn ipfs_resolve(app: AppHandle, id: &str, ipns: &str) -> Result<String, IpmcDesktopError> {
-	let state = app.state::<Mutex<AppState>>();
-	let state = state.lock().await;
+	let state = app.state::<RwLock<AppState>>();
+	let state = state.read().await;
 	if state.nodes.contains_key(id) {
 		let node = state.nodes.get(id).unwrap();
 		Ok(node.resolve(ipns).await?)
@@ -178,8 +178,8 @@ async fn ipfs_resolve(app: AppHandle, id: &str, ipns: &str) -> Result<String, Ip
 
 #[tauri::command]
 async fn ipfs_peers(app: AppHandle, id: &str) -> Result<Vec<PeerInfo>, IpmcDesktopError> {
-	let state = app.state::<Mutex<AppState>>();
-	let state = state.lock().await;
+	let state = app.state::<RwLock<AppState>>();
+	let state = state.read().await;
 	if state.nodes.contains_key(id) {
 		let node = state.nodes.get(id).unwrap();
 		Ok(node.peers().await?)
@@ -190,8 +190,8 @@ async fn ipfs_peers(app: AppHandle, id: &str) -> Result<Vec<PeerInfo>, IpmcDeskt
 
 #[tauri::command]
 async fn ipfs_rm_pin(app: AppHandle, id: &str, cid: &str) -> Result<(), IpmcDesktopError> {
-	let state = app.state::<Mutex<AppState>>();
-	let state = state.lock().await;
+	let state = app.state::<RwLock<AppState>>();
+	let state = state.read().await;
 	if state.nodes.contains_key(id) {
 		let node = state.nodes.get(id).unwrap();
 		node.rm_pin(cid).await?;
@@ -203,8 +203,8 @@ async fn ipfs_rm_pin(app: AppHandle, id: &str, cid: &str) -> Result<(), IpmcDesk
 
 #[tauri::command]
 async fn ipfs_stop(app: AppHandle, id: &str) -> Result<(), String> {
-	let state = app.state::<Mutex<AppState>>();
-	let mut state = state.lock().await;
+	let state = app.state::<RwLock<AppState>>();
+	let mut state = state.write().await;
 	if state.nodes.contains_key(id) {
 		let node = state.nodes.remove(id).unwrap();
 		node.stop().await;
@@ -224,7 +224,7 @@ pub fn run() {
 	tauri::Builder::default()
 		.setup(|app| {
 			let state = AppState::default();
-			app.manage(Mutex::new(state));
+			app.manage(RwLock::new(state));
 			Ok(())
 		})
 		.plugin(tauri_plugin_opener::init())

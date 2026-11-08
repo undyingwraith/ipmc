@@ -20,10 +20,11 @@ const nodeService: INodeService = {
 		await new Promise(resolve => setTimeout(resolve, 5000));
 
 		const id = profile.id;
+		const node_id: string = await invoke('ipfs_id', { id });
 		const api: IIpfsService = {
 			addPin: (cid) => invoke('ipfs_add_pin', { cid, id }),
 			fetch: (cid, path) => invoke('ipfs_fetch', { cid, path, id }),
-			id: () => 'test',//invoke('ipfs_id', { id }),
+			id: () => node_id,
 			isPinned: (cid) => invoke('ipfs_is_pinned', { cid, id }),
 			ls: (cid, _) => invoke('ipfs_ls', { cid, id }),
 			peers: () => invoke('ipfs_peers', { id }),
