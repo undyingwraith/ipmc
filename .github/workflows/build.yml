@@ -29,3 +29,17 @@ jobs:
         with:
           name: 'ui'
           working-directory: './packages/ui'
+  build-rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build
+        run: cargo build --verbose
+      - name: Run tests
+        run: cargo test --verbose
+      - name: Check code style
+        if: success() || failure()
+        run: cargo fmt -- --check
+      - name: Check warnings
+        if: success() || failure()
+        run: cargo clippy -- -D warnings
