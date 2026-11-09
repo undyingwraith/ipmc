@@ -12,12 +12,7 @@
 	"app": {
 		"windows": [
 			{
-				"label": "main",
-				"visible": false
-			},
-			{
-				"label": "launcher",
-				"url": "/launcher"
+				"label": "main"
 			}
 		],
 		"security": {

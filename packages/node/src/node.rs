@@ -80,7 +80,8 @@ impl IpmcNode {
 			.with_relay_server(Default::default())
 			.with_upnp()
 			.with_autorelay()
-			.default_record_key_validator();
+			.default_record_key_validator()
+			.set_path(path);
 		if let Some(ref key) = profile.swarm_key {
 			let psk = PreSharedKey::from_str(key)?;
 
@@ -161,11 +162,17 @@ impl IpmcNode {
 		let peers = self.ipfs.get_bitswap_peers().await?;
 		let mut res = Vec::new();
 		for peer in peers {
+			res.push(PeerInfo {
+				peer: peer.to_base58(),
+				addrs: Vec::new(),
+			});
+			/*
 			let id = self.ipfs.identity(Some(peer)).await?;
 			res.push(PeerInfo {
 				peer: id.peer_id.to_base58(),
 				addrs: Vec::from([id.observed_addr.map(|p| p.to_string()).unwrap_or("t".to_owned())]),
-			})
+			});
+			 */
 		}
 
 		Ok(res)

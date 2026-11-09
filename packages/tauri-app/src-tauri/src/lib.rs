@@ -116,12 +116,12 @@ async fn ipfs_add_pin(app: AppHandle, id: &str, cid: &str) -> Result<(), IpmcDes
 }
 
 #[tauri::command]
-async fn ipfs_fetch(app: AppHandle, id: &str, cid: &str, path: &str) -> Result<Vec<u8>, IpmcDesktopError> {
+async fn ipfs_fetch(app: AppHandle, id: &str, cid: &str, path: &str) -> Result<tauri::ipc::Response, IpmcDesktopError> {
 	let state = app.state::<RwLock<AppState>>();
 	let state = state.read().await;
 	if state.nodes.contains_key(id) {
 		let node = state.nodes.get(id).unwrap();
-		Ok(node.fetch(cid, path).await?)
+		Ok(tauri::ipc::Response::new(node.fetch(cid, path).await?))
 	} else {
 		Err(IpmcDesktopError::NodeNotRunning)
 	}
