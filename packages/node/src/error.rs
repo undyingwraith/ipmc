@@ -25,4 +25,7 @@ pub enum IpmcError {
 
 	#[error(transparent)]
 	Traversal(#[from] rust_ipfs::unixfs::TraversalFailed),
+
+	#[error("Node is not running")]
+	InvalidProfile,
 }

@@ -1,5 +1,5 @@
 use directories::BaseDirs;
-use ipmc_node::{FileInfo, IpmcNode, PeerInfo, Profile};
+use ipmc_node::{FileInfo, IpmcNode, PeerInfo};
 use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
@@ -8,8 +8,10 @@ use tokio::sync::RwLock;
 use tokio::sync::oneshot;
 
 mod error;
+mod profile;
 
 use crate::error::IpmcDesktopError;
+use crate::profile::Profile;
 
 fn get_profile_folder(id: Option<&str>) -> PathBuf {
 	//TODO: better error handling maybe?
@@ -29,9 +31,9 @@ fn get_profile(id: &str) -> Result<Profile, String> {
 	let mut path = get_profile_folder(Some(id));
 	path.push("profile.json");
 	let data = fs::read_to_string(path).map_err(|_| "Failed to read file")?;
-	let profile: Profile = serde_json::from_str(&data).map_err(|_| "Failed to parse json")?;
+	let profile: ipmc_node::Profile = serde_json::from_str(&data).map_err(|_| "Failed to parse json")?;
 
-	Ok(profile)
+	Ok(Profile::from_profile(profile, id.to_owned()))
 }
 
 #[tauri::command]
@@ -70,7 +72,7 @@ fn set_profile(id: &str, profile: Profile) -> Result<(), String> {
 	}
 
 	path.push("profile.json");
-	let json = serde_json::to_string(&profile).map_err(|_| "Failed to serialize profile")?;
+	let json = serde_json::to_string(&Into::<ipmc_node::Profile>::into(profile)).map_err(|_| "Failed to serialize profile")?;
 	fs::write(path, json).map_err(|_| "Failed to write json file")?;
 
 	Ok(())
@@ -78,6 +80,10 @@ fn set_profile(id: &str, profile: Profile) -> Result<(), String> {
 
 #[tauri::command]
 async fn create_node(app: AppHandle, profile: Profile) -> Result<(), IpmcDesktopError> {
+	let profile = match profile {
+		Profile::Internal(inner) => Ok(inner),
+		Profile::Remote(_) => Err(IpmcDesktopError::InvalidProfile),
+	}?;
 	let state = app.state::<RwLock<AppState>>();
 	{
 		let state = state.read().await;

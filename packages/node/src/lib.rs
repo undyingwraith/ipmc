@@ -4,4 +4,4 @@ mod profile;
 
 pub use error::IpmcError;
 pub use node::{FileInfo, IpmcNode, PeerInfo};
-pub use profile::{Library, Profile};
+pub use profile::{Library, Profile, InternalProfile, RemoteProfile};

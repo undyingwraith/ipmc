@@ -27,8 +27,11 @@ impl IpmcNode {
 
 			let data = fs::read_to_string(profile_path)?;
 			let profile: Profile = serde_json::from_str(&data)?;
-			profile
-		};
+			match profile {
+				Profile::Internal(inner) => Ok(inner),
+				Profile::Remote(_) => Err(IpmcError::InvalidProfile)
+			}
+		}?;
 
 		let keypair = {
 			let mut id_path = path.clone();
@@ -102,7 +105,7 @@ impl IpmcNode {
 		println!("Listening Addresses:");
 		let addrs = ipfs.listening_addresses().await?;
 		for addr in addrs {
-			println!("{}", addr.to_string());
+			println!("{addr}");
 		}
 
 		Ok(IpmcNode { ipfs })
@@ -115,8 +118,8 @@ impl IpmcNode {
 
 	pub async fn add_pin(&self, cid: &str) -> Result<(), IpmcError> {
 		let cid = Cid::from_str(cid)?;
-		let res = self.ipfs.insert_pin(cid).await?;
-		Ok(res)
+		self.ipfs.insert_pin(cid).await?;
+		Ok(())
 	}
 
 	pub async fn fetch(&self, cid: &str, path: &str) -> Result<Vec<u8>, IpmcError> {
@@ -190,8 +193,8 @@ impl IpmcNode {
 
 	pub async fn rm_pin(&self, cid: &str) -> Result<(), IpmcError> {
 		let cid = Cid::from_str(cid)?;
-		let res = self.ipfs.remove_pin(cid).await?;
-		Ok(res)
+		self.ipfs.remove_pin(cid).await?;
+		Ok(())
 	}
 
 	pub async fn stop(self) {

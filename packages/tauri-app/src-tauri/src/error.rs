@@ -13,6 +13,9 @@ pub enum IpmcDesktopError {
 
 	#[error("Node is not running")]
 	NodeNotRunning,
+
+	#[error("Node is not running")]
+	InvalidProfile,
 }
 
 impl serde::Serialize for IpmcDesktopError {
